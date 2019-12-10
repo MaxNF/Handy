@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="helpImageViews">
+        <item name="android:background">@drawable/image_view_border</item>
+        <item name="android:elevation" tools:ignore="NewApi">4dp</item>
+        <item name="android:layout_marginStart">150dp</item>
+        <item name="android:layout_marginLeft">150dp</item>
+        <item name="android:layout_marginEnd">150dp</item>
+        <item name="android:layout_marginRight">150dp</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="RecyclerViewMain">
+        <item name="android:clipChildren">false</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:paddingLeft">100dp</item>
+        <item name="android:paddingRight">100dp</item>
+    </style>
+</resources>

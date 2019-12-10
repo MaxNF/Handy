@@ -1,0 +1,71 @@
+<resources>
+    <!--Main-->
+    <string name="app_name">Хэнди</string>
+    <string name="settings_fragment_label">Настройки</string>
+
+    <!--Preferences-->
+    <string name="theme_pref_label">Тема</string>
+    <string name="sorting_pref_label">Сортировка</string>
+
+    <!--Theme names-->
+    <string name="theme_violet_label">Фиолетовая</string>
+    <string name="theme_lilac_label">Сирень</string>
+    <string name="theme_ocean_label">Океан</string>
+    <string name="theme_wood_label">Дерево</string>
+    <string name="theme_green_label">Зеленая</string>
+    <string name="theme_crimson_label">Малиновая</string>
+    <string name="theme_gray_label">Серая</string>
+    <string name="theme_indigo_label">Индиго</string>
+    <string name="theme_orange_label">Оранжевая</string>
+    <string name="theme_sunny_label">Солнечная</string>
+
+    <!--Undo-->
+    <string name="catalog_undo_label">Список был удален</string>
+    <string name="recipe_undo_label">Группа была удалена</string>
+    <string name="buy_undo_label">Товар был удален</string>
+    <string name="ingredient_undo_label">Товар был удален</string>
+    <string name="undo_action">ВОССТАНОВИТЬ</string>
+
+    <!--Headers-->
+    <string name="catalog_recycler_view_label">Ваши списки покупок</string>
+
+    <!--Buttons-->
+    <string name="fab_create_recipe_action">Добавить группу</string>
+    <string name="fab_create_buy_action">Добавить товар</string>
+    <string name="hint_recipe_empty">Группа пуста, добавьте товары</string>
+    <string name="hint_recipe_expand">Нажмите, чтобы развернуть список</string>
+    <string name="hint_recipe_collapse">Нажмите, чтобы свернуть список</string>
+
+    <!--Hints-->
+    <string name="hint_overlay_text_field">Введите название</string>
+    <string name="hint_nothing_to_show">Здесь пока ничего нет</string>
+    <string name="hint_nothing_to_show_catalogs">Создайте новый список покупок</string>
+    <string name="hint_nothing_to_show_recipe">Добавьте группу или товар</string>
+
+    <!--Toasts-->
+    <string name="was_bought_toast">\"%s\" куплен</string>
+    <string name="was_canceled_toast">Покупка \"%s\" отменена</string>
+    <string name="sorting_newest_first_label">Новые в начале</string>
+    <string name="sorting_oldest_first_label">Старые в начале</string>
+    <string name="dialog_cancel">Отмена</string>
+    <string name="dialog_delete_all_msg">Очистить список?</string>
+    <string name="dialog_yes">Да</string>
+    <string name="dialog_buy_all_msg">Отметить все как купленные?</string>
+    <string name="dialog_cancel_all_msg">Отметить все как не купленные?</string>
+    <string name="help_fragment_label">Помощь</string>
+    <string name="help2_1">Чтобы завершить добавление товара, нажмите на кнопку \"готово\" на клавиатуре. Нажатие кнопки \"готово\" не закроет экран добавления товаров. Вы можете добавить множество товаров в одной последовательности.</string>
+    <string name="welcome_first_msg">Спасибо за загрузку!</string>
+    <string name="welcome_second_msg">Управление приложением должно быть интуитивно понятно, но на всякий случай есть раздел помощи.</string>
+    <string name="help_hint">свайпайте для перехода на другую страницу</string>
+    <string name="help1_1">Вначале создайте новый список покупок.</string>
+    <string name="help1_2">Потом добавьте покупку или группу.</string>
+    <string name="help2_2">Для отмены создания товара или выхода из экрана создания просто нажмите на пустое место.</string>
+    <string name="help3_1">Нажав на товар, вы пометите его как \"купленный\".</string>
+    <string name="help3_2">Он автоматически переместится в низ списка. Вы можете нажать по нему еще раз, чтобы вернуть статус \"не купленный\" обратно.</string>
+    <string name="help4_1">Чтобы добавить товары в группу, нажмите на плюсик.</string>
+    <string name="help4_2">Для удаления элементов, свайпайте их влево или вправо. Отменить действие можно в течение нескольких секунд после удаления.</string>
+    <string name="help5_1">Нажимайте на дополнительные кнопки, чтобы удалить, отменить или купить сразу все предметы из списка.</string>
+    <string name="help5_2">Вы можете сменить тему или порядок сортировки в настройках.</string>
+    <string name="welcome_button_text">Начать</string>
+    <string name="rate_app_label">Оценить приложение</string>
+</resources>

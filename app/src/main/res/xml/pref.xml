@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        android:layout="@layout/pref_category_view"
+        android:key="@string/theme_pref_key"
+        android:title="@string/theme_pref_label"
+        android:entries="@array/theme_labels"
+        android:entryValues="@array/theme_values"
+        app:useSimpleSummaryProvider="true"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true" />
+
+
+    <ListPreference
+        android:layout="@layout/pref_category_view"
+        android:key="@string/sorting_pref_key"
+        android:title="@string/sorting_pref_label"
+        android:entries="@array/sorting_labels"
+        android:entryValues="@array/sorting_values"
+        app:useSimpleSummaryProvider="true"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
+
+
+</PreferenceScreen>

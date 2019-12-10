@@ -1,0 +1,84 @@
+<resources>
+    <!--Main-->
+    <string name="app_name">Handy</string>
+    <string name="settings_fragment_label">Settings</string>
+    <string name="help_fragment_label">Help</string>
+
+    <!--Preferences-->
+    <string name="theme_pref_label">Theme</string>
+    <string name="sorting_pref_label">Sorting</string>
+
+    <!--Theme labels-->
+    <string name="theme_violet_label">Purple</string>
+    <string name="theme_lilac_label">Lilac</string>
+    <string name="theme_ocean_label">Ocean</string>
+    <string name="theme_wood_label">Wood</string>
+    <string name="theme_green_label">Green</string>
+    <string name="theme_sunny_label">Sunny</string>
+    <string name="theme_crimson_label">Crimson</string>
+    <string name="theme_orange_label">Orange</string>
+    <string name="theme_indigo_label">Indigo</string>
+    <string name="theme_gray_label">Gray</string>
+
+    <!--Sorting labels-->
+    <string name="sorting_newest_first_label">Newest first</string>
+    <string name="sorting_oldest_first_label">Oldest first</string>
+
+    <!--Dialogs-->
+    <string name="dialog_delete_all_msg">Clear this list?</string>
+    <string name="dialog_buy_all_msg">Mark all items as bought?</string>
+    <string name="dialog_cancel_all_msg">Mark all items as non bought?</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_cancel">Cancel</string>
+
+    <!--Undo-->
+    <string name="catalog_undo_label">The list was deleted</string>
+    <string name="recipe_undo_label">The group was deleted</string>
+    <string name="buy_undo_label">The unit was deleted</string>
+    <string name="ingredient_undo_label">The unit was deleted</string>
+    <string name="undo_action">RESTORE</string>
+
+    <!--Headers-->
+    <string name="catalog_recycler_view_label">Your shopping lists</string>
+
+    <!--Buttons-->
+    <string name="fab_create_recipe_action">Add group</string>
+    <string name="fab_create_buy_action">Add unit</string>
+    <string name="hint_recipe_empty">The group is empty, add items please</string>
+    <string name="hint_recipe_expand">Tap to expand</string>
+    <string name="hint_recipe_collapse">Tap to collapse</string>
+
+    <!--Hints-->
+    <string name="hint_overlay_text_field">Type name here</string>
+    <string name="hint_nothing_to_show">Nothing to show</string>
+    <string name="hint_nothing_to_show_catalogs">Create a new shopping list first</string>
+    <string name="hint_nothing_to_show_recipe">Please add a new unit or a group</string>
+
+    <!--Toasts-->
+    <string name="was_bought_toast">\"%s\" is bought</string>
+    <string name="was_canceled_toast">\"%s\" is canceled</string>
+
+    <!--Welcome screen-->
+    <string name="welcome_first_msg">Thank you for downloading!</string>
+    <string name="welcome_second_msg">Using the app should be intuitive, but there is a help section to make it 100\% clear.</string>
+    <string name="welcome_button_text">Begin</string>
+
+    <!--Help screens-->
+    <string name="help_hint">swipe to move next or previous page</string>
+
+    <string name="help1_1">The first step is to create a new shopping list.</string>
+    <string name="help1_2">Then add either a unit or a group.</string>
+
+    <string name="help2_1">To finish adding the item simply tap done button on your keyboard. Adding units does not automatically cancel the creation process. You can create many items in a sequence.</string>
+    <string name="help2_2">To exit from the creation screen just tap on empty space.</string>
+
+    <string name="help3_1">Tapping on an item will mark it as bought.</string>
+    <string name="help3_2">It will automatically move to the bottom of the list and change it\'s color to green. If you tap again, it will become unbought.</string>
+
+    <string name="help4_1">To add items into a group, click the plus button.</string>
+    <string name="help4_2">You can delete items from the list by swiping it either left or right. This can be undone for several seconds after deletion.</string>
+
+    <string name="help5_1">Additional buttons are here to delete, cancel or buy all items in a single tap.</string>
+    <string name="help5_2">You can change a theme or sorting order in the settings.</string>
+    <string name="rate_app_label">Rate this app</string>
+</resources>

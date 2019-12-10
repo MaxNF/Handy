@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--Themes-->
+    <string name="theme_violet_value" translatable="false">standard</string>
+    <string name="theme_lilac_value" translatable="false">dark</string>
+    <string name="theme_ocean_value" translatable="false">ocean</string>
+    <string name="theme_wood_value" translatable="false">wood</string>
+    <string name="theme_green_value" translatable="false">green</string>
+    <string name="theme_sunny_value" translatable="false">sunny</string>
+    <string name="theme_crimson_value" translatable="false">crimson</string>
+    <string name="theme_orange_value" translatable="false">orange</string>
+    <string name="theme_indigo_value" translatable="false">indigo</string>
+    <string name="theme_gray_value" translatable="false">gray</string>
+<!--Sorting-->
+    <string name="sorting_newest_first_value" translatable="false">newest</string>
+    <string name="sorting_oldest_first_value" translatable="false">oldest</string>
+</resources>

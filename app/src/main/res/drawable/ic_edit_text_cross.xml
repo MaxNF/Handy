@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<item
+    android:gravity="center">
+    <rotate
+        android:fromDegrees="45"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toDegrees="45">
+        <bitmap
+            android:src="@drawable/ic_cross"
+            android:tint="?attr/listIconsColor" />
+    </rotate>
+</item>
+</layer-list>

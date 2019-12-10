@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_pref_key" translatable="false">theme_key</string>
+    <string name="sorting_pref_key" translatable="false">sorting_key</string>
+</resources>

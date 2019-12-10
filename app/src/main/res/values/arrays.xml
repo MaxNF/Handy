@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="theme_labels">
+        <item>@string/theme_violet_label</item>
+        <item>@string/theme_lilac_label</item>
+        <item>@string/theme_ocean_label</item>
+        <item>@string/theme_wood_label</item>
+        <item>@string/theme_green_label</item>
+        <item>@string/theme_sunny_label</item>
+        <item>@string/theme_crimson_label</item>
+        <item>@string/theme_orange_label</item>
+        <item>@string/theme_indigo_label</item>
+        <item>@string/theme_gray_label</item>
+    </array>
+    <array name="theme_values">
+        <item>@string/theme_violet_value</item>
+        <item>@string/theme_lilac_value</item>
+        <item>@string/theme_ocean_value</item>
+        <item>@string/theme_wood_value</item>
+        <item>@string/theme_green_value</item>
+        <item>@string/theme_sunny_value</item>
+        <item>@string/theme_crimson_value</item>
+        <item>@string/theme_orange_value</item>
+        <item>@string/theme_indigo_value</item>
+        <item>@string/theme_gray_value</item>
+    </array>
+
+
+    <array name="sorting_labels">
+        <item>@string/sorting_newest_first_label</item>
+        <item>@string/sorting_oldest_first_label</item>
+    </array>
+    <array name="sorting_values">
+        <item>@string/sorting_newest_first_value</item>
+        <item>@string/sorting_oldest_first_value</item>
+    </array>
+</resources>

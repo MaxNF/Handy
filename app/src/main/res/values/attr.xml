@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--List items-->
+    <attr name="catalogNormalColor" format="reference|color" />
+    <attr name="catalogSwipeColor" format="reference|color" />
+    <attr name="boughtNormalColor" format="reference|color" />
+    <attr name="boughtSwipeColor" format="reference|color" />
+    <attr name="notBoughtNormalColor" format="reference|color" />
+    <attr name="notBoughtSwipeColor" format="reference|color" />
+    <!--Text-->
+    <attr name="listTextColor" format="reference|color"/>
+    <attr name="snackbarActionColor" format="reference|color"/>
+    <!--Icons-->
+    <attr name="toolbarElementColor" format="reference|color" />
+    <attr name="listIconsColor" format="reference|color" />
+    <attr name="toolbarBackArrowColor" format="reference" />
+    <!--FAB-->
+    <attr name="fabIconTintColor" format="reference|color" />
+    <!--Other-->
+    <attr name="overlayBackgroundColor" format="reference|color" />
+    <attr name="speedDialActionLabelBackground" format="reference|color" />
+    <attr name="speedDialActionLabelColor" format="reference|color" />
+    <attr name="swipeBackgroundColor" format="reference|color" />
+    <attr name="mainBackground" format="reference|color" />
+    <attr name="buyAllButtonColor" format="reference|color"/>
+    <attr name="cancelAllButtonColor" format="reference|color"/>
+    <attr name="deleteAllButtonColor" format="reference|color"/>
+</resources>

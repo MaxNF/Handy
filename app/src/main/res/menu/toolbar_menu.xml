@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/rate_app"
+        android:icon="@drawable/ic_star_icon"
+        android:title="@string/rate_app_label"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/helpFragment"
+        android:icon="@drawable/ic_help_icon"
+        android:title="@string/help_fragment_label"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/appSettings"
+        android:icon="@drawable/ic_settings_icon"
+        android:title="@string/settings_fragment_label"
+        app:showAsAction="ifRoom" />
+</menu>

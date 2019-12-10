@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <color android:color="?attr/swipeBackgroundColor" />
+    </item>
+    <item android:left="16dp">
+        <bitmap
+            android:gravity="left|center_vertical"
+            android:src="@drawable/ic_delete_cross"
+            android:tint="?attr/fabIconTintColor" />
+    </item>
+</layer-list>
