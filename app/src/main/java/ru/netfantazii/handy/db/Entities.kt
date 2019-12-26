@@ -3,7 +3,8 @@ package ru.netfantazii.handy.db
 import androidx.room.*
 import java.util.*
 
-abstract class BaseEntity(
+@Entity
+open class CatalogEntity(
     @field:PrimaryKey(autoGenerate = true)
     val id: Long,
     @field:ColumnInfo(name = "creation_time")
@@ -12,14 +13,6 @@ abstract class BaseEntity(
     var name: String
 )
 
-@Entity
-open class CatalogEntity(
-    id: Long,
-    creationTime: Calendar,
-    position: Int,
-    name: String
-) : BaseEntity(id, creationTime, position, name)
-
 @Entity(
     foreignKeys = [ForeignKey(
         entity = CatalogEntity::class,
@@ -27,16 +20,18 @@ open class CatalogEntity(
     )]
 )
 open class GroupEntity(
-    id: Long,
+    @field:PrimaryKey(autoGenerate = true)
+    val id: Long,
     @field:ColumnInfo(name = "catalog_id")
     val catalogId: Long,
-    creationTime: Calendar,
+    @field:ColumnInfo(name = "creation_time")
+    val creationTime: Calendar,
     @field:ColumnInfo(name = "group_type")
     val groupType: GroupType,
-    position: Int,
-    name: String,
+    var position: Int,
+    var name: String,
     var expandStatus: ExpandStatus
-) : BaseEntity(id, creationTime, position, name)
+)
 
 @Entity(
     foreignKeys = [ForeignKey(
@@ -45,14 +40,16 @@ open class GroupEntity(
     )]
 )
 open class ProductEntity(
-    id: Long,
+    @field:PrimaryKey(autoGenerate = true)
+    val id: Long,
     @field:ColumnInfo(name = "catalog_id")
     val catalogId: Long,
     @field:ColumnInfo(name = "group_id")
     val groupId: Long,
-    creationTime: Calendar,
-    position: Int,
-    name: String,
+    @field:ColumnInfo(name = "creation_time")
+    val creationTime: Calendar,
+    var position: Int,
+    var name: String,
     var buyStatus: BuyStatus
-) : BaseEntity(id, creationTime, position, name)
+)
 

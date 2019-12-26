@@ -7,7 +7,7 @@ import java.util.*
 class Catalog(
     id: Long = 0,
     creationTime: Calendar = Calendar.getInstance(),
-    name: String = "",
+    name: String,
     position: Int,
     val totalElementCount: Int = 0,
     val boughtElementCount: Int = 0
@@ -40,14 +40,13 @@ class Group(
     position: Int,
     expandStatus: ExpandStatus = ExpandStatus.EXPANDED,
     @Relation(entity = ProductEntity::class, parentColumn = "id", entityColumn = "group_id")
-    val productList: MutableList<Product> = mutableListOf()
+    val productList: List<Product> = listOf()
 ) : GroupEntity(id, catalogId, creationTime, groupType, position, name, expandStatus) {
     @field:Ignore
     var buyStatus: BuyStatus
 
     init {
         buyStatus = calculateStatus(productList)
-        productList.sortBy { it.position }
     }
 
     private fun calculateStatus(productEntityList: List<Product>): BuyStatus =
