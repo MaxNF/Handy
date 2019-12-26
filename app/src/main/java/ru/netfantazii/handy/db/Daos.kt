@@ -3,41 +3,50 @@ package ru.netfantazii.handy.db
 import androidx.room.*
 import io.reactivex.Completable
 import io.reactivex.Observable
-import org.jetbrains.annotations.TestOnly
+import io.reactivex.schedulers.Schedulers
 
 @Dao
-interface BaseDao<T> {
-    @Insert
-    fun add(t: T) : Completable
+abstract class BaseDao<T> {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun add(t: T): Completable
 
     @Delete
-    fun remove(t: T) : Completable
+    abstract fun remove(t: T): Completable
 
     @Update
-    fun update(t: T) : Completable
+    abstract fun update(t: T): Completable
 
     @Update
-    fun updateAll(t: List<T>) : Completable
+    abstract fun updateAll(t: List<T>): Completable
+
+    open fun removeAndUpdateAll(t: T, list: List<T>): Completable {
+        return remove(t).andThen(updateAll(list))
+    }
+
+    open fun addAndUpdateAll(t: T, list: List<T>): Completable {
+        return add(t).andThen(updateAll(list))
+    }
 }
 
 @Dao
-interface CatalogDao : BaseDao<CatalogEntity> {
+abstract class CatalogDao : BaseDao<CatalogEntity>() {
     @Transaction
-    @Query("SELECT c.id, c.creation_time, c.name, c.position, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buyStatus = 1) AS boughtElementCount FROM CatalogEntity c")
-    fun getCatalogs(): Observable<List<Catalog>>
+    @Query("SELECT c.id, c.creation_time, c.name, c.position, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buyStatus = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
+    abstract fun getCatalogs(): Observable<MutableList<Catalog>>
 
+    @Query("DELETE FROM CatalogEntity")
+    abstract fun removeAllCatalogs(): Completable
 }
 
 @Dao
-interface GroupDao : BaseDao<GroupEntity> {
+abstract class GroupDao : BaseDao<GroupEntity>() {
     @Transaction
-    @Query("SELECT * FROM GroupEntity WHERE catalog_id = :catalogId")
-    fun getGroups(catalogId: Long) : Observable<List<Group>>
+    @Query("SELECT * FROM GroupEntity WHERE catalog_id = :catalogId ORDER BY position")
+    abstract fun getGroups(catalogId: Long): Observable<List<Group>>
 
     @Query("DELETE FROM GroupEntity WHERE catalog_id = :catalogId AND group_type != 1")
-    fun deleteAllGroups(catalogId: Long) : Completable
-
+    abstract fun removeAllGroups(catalogId: Long): Completable
 }
 
 @Dao
-interface ProductDao : BaseDao<ProductEntity>
+abstract class ProductDao : BaseDao<ProductEntity>()

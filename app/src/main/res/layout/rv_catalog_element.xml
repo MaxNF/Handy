@@ -1,60 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    style="@style/ListElementElevation"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="catalog"
+            type="ru.netfantazii.handy.db.Catalog" />
+
+        <variable
+            name="handler"
+            type="ru.netfantazii.handy.core.catalogs.CatalogsClickHandler" />
+    </data>
 
     <FrameLayout
-        android:id="@+id/container"
+        style="@style/ListElementElevation"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/catalogColor"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground">
+        android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <FrameLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/catalogColor"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:onClick="@{()->handler.onCatalogClick(catalog)}">
 
-            <ImageButton
-                android:id="@+id/ib_element_edit"
-                style="@style/EditImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_element_count"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_element_count" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/drag_handle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:textColor="?attr/listTextColor"
-                android:id="@+id/tv_element_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"
-                app:layout_constraintEnd_toStartOf="@id/ib_element_edit"
-                app:layout_constraintTop_toTopOf="@+id/tv_element_name"
-                tools:text="0/2" />
+                <ImageButton
+                    android:id="@+id/ib_element_edit"
+                    style="@style/EditImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{() -> handler.onCatalogEditClick(catalog)}"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_element_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_element_count" />
 
-            <TextView
-                android:textColor="?attr/listTextColor"
-                android:id="@+id/tv_element_name"
-                style="@style/TextCatalog"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginBottom="12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tv_element_count"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Text" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/tv_element_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text='@{String.valueOf(catalog.boughtElementCount) + "/" + String.valueOf(catalog.totalElementCount)}'
+                    android:textColor="?attr/listTextColor"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"
+                    app:layout_constraintEnd_toStartOf="@id/ib_element_edit"
+                    app:layout_constraintTop_toTopOf="@+id/tv_element_name"
+                    tools:text="0/2" />
 
+                <TextView
+                    android:id="@+id/tv_element_name"
+                    style="@style/TextCatalog"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@{catalog.name}"
+                    android:textColor="?attr/listTextColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_element_count"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Text" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
     </FrameLayout>
-</FrameLayout>
+</layout>

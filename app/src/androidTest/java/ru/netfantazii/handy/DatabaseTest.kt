@@ -13,7 +13,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import ru.netfantazii.handy.db.*
 import java.io.IOException
-import kotlin.random.Random
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 
 @RunWith(AndroidJUnit4::class)
@@ -32,40 +31,6 @@ class DatabaseTest {
         productDao = db.getProductDao()
         groupDao = db.getGroupDao()
         catalogDao = db.getCatalogDao()
-    }
-
-    private fun createFakeCatalog(): Catalog {
-        return Catalog(
-            name = "fake catalog#${Random.nextInt()}",
-            position = Random.nextInt()
-        )
-    }
-
-    private fun createFakeGroup(catalogId: Long): Group {
-        return Group(
-            catalogId = catalogId,
-            name = "fake group#${Random.nextInt()}",
-            position = Random.nextInt()
-        )
-    }
-
-    private fun createFakeTopGroup(catalogId: Long): Group {
-        return Group(
-            catalogId = catalogId,
-            name = "fakeTopGroup#${Random.nextInt()}",
-            position = Random.nextInt(),
-            groupType = GroupType.ALWAYS_ON_TOP
-        )
-    }
-
-    private fun createFakeProduct(catalogId: Long, groupId: Long, buyStatus: BuyStatus): Product {
-        return Product(
-            catalogId = catalogId,
-            groupId = groupId,
-            name = "fake product#${Random.nextInt()}",
-            position = Random.nextInt(),
-            buyStatus = buyStatus
-        )
     }
 
     @get:Rule
@@ -191,7 +156,7 @@ class DatabaseTest {
         val groupsBeforeDeletion = groupDao.getGroups(1).test().values()[0]
         assertThat(groupsBeforeDeletion.size, `is`(3)) // В каталоге перед удалением 3 группы
 
-        groupDao.deleteAllGroups(1).test().assertComplete()
+        groupDao.removeAllGroups(1).test().assertComplete()
         val groupsAfterDeletion = groupDao.getGroups(1).test().values()[0]
         assertThat(
             groupsAfterDeletion.size,
@@ -304,4 +269,18 @@ class DatabaseTest {
         assertThat(groups[1].groupType, `is`(GroupType.ALWAYS_ON_TOP)) // Вторая - ALWAYS_ON_TOP
     }
 
+    @Test
+    @Throws(IOException::class)
+    fun testSortingOrder() {
+        catalogDao.add(createFakeCatalog("1", position = 0)).test().assertComplete()
+        catalogDao.add(createFakeCatalog("2", position = 3)).test().assertComplete()
+        catalogDao.add(createFakeCatalog("0", position = 1)).test().assertComplete()
+        catalogDao.add(createFakeCatalog("3", position = 2)).test().assertComplete()
+
+        val catalogs = catalogDao.getCatalogs().test().values()[0]
+        assertThat(catalogs[0].name, `is`("1"))
+        assertThat(catalogs[1].name, `is`("0"))
+        assertThat(catalogs[2].name, `is`("3"))
+        assertThat(catalogs[3].name, `is`("2"))
+    }
 }
