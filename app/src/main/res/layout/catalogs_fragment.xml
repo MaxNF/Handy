@@ -53,7 +53,7 @@
                 android:id="@+id/rv_list"
                 style="@style/RecyclerViewMain"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
 
             <com.leinardi.android.speeddial.SpeedDialView
                 android:id="@+id/fab_create_catalog"
