@@ -10,13 +10,15 @@ open abstract class BaseFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createViewModel()
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         createRecyclerView(view)
+        createSnackbars(view)
+        createHints(view)
         setUpFab(view)
         subscribeToEvents()
+
     }
 
     override fun onDestroyView() {
@@ -42,4 +44,6 @@ open abstract class BaseFragment : Fragment() {
     protected abstract fun subscribeToEvents()
     protected abstract fun unsubscribeFromEvents()
     protected abstract fun setUpFab(view: View)
+    protected abstract fun createSnackbars(view: View)
+    protected abstract fun createHints(view: View)
 }

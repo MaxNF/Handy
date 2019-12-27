@@ -5,11 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
@@ -21,7 +24,11 @@ import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
 import ru.netfantazii.handy.core.BaseFragment
+import ru.netfantazii.handy.core.preferences.ThemeColor
+import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.extensions.doWithDelay
+import ru.netfantazii.handy.extensions.fadeIn
+import ru.netfantazii.handy.extensions.fadeOut
 
 class CatalogsFragment : BaseFragment() {
     private val TAG = "CatalogsFragment"
@@ -30,6 +37,8 @@ class CatalogsFragment : BaseFragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CatalogsAdapter
     private lateinit var dragManager: RecyclerViewDragDropManager
+    private lateinit var undoSnackbar: Snackbar
+    private lateinit var hint: View
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,6 +90,24 @@ class CatalogsFragment : BaseFragment() {
         recyclerView.addItemDecoration(RecyclerViewDecorator())
     }
 
+    override fun createSnackbars(view: View) {
+        val coordinatorLayout = view.findViewById<CoordinatorLayout>(R.id.coordinator_layout)
+        undoSnackbar = Snackbar.make(
+            coordinatorLayout,
+            getString(R.string.catalog_undo_label),
+            Snackbar.LENGTH_LONG
+        )
+            .setAction(getString(R.string.undo_action)) { viewModel.undoRemoval() }
+            .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
+            .setBehavior(object : BaseTransientBottomBar.Behavior() {
+                override fun canSwipeDismissView(child: View) = false
+            })
+    }
+
+    override fun createHints(view: View) {
+        hint = view.findViewById(R.id.hint_group)
+    }
+
     override fun setUpFab(view: View) {
         val fab = view.findViewById<SpeedDialView>(R.id.fab_create_catalog)
         fab.setOnChangeListener(object : SpeedDialView.OnChangeListener {
@@ -88,16 +115,21 @@ class CatalogsFragment : BaseFragment() {
                 viewModel.onCreateCatalogClick()
                 return true
             }
-
             override fun onToggleChanged(isOpen: Boolean) {}
         })
     }
 
     override fun subscribeToEvents() {
         viewModel.newDataReceived.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
+            it.getContentIfNotHandled()?.let { shouldHintBeShown ->
                 Log.d(TAG, "newDataReceived: ")
-                refreshRecyclerView() }
+                refreshRecyclerView()
+                if (shouldHintBeShown) {
+                    showHint()
+                } else {
+                    hideHint()
+                }
+            }
         })
 
         viewModel.catalogClicked.observe(this, Observer {
@@ -109,7 +141,9 @@ class CatalogsFragment : BaseFragment() {
             it.getContentIfNotHandled()?.let { disableDragAndDrop() }
         })
 
-        viewModel.catalogSwipePerformed.observe(this, Observer { it.getContentIfNotHandled()?.let{}})
+        viewModel.catalogSwipePerformed.observe(
+            this,
+            Observer { it.getContentIfNotHandled()?.let {} })
 
         viewModel.catalogSwipeFinished.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
@@ -118,15 +152,25 @@ class CatalogsFragment : BaseFragment() {
             }
         })
 
-        viewModel.catalogSwipeCanceled.observe(this, Observer { it.getContentIfNotHandled()?.let{enableDragAndDrop()} })
+        viewModel.catalogSwipeCanceled.observe(
+            this,
+            Observer { it.getContentIfNotHandled()?.let { enableDragAndDrop() } })
 
-        viewModel.catalogEditClicked.observe(this, Observer { it.getContentIfNotHandled()?.let{showOverlay()} })
+        viewModel.catalogEditClicked.observe(
+            this,
+            Observer { it.getContentIfNotHandled()?.let { showOverlay() } })
 
-        viewModel.catalogDragSucceeded.observe(this, Observer { it.getContentIfNotHandled()?.let{}})
+        viewModel.catalogDragSucceeded.observe(
+            this,
+            Observer { it.getContentIfNotHandled()?.let {} })
 
-        viewModel.createCatalogClicked.observe(this, Observer { it.getContentIfNotHandled()?.let{showOverlay()} })
+        viewModel.createCatalogClicked.observe(
+            this,
+            Observer { it.getContentIfNotHandled()?.let { showOverlay() } })
 
-        viewModel.overlayBackgroundClicked.observe(this, Observer { it.getContentIfNotHandled()?.let{closeOverlay()} })
+        viewModel.overlayBackgroundClicked.observe(
+            this,
+            Observer { it.getContentIfNotHandled()?.let { closeOverlay() } })
 
         viewModel.overlayEnterClicked.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
@@ -152,6 +196,8 @@ class CatalogsFragment : BaseFragment() {
 
     private fun showRemovalSnackbar() {
         Log.d(TAG, "showRemovalSnackbar: ")
+        undoSnackbar.show()
+        undoSnackbar.show()
     }
 
     private fun refreshRecyclerView() {
@@ -179,5 +225,13 @@ class CatalogsFragment : BaseFragment() {
 
     private fun scrollToFirstElement() {
         recyclerView.scrollToPosition(0)
+    }
+
+    private fun showHint() {
+        hint.fadeIn()
+    }
+
+    private fun hideHint() {
+        hint.fadeOut()
     }
 }

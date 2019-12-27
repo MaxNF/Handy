@@ -29,7 +29,7 @@ android {
     }
 
     sourceSets {
-        androidTest{
+        androidTest {
             java.srcDirs += "src/sharedTest/java"
         }
         test {
@@ -73,10 +73,11 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     // FloatingActionButton
-    implementation "com.leinardi.android:speed-dial:3.1.1" // Если будут глюки с кнопкой, то сменить версию на 3.0.0
+    implementation "com.leinardi.android:speed-dial:3.1.1"
 
-    // Android Material Design Library
-    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    // Android Material Design Library (версия выше 1.1.0-alpha09 вызывает визуальный баг у fab
+    // при вызывании snackbar (кнопка дергается))
+    implementation 'com.google.android.material:material:1.1.0-alpha09'
 
     // RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.15'

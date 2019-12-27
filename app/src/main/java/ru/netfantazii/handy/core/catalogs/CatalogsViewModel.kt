@@ -8,7 +8,6 @@ import ru.netfantazii.handy.*
 import ru.netfantazii.handy.core.*
 import ru.netfantazii.handy.db.Catalog
 import ru.netfantazii.handy.extensions.*
-import kotlin.random.Random
 
 
 class CatalogsViewModel(private val localRepository: LocalRepository) : ViewModel(),
@@ -17,7 +16,8 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     private var catalogList = mutableListOf<Catalog>()
         set(value) {
             field = value
-            _newDataReceived.value = Event(Unit)
+            val shouldHintBeShown = value.size == 0
+            _newDataReceived.value = Event(shouldHintBeShown)
         }
 
     private val disposables = CompositeDisposable()
@@ -26,8 +26,8 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override lateinit var overlayBuffer: BufferObject
 
-    private val _newDataReceived = MutableLiveData<Event<Unit>>()
-    val newDataReceived: LiveData<Event<Unit>> = _newDataReceived
+    private val _newDataReceived = MutableLiveData<Event<Boolean>>()
+    val newDataReceived: LiveData<Event<Boolean>> = _newDataReceived
 
     private val _catalogClicked = MutableLiveData<Event<Catalog>>()
     val catalogClicked: LiveData<Event<Catalog>> = _catalogClicked
@@ -95,10 +95,11 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
             listForUpdating.shiftPositionsToLeft()
             localRepository.removeAndUpdateCatalogs(catalog, listForUpdating)
         }
+        lastRemovedObject = catalog
     }
 
     override fun onCatalogSwipeFinish(catalog: Catalog) {
-        Log.d(TAG, "onCatalogSwipeEnd: ")
+        Log.d(TAG, "onCatalogSwipeFinish: ")
         _catalogSwipeFinished.value = Event(catalog)
     }
 
@@ -131,9 +132,14 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
         Log.d(TAG, "undoRemoval: ")
         lastRemovedObject?.let {
             val restoredCatalogPosition = it.position
-            val listForUpdating = catalogList.subList(restoredCatalogPosition, catalogList.size)
-            listForUpdating.shiftPositionsToRight()
-            localRepository.addAndUpdateCatalogs(it, listForUpdating)
+            if (catalogList.size > 0 && restoredCatalogPosition < catalogList.size) {
+                val listForUpdating =
+                    catalogList.subList(restoredCatalogPosition, catalogList.size)
+                listForUpdating.shiftPositionsToRight()
+                localRepository.addAndUpdateCatalogs(it, listForUpdating)
+            } else {
+                localRepository.addCatalog(it)
+            }
         }
     }
 
