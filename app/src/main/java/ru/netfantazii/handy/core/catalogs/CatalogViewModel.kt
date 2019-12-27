@@ -10,8 +10,8 @@ import ru.netfantazii.handy.db.Catalog
 import ru.netfantazii.handy.extensions.*
 
 
-class CatalogsViewModel(private val localRepository: LocalRepository) : ViewModel(),
-    CatalogsClickHandler, CatalogsStorage, OverlayActions {
+class CatalogViewModel(private val localRepository: LocalRepository) : ViewModel(),
+    CatalogClickHandler, CatalogStorage, OverlayActions {
     private val TAG = "CatalogsViewModel"
     private var catalogList = mutableListOf<Catalog>()
         set(value) {
@@ -161,8 +161,8 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 class CatalogsVmFactory(private val localRepository: LocalRepository) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CatalogsViewModel::class.java)) {
-            return CatalogsViewModel(localRepository) as T
+        if (modelClass.isAssignableFrom(CatalogViewModel::class.java)) {
+            return CatalogViewModel(localRepository) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }

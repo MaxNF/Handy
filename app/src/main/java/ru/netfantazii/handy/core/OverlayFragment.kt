@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.textfield.TextInputEditText
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.core.catalogs.CatalogsViewModel
+import ru.netfantazii.handy.core.catalogs.CatalogViewModel
 import ru.netfantazii.handy.databinding.OverlayFragmentBinding
 import ru.netfantazii.handy.db.BaseEntity
 import ru.netfantazii.handy.extensions.fadeIn
@@ -50,7 +50,7 @@ class OverlayFragment : Fragment() {
         overlayActions =
             ViewModelProviders.of(
                 parentFragment!!
-            ).get(CatalogsViewModel::class.java)
+            ).get(CatalogViewModel::class.java)
         overrideBackButton(overlayActions)
         action = overlayActions.overlayBuffer.action
         bufferObject = overlayActions.overlayBuffer.bufferObject

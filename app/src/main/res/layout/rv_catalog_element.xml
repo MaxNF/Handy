@@ -9,7 +9,7 @@
 
         <variable
             name="handler"
-            type="ru.netfantazii.handy.core.catalogs.CatalogsClickHandler" />
+            type="ru.netfantazii.handy.core.catalogs.CatalogClickHandler" />
     </data>
 
     <FrameLayout

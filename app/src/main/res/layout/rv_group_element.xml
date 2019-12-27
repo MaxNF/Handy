@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="group"
+            type="ru.netfantazii.handy.db.Group" />
+
+        <variable
+            name="groupHandler"
+            type="ru.netfantazii.handy.core.products.GroupClickHandler" />
+    </data>
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -88,3 +99,4 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </FrameLayout>
+</layout>

@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="product"
+            type="ru.netfantazii.handy.db.Product" />
+        <variable
+            name="productHandler"
+            type="ru.netfantazii.handy.core.products.ProductClickHandler" />
+    </data>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -47,6 +56,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Продукты" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </FrameLayout>
 </FrameLayout>
+</layout>

@@ -10,16 +10,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
 import com.leinardi.android.speeddial.SpeedDialView
-import kotlinx.android.synthetic.main.help_fragment.*
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
@@ -33,7 +30,7 @@ import ru.netfantazii.handy.extensions.fadeOut
 class CatalogsFragment : BaseFragment() {
     private val TAG = "CatalogsFragment"
 
-    private lateinit var viewModel: CatalogsViewModel
+    private lateinit var viewModel: CatalogViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CatalogsAdapter
     private lateinit var dragManager: RecyclerViewDragDropManager
@@ -54,7 +51,7 @@ class CatalogsFragment : BaseFragment() {
             ViewModelProviders.of(
                 this,
                 CatalogsVmFactory(repository)
-            ).get(CatalogsViewModel::class.java)
+            ).get(CatalogViewModel::class.java)
     }
 
     override fun createRecyclerView(view: View) {
