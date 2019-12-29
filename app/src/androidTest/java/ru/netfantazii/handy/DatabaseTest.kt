@@ -1,6 +1,7 @@
 package ru.netfantazii.handy
 
-import org.hamcrest.CoreMatchers.*
+//import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Matchers.*
 import org.junit.Assert.*
 import android.content.Context
 import androidx.room.Room
@@ -162,7 +163,8 @@ class DatabaseTest {
             groupsAfterDeletion.size,
             `is`(1)
         ) // В группе должен остаться только один (первый продукт)
-        assertThat(groupsAfterDeletion[0].groupType, `is`(GroupType.ALWAYS_ON_TOP)) // Оставшаяся группа имеет тип ALWAYS_ON_TOP
+        assertThat(groupsAfterDeletion[0].groupType,
+            `is`(GroupType.ALWAYS_ON_TOP)) // Оставшаяся группа имеет тип ALWAYS_ON_TOP
     }
 
     @Test
@@ -265,7 +267,8 @@ class DatabaseTest {
         groupDao.add(createFakeTopGroup(1)).test().assertComplete()
 
         val groups = groupDao.getGroups(1).test().values()[0]
-        assertThat(groups[0].groupType, `is`(GroupType.STANDARD)) // Первая добавленная группа имеет стандартный тип
+        assertThat(groups[0].groupType,
+            `is`(GroupType.STANDARD)) // Первая добавленная группа имеет стандартный тип
         assertThat(groups[1].groupType, `is`(GroupType.ALWAYS_ON_TOP)) // Вторая - ALWAYS_ON_TOP
     }
 
@@ -282,5 +285,16 @@ class DatabaseTest {
         assertThat(catalogs[1].name, `is`("0"))
         assertThat(catalogs[2].name, `is`("3"))
         assertThat(catalogs[3].name, `is`("2"))
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun testDefaultGroupCreated_DefaultGroupCreated() {
+        catalogDao.addWithDefaultGroup(createFakeCatalog("1", position = 0)).test().assertComplete()
+        val groups = groupDao.getGroups(1).test().values()[0]
+        assertThat(groups, not(empty()))
+        assertThat(groups[0].groupType, `is`(GroupType.ALWAYS_ON_TOP))
+        assertThat(groups[0].expandStatus, `is`(ExpandStatus.EXPANDED))
+        assertThat(groups[0].name, `is`("default group"))
     }
 }

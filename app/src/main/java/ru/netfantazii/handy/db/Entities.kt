@@ -35,6 +35,7 @@ open class GroupEntity(
     val groupType: GroupType,
     position: Int,
     name: String,
+    @field:ColumnInfo(name = "expand_status")
     var expandStatus: ExpandStatus
 ) : BaseEntity(id, creationTime, position, name)
 
@@ -53,6 +54,7 @@ open class ProductEntity(
     creationTime: Calendar,
     position: Int,
     name: String,
+    @field:ColumnInfo(name = "buy_status")
     var buyStatus: BuyStatus
 ) : BaseEntity(id, creationTime, position, name)
 

@@ -6,7 +6,7 @@ import org.junit.Test
 import ru.netfantazii.handy.extensions.move
 import ru.netfantazii.handy.extensions.moveAndReassignPositions
 import ru.netfantazii.handy.extensions.reassignPositions
-import ru.netfantazii.handy.extensions.sublistModified
+import ru.netfantazii.handy.extensions.subListModified
 
 class ExtensionsTest {
 
@@ -65,7 +65,7 @@ class ExtensionsTest {
         val catalog3 = createFakeCatalog("superCatalog3", 2, 3)
         val catalog4 = createFakeCatalog("superCatalog4", 3, 4)
         val list = mutableListOf(catalog1, catalog2, catalog3, catalog4)
-        val newList = list.sublistModified(3, 1)
+        val newList = list.subListModified(3, 1)
         assertThat(newList[0], `is`(catalog2))
         assertThat(newList[1], `is`(catalog3))
         assertThat(newList[2], `is`(catalog4))

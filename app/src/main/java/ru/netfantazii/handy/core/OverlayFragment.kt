@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
+import androidx.databinding.Observable
+import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.textfield.TextInputEditText
@@ -30,7 +32,18 @@ const val OVERLAY_ACTION_GROUP_RENAME = "overlay_group_rename"
 const val OVERLAY_ACTION_PRODUCT_CREATE = "overlay_product_create"
 const val OVERLAY_ACTION_PRODUCT_RENAME = "overlay_product_rename"
 
-data class BufferObject(val action: String, val bufferObject: BaseEntity)
+data class BufferObject(val action: String, val bufferObject: BaseEntity) {
+    val name = ObservableField<String>()
+
+    init {
+        name.set(bufferObject.name)
+        name.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                bufferObject.name = (sender as ObservableField<String>).get()!!
+            }
+        })
+    }
+}
 
 interface OverlayActions {
     var overlayBuffer: BufferObject
@@ -43,7 +56,7 @@ class OverlayFragment : Fragment() {
 
     private lateinit var overlayActions: OverlayActions
     private lateinit var action: String
-    private lateinit var bufferObject: BaseEntity
+    private lateinit var bufferObject: BufferObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +66,7 @@ class OverlayFragment : Fragment() {
             ).get(CatalogViewModel::class.java)
         overrideBackButton(overlayActions)
         action = overlayActions.overlayBuffer.action
-        bufferObject = overlayActions.overlayBuffer.bufferObject
+        bufferObject = overlayActions.overlayBuffer
     }
 
     override fun onCreateView(
@@ -93,7 +106,7 @@ class OverlayFragment : Fragment() {
     private fun addEnterButtonClickListener(textField: TextInputEditText) {
         textField.setOnEditorActionListener { _, button: Int, _ ->
             if (button == EditorInfo.IME_ACTION_DONE) {
-                if (bufferObject.name.isEmpty()) {
+                if (bufferObject.name.get()!!.isEmpty()) {
                     overlayActions.onOverlayBackgroundClick()
                 } else {
                     overlayActions.onOverlayEnterClick()

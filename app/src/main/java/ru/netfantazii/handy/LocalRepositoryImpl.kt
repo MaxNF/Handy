@@ -20,7 +20,7 @@ interface LocalRepository {
     fun updateAllGroups(groups: List<Group>): Disposable
     fun removeAndUpdateGroups(group: Group, list: List<Group>): Disposable
     fun addAndUpdateGroups(group: Group, list: List<Group>): Disposable
-    fun getGroups(catalogId: Long): Observable<List<Group>>
+    fun getGroups(catalogId: Long): Observable<MutableList<Group>>
     fun addProduct(product: Product): Disposable
     fun removeProduct(product: Product): Disposable
     fun updateProduct(product: Product): Disposable
@@ -49,9 +49,11 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     override fun removeAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>) =
         catalogDao.removeAndUpdateAll(catalog, list).subscribeOn(Schedulers.io()).subscribe()!!
 
-    override fun addAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>) =
+    override fun addAndUpdateCatalogs(
+        catalog: Catalog,
+        list: List<Catalog>
+    ) =
         catalogDao.addAndUpdateAll(catalog, list).subscribeOn(Schedulers.io()).subscribe()!!
-
 
     override fun getCatalogs(): Observable<MutableList<Catalog>> = catalogDao.getCatalogs()
 
@@ -76,7 +78,7 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
         groupDao.addAndUpdateAll(group, list).subscribeOn(Schedulers.io()).subscribe()!!
 
 
-    override fun getGroups(catalogId: Long): Observable<List<Group>> = groupDao.getGroups(catalogId)
+    override fun getGroups(catalogId: Long): Observable<MutableList<Group>> = groupDao.getGroups(catalogId)
 
     override fun addProduct(product: Product) =
         productDao.add(product).subscribeOn(Schedulers.io()).subscribe()!!

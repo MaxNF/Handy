@@ -16,7 +16,7 @@ class CatalogViewModel(private val localRepository: LocalRepository) : ViewModel
     private var catalogList = mutableListOf<Catalog>()
         set(value) {
             field = value
-            val shouldHintBeShown = value.size == 0
+            val shouldHintBeShown = value.isEmpty()
             _newDataReceived.value = Event(shouldHintBeShown)
         }
 
@@ -117,7 +117,7 @@ class CatalogViewModel(private val localRepository: LocalRepository) : ViewModel
     override fun onCatalogDragSucceed(fromPosition: Int, toPosition: Int) {
         Log.d(TAG, "onCatalogDragSucceed: ")
         catalogList.moveAndReassignPositions(fromPosition, toPosition)
-        localRepository.updateAllCatalogs(catalogList.sublistModified(fromPosition, toPosition))
+        localRepository.updateAllCatalogs(catalogList.subListModified(fromPosition, toPosition))
         _catalogDragSucceeded.value = Event(Unit)
     }
 
@@ -144,12 +144,17 @@ class CatalogViewModel(private val localRepository: LocalRepository) : ViewModel
     }
 
     override fun onOverlayBackgroundClick() {
+        Log.d(TAG, "onOverlayBackgroundClick: ")
         _overlayBackgroundClicked.value = Event(Unit)
     }
 
     override fun onOverlayEnterClick() {
-        catalogList.shiftPositionsToRight()
-        localRepository.addAndUpdateCatalogs(overlayBuffer.bufferObject as Catalog, catalogList)
+        if (overlayBuffer.action == OVERLAY_ACTION_CATALOG_CREATE) {
+            catalogList.shiftPositionsToRight()
+            localRepository.addAndUpdateCatalogs(overlayBuffer.bufferObject as Catalog, catalogList)
+        } else {
+            localRepository.updateCatalog(overlayBuffer.bufferObject as Catalog)
+        }
         _overlayEnterClicked.value = Event(Unit)
     }
 
@@ -166,5 +171,4 @@ class CatalogsVmFactory(private val localRepository: LocalRepository) : ViewMode
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }
-
 }

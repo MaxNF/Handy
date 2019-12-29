@@ -30,47 +30,8 @@
                 android:layout_width="match_parent"
                 android:background="@null"
                 android:imeOptions="actionDone|flagNoExtractUi"
-                android:text="@={overlayActions.overlayBuffer.component2().name}" />
+                android:text="@={overlayActions.overlayBuffer.name}" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                android:id="@+id/constraintLayout"-->
-<!--                style="@style/OverlayTextFieldElevation"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="top">-->
-
-<!--                <EditText-->
-<!--                    android:id="@+id/overlay_text_field"-->
-<!--                    style="@style/OverlayEditText"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:background="@android:color/white"-->
-<!--                    android:imeOptions="actionDone|flagNoExtractUi"-->
-<!--                    android:inputType="textCapSentences"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintEnd_toStartOf="@id/clear_text_button"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--                <ImageView-->
-<!--                    android:id="@+id/clear_text_button"-->
-<!--                    style="@style/CrossNextToEditText"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="0dp"-->
-<!--                    android:layout_alignEnd="@id/overlay_text_field"-->
-<!--                    android:layout_alignRight="@id/overlay_text_field"-->
-<!--                    android:layout_gravity="end"-->
-<!--                    android:background="@android:color/white"-->
-<!--                    android:clickable="true"-->
-<!--                    android:focusable="true"-->
-<!--                    android:src="@drawable/ic_edit_text_cross"-->
-<!--                    android:visibility="gone"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@+id/overlay_text_field"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toEndOf="@+id/overlay_text_field"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintVertical_bias="0.5" />-->
-<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
     </FrameLayout>
 </layout>

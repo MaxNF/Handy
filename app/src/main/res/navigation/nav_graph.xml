@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/products_fragment"
-        android:name="ru.netfantazii.handy.core.products.ProductsFragment"
+        android:name="ru.netfantazii.handy.core.groupsandproducts.GroupsAndProductsFragment"
         android:label="@string/app_name"
         tools:layout="@layout/products_fragment">
         <argument
