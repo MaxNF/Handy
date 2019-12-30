@@ -10,7 +10,7 @@ import ru.netfantazii.handy.db.Catalog
 import ru.netfantazii.handy.extensions.*
 
 
-class CatalogViewModel(private val localRepository: LocalRepository) : ViewModel(),
+class CatalogsViewModel(private val localRepository: LocalRepository) : ViewModel(),
     CatalogClickHandler, CatalogStorage, OverlayActions {
     private val TAG = "CatalogsViewModel"
     private var catalogList = mutableListOf<Catalog>()
@@ -123,7 +123,7 @@ class CatalogViewModel(private val localRepository: LocalRepository) : ViewModel
 
     fun onCreateCatalogClick() {
         Log.d(TAG, "createCatalog: ")
-        val newCatalog = Catalog(position = catalogList.calculatePositionForNewObject())
+        val newCatalog = Catalog()
         overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_CREATE, newCatalog)
         _createCatalogClicked.value = Event(Unit)
     }
@@ -132,7 +132,7 @@ class CatalogViewModel(private val localRepository: LocalRepository) : ViewModel
         Log.d(TAG, "undoRemoval: ")
         lastRemovedObject?.let {
             val restoredCatalogPosition = it.position
-            if (catalogList.size > 0 && restoredCatalogPosition < catalogList.size) {
+            if (catalogList.isNotEmpty() && restoredCatalogPosition < catalogList.size) {
                 val listForUpdating =
                     catalogList.subList(restoredCatalogPosition, catalogList.size)
                 listForUpdating.shiftPositionsToRight()
@@ -166,8 +166,8 @@ class CatalogViewModel(private val localRepository: LocalRepository) : ViewModel
 class CatalogsVmFactory(private val localRepository: LocalRepository) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CatalogViewModel::class.java)) {
-            return CatalogViewModel(localRepository) as T
+        if (modelClass.isAssignableFrom(CatalogsViewModel::class.java)) {
+            return CatalogsViewModel(localRepository) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }

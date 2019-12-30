@@ -44,8 +44,6 @@ fun <E : BaseEntity> List<E>.subListModified(index1: Int, index2: Int): List<E> 
     return this.subList(lowestPosition, highestPosition + 1)
 }
 
-fun <E : BaseEntity> List<E>.calculatePositionForNewObject(): Int = 0
-
 /**
  * Приравнивает поле "position" у каждого элемента к его индексу внутри списка*/
 fun <E : BaseEntity> List<E>.reassignPositions() =

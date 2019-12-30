@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -23,19 +24,14 @@ import ru.netfantazii.handy.customviews.RecyclerViewDecorator
 import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
-import ru.netfantazii.handy.extensions.doWithDelay
-import ru.netfantazii.handy.extensions.fadeIn
-import ru.netfantazii.handy.extensions.fadeOut
+import ru.netfantazii.handy.db.Catalog
 
-class CatalogsFragment : BaseFragment() {
+class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     private val TAG = "CatalogsFragment"
 
-    private lateinit var viewModel: CatalogViewModel
+    private lateinit var viewModel: CatalogsViewModel
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: CatalogsAdapter
-    private lateinit var dragManager: RecyclerViewDragDropManager
     private lateinit var undoSnackbar: Snackbar
-    private lateinit var hint: View
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +47,7 @@ class CatalogsFragment : BaseFragment() {
             ViewModelProviders.of(
                 this,
                 CatalogsVmFactory(repository)
-            ).get(CatalogViewModel::class.java)
+            ).get(CatalogsViewModel::class.java)
     }
 
     override fun createRecyclerView(view: View) {
@@ -92,17 +88,12 @@ class CatalogsFragment : BaseFragment() {
         undoSnackbar = Snackbar.make(
             coordinatorLayout,
             getString(R.string.catalog_undo_label),
-            Snackbar.LENGTH_LONG
-        )
+            Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.undo_action)) { viewModel.undoRemoval() }
             .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
             .setBehavior(object : BaseTransientBottomBar.Behavior() {
                 override fun canSwipeDismissView(child: View) = false
             })
-    }
-
-    override fun createHints(view: View) {
-        hint = view.findViewById(R.id.hint_group)
     }
 
     override fun setUpFab(view: View) {
@@ -112,123 +103,102 @@ class CatalogsFragment : BaseFragment() {
                 viewModel.onCreateCatalogClick()
                 return true
             }
+
             override fun onToggleChanged(isOpen: Boolean) {}
         })
     }
 
     override fun subscribeToEvents() {
-        viewModel.newDataReceived.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { shouldHintBeShown ->
-                Log.d(TAG, "newDataReceived: ")
-                refreshRecyclerView()
-                if (shouldHintBeShown) {
-                    showHint()
-                } else {
-                    hideHint()
+        val owner = this
+        with(viewModel) {
+            newDataReceived.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { shouldHintBeShown ->
+                    refreshRecyclerView()
+                    if (shouldHintBeShown) {
+                        showHint()
+                    } else {
+                        hideHint()
+                    }
                 }
-            }
-        })
+            })
+            allLiveDataList.add(newDataReceived)
 
-        viewModel.catalogClicked.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { catalog -> enterCatalog(catalog.id) }
-        })
+            catalogClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { catalog -> enterCatalog(catalog) }
+            })
+            allLiveDataList.add(catalogClicked)
 
-        viewModel.catalogSwipeStarted.observe(this, Observer {
-            // на время свайпа нужно отключить drag режим, иначе возможен конфликт и зависание анимации
-            it.getContentIfNotHandled()?.let { disableDragAndDrop() }
-        })
+            catalogSwipeStarted.observe(owner, Observer {
+                // на время свайпа нужно отключить drag режим, иначе возможен конфликт и зависание анимации
+                it.getContentIfNotHandled()?.let { disableDragAndDrop() }
+            })
+            allLiveDataList.add(catalogSwipeStarted)
 
-        viewModel.catalogSwipePerformed.observe(
-            this,
-            Observer { it.getContentIfNotHandled()?.let {} })
+            catalogSwipePerformed.observe(
+                owner,
+                Observer { it.getContentIfNotHandled()?.let { } }) // do nothing yet
+            allLiveDataList.add(catalogSwipePerformed)
 
-        viewModel.catalogSwipeFinished.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                showRemovalSnackbar()
-                enableDragAndDrop()
-            }
-        })
+            catalogSwipeFinished.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    showCatalogRemovalSnackbar()
+                    enableDragAndDrop()
+                }
+            })
+            allLiveDataList.add(catalogSwipeFinished)
 
-        viewModel.catalogSwipeCanceled.observe(
-            this,
-            Observer { it.getContentIfNotHandled()?.let { enableDragAndDrop() } })
+            catalogSwipeCanceled.observe(
+                owner, Observer {
+                    it.getContentIfNotHandled()?.let { enableDragAndDrop() }
+                })
+            allLiveDataList.add(catalogSwipeCanceled)
 
-        viewModel.catalogEditClicked.observe(
-            this,
-            Observer { it.getContentIfNotHandled()?.let { showOverlay() } })
+            catalogEditClicked.observe(
+                owner,
+                Observer { it.getContentIfNotHandled()?.let { showOverlay() } })
+            allLiveDataList.add(catalogEditClicked)
 
-        viewModel.catalogDragSucceeded.observe(
-            this,
-            Observer { it.getContentIfNotHandled()?.let {} })
+            catalogDragSucceeded.observe(
+                owner, Observer {
+                    it.getContentIfNotHandled()?.let { } // do nothing yet
+                })
+            allLiveDataList.add(catalogDragSucceeded)
 
-        viewModel.createCatalogClicked.observe(
-            this,
-            Observer { it.getContentIfNotHandled()?.let { showOverlay() } })
+            createCatalogClicked.observe(
+                owner,
+                Observer { it.getContentIfNotHandled()?.let { showOverlay() } })
+            allLiveDataList.add(createCatalogClicked)
 
-        viewModel.overlayBackgroundClicked.observe(
-            this,
-            Observer { it.getContentIfNotHandled()?.let { closeOverlay() } })
+            overlayBackgroundClicked.observe(
+                owner,
+                Observer { it.getContentIfNotHandled()?.let { closeOverlay() } })
+            allLiveDataList.add(overlayBackgroundClicked)
 
-        viewModel.overlayEnterClicked.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
-                closeOverlay()
-                scrollToFirstElement()
-            }
-        })
-    }
-
-    override fun unsubscribeFromEvents() {
-        viewModel.newDataReceived.removeObservers(this)
-        viewModel.catalogClicked.removeObservers(this)
-        viewModel.catalogSwipeStarted.removeObservers(this)
-        viewModel.catalogSwipePerformed.removeObservers(this)
-        viewModel.catalogSwipeFinished.removeObservers(this)
-        viewModel.catalogSwipeCanceled.removeObservers(this)
-        viewModel.catalogEditClicked.removeObservers(this)
-        viewModel.catalogDragSucceeded.removeObservers(this)
-        viewModel.createCatalogClicked.removeObservers(this)
-        viewModel.overlayBackgroundClicked.removeObservers(this)
-        viewModel.overlayEnterClicked.removeObservers(this)
-    }
-
-    private fun showRemovalSnackbar() {
-        Log.d(TAG, "showRemovalSnackbar: ")
-        undoSnackbar.show()
-        undoSnackbar.show()
-    }
-
-    private fun refreshRecyclerView() {
-        Log.d(TAG, "refreshRecyclerView: ")
-        adapter.notifyDataSetChanged()
-    }
-
-    private fun enterCatalog(id: Long) {
-        Log.d(TAG, "enterCatalog: ")
-    }
-
-    private fun disableDragAndDrop() {
-        dragManager.setInitiateOnLongPress(false)
-    }
-
-    private fun enableDragAndDrop() {
-        // перед включением drag режима нужна задержка, т.к. иначе иногда возникает глитч с
-        // анимацией после отмены свайпа
-        doWithDelay(300) {
-            dragManager.setInitiateOnLongPress(
-                true
-            )
+            overlayEnterClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    closeOverlay()
+                    scrollToBeginOfList()
+                }
+            })
+            allLiveDataList.add(overlayEnterClicked)
         }
     }
 
-    private fun scrollToFirstElement() {
+    private fun showCatalogRemovalSnackbar() {
+        Log.d(TAG, "showRemovalSnackbar: ")
+        undoSnackbar.show()
+    }
+
+    private fun enterCatalog(catalog: Catalog) {
+        Log.d(TAG, "enterCatalog: ")
+        val direction =
+            CatalogsFragmentDirections.actionCatalogsFragmentToProductsFragment(catalog.name,
+                catalog.id)
+        val navController = NavHostFragment.findNavController(this)
+        navController.navigate(direction)
+    }
+
+    private fun scrollToBeginOfList() {
         recyclerView.scrollToPosition(0)
-    }
-
-    private fun showHint() {
-        hint.fadeIn()
-    }
-
-    private fun hideHint() {
-        hint.fadeOut()
     }
 }

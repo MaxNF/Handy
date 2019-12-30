@@ -15,7 +15,7 @@ import ru.netfantazii.handy.createFakeCatalog
 @RunWith(AndroidJUnit4::class)
 class CatalogsViewModelTest {
     private lateinit var localRepository: FakeLocalRepository
-    private lateinit var viewModel: CatalogViewModel
+    private lateinit var viewModel: CatalogsViewModel
     private val catalog1 = createFakeCatalog("catalog1", 0, 1)
     private val catalog2 = createFakeCatalog("catalog2", 1, 2)
 
@@ -25,7 +25,7 @@ class CatalogsViewModelTest {
         localRepository = FakeLocalRepository()
         localRepository.addCatalog(catalog1)
         localRepository.addCatalog(catalog2)
-        viewModel = CatalogViewModel(localRepository)
+        viewModel = CatalogsViewModel(localRepository)
     }
 
     @Test

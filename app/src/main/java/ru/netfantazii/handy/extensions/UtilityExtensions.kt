@@ -2,9 +2,9 @@ package ru.netfantazii.handy.extensions
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
-import java.lang.UnsupportedOperationException
 
 fun doWithDelay(delayMillis: Long, action: () -> Unit) {
     Handler().postDelayed(action, delayMillis)
@@ -28,5 +28,13 @@ fun showKeyboard(activity: Activity) {
     } else {
         throw UnsupportedOperationException("Can't show keyboard. Activity's window is null.")
     }
+}
+
+fun dpToPx(dp: Int): Float {
+    return dp * Resources.getSystem().displayMetrics.density
+}
+
+fun pxToDp(px: Int): Float {
+    return px / Resources.getSystem().displayMetrics.density
 }
 

@@ -38,6 +38,8 @@ interface ProductClickHandler {
 }
 
 interface GroupClickHandler {
+    fun onGroupClick(groupPosition: Int)
+
     fun onGroupSwipeStart(group: Group)
 
     fun onGroupSwipePerform(group: Group)
@@ -49,6 +51,8 @@ interface GroupClickHandler {
     fun onGroupEditClick(group: Group)
 
     fun onGroupDragSucceed(fromPosition: Int, toPosition: Int)
+
+    fun onGroupCreateProductClick(groupId: Long)
 }
 
 interface GroupStorage {
@@ -105,7 +109,7 @@ class ProductViewHolder(private val productBinding: RvProductElementBinding) :
     }
 }
 
-class ProductAdapter(
+class GroupsAndProductsAdapter(
     private val groupClickHandler: GroupClickHandler,
     private val productClickHandler: ProductClickHandler,
     private val groupStorage: GroupStorage

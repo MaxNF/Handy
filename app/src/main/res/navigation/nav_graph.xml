@@ -22,6 +22,9 @@
         <argument
             android:name="catalogName"
             app:argType="string" />
+        <argument
+            android:name="catalogId"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/appSettings"

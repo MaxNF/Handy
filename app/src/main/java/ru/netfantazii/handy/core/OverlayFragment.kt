@@ -15,7 +15,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.textfield.TextInputEditText
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.core.catalogs.CatalogViewModel
+import ru.netfantazii.handy.core.catalogs.CatalogsFragment
+import ru.netfantazii.handy.core.catalogs.CatalogsViewModel
+import ru.netfantazii.handy.core.groupsandproducts.GroupsAndProductsViewModel
 import ru.netfantazii.handy.databinding.OverlayFragmentBinding
 import ru.netfantazii.handy.db.BaseEntity
 import ru.netfantazii.handy.extensions.fadeIn
@@ -32,7 +34,7 @@ const val OVERLAY_ACTION_GROUP_RENAME = "overlay_group_rename"
 const val OVERLAY_ACTION_PRODUCT_CREATE = "overlay_product_create"
 const val OVERLAY_ACTION_PRODUCT_RENAME = "overlay_product_rename"
 
-data class BufferObject(val action: String, val bufferObject: BaseEntity) {
+data class BufferObject(val action: String, var bufferObject: BaseEntity) {
     val name = ObservableField<String>()
 
     init {
@@ -42,6 +44,11 @@ data class BufferObject(val action: String, val bufferObject: BaseEntity) {
                 bufferObject.name = (sender as ObservableField<String>).get()!!
             }
         })
+    }
+
+    fun replaceObject(newObject: BaseEntity) {
+        bufferObject = newObject
+        name.set(bufferObject.name)
     }
 }
 
@@ -55,18 +62,19 @@ interface OverlayActions {
 class OverlayFragment : Fragment() {
 
     private lateinit var overlayActions: OverlayActions
-    private lateinit var action: String
-    private lateinit var bufferObject: BufferObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        overlayActions =
+        overlayActions = if (parentFragment is CatalogsFragment) {
             ViewModelProviders.of(
                 parentFragment!!
-            ).get(CatalogViewModel::class.java)
+            ).get(CatalogsViewModel::class.java)
+        } else {
+            ViewModelProviders.of(
+                parentFragment!!
+            ).get(GroupsAndProductsViewModel::class.java)
+        }
         overrideBackButton(overlayActions)
-        action = overlayActions.overlayBuffer.action
-        bufferObject = overlayActions.overlayBuffer
     }
 
     override fun onCreateView(
@@ -106,7 +114,7 @@ class OverlayFragment : Fragment() {
     private fun addEnterButtonClickListener(textField: TextInputEditText) {
         textField.setOnEditorActionListener { _, button: Int, _ ->
             if (button == EditorInfo.IME_ACTION_DONE) {
-                if (bufferObject.name.get()!!.isEmpty()) {
+                if (overlayActions.overlayBuffer.name.get()!!.isEmpty()) {
                     overlayActions.onOverlayBackgroundClick()
                 } else {
                     overlayActions.onOverlayEnterClick()

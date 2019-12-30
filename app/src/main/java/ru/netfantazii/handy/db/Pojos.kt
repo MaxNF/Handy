@@ -8,7 +8,7 @@ class Catalog(
     id: Long = 0,
     creationTime: Calendar = Calendar.getInstance(),
     name: String = "",
-    position: Int,
+    position: Int = 0,
     val totalElementCount: Int = 0,
     val boughtElementCount: Int = 0
 ) : CatalogEntity(id, creationTime, position, name) {
@@ -35,9 +35,9 @@ class Group(
     id: Long = 0,
     catalogId: Long,
     creationTime: Calendar = Calendar.getInstance(),
-    name: String,
+    name: String = "",
     groupType: GroupType = GroupType.STANDARD,
-    position: Int,
+    position: Int = 1,
     expandStatus: ExpandStatus = ExpandStatus.EXPANDED,
     @Relation(entity = ProductEntity::class, parentColumn = "id", entityColumn = "group_id")
     val productList: MutableList<Product> = mutableListOf()
@@ -64,8 +64,8 @@ class Product(
     catalogId: Long,
     groupId: Long,
     creationTime: Calendar = Calendar.getInstance(),
-    name: String,
-    position: Int,
+    name: String = "",
+    position: Int = 0,
     buyStatus: BuyStatus = BuyStatus.NOT_BOUGHT
 ) : ProductEntity(id, catalogId, groupId, creationTime, position, name, buyStatus) {
 
