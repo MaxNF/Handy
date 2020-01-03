@@ -59,6 +59,10 @@ interface GroupStorage {
     fun getGroupList(): List<Group>
 }
 
+const val VIEW_TYPE_ALWAYS_ON_TOP = 1
+const val VIEW_TYPE_STANDARD_GROUP = 2
+const val VIEW_TYPE_FIRST_GROUP = 3
+
 open class BaseViewHolder(view: View) :
     AbstractDraggableSwipeableItemViewHolder(view), ExpandableItemViewHolder {
 
@@ -95,6 +99,7 @@ class UnsortedGroupViewHolder(private val groupBinding: RvUnsortedGroupElementBi
 
     override fun bindData(group: Group, handler: GroupClickHandler) {
         groupBinding.group = group
+        groupBinding.groupHandler = handler
         groupBinding.executePendingBindings()
     }
 }
@@ -117,9 +122,6 @@ class GroupsAndProductsAdapter(
     ExpandableDraggableItemAdapter<BaseGroupViewHolder, ProductViewHolder>,
     ExpandableSwipeableItemAdapter<BaseGroupViewHolder, ProductViewHolder> {
 
-    private val viewTypeAlwaysOnTop = 1
-    private val viewTypeStandardGroup = 2
-
     private val TAG = "ProductAdapter"
     private val groupList: List<Group>
         get() = groupStorage.getGroupList()
@@ -130,9 +132,7 @@ class GroupsAndProductsAdapter(
 
     override fun getChildCount(groupPosition: Int): Int = groupList[groupPosition].productList.size
 
-    override fun getGroupItemViewType(groupPosition: Int): Int {
-        return if (groupPosition == 0) viewTypeAlwaysOnTop else viewTypeStandardGroup
-    }
+    override fun getGroupItemViewType(groupPosition: Int) : Int = if (groupPosition == 0) VIEW_TYPE_ALWAYS_ON_TOP else VIEW_TYPE_STANDARD_GROUP
 
     override fun onCheckCanExpandOrCollapseGroup(
         holder: BaseGroupViewHolder,
@@ -144,8 +144,9 @@ class GroupsAndProductsAdapter(
 
     override fun onCreateGroupViewHolder(parent: ViewGroup, viewType: Int): BaseGroupViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return if (viewType == viewTypeAlwaysOnTop) {
-            val groupBinding = RvUnsortedGroupElementBinding.inflate(layoutInflater, parent, false)
+        return if (viewType == VIEW_TYPE_ALWAYS_ON_TOP) {
+            val groupBinding =
+                RvUnsortedGroupElementBinding.inflate(layoutInflater, parent, false)
             UnsortedGroupViewHolder(groupBinding)
         } else {
             val groupBinding = RvGroupElementBinding.inflate(layoutInflater, parent
@@ -184,13 +185,6 @@ class GroupsAndProductsAdapter(
         holder.bindData(groupList[groupPosition], groupClickHandler)
     }
 
-    override fun onGroupDragFinished(
-        fromGroupPosition: Int,
-        toGroupPosition: Int,
-        result: Boolean
-    ) {
-        // no action
-    }
 
     override fun onMoveGroupItem(fromGroupPosition: Int, toGroupPosition: Int) {
         groupClickHandler.onGroupDragSucceed(fromGroupPosition, toGroupPosition)
@@ -230,15 +224,28 @@ class GroupsAndProductsAdapter(
         groupPosition: Int
     ): ItemDraggableRange = ItemDraggableRange(1, groupCount - 1)
 
-    override fun onChildDragStarted(groupPosition: Int, childPosition: Int) {
-        // no action
-    }
 
     override fun onGetChildItemDraggableRange(
         holder: ProductViewHolder,
         groupPosition: Int,
         childPosition: Int
     ): ItemDraggableRange? = null // любой диапазон
+
+    override fun onGroupDragStarted(groupPosition: Int) {
+        notifyDataSetChanged()
+    }
+
+    override fun onGroupDragFinished(
+        fromGroupPosition: Int,
+        toGroupPosition: Int,
+        result: Boolean
+    ) {
+        notifyDataSetChanged()
+    }
+
+    override fun onChildDragStarted(groupPosition: Int, childPosition: Int) {
+        notifyDataSetChanged()
+    }
 
     override fun onChildDragFinished(
         fromGroupPosition: Int,
@@ -247,12 +254,9 @@ class GroupsAndProductsAdapter(
         toChildPosition: Int,
         result: Boolean
     ) {
-        // no action
+        notifyDataSetChanged()
     }
 
-    override fun onGroupDragStarted(groupPosition: Int) {
-        // no action
-    }
 
     override fun onCheckChildCanStartDrag(
         holder: ProductViewHolder,
@@ -285,7 +289,7 @@ class GroupsAndProductsAdapter(
     }
 
     override fun onSwipeGroupItemStarted(holder: BaseGroupViewHolder, groupPosition: Int) {
-        // no action
+        groupClickHandler.onGroupSwipeStart(groupList[groupPosition])
     }
 
     override fun onGetGroupItemSwipeReactionType(
@@ -318,7 +322,7 @@ class GroupsAndProductsAdapter(
         groupPosition: Int,
         childPosition: Int
     ) {
-        // no action
+        productClickHandler.onProductSwipeStart(groupList[groupPosition].productList[childPosition])
     }
 
     override fun onSwipeChildItem(

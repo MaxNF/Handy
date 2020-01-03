@@ -12,9 +12,9 @@ class RecyclerViewDecorator : RecyclerView.ItemDecoration() {
         parent: RecyclerView,
         state: RecyclerView.State
     ) {
-        outRect.left = 0
         outRect.top = 5
         outRect.right = 0
         outRect.bottom = 5
+        outRect.left = 0
     }
 }

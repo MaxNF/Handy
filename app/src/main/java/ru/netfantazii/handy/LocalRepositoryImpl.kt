@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.db.*
+import java.util.concurrent.TimeUnit
 
 interface LocalRepository {
     fun addCatalog(catalog: Catalog): Disposable
@@ -15,6 +16,8 @@ interface LocalRepository {
     fun getCatalogs(): Observable<MutableList<Catalog>>
     fun removeAllCatalogs(): Disposable
     fun addGroup(group: Group): Disposable
+    fun addGroupWithProducts(group: Group): Disposable
+    fun addGroupWithProductsAndUpdateAll(group: Group, list: List<Group>): Disposable
     fun removeGroup(group: Group): Disposable
     fun updateGroup(group: Group): Disposable
     fun updateAllGroups(groups: List<Group>): Disposable
@@ -24,6 +27,7 @@ interface LocalRepository {
     fun addProduct(product: Product): Disposable
     fun removeProduct(product: Product): Disposable
     fun updateProduct(product: Product): Disposable
+    fun updateProductWithDelay(product: Product, delayMillis: Long): Disposable
     fun updateAllProducts(products: List<Product>): Disposable
     fun removeAndUpdateProducts(product: Product, list: List<Product>): Disposable
     fun addAndUpdateProducts(product: Product, list: List<Product>): Disposable
@@ -60,7 +64,8 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     override fun removeAllCatalogs(): Disposable =
         catalogDao.removeAllCatalogs().subscribeOn(Schedulers.io()).subscribe()!!
 
-    override fun addGroup(group: Group) = groupDao.add(group).subscribe()!!
+    override fun addGroup(group: Group) =
+        groupDao.add(group).subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeGroup(group: Group) =
         groupDao.remove(group).subscribeOn(Schedulers.io()).subscribe()!!
@@ -77,8 +82,15 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     override fun addAndUpdateGroups(group: Group, list: List<Group>) =
         groupDao.addAndUpdateAll(group, list).subscribeOn(Schedulers.io()).subscribe()!!
 
+    override fun addGroupWithProducts(group: Group): Disposable =
+        groupDao.addGroupWithProducts(group).subscribeOn(Schedulers.io()).subscribe()!!
 
-    override fun getGroups(catalogId: Long): Observable<MutableList<Group>> = groupDao.getGroups(catalogId)
+    override fun addGroupWithProductsAndUpdateAll(group: Group, list: List<Group>): Disposable =
+        groupDao.addGroupWithProductsAndUpdateAll(group,
+            list).subscribeOn(Schedulers.io()).subscribe()!!
+
+    override fun getGroups(catalogId: Long): Observable<MutableList<Group>> =
+        groupDao.getGroups(catalogId)
 
     override fun addProduct(product: Product) =
         productDao.add(product).subscribeOn(Schedulers.io()).subscribe()!!
@@ -88,6 +100,9 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
 
     override fun updateProduct(product: Product) =
         productDao.update(product).subscribeOn(Schedulers.io()).subscribe()!!
+
+    override fun updateProductWithDelay(product: Product, delayMillis: Long) =
+        productDao.update(product).subscribeOn(Schedulers.io()).delaySubscription(delayMillis, TimeUnit.MILLISECONDS).subscribe()!!
 
     override fun updateAllProducts(products: List<Product>) =
         productDao.updateAll(products).subscribeOn(Schedulers.io()).subscribe()!!

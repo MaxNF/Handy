@@ -60,9 +60,6 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true)
         guardManager.isEnabled = true
 
-        val animator = DraggableItemAnimator()
-        animator.supportsChangeAnimations = false
-
         val swipeManager = RecyclerViewSwipeManager()
 
         adapter = CatalogsAdapter(viewModel, viewModel)
@@ -72,9 +69,12 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         recyclerView = view.findViewById(R.id.rv_list)
         val layoutManager = LinearLayoutManager(context)
 
+        val animator = DraggableItemAnimator()
+        animator.supportsChangeAnimations = false
+
+        recyclerView.itemAnimator = animator
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = wrappedAdapter
-        recyclerView.itemAnimator = animator
 
         guardManager.attachRecyclerView(recyclerView)
         swipeManager.attachRecyclerView(recyclerView)

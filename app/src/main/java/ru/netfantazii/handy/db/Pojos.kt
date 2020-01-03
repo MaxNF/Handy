@@ -2,6 +2,7 @@ package ru.netfantazii.handy.db
 
 import androidx.room.Ignore
 import androidx.room.Relation
+import ru.netfantazii.handy.R
 import java.util.*
 
 class Catalog(
@@ -44,10 +45,19 @@ class Group(
 ) : GroupEntity(id, catalogId, creationTime, groupType, position, name, expandStatus) {
     @field:Ignore
     var buyStatus: BuyStatus
+    @field:Ignore
+    val totalProductCount = productList.size
+    @field:Ignore
+    val boughtProductCount = productList.count { it.buyStatus == BuyStatus.BOUGHT }
+    @field:Ignore
+    val statusColor: Int
+
 
     init {
         buyStatus = calculateStatus(productList)
+        statusColor = if (buyStatus == BuyStatus.BOUGHT) R.color.boughtColor else R.color.notBoughtColor
         productList.sortBy { it.position }
+
     }
 
     private fun calculateStatus(productEntityList: List<Product>): BuyStatus =

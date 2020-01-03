@@ -1,6 +1,5 @@
 package ru.netfantazii.handy
 
-import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.Observable
@@ -45,9 +44,9 @@ class FakeLocalRepository : LocalRepository {
         return FakeDisposable()
     }
 
-    override fun updateAllCatalogs(list: List<Catalog>): Disposable {
-        catalogs.removeAll(list)
-        catalogs.addAll(list)
+    override fun updateAllCatalogs(catalogs: List<Catalog>): Disposable {
+        this.catalogs.removeAll(catalogs)
+        this.catalogs.addAll(catalogs)
         return FakeDisposable()
     }
 
@@ -98,7 +97,7 @@ class FakeLocalRepository : LocalRepository {
         return FakeDisposable()
     }
 
-    override fun getGroups(catalogId: Long): Observable<List<Group>> {
+    override fun getGroups(catalogId: Long): Observable<MutableList<Group>> {
         return Observable.just(groups.toMutableList())
     }
 

@@ -84,4 +84,5 @@
 
     <!--Databinding Templates-->
     <string name="element_count_template" translatable="false">%1$s\%2$s</string>
+    <string name="unsorted_group_label">No group</string>
 </resources>

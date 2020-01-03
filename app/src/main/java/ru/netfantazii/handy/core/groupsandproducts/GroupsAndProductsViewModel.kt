@@ -14,7 +14,6 @@ import ru.netfantazii.handy.db.Group
 import ru.netfantazii.handy.db.Product
 import ru.netfantazii.handy.extensions.*
 import java.lang.UnsupportedOperationException
-import java.nio.Buffer
 import java.util.NoSuchElementException
 
 class GroupsAndProductsViewModel(
@@ -22,12 +21,12 @@ class GroupsAndProductsViewModel(
     private val currentCatalogId: Long
 ) : ViewModel(),
     GroupClickHandler, ProductClickHandler, GroupStorage, OverlayActions {
-    private val TAG = "GroupAndProductsViewMod"
+    private val TAG = "GroupsAndProductsViewMo"
     private var groupList = mutableListOf<Group>()
-        set(value) {
-            field = value
-            val allProducts = value.flatMap { it.productList }
-            val shouldHintBeShown = allProducts.isEmpty()
+        set(groups) {
+            field = groups
+            val allProducts = groups.flatMap { it.productList }
+            val shouldHintBeShown = allProducts.isEmpty() && groups.size == 1
             _newDataReceived.value = Event(shouldHintBeShown)
         }
 
@@ -161,9 +160,11 @@ class GroupsAndProductsViewModel(
         val firstProductList = groupList[fromGroup].productList
         val secondProductList = groupList[toGroup].productList
         if (firstProductList == secondProductList) {
+            firstProductList.moveAndReassignPositions(fromPosition, toPosition)
             localRepository.updateAllProducts(firstProductList.subListModified(fromPosition,
                 toPosition))
         } else {
+            firstProductList[fromPosition].groupId = groupList[toGroup].id
             moveBetweenListsAndReassignPositions(firstProductList,
                 fromPosition,
                 secondProductList,
@@ -309,9 +310,9 @@ class GroupsAndProductsViewModel(
             if (groupList.isNotEmpty() && restoredGroupPosition < groupList.size) {
                 val listForUpdating = groupList.subList(restoredGroupPosition, groupList.size)
                 listForUpdating.shiftPositionsToRight()
-                localRepository.addAndUpdateGroups(it, listForUpdating)
+                localRepository.addGroupWithProductsAndUpdateAll(it, listForUpdating)
             } else {
-                localRepository.addGroup(it)
+                localRepository.addGroupWithProducts(it)
             }
         }
     }

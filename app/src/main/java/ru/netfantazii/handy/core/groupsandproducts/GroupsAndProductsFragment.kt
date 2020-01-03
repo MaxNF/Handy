@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.core.groupsandproducts
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
@@ -30,6 +32,8 @@ import ru.netfantazii.handy.extensions.dpToPx
 import java.lang.UnsupportedOperationException
 
 class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
+    private val TAG = "GroupsAndProducts"
+
     val fragmentArgs: GroupsAndProductsFragmentArgs by navArgs()
 
     private lateinit var viewModel: GroupsAndProductsViewModel
@@ -89,9 +93,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
 
         val animator = SwipeDismissItemAnimator()
         animator.supportsChangeAnimations = false
+
         recyclerView.itemAnimator = animator
         recyclerView.addItemDecoration(RecyclerViewDecorator())
-        recyclerView.setHasFixedSize(true)
+        recyclerView.setHasFixedSize(false)
 
         guardManager.attachRecyclerView(recyclerView)
         swipeManager.attachRecyclerView(recyclerView)
@@ -186,9 +191,11 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             groupClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { groupPosition ->
                     if (expandManager.isGroupExpanded(groupPosition)) {
+                        Log.d(TAG, "subscribeToGroupEvents: collapsed")
                         expandManager.collapseGroup(groupPosition)
                     } else {
-                        expandManager.collapseGroup(groupPosition)
+                        Log.d(TAG, "subscribeToGroupEvents: expanded")
+                        expandManager.expandGroup(groupPosition)
                     }
                 }
             })
@@ -231,8 +238,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             allLiveDataList.add(groupDragSucceed)
 
             createGroupClicked.observe(owner, Observer {
-                showOverlay()
-                scrollToGroup(1)
+                it.getContentIfNotHandled()?.let {
+                    showOverlay()
+                    scrollToGroup(1)
+                }
             })
             allLiveDataList.add(createGroupClicked)
         }
@@ -266,10 +275,12 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                 when (it.id) {
                     R.id.fab_add_recipe -> {
                         viewModel.onCreateGroupClick()
+                        fab.close()
                         true
                     }
                     R.id.fab_add_buy -> {
                         viewModel.onCreateProductClick()
+                        fab.close()
                         true
                     }
                     else -> throw UnsupportedOperationException("Unknown action id")
@@ -308,7 +319,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     }
 
     private fun scrollToGroup(groupPosition: Int) {
-        expandManager.scrollToGroup(groupPosition, dpToPx(50).toInt())
+//        expandManager.scrollToGroup(groupPosition, dpToPx(50).toInt())
     }
 
     private fun scrollToBeginOfList() {

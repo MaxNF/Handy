@@ -68,6 +68,17 @@ abstract class GroupDao : BaseDao<GroupEntity>() {
 
     @Query("DELETE FROM GroupEntity WHERE catalog_id = :catalogId AND group_type != 1")
     abstract fun removeAllGroups(catalogId: Long): Completable
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun addAllProducts(products: List<ProductEntity>): Completable
+
+    fun addGroupWithProductsAndUpdateAll(group: Group, groupList: List<Group>): Completable {
+        return addGroupWithProducts(group).andThen(updateAll(groupList))
+    }
+
+    fun addGroupWithProducts(group: Group): Completable {
+        return add(group).andThen(addAllProducts(group.productList))
+    }
 }
 
 @Dao

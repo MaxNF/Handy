@@ -106,7 +106,9 @@ class OverlayFragment : Fragment() {
     private fun startFadeInAnimationAndShowKeyboard(rootView: View) {
         rootView.fadeIn().setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
-                showKeyboard(activity as Activity)
+                if (activity != null) {
+                    showKeyboard(activity as Activity)
+                }
             }
         })
     }

@@ -50,7 +50,7 @@ open class ProductEntity(
     @field:ColumnInfo(name = "catalog_id")
     val catalogId: Long,
     @field:ColumnInfo(name = "group_id")
-    val groupId: Long,
+    var groupId: Long,
     creationTime: Calendar,
     position: Int,
     name: String,
