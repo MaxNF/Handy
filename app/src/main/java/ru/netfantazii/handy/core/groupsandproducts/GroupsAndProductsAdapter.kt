@@ -4,10 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange
-import com.h6ah4i.android.widget.advrecyclerview.expandable.ExpandableDraggableItemAdapter
-import com.h6ah4i.android.widget.advrecyclerview.expandable.ExpandableItemState
-import com.h6ah4i.android.widget.advrecyclerview.expandable.ExpandableItemViewHolder
-import com.h6ah4i.android.widget.advrecyclerview.expandable.ExpandableSwipeableItemAdapter
+import com.h6ah4i.android.widget.advrecyclerview.expandable.*
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem
@@ -81,26 +78,28 @@ open class BaseViewHolder(view: View) :
 }
 
 abstract class BaseGroupViewHolder(rootView: View) : BaseViewHolder(rootView) {
-    abstract fun bindData(group: Group, handler: GroupClickHandler)
+    abstract fun bindData(group: Group, handler: GroupClickHandler, expandManager: RecyclerViewExpandableItemManager)
 }
 
 class GroupViewHolder(private val groupBinding: RvGroupElementBinding) :
     BaseGroupViewHolder(groupBinding.root) {
 
-    override fun bindData(group: Group, handler: GroupClickHandler) {
+    override fun bindData(group: Group, handler: GroupClickHandler, expandManager: RecyclerViewExpandableItemManager) {
         groupBinding.group = group
         groupBinding.groupHandler = handler
         groupBinding.executePendingBindings()
+        groupBinding.expandManager = expandManager
     }
 }
 
 class UnsortedGroupViewHolder(private val groupBinding: RvUnsortedGroupElementBinding) :
     BaseGroupViewHolder(groupBinding.root) {
 
-    override fun bindData(group: Group, handler: GroupClickHandler) {
+    override fun bindData(group: Group, handler: GroupClickHandler, expandManager: RecyclerViewExpandableItemManager) {
         groupBinding.group = group
         groupBinding.groupHandler = handler
         groupBinding.executePendingBindings()
+        groupBinding.expandManager = expandManager
     }
 }
 
@@ -117,7 +116,8 @@ class ProductViewHolder(private val productBinding: RvProductElementBinding) :
 class GroupsAndProductsAdapter(
     private val groupClickHandler: GroupClickHandler,
     private val productClickHandler: ProductClickHandler,
-    private val groupStorage: GroupStorage
+    private val groupStorage: GroupStorage,
+    private val expandManager: RecyclerViewExpandableItemManager
 ) : AbstractExpandableItemAdapter<BaseGroupViewHolder, ProductViewHolder>(),
     ExpandableDraggableItemAdapter<BaseGroupViewHolder, ProductViewHolder>,
     ExpandableSwipeableItemAdapter<BaseGroupViewHolder, ProductViewHolder> {
@@ -132,7 +132,8 @@ class GroupsAndProductsAdapter(
 
     override fun getChildCount(groupPosition: Int): Int = groupList[groupPosition].productList.size
 
-    override fun getGroupItemViewType(groupPosition: Int) : Int = if (groupPosition == 0) VIEW_TYPE_ALWAYS_ON_TOP else VIEW_TYPE_STANDARD_GROUP
+    override fun getGroupItemViewType(groupPosition: Int): Int =
+        if (groupPosition == 0) VIEW_TYPE_ALWAYS_ON_TOP else VIEW_TYPE_STANDARD_GROUP
 
     override fun onCheckCanExpandOrCollapseGroup(
         holder: BaseGroupViewHolder,
@@ -182,7 +183,7 @@ class GroupsAndProductsAdapter(
         groupPosition: Int,
         viewType: Int
     ) {
-        holder.bindData(groupList[groupPosition], groupClickHandler)
+        holder.bindData(groupList[groupPosition], groupClickHandler, expandManager)
     }
 
 

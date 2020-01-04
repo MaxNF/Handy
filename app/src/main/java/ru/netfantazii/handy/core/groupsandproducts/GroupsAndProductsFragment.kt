@@ -76,13 +76,14 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         dragManager.setInitiateOnTouch(false)
         dragManager.setInitiateOnLongPress(true)
         expandManager = RecyclerViewExpandableItemManager(null)
+        expandManager.defaultGroupsExpandedState = true
         val swipeManager = RecyclerViewSwipeManager()
         val layoutManager = LinearLayoutManager(context)
         val guardManager = RecyclerViewTouchActionGuardManager()
         guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true)
         guardManager.isEnabled = true
 
-        adapter = GroupsAndProductsAdapter(viewModel, viewModel, viewModel)
+        adapter = GroupsAndProductsAdapter(viewModel, viewModel, viewModel, expandManager)
         var wrappedAdapter = expandManager.createWrappedAdapter(adapter)
         wrappedAdapter = dragManager.createWrappedAdapter(wrappedAdapter)
         wrappedAdapter = swipeManager.createWrappedAdapter(wrappedAdapter)

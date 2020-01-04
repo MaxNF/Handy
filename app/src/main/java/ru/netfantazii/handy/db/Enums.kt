@@ -14,3 +14,7 @@ enum class GroupType(val number: Int) {
     ALWAYS_ON_TOP(1), STANDARD(2)
 }
 
+enum class HintType {
+    EXPAND, COLLAPSE, EMPTY, EMPTY_UNSORTED
+}
+

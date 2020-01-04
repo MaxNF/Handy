@@ -4,11 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="ru.netfantazii.handy.R" />
-        <import type="ru.netfantazii.handy.db.BuyStatus"/>
+
+        <import type="ru.netfantazii.handy.db.BuyStatus" />
+
+        <import type="ru.netfantazii.handy.db.HintType" />
+
         <variable
             name="group"
             type="ru.netfantazii.handy.db.Group" />
+
+        <variable
+            name="expandManager"
+            type="com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager" />
 
         <variable
             name="groupHandler"
@@ -21,8 +30,8 @@
         app:marginTop="@{group.position == 1 ? 10 : 0}">
 
         <FrameLayout
-            style="@style/ListElementElevation_shape"
             android:id="@+id/container"
+            style="@style/ListElementElevation_shape"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:clipToOutline="@{true}"
@@ -90,8 +99,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:text="@string/hint_recipe_empty"
                     android:textColor="@color/textColorGray"
+                    app:hintText="@{group.productList.empty ? HintType.EMPTY : expandManager.isGroupExpanded(group.position) ? HintType.COLLAPSE : HintType.EXPAND}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_element_name"
                     app:layout_constraintTop_toBottomOf="@id/tv_element_name" />
@@ -99,7 +108,7 @@
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:foreground="?attr/selectableItemBackground"
+                    app:hasRipple="@{true}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

@@ -27,8 +27,6 @@
             android:layout_height="match_parent"
             android:onClick="@{() -> productHandler.onProductClick(product)}"
             style="@style/ListElementElevation_shape"
-            android:clickable="true"
-            android:focusable="true"
             app:clipToOutline="@{true}"
             app:productBackground="@{product.buyStatus == BuyStatus.BOUGHT ? true : false}">
 

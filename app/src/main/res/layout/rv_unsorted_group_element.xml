@@ -7,11 +7,19 @@
 
         <import type="ru.netfantazii.handy.db.BuyStatus" />
 
+        <import type="ru.netfantazii.handy.db.HintType" />
+
+        <import type="ru.netfantazii.handy.db.ExpandStatus" />
+
         <import type="ru.netfantazii.handy.R" />
 
         <variable
             name="group"
             type="ru.netfantazii.handy.db.Group" />
+
+        <variable
+            name="expandManager"
+            type="com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager" />
 
         <variable
             name="groupHandler"
@@ -25,9 +33,9 @@
 
         <FrameLayout
             android:id="@+id/container"
+            style="@style/ListElementElevation_shape"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            style="@style/ListElementElevation_shape"
             app:clipToOutline="@{true}"
             app:groupBackground="@{group.buyStatus == BuyStatus.BOUGHT ? true : false}">
 
@@ -42,7 +50,7 @@
                     style="@style/SecondaryText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
+                    android:layout_marginStart="48dp"
                     android:text='@{String.valueOf(group.boughtProductCount) + "/" + String.valueOf(group.totalProductCount)}'
                     android:textColor="?attr/listTextColor"
                     android:visibility="visible"
@@ -53,13 +61,13 @@
 
                 <TextView
                     android:id="@+id/tv_element_name"
-                    android:textSize="16sp"
-                    android:textAllCaps="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/unsorted_group_label"
+                    android:textAllCaps="true"
                     android:textColor="?attr/listTextColor"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -70,19 +78,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:text="@string/hint_recipe_expand"
                     android:textColor="@color/textColorGray"
+                    app:hintText="@{group.productList.empty ? HintType.EMPTY_UNSORTED : expandManager.isGroupExpanded(group.position) ? HintType.COLLAPSE : HintType.EXPAND}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/tv_element_name"
                     app:layout_constraintStart_toStartOf="@+id/tv_element_name"
-                    app:layout_constraintTop_toBottomOf="@id/tv_element_name" />
-
+                    app:layout_constraintTop_toBottomOf="@id/tv_element_name"
+                    tools:text="No products found, add one"/>
 
                 <View
-                    android:id="@+id/view"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:foreground="?attr/selectableItemBackground"
+                    app:hasRipple="@{true}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
