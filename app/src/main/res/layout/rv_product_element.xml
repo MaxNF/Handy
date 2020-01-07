@@ -7,6 +7,9 @@
         <import type="ru.netfantazii.handy.R" />
         <import type="ru.netfantazii.handy.db.BuyStatus" />
         <variable
+            name="parentGroup"
+            type="ru.netfantazii.handy.db.Group" />
+        <variable
             name="product"
             type="ru.netfantazii.handy.db.Product" />
         <variable
@@ -25,7 +28,7 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:onClick="@{() -> productHandler.onProductClick(product)}"
+            android:onClick="@{() -> productHandler.onProductClick(parentGroup, product)}"
             style="@style/ListElementElevation_shape"
             app:clipToOutline="@{true}"
             app:productBackground="@{product.buyStatus == BuyStatus.BOUGHT ? true : false}">

@@ -63,6 +63,8 @@ class Group(
     private fun calculateStatus(productEntityList: List<Product>): BuyStatus =
         if (productEntityList.isNotEmpty() && productEntityList.all { it.buyStatus == BuyStatus.BOUGHT }) BuyStatus.BOUGHT else BuyStatus.NOT_BOUGHT
 
+    fun isStatusChanged() = buyStatus != calculateStatus(productList)
+
     override fun equals(other: Any?): Boolean {
         return if (other == null) false
         else this.id == (other as Group).id

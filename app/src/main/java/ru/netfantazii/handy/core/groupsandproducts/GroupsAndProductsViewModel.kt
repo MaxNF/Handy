@@ -13,6 +13,7 @@ import ru.netfantazii.handy.db.BuyStatus
 import ru.netfantazii.handy.db.Group
 import ru.netfantazii.handy.db.Product
 import ru.netfantazii.handy.extensions.*
+import java.lang.IllegalStateException
 import java.lang.UnsupportedOperationException
 import java.util.NoSuchElementException
 
@@ -107,11 +108,12 @@ class GroupsAndProductsViewModel(
 
     override fun getGroupList(): List<Group> = groupList
 
-    override fun onProductClick(product: Product) {
+    override fun onProductClick(group: Group, product: Product) {
         Log.d(TAG, "onProductClick: ")
         product.buyStatus =
             if (product.buyStatus == BuyStatus.NOT_BOUGHT) BuyStatus.BOUGHT else BuyStatus.NOT_BOUGHT
         localRepository.updateProduct(product)
+        checkGroupStatusAndUpdatePosition(group, groupList)
         _productClicked.value = Event(product)
     }
 
@@ -127,15 +129,17 @@ class GroupsAndProductsViewModel(
         } else {
             val removedProductIndex = group.productList.indexOf(product)
             val listForUpdating =
-                group.productList.subList(removedProductIndex + 1, group.productList.size)
+                group.productList.slice((removedProductIndex + 1)..group.productList.lastIndex)
             listForUpdating.shiftPositionsToLeft()
             localRepository.removeAndUpdateProducts(product, listForUpdating)
         }
         lastRemovedProduct = product
     }
 
-    override fun onProductSwipeFinish(product: Product) {
+    override fun onProductSwipeFinish(group: Group, product: Product) {
         Log.d(TAG, "onProductSwipeFinish: ")
+        group.productList.remove(product)
+        checkGroupStatusAndUpdatePosition(group, groupList)
         _productSwipeFinished.value = Event(product)
     }
 
@@ -157,14 +161,16 @@ class GroupsAndProductsViewModel(
         toPosition: Int
     ) {
         Log.d(TAG, "onProductDragSucceed: ")
-        val firstProductList = groupList[fromGroup].productList
-        val secondProductList = groupList[toGroup].productList
+        val firstGroup = groupList[fromGroup]
+        val secondGroup = groupList[toGroup]
+        val firstProductList = firstGroup.productList
+        val secondProductList = secondGroup.productList
         if (firstProductList == secondProductList) {
             firstProductList.moveAndReassignPositions(fromPosition, toPosition)
-            localRepository.updateAllProducts(firstProductList.subListModified(fromPosition,
+            localRepository.updateAllProducts(firstProductList.sliceModified(fromPosition,
                 toPosition))
         } else {
-            firstProductList[fromPosition].groupId = groupList[toGroup].id
+            firstProductList[fromPosition].groupId = secondGroup.id
             moveBetweenListsAndReassignPositions(firstProductList,
                 fromPosition,
                 secondProductList,
@@ -175,8 +181,27 @@ class GroupsAndProductsViewModel(
                 addAll(secondProductList)
             }
             localRepository.updateAllProducts(listForUpdating)
+            checkGroupStatusAndUpdatePosition(firstGroup, groupList)
+            checkGroupStatusAndUpdatePosition(secondGroup, groupList)
         }
         _productDragSucceed.value = Event(Unit)
+    }
+
+    private fun checkGroupStatusAndUpdatePosition(group: Group, groupList: MutableList<Group>) {
+        if (group.isStatusChanged()) {
+            val previousStatus = group.buyStatus
+            if (previousStatus == BuyStatus.NOT_BOUGHT) {
+                val fromPosition = group.position
+                val toPosition = groupList.lastIndex
+                groupList.moveAndReassignPositions(fromPosition, toPosition)
+                localRepository.updateAllGroups(groupList.sliceModified(fromPosition, toPosition))
+            } else {
+                val fromPosition = group.position
+                val toPosition = 1 // позиция самой верхней стандартной группы (0 относится к неизменяемой группе несорт. товаров)
+                groupList.moveAndReassignPositions(fromPosition, toPosition)
+                localRepository.updateAllGroups(groupList.sliceModified(fromPosition, toPosition))
+            }
+        }
     }
 
     fun onCreateProductClick() {
@@ -204,7 +229,7 @@ class GroupsAndProductsViewModel(
             localRepository.removeGroup(group)
         } else {
             val removedGroupIndex = groupList.indexOf(group)
-            val listForUpdating = groupList.subList(removedGroupIndex + 1, groupList.size)
+            val listForUpdating = groupList.slice(removedGroupIndex + 1..groupList.lastIndex)
             listForUpdating.shiftPositionsToLeft()
             localRepository.removeAndUpdateGroups(group, listForUpdating)
         }
@@ -230,7 +255,7 @@ class GroupsAndProductsViewModel(
     override fun onGroupDragSucceed(fromPosition: Int, toPosition: Int) {
         Log.d(TAG, "onGroupDragSucceed: ")
         groupList.moveAndReassignPositions(fromPosition, toPosition)
-        localRepository.updateAllGroups(groupList.subListModified(fromPosition, toPosition))
+        localRepository.updateAllGroups(groupList.sliceModified(fromPosition, toPosition))
         _groupDragSucceed.value = Event(Unit)
     }
 
@@ -294,7 +319,7 @@ class GroupsAndProductsViewModel(
                     ?: throw NoSuchElementException("Group with id#${restoredProductGroupId} is not found")
             if (listWithThisProduct.isNotEmpty() && restoredProductPosition < listWithThisProduct.size) {
                 val listForUpdating =
-                    listWithThisProduct.subList(restoredProductPosition, listWithThisProduct.size)
+                    listWithThisProduct.slice(restoredProductPosition..listWithThisProduct.lastIndex)
                 listForUpdating.shiftPositionsToRight()
                 localRepository.addAndUpdateProducts(it, listForUpdating)
             } else {
@@ -308,7 +333,7 @@ class GroupsAndProductsViewModel(
         lastRemovedGroup?.let {
             val restoredGroupPosition = it.position
             if (groupList.isNotEmpty() && restoredGroupPosition < groupList.size) {
-                val listForUpdating = groupList.subList(restoredGroupPosition, groupList.size)
+                val listForUpdating = groupList.slice(restoredGroupPosition..groupList.lastIndex)
                 listForUpdating.shiftPositionsToRight()
                 localRepository.addGroupWithProductsAndUpdateAll(it, listForUpdating)
             } else {

@@ -14,18 +14,19 @@ import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.RvGroupElementBinding
 import ru.netfantazii.handy.databinding.RvProductElementBinding
 import ru.netfantazii.handy.databinding.RvUnsortedGroupElementBinding
+import ru.netfantazii.handy.db.BuyStatus
 import ru.netfantazii.handy.db.Group
 import ru.netfantazii.handy.db.Product
 import java.lang.UnsupportedOperationException
 
 interface ProductClickHandler {
-    fun onProductClick(product: Product)
+    fun onProductClick(group: Group, product: Product)
 
     fun onProductSwipeStart(product: Product)
 
     fun onProductSwipePerform(group: Group, product: Product)
 
-    fun onProductSwipeFinish(product: Product)
+    fun onProductSwipeFinish(group: Group, product: Product)
 
     fun onProductSwipeCancel(product: Product)
 
@@ -78,13 +79,21 @@ open class BaseViewHolder(view: View) :
 }
 
 abstract class BaseGroupViewHolder(rootView: View) : BaseViewHolder(rootView) {
-    abstract fun bindData(group: Group, handler: GroupClickHandler, expandManager: RecyclerViewExpandableItemManager)
+    abstract fun bindData(
+        group: Group,
+        handler: GroupClickHandler,
+        expandManager: RecyclerViewExpandableItemManager
+    )
 }
 
 class GroupViewHolder(private val groupBinding: RvGroupElementBinding) :
     BaseGroupViewHolder(groupBinding.root) {
 
-    override fun bindData(group: Group, handler: GroupClickHandler, expandManager: RecyclerViewExpandableItemManager) {
+    override fun bindData(
+        group: Group,
+        handler: GroupClickHandler,
+        expandManager: RecyclerViewExpandableItemManager
+    ) {
         groupBinding.group = group
         groupBinding.groupHandler = handler
         groupBinding.executePendingBindings()
@@ -95,7 +104,11 @@ class GroupViewHolder(private val groupBinding: RvGroupElementBinding) :
 class UnsortedGroupViewHolder(private val groupBinding: RvUnsortedGroupElementBinding) :
     BaseGroupViewHolder(groupBinding.root) {
 
-    override fun bindData(group: Group, handler: GroupClickHandler, expandManager: RecyclerViewExpandableItemManager) {
+    override fun bindData(
+        group: Group,
+        handler: GroupClickHandler,
+        expandManager: RecyclerViewExpandableItemManager
+    ) {
         groupBinding.group = group
         groupBinding.groupHandler = handler
         groupBinding.executePendingBindings()
@@ -106,7 +119,8 @@ class UnsortedGroupViewHolder(private val groupBinding: RvUnsortedGroupElementBi
 class ProductViewHolder(private val productBinding: RvProductElementBinding) :
     BaseViewHolder(productBinding.root) {
 
-    fun bindData(product: Product, handler: ProductClickHandler) {
+    fun bindData(group: Group, product: Product, handler: ProductClickHandler) {
+        productBinding.parentGroup = group
         productBinding.product = product
         productBinding.productHandler = handler
         productBinding.executePendingBindings()
@@ -170,7 +184,9 @@ class GroupsAndProductsAdapter(
         childPosition: Int,
         viewType: Int
     ) {
-        holder.bindData(groupList[groupPosition].productList[childPosition], productClickHandler)
+        holder.bindData(groupList[groupPosition],
+            groupList[groupPosition].productList[childPosition],
+            productClickHandler)
     }
 
     override fun getChildId(groupPosition: Int, childPosition: Int): Long =
@@ -191,8 +207,13 @@ class GroupsAndProductsAdapter(
         groupClickHandler.onGroupDragSucceed(fromGroupPosition, toGroupPosition)
     }
 
-    override fun onCheckGroupCanDrop(draggingGroupPosition: Int, dropGroupPosition: Int): Boolean =
-        dropGroupPosition > 0
+    override fun onCheckGroupCanDrop(draggingGroupPosition: Int, dropGroupPosition: Int): Boolean {
+        // на данный момент не используется, для использования нужно включить checkCanDrop(true)
+        val notTopGroup = dropGroupPosition > 0
+        val notBoughtGroup = groupList[dropGroupPosition].buyStatus != BuyStatus.BOUGHT
+        return notTopGroup && notBoughtGroup
+    }
+
 
     override fun onMoveChildItem(
         fromGroupPosition: Int,
@@ -218,13 +239,31 @@ class GroupsAndProductsAdapter(
         draggingChildPosition: Int,
         dropGroupPosition: Int,
         dropChildPosition: Int
-    ): Boolean = true
+    ): Boolean = true // на данный момент не используется
 
     override fun onGetGroupItemDraggableRange(
         holder: BaseGroupViewHolder,
         groupPosition: Int
-    ): ItemDraggableRange = ItemDraggableRange(1, groupCount - 1)
+    ): ItemDraggableRange {
+        return if (groupList[groupPosition].buyStatus == BuyStatus.NOT_BOUGHT) {
+            val firstBoughtGroup = groupList.find { it.buyStatus == BuyStatus.BOUGHT }
+            val firstBoughtGroupPosition =
+                if (firstBoughtGroup != null) firstBoughtGroup.position - 1 else groupCount - 1
+            ItemDraggableRange(1, firstBoughtGroupPosition)
+        } else {
+            val lastNotBoughtGroup = groupList.findLast { it.buyStatus == BuyStatus.NOT_BOUGHT }
+            val lastNotBoughtGroupPosition = if (lastNotBoughtGroup != null) lastNotBoughtGroup.position + 1 else 1
+            ItemDraggableRange(lastNotBoughtGroupPosition, groupCount - 1)
+        }
+    }
 
+    override fun onCheckChildCanStartDrag(
+        holder: ProductViewHolder,
+        groupPosition: Int,
+        childPosition: Int,
+        x: Int,
+        y: Int
+    ): Boolean = true
 
     override fun onGetChildItemDraggableRange(
         holder: ProductViewHolder,
@@ -257,15 +296,6 @@ class GroupsAndProductsAdapter(
     ) {
         notifyDataSetChanged()
     }
-
-
-    override fun onCheckChildCanStartDrag(
-        holder: ProductViewHolder,
-        groupPosition: Int,
-        childPosition: Int,
-        x: Int,
-        y: Int
-    ): Boolean = true
 
     override fun onSetGroupItemSwipeBackground(
         holder: BaseGroupViewHolder,
@@ -367,7 +397,7 @@ class GroupsAndProductsAdapter(
         }
 
         override fun onSlideAnimationEnd() {
-            productClickHandler.onProductSwipeFinish(product)
+            productClickHandler.onProductSwipeFinish(group, product)
         }
     }
 }

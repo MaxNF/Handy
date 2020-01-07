@@ -76,6 +76,14 @@ class FakeLocalRepository : LocalRepository {
         return FakeDisposable()
     }
 
+    override fun addGroupWithProducts(group: Group): Disposable {
+        return FakeDisposable()
+    }
+
+    override fun addGroupWithProductsAndUpdateAll(group: Group, list: List<Group>): Disposable {
+        return FakeDisposable()
+    }
+
     override fun removeGroup(group: Group): Disposable {
         return FakeDisposable()
     }
@@ -111,6 +119,10 @@ class FakeLocalRepository : LocalRepository {
 
     override fun updateProduct(product: Product): Disposable {
         return FakeDisposable()
+    }
+
+    override fun updateProductWithDelay(product: Product, delayMillis: Long): Disposable {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun updateAllProducts(products: List<Product>): Disposable {

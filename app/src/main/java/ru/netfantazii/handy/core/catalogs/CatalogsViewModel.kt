@@ -117,7 +117,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     override fun onCatalogDragSucceed(fromPosition: Int, toPosition: Int) {
         Log.d(TAG, "onCatalogDragSucceed: ")
         catalogList.moveAndReassignPositions(fromPosition, toPosition)
-        localRepository.updateAllCatalogs(catalogList.subListModified(fromPosition, toPosition))
+        localRepository.updateAllCatalogs(catalogList.sliceModified(fromPosition, toPosition))
         _catalogDragSucceeded.value = Event(Unit)
     }
 

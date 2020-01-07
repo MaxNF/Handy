@@ -36,12 +36,12 @@ fun <E : BaseEntity> moveBetweenLists(
 }
 
 /**
- * То же что и sublist. Только меньший из аргументов всегда становится первым индексом, больший - вторым.
+ * То же что и slice. Только меньший из аргументов всегда становится первым индексом, больший - вторым.
  * Все параметры - включительно.*/
-fun <E : BaseEntity> List<E>.subListModified(index1: Int, index2: Int): List<E> {
+fun <E : BaseEntity> List<E>.sliceModified(index1: Int, index2: Int): List<E> {
     val lowestPosition = index1.coerceAtMost(index2)
     val highestPosition = index2.coerceAtLeast(index1)
-    return this.subList(lowestPosition, highestPosition + 1)
+    return this.slice(lowestPosition..highestPosition)
 }
 
 /**
