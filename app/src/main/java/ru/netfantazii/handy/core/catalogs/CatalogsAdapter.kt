@@ -65,8 +65,6 @@ class CatalogViewHolder(private val catalogBinding: RvCatalogElementBinding) :
         catalogBinding.handler = handler
         catalogBinding.executePendingBindings() //В ресайклервью нужно сразу связать данные!
     }
-
-
 }
 
 class CatalogsAdapter(
@@ -116,7 +114,7 @@ class CatalogsAdapter(
     }
 
     override fun onItemDragStarted(position: Int) {
-// no action
+//        notifyDataSetChanged()
     }
 
     override fun onMoveItem(fromPosition: Int, toPosition: Int) {
@@ -128,7 +126,7 @@ class CatalogsAdapter(
     }
 
     override fun onItemDragFinished(fromPosition: Int, toPosition: Int, result: Boolean) {
-// no action
+//        notifyDataSetChanged()
     }
 
     override fun onSwipeItem(

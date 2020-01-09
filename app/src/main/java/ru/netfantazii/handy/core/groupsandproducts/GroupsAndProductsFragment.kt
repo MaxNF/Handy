@@ -75,6 +75,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         dragManager.setInitiateOnMove(false)
         dragManager.setInitiateOnTouch(false)
         dragManager.setInitiateOnLongPress(true)
+//        dragManager.isCheckCanDropEnabled = true
+
         expandManager = RecyclerViewExpandableItemManager(null)
         expandManager.defaultGroupsExpandedState = true
         val swipeManager = RecyclerViewSwipeManager()
@@ -325,5 +327,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
 
     private fun scrollToBeginOfList() {
         recyclerView.scrollToPosition(0)
+    }
+
+    override fun hideSnackbars() {
+        productUndoSnackbar.dismiss()
+        groupUndoSnackbar.dismiss()
     }
 }

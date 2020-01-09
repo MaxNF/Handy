@@ -16,8 +16,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     private var catalogList = mutableListOf<Catalog>()
         set(value) {
             field = value
-            val shouldHintBeShown = value.isEmpty()
-            _newDataReceived.value = Event(shouldHintBeShown)
+            onNewDataReceive(value)
         }
 
     private val disposables = CompositeDisposable()
@@ -63,6 +62,13 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
         subscribeToCatalogsChanges()
     }
 
+    private fun onNewDataReceive(newList: MutableList<Catalog>) {
+        Log.d(TAG, "onNewDataReceive: ")
+        lastRemovedObject?.let { newList.remove(it) }
+        val shouldHintBeShown = newList.isEmpty()
+        _newDataReceived.value = Event(shouldHintBeShown)
+    }
+
     private fun subscribeToCatalogsChanges() {
         disposables.add(localRepository.getCatalogs()
             .observeOn(AndroidSchedulers.mainThread())
@@ -86,16 +92,28 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override fun onCatalogSwipePerform(catalog: Catalog) {
         Log.d(TAG, "onCatalogSwipePerform: ")
-        if (catalogList.size == 1) {
-            localRepository.removeCatalog(catalog)
+        tempRemove(catalog)
+        if (lastRemovedObject == null) {
+            onNewDataReceive(catalogList)
         } else {
-            val removedCatalogIndex = catalogList.indexOf(catalog)
-            val listForUpdating =
-                catalogList.subList(removedCatalogIndex + 1, catalogList.size)
-            listForUpdating.shiftPositionsToLeft()
-            localRepository.removeAndUpdateCatalogs(catalog, listForUpdating)
+            realRemove(lastRemovedObject!!)
         }
         lastRemovedObject = catalog
+    }
+
+    private fun tempRemove(catalog: Catalog) {
+        if (catalogList.size > 1 && catalog.position != catalogList.lastIndex) {
+            val listForUpdating =
+                catalogList.slice(catalog.position + 1..catalogList.lastIndex)
+            listForUpdating.shiftPositionsToLeft()
+        }
+        catalogList.remove(catalog)
+    }
+
+    private fun realRemove(catalog: Catalog) {
+        // удаляем объект из буфера и обновляем остальные каталоги в бд,
+        // т.к. их позиция могли измениться с последнего обновления
+        localRepository.removeAndUpdateCatalogs(catalog, catalogList)
     }
 
     override fun onCatalogSwipeFinish(catalog: Catalog) {
@@ -131,15 +149,11 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     fun undoRemoval() {
         Log.d(TAG, "undoRemoval: ")
         lastRemovedObject?.let {
-            val restoredCatalogPosition = it.position
-            if (catalogList.isNotEmpty() && restoredCatalogPosition < catalogList.size) {
-                val listForUpdating =
-                    catalogList.subList(restoredCatalogPosition, catalogList.size)
-                listForUpdating.shiftPositionsToRight()
-                localRepository.addAndUpdateCatalogs(it, listForUpdating)
-            } else {
-                localRepository.addCatalog(it)
-            }
+            val removedCatalogPosition = it.position
+            catalogList.shiftPositionsToRight(it.position)
+            catalogList.add(removedCatalogPosition, it)
+            lastRemovedObject = null
+            onNewDataReceive(catalogList)
         }
     }
 
@@ -160,6 +174,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override fun onCleared() {
         disposables.clear()
+        lastRemovedObject?.let { realRemove(it) }
     }
 }
 

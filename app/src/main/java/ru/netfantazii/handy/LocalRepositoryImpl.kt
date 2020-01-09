@@ -39,7 +39,7 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     private val productDao: ProductDao = db.getProductDao()
 
     override fun addCatalog(catalog: Catalog) =
-        catalogDao.add(catalog).subscribeOn(Schedulers.io()).subscribe()!!
+        catalogDao.addWithDefaultGroup(catalog).subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeCatalog(catalog: Catalog) =
         catalogDao.remove(catalog).subscribeOn(Schedulers.io()).subscribe()!!

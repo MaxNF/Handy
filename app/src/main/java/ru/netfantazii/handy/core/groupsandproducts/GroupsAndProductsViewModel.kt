@@ -9,9 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.LocalRepository
 import ru.netfantazii.handy.core.*
-import ru.netfantazii.handy.db.BuyStatus
-import ru.netfantazii.handy.db.Group
-import ru.netfantazii.handy.db.Product
+import ru.netfantazii.handy.db.*
 import ru.netfantazii.handy.extensions.*
 import java.lang.IllegalStateException
 import java.lang.UnsupportedOperationException
@@ -99,7 +97,7 @@ class GroupsAndProductsViewModel(
     }
 
     private fun subscribeToGroupChanges() {
-        disposables.add(localRepository.getGroups(1)
+        disposables.add(localRepository.getGroups(currentCatalogId)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 groupList = it
@@ -110,9 +108,7 @@ class GroupsAndProductsViewModel(
 
     override fun onProductClick(group: Group, product: Product) {
         Log.d(TAG, "onProductClick: ")
-        product.buyStatus =
-            if (product.buyStatus == BuyStatus.NOT_BOUGHT) BuyStatus.BOUGHT else BuyStatus.NOT_BOUGHT
-        localRepository.updateProduct(product)
+        updateProductStatusAndPositions(product, group.productList)
         checkGroupStatusAndUpdatePosition(group, groupList)
         _productClicked.value = Event(product)
     }
@@ -188,21 +184,37 @@ class GroupsAndProductsViewModel(
     }
 
     private fun checkGroupStatusAndUpdatePosition(group: Group, groupList: MutableList<Group>) {
-        if (group.isStatusChanged()) {
+        if (group.groupType != GroupType.ALWAYS_ON_TOP && group.isStatusChanged()) {
             val previousStatus = group.buyStatus
-            if (previousStatus == BuyStatus.NOT_BOUGHT) {
-                val fromPosition = group.position
-                val toPosition = groupList.lastIndex
-                groupList.moveAndReassignPositions(fromPosition, toPosition)
-                localRepository.updateAllGroups(groupList.sliceModified(fromPosition, toPosition))
-            } else {
-                val fromPosition = group.position
-                val toPosition = 1 // позиция самой верхней стандартной группы (0 относится к неизменяемой группе несорт. товаров)
-                groupList.moveAndReassignPositions(fromPosition, toPosition)
-                localRepository.updateAllGroups(groupList.sliceModified(fromPosition, toPosition))
-            }
+            val fromPosition = group.position
+            val toPosition =
+                if (previousStatus == BuyStatus.NOT_BOUGHT) groupList.lastIndex else 1 // позиция самой верхней стандартной группы (0 относится к неизменяемой группе несорт. товаров)
+            groupList.moveAndReassignPositions(fromPosition, toPosition)
+            val groupListForUpdating = groupList.sliceModified(fromPosition, toPosition)
+            localRepository.updateAllGroups(groupListForUpdating)
         }
     }
+
+    private fun updateProductStatusAndPositions(
+        product: Product,
+        productList: MutableList<Product>
+    ) {
+        val previousStatus = product.buyStatus
+        val fromPosition = product.position
+        val toPosition: Int
+        if (previousStatus == BuyStatus.NOT_BOUGHT){
+            toPosition = productList.lastIndex
+            product.buyStatus = BuyStatus.BOUGHT
+        } else {
+            toPosition = 0
+            product.buyStatus = BuyStatus.NOT_BOUGHT
+        }
+        productList.moveAndReassignPositions(fromPosition, toPosition)
+        val productListForUpdating = productList.sliceModified(fromPosition,
+            toPosition).toMutableList()
+        localRepository.updateAllProducts(productListForUpdating)
+    }
+
 
     fun onCreateProductClick() {
         Log.d(TAG, "onCreateProductClick: ")

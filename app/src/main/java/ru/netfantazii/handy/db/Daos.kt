@@ -55,6 +55,7 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
         }
     }
 
+    //todo попробовать запилить @transaction, чтобы не было бага в отображении
     override fun addAndUpdateAll(t: CatalogEntity, list: List<CatalogEntity>): Completable {
         return addWithDefaultGroup(t).andThen(updateAll(list))
     }

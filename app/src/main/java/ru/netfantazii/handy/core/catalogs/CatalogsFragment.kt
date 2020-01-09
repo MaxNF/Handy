@@ -17,6 +17,7 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
+import com.jakewharton.rxbinding3.material.dismisses
 import com.leinardi.android.speeddial.SpeedDialView
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
@@ -110,6 +111,7 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
     override fun subscribeToEvents() {
         val owner = this
+
         with(viewModel) {
             newDataReceived.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { shouldHintBeShown ->
@@ -200,5 +202,9 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
     private fun scrollToBeginOfList() {
         recyclerView.scrollToPosition(0)
+    }
+
+    override fun hideSnackbars() {
+        undoSnackbar.dismiss()
     }
 }

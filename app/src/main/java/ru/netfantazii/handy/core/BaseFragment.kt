@@ -30,7 +30,6 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
         createHints(view)
         setUpFab(view)
         subscribeToEvents()
-
     }
 
     override fun onDestroyView() {
@@ -39,6 +38,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
     }
 
     protected fun showOverlay() {
+        hideSnackbars()
         val overlayFragment = OverlayFragment()
         childFragmentManager.beginTransaction()
             .add(R.id.overlay_container, overlayFragment)
@@ -87,4 +87,5 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
     protected abstract fun subscribeToEvents()
     protected abstract fun setUpFab(view: View)
     protected abstract fun createSnackbars(view: View)
+    protected abstract fun hideSnackbars()
 }

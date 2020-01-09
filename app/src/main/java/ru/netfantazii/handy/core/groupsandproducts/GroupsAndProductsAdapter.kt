@@ -207,24 +207,48 @@ class GroupsAndProductsAdapter(
         groupClickHandler.onGroupDragSucceed(fromGroupPosition, toGroupPosition)
     }
 
-    override fun onCheckGroupCanDrop(draggingGroupPosition: Int, dropGroupPosition: Int): Boolean {
-        // на данный момент не используется, для использования нужно включить checkCanDrop(true)
-        val notTopGroup = dropGroupPosition > 0
-        val notBoughtGroup = groupList[dropGroupPosition].buyStatus != BuyStatus.BOUGHT
-        return notTopGroup && notBoughtGroup
-    }
-
-
     override fun onMoveChildItem(
         fromGroupPosition: Int,
         fromChildPosition: Int,
         toGroupPosition: Int,
         toChildPosition: Int
     ) {
+        val fromProductList = groupList[fromGroupPosition].productList
+        val draggingProduct = fromProductList[fromChildPosition]
+
+        val toProductList = groupList[toGroupPosition].productList
+        val dropProduct = when {
+            toProductList.isEmpty() -> null
+            toChildPosition > toProductList.lastIndex -> toProductList.last()
+            else -> toProductList[toChildPosition]
+        }
+
+        val finalDropPosition =
+            when {
+                dropProduct == null -> 0
+                draggingProduct.buyStatus == BuyStatus.NOT_BOUGHT -> {
+                    if (dropProduct.buyStatus == BuyStatus.NOT_BOUGHT) toChildPosition
+                    else {
+                        when {
+                            toProductList.none { it.buyStatus == BuyStatus.NOT_BOUGHT } -> 0
+                            fromProductList == toProductList -> toProductList.indexOfLast { it.buyStatus == BuyStatus.NOT_BOUGHT }
+                            else -> toProductList.indexOfFirst { it.buyStatus == BuyStatus.BOUGHT }
+                            }
+                        }
+                    }
+                else -> {
+                    if (dropProduct.buyStatus == BuyStatus.BOUGHT) toChildPosition
+                    else {
+                        if (toProductList.none { it.buyStatus == BuyStatus.BOUGHT }) toProductList.lastIndex + 1
+                        else toProductList.indexOfFirst { it.buyStatus == BuyStatus.BOUGHT }
+                    }
+                }
+            }
+
         productClickHandler.onProductDragSucceed(fromGroupPosition,
             fromChildPosition,
             toGroupPosition,
-            toChildPosition)
+            finalDropPosition)
     }
 
     override fun onCheckGroupCanStartDrag(
@@ -234,25 +258,59 @@ class GroupsAndProductsAdapter(
         y: Int
     ): Boolean = groupPosition > 0
 
+    override fun onCheckGroupCanDrop(draggingGroupPosition: Int, dropGroupPosition: Int): Boolean {
+        // на данный момент не используется, для использования нужно включить checkCanDrop(true)
+//        val notTopGroup = dropGroupPosition > 0
+//        val notBoughtGroup = groupList[dropGroupPosition].buyStatus != BuyStatus.BOUGHT
+//        return notTopGroup && notBoughtGroup
+        return true
+    }
+
     override fun onCheckChildCanDrop(
         draggingGroupPosition: Int,
         draggingChildPosition: Int,
         dropGroupPosition: Int,
         dropChildPosition: Int
-    ): Boolean = true // на данный момент не используется
+    ): Boolean {
+//        val draggingProductList = groupList[draggingGroupPosition].productList
+//        val draggingProduct = draggingProductList[draggingChildPosition]
+//
+//        val dropProductList =
+//            if (dropGroupPosition > groupList.lastIndex) groupList.last().productList else groupList[dropGroupPosition].productList
+//        val dropProduct =
+//            if (dropChildPosition > dropProductList.lastIndex) dropProductList.last() else dropProductList[dropChildPosition]
+//
+//        return if (draggingProduct.buyStatus == BuyStatus.NOT_BOUGHT) {
+//            if (dropProductList.all { it.buyStatus == BuyStatus.BOUGHT } && dropChildPosition == 0) {
+//                true
+//            } else {
+//                dropProduct.buyStatus == BuyStatus.NOT_BOUGHT
+//            }
+//        } else {
+//            if (dropProductList.all { it.buyStatus == BuyStatus.NOT_BOUGHT } && dropChildPosition == dropProductList.size) {
+//                true
+//            } else {
+//                dropProduct.buyStatus == BuyStatus.BOUGHT
+//            }
+//        }
+        return true
+    } // на данный момент не используется
 
     override fun onGetGroupItemDraggableRange(
         holder: BaseGroupViewHolder,
         groupPosition: Int
     ): ItemDraggableRange {
         return if (groupList[groupPosition].buyStatus == BuyStatus.NOT_BOUGHT) {
-            val firstBoughtGroup = groupList.find { it.buyStatus == BuyStatus.BOUGHT }
+            val firstBoughtGroup =
+                groupList.subList(1, groupList.size)
+                    .find { it.buyStatus == BuyStatus.BOUGHT } // не учитываем ALWAYS ON TOP группу
             val firstBoughtGroupPosition =
                 if (firstBoughtGroup != null) firstBoughtGroup.position - 1 else groupCount - 1
             ItemDraggableRange(1, firstBoughtGroupPosition)
         } else {
             val lastNotBoughtGroup = groupList.findLast { it.buyStatus == BuyStatus.NOT_BOUGHT }
-            val lastNotBoughtGroupPosition = if (lastNotBoughtGroup != null) lastNotBoughtGroup.position + 1 else 1
+            val lastNotBoughtGroupPosition =
+                if (lastNotBoughtGroup != null) lastNotBoughtGroup.position + 1 else 1
             ItemDraggableRange(lastNotBoughtGroupPosition, groupCount - 1)
         }
     }
