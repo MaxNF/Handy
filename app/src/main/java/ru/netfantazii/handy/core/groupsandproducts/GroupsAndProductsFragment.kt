@@ -28,6 +28,7 @@ import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
+import ru.netfantazii.handy.databinding.ProductsFragmentBinding
 import ru.netfantazii.handy.extensions.dpToPx
 import java.lang.UnsupportedOperationException
 
@@ -48,7 +49,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.products_fragment, container, false)
+        val binding = ProductsFragmentBinding.inflate(inflater, container, false)
+        binding.viewModel = viewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,6 +113,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     override fun subscribeToEvents() {
         subscribeToProductEvents()
         subscribeToGroupEvents()
+        subscribeToDialogEvents()
         val owner = this
         with(viewModel) {
             newDataReceived.observe(owner, Observer {
@@ -250,6 +254,26 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         }
     }
 
+    private fun subscribeToDialogEvents() {
+        val owner = this
+        with(viewModel) {
+            deleteAllClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { showDeleteAllDialog() }
+            })
+            allLiveDataList.add(deleteAllClicked)
+
+            cancelAllClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { showCancelAllDialog() }
+            })
+            allLiveDataList.add(cancelAllClicked)
+
+            buyAllClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { showBuyAllDialog() }
+            })
+            allLiveDataList.add(buyAllClicked)
+        }
+    }
+
     override fun setUpFab(view: View) {
         val fab = view.findViewById<SpeedDialView>(R.id.speedDial)
         with(fab) {
@@ -323,6 +347,18 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
 
     private fun scrollToGroup(groupPosition: Int) {
 //        expandManager.scrollToGroup(groupPosition, dpToPx(50).toInt())
+    }
+
+    private fun showBuyAllDialog() {
+        BuyAllDialog().show(childFragmentManager, "buyAllDialog")
+    }
+
+    private fun showCancelAllDialog() {
+        CancelAllDialog().show(childFragmentManager, "cancelAllDialog")
+    }
+
+    private fun showDeleteAllDialog() {
+        DeleteAllDialog().show(childFragmentManager, "deleteAllDialog")
     }
 
     private fun scrollToBeginOfList() {

@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.core.catalogs
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -160,8 +159,8 @@ class CatalogsAdapter(
 
     override fun onSetSwipeBackground(holder: CatalogViewHolder, position: Int, type: Int) {
         val backgroundResourceId = when (type) {
-            SwipeableItemConstants.DRAWABLE_SWIPE_LEFT_BACKGROUND -> R.drawable.bg_swipe_item_left
-            SwipeableItemConstants.DRAWABLE_SWIPE_RIGHT_BACKGROUND -> R.drawable.bg_swipe_item_right
+            SwipeableItemConstants.DRAWABLE_SWIPE_LEFT_BACKGROUND -> R.drawable.bg_swipe_catalog_left
+            SwipeableItemConstants.DRAWABLE_SWIPE_RIGHT_BACKGROUND -> R.drawable.bg_swipe_catalog_right
             else -> R.color.swipeBackgroundTransparent
         }
         holder.itemView.setBackgroundResource(backgroundResourceId)

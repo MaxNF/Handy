@@ -19,7 +19,7 @@ class GroupsAndProductsViewModel(
     private val localRepository: LocalRepository,
     private val currentCatalogId: Long
 ) : ViewModel(),
-    GroupClickHandler, ProductClickHandler, GroupStorage, OverlayActions {
+    GroupClickHandler, ProductClickHandler, GroupStorage, OverlayActions, DialogClickHandler {
     private val TAG = "GroupsAndProductsViewMo"
     private var groupList = mutableListOf<Group>()
         set(groups) {
@@ -91,6 +91,15 @@ class GroupsAndProductsViewModel(
 
     private val _overlayEnterClicked = MutableLiveData<Event<Unit>>()
     val overlayEnterClicked: LiveData<Event<Unit>> = _overlayEnterClicked
+
+    private val _deleteAllClicked = MutableLiveData<Event<Unit>>()
+    val deleteAllClicked: LiveData<Event<Unit>> = _deleteAllClicked
+
+    private val _cancelAllClicked = MutableLiveData<Event<Unit>>()
+    val cancelAllClicked: LiveData<Event<Unit>> = _cancelAllClicked
+
+    private val _buyAllClicked = MutableLiveData<Event<Unit>>()
+    val buyAllClicked: LiveData<Event<Unit>> = _buyAllClicked
 
     init {
         subscribeToGroupChanges()
@@ -353,6 +362,40 @@ class GroupsAndProductsViewModel(
             }
         }
     }
+
+    fun onCancelAllClick() {
+        Log.d(TAG, "onCancelAllClick: ")
+        _cancelAllClicked.value = Event(Unit)
+    }
+
+    fun onBuyAllClick() {
+        Log.d(TAG, "onBuyAllClick: ")
+        _buyAllClicked.value = Event(Unit)
+    }
+
+    fun onDeleteAllClick() {
+        Log.d(TAG, "onDeleteAllClick: ")
+        _deleteAllClicked.value = Event(Unit)
+    }
+
+    override fun onCancelAllYesClick() {
+        Log.d(TAG, "cancelAll: ")
+        val allProducts = groupList.flatMap { it.productList }
+        allProducts.forEach { it.buyStatus = BuyStatus.NOT_BOUGHT }
+        localRepository.updateAllProducts(allProducts)
+    }
+
+    override fun onBuyAllYesClick() {
+        Log.d(TAG, "buyAll: ")
+        val allProducts = groupList.flatMap { it.productList }
+        allProducts.forEach { it.buyStatus = BuyStatus.BOUGHT }
+        localRepository.updateAllProducts(allProducts)
+    }
+
+    override fun onDeleteAllYesClick() {
+        Log.d(TAG, "deleteAll: ")
+    }
+
 
     override fun onCleared() {
         disposables.clear()

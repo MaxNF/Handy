@@ -233,9 +233,9 @@ class GroupsAndProductsAdapter(
                             toProductList.none { it.buyStatus == BuyStatus.NOT_BOUGHT } -> 0
                             fromProductList == toProductList -> toProductList.indexOfLast { it.buyStatus == BuyStatus.NOT_BOUGHT }
                             else -> toProductList.indexOfFirst { it.buyStatus == BuyStatus.BOUGHT }
-                            }
                         }
                     }
+                }
                 else -> {
                     if (dropProduct.buyStatus == BuyStatus.BOUGHT) toChildPosition
                     else {
@@ -258,43 +258,16 @@ class GroupsAndProductsAdapter(
         y: Int
     ): Boolean = groupPosition > 0
 
-    override fun onCheckGroupCanDrop(draggingGroupPosition: Int, dropGroupPosition: Int): Boolean {
-        // на данный момент не используется, для использования нужно включить checkCanDrop(true)
-//        val notTopGroup = dropGroupPosition > 0
-//        val notBoughtGroup = groupList[dropGroupPosition].buyStatus != BuyStatus.BOUGHT
-//        return notTopGroup && notBoughtGroup
-        return true
-    }
+    override fun onCheckGroupCanDrop(draggingGroupPosition: Int, dropGroupPosition: Int): Boolean =
+        true // на данный момент не используется, для использования нужно включить checkCanDrop(true)
 
     override fun onCheckChildCanDrop(
         draggingGroupPosition: Int,
         draggingChildPosition: Int,
         dropGroupPosition: Int,
         dropChildPosition: Int
-    ): Boolean {
-//        val draggingProductList = groupList[draggingGroupPosition].productList
-//        val draggingProduct = draggingProductList[draggingChildPosition]
-//
-//        val dropProductList =
-//            if (dropGroupPosition > groupList.lastIndex) groupList.last().productList else groupList[dropGroupPosition].productList
-//        val dropProduct =
-//            if (dropChildPosition > dropProductList.lastIndex) dropProductList.last() else dropProductList[dropChildPosition]
-//
-//        return if (draggingProduct.buyStatus == BuyStatus.NOT_BOUGHT) {
-//            if (dropProductList.all { it.buyStatus == BuyStatus.BOUGHT } && dropChildPosition == 0) {
-//                true
-//            } else {
-//                dropProduct.buyStatus == BuyStatus.NOT_BOUGHT
-//            }
-//        } else {
-//            if (dropProductList.all { it.buyStatus == BuyStatus.NOT_BOUGHT } && dropChildPosition == dropProductList.size) {
-//                true
-//            } else {
-//                dropProduct.buyStatus == BuyStatus.BOUGHT
-//            }
-//        }
-        return true
-    } // на данный момент не используется
+    ): Boolean = true  // на данный момент не используется
+
 
     override fun onGetGroupItemDraggableRange(
         holder: BaseGroupViewHolder,
@@ -355,13 +328,6 @@ class GroupsAndProductsAdapter(
         notifyDataSetChanged()
     }
 
-    override fun onSetGroupItemSwipeBackground(
-        holder: BaseGroupViewHolder,
-        groupPosition: Int,
-        type: Int
-    ) {
-        holder.itemView.setBackgroundResource(getOnSwipeBackground(type))
-    }
 
     override fun onSwipeGroupItem(
         holder: BaseGroupViewHolder,
@@ -397,13 +363,33 @@ class GroupsAndProductsAdapter(
         y: Int
     ): Int = SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H
 
+    override fun onSetGroupItemSwipeBackground(
+        holder: BaseGroupViewHolder,
+        groupPosition: Int,
+        type: Int
+    ) {
+        holder.itemView.setBackgroundResource(getGroupSwipeBackground(type))
+    }
+
+    private fun getGroupSwipeBackground(type: Int) = when (type) {
+        SwipeableItemConstants.DRAWABLE_SWIPE_LEFT_BACKGROUND -> R.drawable.bg_swipe_group_left
+        SwipeableItemConstants.DRAWABLE_SWIPE_RIGHT_BACKGROUND -> R.drawable.bg_swipe_group_right
+        else -> R.color.swipeBackgroundTransparent
+    }
+
     override fun onSetChildItemSwipeBackground(
         holder: ProductViewHolder,
         groupPosition: Int,
         childPosition: Int,
         type: Int
     ) {
-        holder.itemView.setBackgroundResource(getOnSwipeBackground(type))
+        holder.itemView.setBackgroundResource(getChildSwipeBackground(type))
+    }
+
+    private fun getChildSwipeBackground(type: Int) = when (type) {
+        SwipeableItemConstants.DRAWABLE_SWIPE_LEFT_BACKGROUND -> R.drawable.bg_swipe_product_left
+        SwipeableItemConstants.DRAWABLE_SWIPE_RIGHT_BACKGROUND -> R.drawable.bg_swipe_product_right
+        else -> R.color.swipeBackgroundTransparent
     }
 
     override fun onSwipeChildItemStarted(
@@ -428,12 +414,6 @@ class GroupsAndProductsAdapter(
             null
         }
         else -> throw UnsupportedOperationException("Unsupported swipe type")
-    }
-
-    private fun getOnSwipeBackground(type: Int) = when (type) {
-        SwipeableItemConstants.DRAWABLE_SWIPE_LEFT_BACKGROUND -> R.drawable.bg_swipe_item_left
-        SwipeableItemConstants.DRAWABLE_SWIPE_RIGHT_BACKGROUND -> R.drawable.bg_swipe_item_right
-        else -> R.color.swipeBackgroundTransparent
     }
 
     private inner class GroupSwipeDeleteResult(val group: Group) : SwipeResultActionRemoveItem() {
