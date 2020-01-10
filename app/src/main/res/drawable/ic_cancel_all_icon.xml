@@ -4,6 +4,6 @@
         android:gravity="center">
         <bitmap
             android:src="@drawable/ic_cancel_all"
-            android:tint="?attr/cancelAllButtonColor" />
+            android:tint="?attr/toolbarElementColor" />
     </item>
 </layer-list>

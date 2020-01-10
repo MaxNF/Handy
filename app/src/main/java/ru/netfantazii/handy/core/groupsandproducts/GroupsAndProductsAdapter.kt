@@ -50,7 +50,7 @@ interface GroupClickHandler {
 
     fun onGroupDragSucceed(fromPosition: Int, toPosition: Int)
 
-    fun onGroupCreateProductClick(groupId: Long)
+    fun onGroupCreateProductClick(group: Group)
 }
 
 interface GroupStorage {
@@ -303,7 +303,9 @@ class GroupsAndProductsAdapter(
     ): ItemDraggableRange? = null // любой диапазон
 
     override fun onGroupDragStarted(groupPosition: Int) {
-        notifyDataSetChanged()
+        // не совсем понятно, зачем в примере разработчика фрейморвка тут стоит вызов notifyDataSetChanged()
+        // отключение не влияет на функционал и анимации
+        // notifyDataSetChanged()
     }
 
     override fun onGroupDragFinished(
@@ -311,11 +313,12 @@ class GroupsAndProductsAdapter(
         toGroupPosition: Int,
         result: Boolean
     ) {
+        // а вот тут уже влияет на анимацию после перетаскивания
         notifyDataSetChanged()
     }
 
     override fun onChildDragStarted(groupPosition: Int, childPosition: Int) {
-        notifyDataSetChanged()
+//        notifyDataSetChanged()
     }
 
     override fun onChildDragFinished(

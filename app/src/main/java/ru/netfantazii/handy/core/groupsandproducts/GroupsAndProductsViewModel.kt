@@ -65,6 +65,9 @@ class GroupsAndProductsViewModel(
     private val _groupClicked = MutableLiveData<Event<Int>>()
     val groupClicked: LiveData<Event<Int>> = _groupClicked
 
+    private val _groupCreateProductClicked = MutableLiveData<Event<Int>>()
+    val groupCreateProductClicked: LiveData<Event<Int>> = _groupCreateProductClicked
+
     private val _groupSwipeStarted = MutableLiveData<Event<Unit>>()
     val groupSwipeStarted: LiveData<Event<Unit>> = _groupSwipeStarted
 
@@ -313,11 +316,11 @@ class GroupsAndProductsViewModel(
         }
     }
 
-    override fun onGroupCreateProductClick(groupId: Long) {
+    override fun onGroupCreateProductClick(group: Group) {
         Log.d(TAG, "onGroupCreateProductClick: ")
         overlayBuffer =
-            BufferObject(OVERLAY_ACTION_PRODUCT_CREATE, createNewProduct(currentCatalogId, groupId))
-        _createProductClicked.value = Event(Unit)
+            BufferObject(OVERLAY_ACTION_PRODUCT_CREATE, createNewProduct(currentCatalogId, group.id))
+        _groupCreateProductClicked.value = Event(group.position)
     }
 
     fun onCreateGroupClick() {
@@ -394,6 +397,7 @@ class GroupsAndProductsViewModel(
 
     override fun onDeleteAllYesClick() {
         Log.d(TAG, "deleteAll: ")
+        localRepository.removeAllGroups(groupList)
     }
 
 

@@ -4,6 +4,6 @@
         android:gravity="center">
         <bitmap
             android:src="@drawable/ic_buy_all"
-            android:tint="?attr/buyAllButtonColor" />
+            android:tint="?attr/toolbarElementColor" />
     </item>
 </layer-list>

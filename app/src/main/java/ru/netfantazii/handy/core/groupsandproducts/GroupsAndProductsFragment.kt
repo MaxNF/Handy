@@ -2,10 +2,7 @@ package ru.netfantazii.handy.core.groupsandproducts
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
@@ -22,13 +18,13 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
+import kotlinx.android.synthetic.main.activity_main.*
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
-import ru.netfantazii.handy.databinding.ProductsFragmentBinding
 import ru.netfantazii.handy.extensions.dpToPx
 import java.lang.UnsupportedOperationException
 
@@ -49,9 +45,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = ProductsFragmentBinding.inflate(inflater, container, false)
-        binding.viewModel = viewModel
-        return binding.root
+        return inflater.inflate(R.layout.products_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,8 +55,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
 
     private fun setCatalogName(rootView: View) {
         val currentCatalogName = fragmentArgs.catalogName
-        val catalogNameTextView = rootView.findViewById<TextView>(R.id.catalog_label)
-        catalogNameTextView.text = currentCatalogName
+        activity!!.toolbar.title = currentCatalogName
     }
 
     override fun createViewModel() {
@@ -78,7 +71,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         dragManager.setInitiateOnMove(false)
         dragManager.setInitiateOnTouch(false)
         dragManager.setInitiateOnLongPress(true)
-//        dragManager.isCheckCanDropEnabled = true
+        dragManager.draggingItemAlpha = 0.9f
+        dragManager.draggingItemScale = 1.07f
+        dragManager.dragStartItemAnimationDuration = 250
+        // todo установить тень для перемещаемых объектов
 
         expandManager = RecyclerViewExpandableItemManager(null)
         expandManager.defaultGroupsExpandedState = true
@@ -247,10 +243,17 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             createGroupClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showOverlay()
-                    scrollToGroup(1)
+                    scrollToBeginOfList()
                 }
             })
             allLiveDataList.add(createGroupClicked)
+
+            groupCreateProductClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { groupPosition ->
+                    showOverlay()
+                    scrollToGroup(groupPosition)
+                }
+            })
         }
     }
 
@@ -337,6 +340,28 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             })
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.buy_all -> {
+                viewModel.onBuyAllClick()
+                true
+            }
+            R.id.cancel_all -> {
+                viewModel.onCancelAllClick()
+                true
+            }
+            R.id.delete_all -> {
+                viewModel.onDeleteAllClick()
+                true
+            }
+            else -> false
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.toolbar_menu, menu)
+    }
+
     private fun showProductRemovalSnackbar() {
         productUndoSnackbar.show()
     }
@@ -346,7 +371,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     }
 
     private fun scrollToGroup(groupPosition: Int) {
-//        expandManager.scrollToGroup(groupPosition, dpToPx(50).toInt())
+        expandManager.scrollToGroup(groupPosition, dpToPx(50).toInt())
     }
 
     private fun showBuyAllDialog() {

@@ -1,31 +1,36 @@
 package ru.netfantazii.handy.db
 
-import androidx.annotation.VisibleForTesting
 import androidx.room.*
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 
 @Dao
 abstract class BaseDao<T> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun add(t: T): Completable
+    abstract fun add(t: T)
 
     @Delete
-    abstract fun remove(t: T): Completable
+    abstract fun remove(t: T)
+
+    @Delete
+    abstract fun removeAll(t: List<T>)
 
     @Update
-    abstract fun update(t: T): Completable
+    abstract fun update(t: T)
 
     @Update
-    abstract fun updateAll(t: List<T>): Completable
+    abstract fun updateAll(t: List<T>)
 
-    open fun removeAndUpdateAll(t: T, list: List<T>): Completable {
-        return remove(t).andThen(updateAll(list))
+    @Transaction
+    open fun removeAndUpdateAll(t: T, list: List<T>) {
+        remove(t)
+        updateAll(list)
     }
 
-    open fun addAndUpdateAll(t: T, list: List<T>): Completable {
-        return add(t).andThen(updateAll(list))
+    @Transaction
+    open fun addAndUpdateAll(t: T, list: List<T>) {
+        add(t)
+        updateAll(list)
     }
 }
 
@@ -39,25 +44,29 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
     abstract fun removeAllCatalogs(): Completable
 
     @Insert
-    abstract fun addAndReturnId(t: CatalogEntity): Single<Long>
+    abstract fun addAndReturnId(t: CatalogEntity): Long
 
     @Insert
-    abstract fun addDefaultGroup(group: GroupEntity): Completable
+    abstract fun addDefaultGroup(group: GroupEntity)
 
-    fun addWithDefaultGroup(catalog: CatalogEntity): Completable {
-        return addAndReturnId(catalog).flatMapCompletable {
-            val defaultGroup = Group(catalogId = it,
-                name = "default group",
-                groupType = GroupType.ALWAYS_ON_TOP,
-                position = 0,
-                expandStatus = ExpandStatus.EXPANDED)
-            addDefaultGroup(defaultGroup)
-        }
+    @Transaction
+    open fun addWithDefaultGroup(catalog: CatalogEntity) {
+        val catalogId = addAndReturnId(catalog)
+        val defaultGroup = Group(catalogId = catalogId,
+            name = "default group",
+            groupType = GroupType.ALWAYS_ON_TOP,
+            position = 0,
+            expandStatus = ExpandStatus.EXPANDED)
+        addDefaultGroup(defaultGroup)
     }
 
-    //todo попробовать запилить @transaction, чтобы не было бага в отображении
-    override fun addAndUpdateAll(t: CatalogEntity, list: List<CatalogEntity>): Completable {
-        return addWithDefaultGroup(t).andThen(updateAll(list))
+    @Update
+    abstract fun updateAllCatalogs(list: List<CatalogEntity>)
+
+    @Transaction
+    open fun addCatalogAndUpdateAll(catalog: CatalogEntity, list: List<CatalogEntity>) {
+        addWithDefaultGroup(catalog)
+        updateAllCatalogs(list)
     }
 }
 
@@ -67,18 +76,33 @@ abstract class GroupDao : BaseDao<GroupEntity>() {
     @Query("SELECT * FROM GroupEntity WHERE catalog_id = :catalogId ORDER BY position")
     abstract fun getGroups(catalogId: Long): Observable<MutableList<Group>>
 
-    @Query("DELETE FROM GroupEntity WHERE catalog_id = :catalogId AND group_type != 1")
-    abstract fun removeAllGroups(catalogId: Long): Completable
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun addAllProducts(products: List<ProductEntity>): Completable
 
-    fun addGroupWithProductsAndUpdateAll(group: Group, groupList: List<Group>): Completable {
-        return addGroupWithProducts(group).andThen(updateAll(groupList))
+    @Transaction
+    open fun addGroupWithProductsAndUpdateAll(group: Group, groupList: List<Group>) {
+        addGroupWithProducts(group)
+        updateAll(groupList)
     }
 
-    fun addGroupWithProducts(group: Group): Completable {
-        return add(group).andThen(addAllProducts(group.productList))
+    @Transaction
+    open fun addGroupWithProducts(group: Group) {
+        add(group)
+        addAllProducts(group.productList)
+    }
+
+    @Delete
+    abstract fun removeGroups(groups: List<GroupEntity>)
+
+    @Delete
+    abstract fun removeProducts(products: List<ProductEntity>)
+
+    @Transaction
+    open fun removeAllGroups(groupList: List<Group>) {
+        val groupsForRemoval = groupList.subList(1, groupList.size)
+        val productsForRemoval = groupList[0].productList
+        removeGroups(groupsForRemoval)
+        removeProducts(productsForRemoval)
     }
 }
 

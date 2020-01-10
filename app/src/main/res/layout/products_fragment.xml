@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
 
-        <variable
-            name="viewModel"
-            type="ru.netfantazii.handy.core.groupsandproducts.GroupsAndProductsViewModel" />
-    </data>
-
-    <FrameLayout
         android:id="@+id/overlay_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -20,57 +13,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/catalog_label"
-                style="@style/HeaderText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/listTextColor"
-                app:layout_constraintEnd_toStartOf="@+id/button_delete_all"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Catalog's name" />
-
-            <ImageButton
-                android:id="@+id/button_buy_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:background="@android:color/transparent"
-                android:foreground="?attr/selectableItemBackground"
-                android:onClick="@{() -> viewModel.onBuyAllClick()}"
-                android:padding="14dp"
-                android:src="@drawable/ic_buy_all_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/catalog_label"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/catalog_label" />
-
-            <ImageButton
-                android:id="@+id/button_cancel_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:foreground="?attr/selectableItemBackground"
-                android:onClick="@{() -> viewModel.onCancelAllClick()}"
-                android:padding="14dp"
-                android:src="@drawable/ic_cancel_all_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/catalog_label"
-                app:layout_constraintEnd_toStartOf="@+id/button_buy_all"
-                app:layout_constraintTop_toTopOf="@+id/catalog_label" />
-
-            <ImageButton
-                android:id="@+id/button_delete_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:foreground="?attr/selectableItemBackground"
-                android:onClick="@{() -> viewModel.onDeleteAllClick()}"
-                android:padding="14dp"
-                android:src="@drawable/ic_delete_all_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/catalog_label"
-                app:layout_constraintEnd_toStartOf="@+id/button_cancel_all"
-                app:layout_constraintTop_toTopOf="@+id/catalog_label" />
-
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:id="@+id/coordinator_layout"
                 android:layout_width="0dp"
@@ -78,7 +20,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/catalog_label">
+                app:layout_constraintTop_toTopOf="parent">
 
 
                 <LinearLayout
@@ -121,6 +63,8 @@
                     app:sdOverlayLayout="@id/overlay" />
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:paddingTop="10dp"
+                    android:paddingBottom="80dp"
                     android:id="@+id/rv_list"
                     style="@style/RecyclerViewMain"
                     android:layout_width="match_parent"
@@ -131,4 +75,3 @@
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
-</layout>

@@ -2,20 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/rate_app"
-        android:icon="@drawable/ic_star_icon"
-        android:title="@string/rate_app_label"
-        app:showAsAction="ifRoom"
-        />
+        android:id="@+id/delete_all"
+        android:icon="@drawable/ic_delete_all_icon"
+        android:title="@string/delete_all_title"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/cancel_all"
+        android:icon="@drawable/ic_cancel_all_icon"
+        android:title="@string/cancel_all_title"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/buy_all"
+        android:icon="@drawable/ic_buy_all_icon"
+        android:title="@string/buy_all_title"
+        app:showAsAction="never" />
 
-    <item
-        android:id="@+id/helpFragment"
-        android:icon="@drawable/ic_help_icon"
-        android:title="@string/help_fragment_label"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/appSettings"
-        android:icon="@drawable/ic_settings_icon"
-        android:title="@string/settings_fragment_label"
-        app:showAsAction="ifRoom" />
+
+
 </menu>

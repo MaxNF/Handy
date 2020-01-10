@@ -1,5 +1,7 @@
 package ru.netfantazii.handy
 
+import androidx.room.RxRoom
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -22,6 +24,7 @@ interface LocalRepository {
     fun updateGroup(group: Group): Disposable
     fun updateAllGroups(groups: List<Group>): Disposable
     fun removeAndUpdateGroups(group: Group, list: List<Group>): Disposable
+    fun removeAllGroups(groupList: List<Group>): Disposable
     fun addAndUpdateGroups(group: Group, list: List<Group>): Disposable
     fun getGroups(catalogId: Long): Observable<MutableList<Group>>
     fun addProduct(product: Product): Disposable
@@ -39,25 +42,27 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     private val productDao: ProductDao = db.getProductDao()
 
     override fun addCatalog(catalog: Catalog) =
-        catalogDao.addWithDefaultGroup(catalog).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.addWithDefaultGroup(catalog) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeCatalog(catalog: Catalog) =
-        catalogDao.remove(catalog).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.remove(catalog) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun updateCatalog(catalog: Catalog) =
-        catalogDao.update(catalog).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.update(catalog) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun updateAllCatalogs(catalogs: List<Catalog>) =
-        catalogDao.updateAll(catalogs).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.updateAll(catalogs) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>) =
-        catalogDao.removeAndUpdateAll(catalog, list).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.removeAndUpdateAll(catalog, list) }.subscribeOn(
+            Schedulers.io()).subscribe()!!
 
     override fun addAndUpdateCatalogs(
         catalog: Catalog,
         list: List<Catalog>
     ) =
-        catalogDao.addAndUpdateAll(catalog, list).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.addCatalogAndUpdateAll(catalog, list) }.subscribeOn(
+            Schedulers.io()).subscribe()!!
 
     override fun getCatalogs(): Observable<MutableList<Catalog>> = catalogDao.getCatalogs()
 
@@ -65,53 +70,67 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
         catalogDao.removeAllCatalogs().subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun addGroup(group: Group) =
-        groupDao.add(group).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.add(group) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeGroup(group: Group) =
-        groupDao.remove(group).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.remove(group) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun updateGroup(group: Group) =
-        groupDao.update(group).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.update(group) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun updateAllGroups(groups: List<Group>) =
-        groupDao.updateAll(groups).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.updateAll(groups) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeAndUpdateGroups(group: Group, list: List<Group>) =
-        groupDao.removeAndUpdateAll(group, list).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable {
+            groupDao.removeAndUpdateAll(group,
+                list)
+        }.subscribeOn(Schedulers.io()).subscribe()!!
+
+    override fun removeAllGroups(groupList: List<Group>) =
+        Completable.fromRunnable { groupDao.removeAllGroups(groupList) }.subscribeOn(Schedulers.io()).subscribe()!!
+
 
     override fun addAndUpdateGroups(group: Group, list: List<Group>) =
-        groupDao.addAndUpdateAll(group, list).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable {
+            groupDao.addAndUpdateAll(group,
+                list)
+        }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun addGroupWithProducts(group: Group): Disposable =
-        groupDao.addGroupWithProducts(group).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.addGroupWithProducts(group) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun addGroupWithProductsAndUpdateAll(group: Group, list: List<Group>): Disposable =
-        groupDao.addGroupWithProductsAndUpdateAll(group,
-            list).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable {
+            groupDao.addGroupWithProductsAndUpdateAll(group,
+                list)
+        }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun getGroups(catalogId: Long): Observable<MutableList<Group>> =
         groupDao.getGroups(catalogId)
 
     override fun addProduct(product: Product) =
-        productDao.add(product).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.add(product) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeProduct(product: Product) =
-        productDao.remove(product).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.remove(product) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun updateProduct(product: Product) =
-        productDao.update(product).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.update(product) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun updateProductWithDelay(product: Product, delayMillis: Long) =
-        productDao.update(product).subscribeOn(Schedulers.io()).delaySubscription(delayMillis, TimeUnit.MILLISECONDS).subscribe()!!
+        Completable.fromRunnable { productDao.update(product) }.subscribeOn(Schedulers.io()).delaySubscription(
+            delayMillis,
+            TimeUnit.MILLISECONDS).subscribe()!!
 
     override fun updateAllProducts(products: List<Product>) =
-        productDao.updateAll(products).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.updateAll(products) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeAndUpdateProducts(product: Product, list: List<Product>) =
-        productDao.removeAndUpdateAll(product, list).subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.removeAndUpdateAll(product, list) }.subscribeOn(
+            Schedulers.io()).subscribe()!!
 
     override fun addAndUpdateProducts(product: Product, list: List<Product>) =
-        productDao.addAndUpdateAll(product, list).subscribeOn(Schedulers.io()).subscribe()!!
-
-
+        Completable.fromRunnable { productDao.addAndUpdateAll(product, list) }.subscribeOn(
+            Schedulers.io()).subscribe()!!
 }
