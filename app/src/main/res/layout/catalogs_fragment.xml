@@ -11,13 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            style="@style/HeaderText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/catalog_recycler_view_label"
-            android:textColor="?attr/listTextColor" />
-
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/coordinator_layout"
@@ -51,6 +44,8 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_list"
+                android:paddingTop="10dp"
+                android:paddingBottom="80dp"
                 style="@style/RecyclerViewMain"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

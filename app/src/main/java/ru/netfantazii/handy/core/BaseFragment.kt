@@ -6,7 +6,11 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.internal.NavigationMenu
+import com.google.android.material.internal.NavigationMenuItemView
+import com.google.android.material.internal.NavigationMenuView
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
+import ru.netfantazii.handy.MainActivity
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.doWithDelay
 import ru.netfantazii.handy.extensions.fadeIn
@@ -31,6 +35,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
         createHints(view)
         setUpFab(view)
         subscribeToEvents()
+        (activity as MainActivity).uncheckActiveMenuItem()
     }
 
     override fun onDestroyView() {

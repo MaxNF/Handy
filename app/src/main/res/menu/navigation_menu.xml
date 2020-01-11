@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/rate_app"
-        android:icon="@drawable/ic_star_icon"
-        android:title="@string/rate_app_label" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/helpFragment"
-        android:icon="@drawable/ic_help_icon"
-        android:title="@string/help_fragment_label" />
+    <group android:id="@+id/main_options"
+        android:checkableBehavior="single">
 
-    <item
-        android:id="@+id/appSettings"
-        android:icon="@drawable/ic_settings_icon"
-        android:title="@string/settings_fragment_label" />
+        <item
+            android:id="@+id/navigation_app_settings"
+            android:icon="@drawable/ic_settings_icon"
+            android:title="@string/settings_fragment_label" />
+
+        <item
+            android:id="@+id/navigation_help_fragment"
+            android:icon="@drawable/ic_help_icon"
+            android:title="@string/help_fragment_label" />
+    </group>
+
+    <group android:id="@+id/other_options"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/navigation_rate_app"
+            android:icon="@drawable/ic_star_icon"
+            android:title="@string/rate_app_label" />
+    </group>
 </menu>

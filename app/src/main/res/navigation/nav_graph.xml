@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/catalogs_fragment"
         android:name="ru.netfantazii.handy.core.catalogs.CatalogsFragment"
-        android:label="@string/app_name"
+        android:label="@string/catalog_recycler_view_label"
         tools:layout="@layout/catalogs_fragment">
         <action
             android:id="@+id/action_catalogs_fragment_to_products_fragment"
@@ -27,19 +27,19 @@
             app:argType="long" />
     </fragment>
     <fragment
-        android:id="@+id/appSettings"
+        android:id="@+id/navigation_app_settings"
         android:name="ru.netfantazii.handy.core.preferences.AppSettings"
         android:label="@string/settings_fragment_label" />
     <action
         android:id="@+id/action_global_appSettings"
-        app:destination="@id/appSettings"/>
+        app:destination="@id/navigation_app_settings"/>
     <fragment
-        android:id="@+id/helpFragment"
+        android:id="@+id/navigation_help_fragment"
         android:name="ru.netfantazii.handy.core.help.HelpFragment"
         android:label="@string/help_fragment_label" />
     <action
         android:id="@+id/action_global_helpFragment"
-        app:destination="@id/helpFragment"/>
+        app:destination="@id/navigation_help_fragment"/>
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="ru.netfantazii.handy.core.welcome.WelcomeFragment"

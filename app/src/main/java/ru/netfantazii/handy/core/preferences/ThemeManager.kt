@@ -5,6 +5,7 @@ import android.util.TypedValue
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.preferences.ThemeColor.*
+import java.lang.UnsupportedOperationException
 
 enum class ThemeColor {
     COLOR_PRIMARY, COLOR_PRIMARY_DARK, COLOR_ACCENT, CATALOG_NORMAL_COLOR, CATALOG_SWIPE_COLOR,
@@ -60,13 +61,13 @@ fun getThemeColor(context: Context, themeColor: ThemeColor?): Int {
     return typedValue.data
 }
 
-fun getCurrentThemeValue(context: Context): String? {
+fun getCurrentThemeValue(context: Context): String {
     val sp =
         PreferenceManager.getDefaultSharedPreferences(context)
     return sp.getString(
         context.getString(R.string.theme_pref_key),
         context.getString(R.string.theme_violet_value)
-    )
+    ) ?: throw UnsupportedOperationException("No such a theme")
 }
 
 fun setTheme(context: Context, themeValue: String) {

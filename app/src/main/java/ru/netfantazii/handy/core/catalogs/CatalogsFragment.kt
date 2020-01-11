@@ -56,6 +56,9 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         dragManager.setInitiateOnMove(false)
         dragManager.setInitiateOnTouch(false)
         dragManager.setInitiateOnLongPress(true)
+        dragManager.draggingItemAlpha = 0.9f
+        dragManager.draggingItemScale = 1.07f
+        dragManager.dragStartItemAnimationDuration = 250
 
         val guardManager = RecyclerViewTouchActionGuardManager()
         guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true)
