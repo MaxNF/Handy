@@ -25,6 +25,9 @@
         <argument
             android:name="catalogId"
             app:argType="long" />
+        <argument
+            android:name="groupExpandStates"
+            app:argType="com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager$SavedState" />
     </fragment>
     <fragment
         android:id="@+id/navigation_app_settings"

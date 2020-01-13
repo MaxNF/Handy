@@ -29,6 +29,7 @@
         <item name="buyAllButtonColor">@color/buyAllButtonColor</item>
         <item name="cancelAllButtonColor">@color/cancelAllButtonColor</item>
         <item name="deleteAllButtonColor">@color/deleteAllButtonColor</item>
+        <item name="fabIconTintColor">?attr/fabIconTintColor</item>
     </style>
 
     <style name="BaseBlackTitles" parent="Base">
@@ -49,14 +50,14 @@
         <item name="colorPrimaryDark">#6a0080</item>
         <item name="colorAccent">#00796b</item>
         <item name="snackbarActionColor">#48a999</item>
-        <item name="swipeBackgroundColor">#d05ce3</item>
+        <item name="swipeBackgroundColor">#9c27b0</item>
     </style>
 
     <!--L-->
     <style name="Lilac" parent="BaseBlackTitles">
         <item name="colorPrimary">#e1bee7</item>
         <item name="colorPrimaryDark">#af8eb5</item>
-        <item name="colorAccent">#ffb649</item>
+        <item name="colorAccent">#F8A213</item>
         <item name="swipeBackgroundColor">#e1bee7</item>
         <item name="snackbarActionColor">#ffe879</item>
     </style>
@@ -66,7 +67,7 @@
         <item name="colorPrimary">#1976d2</item>
         <item name="colorPrimaryDark">#004ba0</item>
         <item name="colorAccent">#ef6c00</item>
-        <item name="swipeBackgroundColor">#63a4ff</item>
+        <item name="swipeBackgroundColor">#1976d2</item>
         <item name="snackbarActionColor">#ff9d3f</item>
     </style>
 
@@ -75,7 +76,7 @@
         <item name="colorPrimary">#6d4c41</item>
         <item name="colorPrimaryDark">#40241a</item>
         <item name="colorAccent">#388e3c</item>
-        <item name="swipeBackgroundColor">#9c786c</item>
+        <item name="swipeBackgroundColor">#6d4c41</item>
         <item name="snackbarActionColor">#6abf69</item>
     </style>
 
@@ -83,8 +84,8 @@
     <style name="Green" parent="BaseBlackTitles">
         <item name="colorPrimary">#81c784</item>
         <item name="colorPrimaryDark">#519657</item>
-        <item name="colorAccent">#ffab91</item>
-        <item name="swipeBackgroundColor">#b2fab4</item>
+        <item name="colorAccent">#FC866C</item>
+        <item name="swipeBackgroundColor">#81c784</item>
         <item name="snackbarActionColor">#ffddc1</item>
     </style>
 
@@ -92,8 +93,8 @@
     <style name="Sunny" parent="BaseBlackTitles">
         <item name="colorPrimary">#ffee58</item>
         <item name="colorPrimaryDark">#c9bc1f</item>
-        <item name="colorAccent">#29b6f6</item>
-        <item name="swipeBackgroundColor">#ffff8b</item>
+        <item name="colorAccent">#16A0DF</item>
+        <item name="swipeBackgroundColor">#ffee58</item>
         <item name="snackbarActionColor">#73e8ff</item>
     </style>
 
@@ -102,16 +103,16 @@
         <item name="colorPrimary">#c62828</item>
         <item name="colorPrimaryDark">#8e0000</item>
         <item name="colorAccent">#37474f</item>
-        <item name="swipeBackgroundColor">#ff5f52</item>
+        <item name="swipeBackgroundColor">#c62828</item>
         <item name="snackbarActionColor">#90AAB8</item>
     </style>
 
     <!--Orange-->
     <style name="Orange" parent="BaseBlackTitles">
-        <item name="colorPrimary">#fb8c00</item>
-        <item name="colorPrimaryDark">#c25e00</item>
-        <item name="colorAccent">#4db6ac</item>
-        <item name="swipeBackgroundColor">#ffbd45</item>
+        <item name="colorPrimary">#FF971A</item>
+        <item name="colorPrimaryDark">#D16A11</item>
+        <item name="colorAccent">#28AD96</item>
+        <item name="swipeBackgroundColor">#fb8c00</item>
         <item name="snackbarActionColor">#82e9de</item>
     </style>
 
@@ -120,16 +121,16 @@
         <item name="colorPrimary">#3f51b5</item>
         <item name="colorPrimaryDark">#002984</item>
         <item name="colorAccent">#ef5350</item>
-        <item name="swipeBackgroundColor">#757de8</item>
+        <item name="swipeBackgroundColor">#3f51b5</item>
         <item name="snackbarActionColor">#ff867c</item>
     </style>
 
     <!--Gray-->
     <style name="Gray" parent="BaseWhiteTitles">
-        <item name="colorPrimary">#757575</item>
-        <item name="colorPrimaryDark">#494949</item>
+        <item name="colorPrimary">#5E5E5E</item>
+        <item name="colorPrimaryDark">#3C3C3C</item>
         <item name="colorAccent">#5E5E5E</item>
-        <item name="swipeBackgroundColor">#818181</item>
+        <item name="swipeBackgroundColor">#757575</item>
         <item name="snackbarActionColor">#CACACA</item>
     </style>
 

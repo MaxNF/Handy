@@ -1,6 +1,7 @@
 package ru.netfantazii.handy
 
 import androidx.room.RxRoom
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -17,6 +18,10 @@ interface LocalRepository {
     fun addAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>): Disposable
     fun getCatalogs(): Observable<MutableList<Catalog>>
     fun removeAllCatalogs(): Disposable
+    fun updateGroupExpandStates(
+        catalogId: Long,
+        expandStates: RecyclerViewExpandableItemManager.SavedState
+    ): Disposable
     fun addGroup(group: Group): Disposable
     fun addGroupWithProducts(group: Group): Disposable
     fun addGroupWithProductsAndUpdateAll(group: Group, list: List<Group>): Disposable
@@ -63,6 +68,15 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     ) =
         Completable.fromRunnable { catalogDao.addCatalogAndUpdateAll(catalog, list) }.subscribeOn(
             Schedulers.io()).subscribe()!!
+
+    override fun updateGroupExpandStates(
+        catalogId: Long,
+        expandStates: RecyclerViewExpandableItemManager.SavedState
+    ) =
+        Completable.fromRunnable {
+            catalogDao.getCatalogByIdAndUpdateStates(catalogId,
+                expandStates)
+        }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun getCatalogs(): Observable<MutableList<Catalog>> = catalogDao.getCatalogs()
 

@@ -1,9 +1,11 @@
 package ru.netfantazii.handy.core.groupsandproducts
 
+import android.graphics.drawable.NinePatchDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
@@ -25,11 +27,14 @@ import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
+import ru.netfantazii.handy.db.Converters.groupExpandStatesToString
+import ru.netfantazii.handy.extensions.doWithDelay
 import ru.netfantazii.handy.extensions.dpToPx
 import java.lang.UnsupportedOperationException
 
 class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     private val TAG = "GroupsAndProducts"
+    private val groupExpandStatesKey = "group_expand_states"
 
     val fragmentArgs: GroupsAndProductsFragmentArgs by navArgs()
 
@@ -40,20 +45,49 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     private lateinit var groupUndoSnackbar: Snackbar
     private lateinit var hint: View
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (!viewModel.isGroupExpandStatesInitialized()) {
+            Log.d(TAG, "onCreate: not init")
+            viewModel.groupExpandStates = fragmentArgs.groupExpandStates
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "onCreateView: $savedInstanceState")
         return inflater.inflate(R.layout.products_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated: $savedInstanceState")
         super.onViewCreated(view, savedInstanceState)
-        setCatalogName(view)
+        setCatalogName()
     }
 
-    private fun setCatalogName(rootView: View) {
+    private fun restoreExpandState(groupExpandStates: RecyclerViewExpandableItemManager.SavedState) {
+        Log.d(TAG, "restoreExpandState: 1")
+        expandManager.restoreState(groupExpandStates)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.saveExpandStateToDb(expandManager.savedState as RecyclerViewExpandableItemManager.SavedState)
+        Log.d(TAG,
+            "onDestroy: ${(expandManager.savedState as RecyclerViewExpandableItemManager.SavedState).adapterSavedState.joinToString(
+                " ")}")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        viewModel.groupExpandStates =
+            expandManager.savedState as RecyclerViewExpandableItemManager.SavedState
+    }
+
+    private fun setCatalogName() {
         val currentCatalogName = fragmentArgs.catalogName
         activity!!.toolbar.title = currentCatalogName
     }
@@ -62,10 +96,13 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         val repository = (requireContext().applicationContext as HandyApplication).localRepository
         val currentCatalogId = fragmentArgs.catalogId
         viewModel =
-            ViewModelProviders.of(this, GroupsAndProductsVmFactory(repository, currentCatalogId))
+            ViewModelProviders.of(this,
+                GroupsAndProductsVmFactory(repository,
+                    currentCatalogId))
                 .get(GroupsAndProductsViewModel::class.java)
     }
 
+    // todo сделать загрузку и сохранение статуса открытых и закрытых групп
     override fun createRecyclerView(view: View) {
         dragManager = RecyclerViewDragDropManager()
         dragManager.setInitiateOnMove(false)
@@ -74,10 +111,12 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         dragManager.draggingItemAlpha = 0.9f
         dragManager.draggingItemScale = 1.07f
         dragManager.dragStartItemAnimationDuration = 250
-        // todo установить тень для перемещаемых объектов
+        dragManager.setDraggingItemShadowDrawable(ContextCompat.getDrawable(requireContext(),
+            R.drawable.shadow_round_corners) as NinePatchDrawable)
 
         expandManager = RecyclerViewExpandableItemManager(null)
         expandManager.defaultGroupsExpandedState = true
+
         val swipeManager = RecyclerViewSwipeManager()
         val layoutManager = LinearLayoutManager(context)
         val guardManager = RecyclerViewTouchActionGuardManager()
@@ -120,278 +159,284 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                     } else {
                         hideHint()
                     }
+                    Log.d(TAG, "subscribeToEvents: ")
                 }
+                restoreExpandState(viewModel.groupExpandStates)
             })
-            allLiveDataList.add(newDataReceived)
 
-            overlayBackgroundClicked.observe(owner,
-                Observer { it.getContentIfNotHandled()?.let { closeOverlay() } })
-            allLiveDataList.add(overlayBackgroundClicked)
+        allLiveDataList.add(newDataReceived)
 
-            overlayEnterClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    closeOverlay()
-                }
-            })
-            allLiveDataList.add(overlayEnterClicked)
-        }
+        overlayBackgroundClicked.observe(owner,
+            Observer { it.getContentIfNotHandled()?.let { closeOverlay() } })
+        allLiveDataList.add(overlayBackgroundClicked)
+
+        overlayEnterClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let {
+                closeOverlay()
+            }
+        })
+        allLiveDataList.add(overlayEnterClicked)
     }
+}
 
-    private fun subscribeToProductEvents() {
-        val owner = this
-        with(viewModel) {
-            productClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { } // do nothing yet
-            })
-            allLiveDataList.add(productClicked)
+private fun subscribeToProductEvents() {
+    val owner = this
+    with(viewModel) {
+        productClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { } // do nothing yet
+        })
+        allLiveDataList.add(productClicked)
 
-            productSwipeStarted.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { disableDragAndDrop() }
-            })
-            allLiveDataList.add(productSwipeStarted)
+        productSwipeStarted.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { disableDragAndDrop() }
+        })
+        allLiveDataList.add(productSwipeStarted)
 
-            productSwipePerformed.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { } // do nothing yet
-            })
-            allLiveDataList.add(productSwipePerformed)
+        productSwipePerformed.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { } // do nothing yet
+        })
+        allLiveDataList.add(productSwipePerformed)
 
-            productSwipeFinished.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    showProductRemovalSnackbar()
-                    enableDragAndDrop()
-                }
-            })
-            allLiveDataList.add(productSwipeFinished)
+        productSwipeFinished.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let {
+                showProductRemovalSnackbar()
+                enableDragAndDrop()
+            }
+        })
+        allLiveDataList.add(productSwipeFinished)
 
-            productSwipeCanceled.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { enableDragAndDrop() }
-            })
-            allLiveDataList.add(productSwipeCanceled)
+        productSwipeCanceled.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { enableDragAndDrop() }
+        })
+        allLiveDataList.add(productSwipeCanceled)
 
-            productEditClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { showOverlay() }
-            })
-            allLiveDataList.add(productEditClicked)
+        productEditClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { showOverlay() }
+        })
+        allLiveDataList.add(productEditClicked)
 
-            productDragSucceed.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { } // do nothing yet
-            })
-            allLiveDataList.add(productDragSucceed)
+        productDragSucceed.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { } // do nothing yet
+        })
+        allLiveDataList.add(productDragSucceed)
 
-            createProductClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    showOverlay()
-                    scrollToBeginOfList()
-                }
-            })
-            allLiveDataList.add(createProductClicked)
-        }
+        createProductClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let {
+                showOverlay()
+                scrollToBeginOfList()
+            }
+        })
+        allLiveDataList.add(createProductClicked)
     }
+}
 
-    private fun subscribeToGroupEvents() {
-        val owner = this
-        with(viewModel) {
-            groupClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { groupPosition ->
-                    if (expandManager.isGroupExpanded(groupPosition)) {
-                        Log.d(TAG, "subscribeToGroupEvents: collapsed")
-                        expandManager.collapseGroup(groupPosition)
-                    } else {
-                        Log.d(TAG, "subscribeToGroupEvents: expanded")
-                        expandManager.expandGroup(groupPosition)
-                    }
+private fun subscribeToGroupEvents() {
+    val owner = this
+    with(viewModel) {
+        groupClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { groupPosition ->
+                if (expandManager.isGroupExpanded(groupPosition)) {
+                    Log.d(TAG, "subscribeToGroupEvents: collapsed")
+                    expandManager.collapseGroup(groupPosition)
+                } else {
+                    Log.d(TAG, "subscribeToGroupEvents: expanded")
+                    expandManager.expandGroup(groupPosition)
                 }
-            })
-            allLiveDataList.add(groupClicked)
+                Log.d(TAG, "subscribeToGroupEvents: ")
+                viewModel.groupExpandStates =
+                    expandManager.savedState as RecyclerViewExpandableItemManager.SavedState
+            }
+        })
+        allLiveDataList.add(groupClicked)
 
-            groupSwipeStarted.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { disableDragAndDrop() }
-            })
-            allLiveDataList.add(groupSwipeStarted)
+        groupSwipeStarted.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { disableDragAndDrop() }
+        })
+        allLiveDataList.add(groupSwipeStarted)
 
-            groupSwipePerformed.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { } // do nothing yet
-            })
-            allLiveDataList.add(groupSwipePerformed)
+        groupSwipePerformed.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { } // do nothing yet
+        })
+        allLiveDataList.add(groupSwipePerformed)
 
-            groupSwipeFinished.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    showGroupRemovalSnackbar()
-                    enableDragAndDrop()
-                }
-            })
-            allLiveDataList.add(groupSwipeFinished)
+        groupSwipeFinished.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let {
+                showGroupRemovalSnackbar()
+                enableDragAndDrop()
+            }
+        })
+        allLiveDataList.add(groupSwipeFinished)
 
-            groupSwipeCanceled.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { enableDragAndDrop() }
-            })
-            allLiveDataList.add(groupSwipeCanceled)
+        groupSwipeCanceled.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { enableDragAndDrop() }
+        })
+        allLiveDataList.add(groupSwipeCanceled)
 
-            groupEditClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { group ->
-                    showOverlay()
-                    scrollToGroup(group.position)
-                }
-            })
-            allLiveDataList.add(groupEditClicked)
+        groupEditClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { group ->
+                showOverlay()
+                scrollToGroup(group.position)
+            }
+        })
+        allLiveDataList.add(groupEditClicked)
 
-            groupDragSucceed.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { } // do nothing yet
-            })
-            allLiveDataList.add(groupDragSucceed)
+        groupDragSucceed.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { } // do nothing yet
+        })
+        allLiveDataList.add(groupDragSucceed)
 
-            createGroupClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    showOverlay()
-                    scrollToBeginOfList()
-                }
-            })
-            allLiveDataList.add(createGroupClicked)
+        createGroupClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let {
+                showOverlay()
+                scrollToBeginOfList()
+            }
+        })
+        allLiveDataList.add(createGroupClicked)
 
-            groupCreateProductClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { groupPosition ->
-                    showOverlay()
-                    scrollToGroup(groupPosition)
-                }
-            })
-        }
+        groupCreateProductClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { groupPosition ->
+                showOverlay()
+                scrollToGroup(groupPosition)
+            }
+        })
     }
+}
 
-    private fun subscribeToDialogEvents() {
-        val owner = this
-        with(viewModel) {
-            deleteAllClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { showDeleteAllDialog() }
-            })
-            allLiveDataList.add(deleteAllClicked)
+private fun subscribeToDialogEvents() {
+    val owner = this
+    with(viewModel) {
+        deleteAllClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { showDeleteAllDialog() }
+        })
+        allLiveDataList.add(deleteAllClicked)
 
-            cancelAllClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { showCancelAllDialog() }
-            })
-            allLiveDataList.add(cancelAllClicked)
+        cancelAllClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { showCancelAllDialog() }
+        })
+        allLiveDataList.add(cancelAllClicked)
 
-            buyAllClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { showBuyAllDialog() }
-            })
-            allLiveDataList.add(buyAllClicked)
-        }
+        buyAllClicked.observe(owner, Observer {
+            it.getContentIfNotHandled()?.let { showBuyAllDialog() }
+        })
+        allLiveDataList.add(buyAllClicked)
     }
+}
 
-    override fun setUpFab(view: View) {
-        val fab = view.findViewById<SpeedDialView>(R.id.speedDial)
-        with(fab) {
+override fun setUpFab(view: View) {
+    val fab = view.findViewById<SpeedDialView>(R.id.speedDial)
+    with(fab) {
 
-            addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_recipe,
-                R.drawable.ic_fab_action_add_recipe)
-                .setFabImageTintColor(getThemeColor(context, ThemeColor.FAB_ICON_TINT))
-                .setLabel(getString(R.string.fab_create_recipe_action))
-                .setLabelClickable(true)
-                .setLabelBackgroundColor(getThemeColor(context,
-                    ThemeColor.SPEED_DIAL_LABEL_BACKGROUND))
-                .setLabelColor(getThemeColor(context, ThemeColor.SPEED_DIAL_LABEL_COLOR))
-                .create())
+        addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_recipe,
+            R.drawable.ic_fab_action_add_recipe)
+            .setFabImageTintColor(getThemeColor(context, ThemeColor.FAB_ICON_TINT))
+            .setLabel(getString(R.string.fab_create_recipe_action))
+            .setLabelClickable(true)
+            .setLabelBackgroundColor(getThemeColor(context,
+                ThemeColor.SPEED_DIAL_LABEL_BACKGROUND))
+            .setLabelColor(getThemeColor(context, ThemeColor.SPEED_DIAL_LABEL_COLOR))
+            .create())
 
-            addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_buy,
-                R.drawable.ic_fab_action_add_buy)
-                .setFabImageTintColor(getThemeColor(context, ThemeColor.FAB_ICON_TINT))
-                .setLabel(getString(R.string.fab_create_buy_action))
-                .setLabelClickable(true)
-                .setLabelBackgroundColor(getThemeColor(context,
-                    ThemeColor.SPEED_DIAL_LABEL_BACKGROUND))
-                .setLabelColor(getThemeColor(context, ThemeColor.SPEED_DIAL_LABEL_COLOR))
-                .create())
+        addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_buy,
+            R.drawable.ic_fab_action_add_buy)
+            .setFabImageTintColor(getThemeColor(context, ThemeColor.FAB_ICON_TINT))
+            .setLabel(getString(R.string.fab_create_buy_action))
+            .setLabelClickable(true)
+            .setLabelBackgroundColor(getThemeColor(context,
+                ThemeColor.SPEED_DIAL_LABEL_BACKGROUND))
+            .setLabelColor(getThemeColor(context, ThemeColor.SPEED_DIAL_LABEL_COLOR))
+            .create())
 
-            setOnActionSelectedListener {
-                when (it.id) {
-                    R.id.fab_add_recipe -> {
-                        viewModel.onCreateGroupClick()
-                        fab.close()
-                        true
-                    }
-                    R.id.fab_add_buy -> {
-                        viewModel.onCreateProductClick()
-                        fab.close()
-                        true
-                    }
-                    else -> throw UnsupportedOperationException("Unknown action id")
+        setOnActionSelectedListener {
+            when (it.id) {
+                R.id.fab_add_recipe -> {
+                    viewModel.onCreateGroupClick()
+                    fab.close()
+                    true
                 }
+                R.id.fab_add_buy -> {
+                    viewModel.onCreateProductClick()
+                    fab.close()
+                    true
+                }
+                else -> throw UnsupportedOperationException("Unknown action id")
             }
         }
     }
+}
 
-    override fun createSnackbars(view: View) {
-        val coordinatorLayout = view.findViewById<CoordinatorLayout>(R.id.coordinator_layout)
-        productUndoSnackbar = Snackbar.make(coordinatorLayout,
-            getString(R.string.buy_undo_label),
-            Snackbar.LENGTH_LONG)
-            .setAction(getString(R.string.undo_action)) { viewModel.undoProductRemoval() }
-            .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
-            .setBehavior(object : BaseTransientBottomBar.Behavior() {
-                override fun canSwipeDismissView(child: View): Boolean = false
-            })
+override fun createSnackbars(view: View) {
+    val coordinatorLayout = view.findViewById<CoordinatorLayout>(R.id.coordinator_layout)
+    productUndoSnackbar = Snackbar.make(coordinatorLayout,
+        getString(R.string.buy_undo_label),
+        Snackbar.LENGTH_LONG)
+        .setAction(getString(R.string.undo_action)) { viewModel.undoProductRemoval() }
+        .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
+        .setBehavior(object : BaseTransientBottomBar.Behavior() {
+            override fun canSwipeDismissView(child: View): Boolean = false
+        })
 
-        groupUndoSnackbar = Snackbar.make(coordinatorLayout,
-            getString(R.string.recipe_undo_label),
-            Snackbar.LENGTH_LONG)
-            .setAction(getString(R.string.undo_action)) { viewModel.undoGroupRemoval() }
-            .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
-            .setBehavior(object : BaseTransientBottomBar.Behavior() {
-                override fun canSwipeDismissView(child: View): Boolean = false
-            })
-    }
+    groupUndoSnackbar = Snackbar.make(coordinatorLayout,
+        getString(R.string.recipe_undo_label),
+        Snackbar.LENGTH_LONG)
+        .setAction(getString(R.string.undo_action)) { viewModel.undoGroupRemoval() }
+        .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
+        .setBehavior(object : BaseTransientBottomBar.Behavior() {
+            override fun canSwipeDismissView(child: View): Boolean = false
+        })
+}
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.buy_all -> {
-                viewModel.onBuyAllClick()
-                true
-            }
-            R.id.cancel_all -> {
-                viewModel.onCancelAllClick()
-                true
-            }
-            R.id.delete_all -> {
-                viewModel.onDeleteAllClick()
-                true
-            }
-            else -> false
+override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+        R.id.buy_all -> {
+            viewModel.onBuyAllClick()
+            true
         }
+        R.id.cancel_all -> {
+            viewModel.onCancelAllClick()
+            true
+        }
+        R.id.delete_all -> {
+            viewModel.onDeleteAllClick()
+            true
+        }
+        else -> false
     }
+}
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.toolbar_menu, menu)
-    }
+override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    inflater.inflate(R.menu.toolbar_menu, menu)
+}
 
-    private fun showProductRemovalSnackbar() {
-        productUndoSnackbar.show()
-    }
+private fun showProductRemovalSnackbar() {
+    productUndoSnackbar.show()
+}
 
-    private fun showGroupRemovalSnackbar() {
-        groupUndoSnackbar.show()
-    }
+private fun showGroupRemovalSnackbar() {
+    groupUndoSnackbar.show()
+}
 
-    private fun scrollToGroup(groupPosition: Int) {
-        expandManager.scrollToGroup(groupPosition, dpToPx(50).toInt())
-    }
+private fun scrollToGroup(groupPosition: Int) {
+    expandManager.scrollToGroup(groupPosition, dpToPx(50).toInt())
+}
 
-    private fun showBuyAllDialog() {
-        BuyAllDialog().show(childFragmentManager, "buyAllDialog")
-    }
+private fun showBuyAllDialog() {
+    BuyAllDialog().show(childFragmentManager, "buyAllDialog")
+}
 
-    private fun showCancelAllDialog() {
-        CancelAllDialog().show(childFragmentManager, "cancelAllDialog")
-    }
+private fun showCancelAllDialog() {
+    CancelAllDialog().show(childFragmentManager, "cancelAllDialog")
+}
 
-    private fun showDeleteAllDialog() {
-        DeleteAllDialog().show(childFragmentManager, "deleteAllDialog")
-    }
+private fun showDeleteAllDialog() {
+    DeleteAllDialog().show(childFragmentManager, "deleteAllDialog")
+}
 
-    private fun scrollToBeginOfList() {
-        recyclerView.scrollToPosition(0)
-    }
+private fun scrollToBeginOfList() {
+    recyclerView.scrollToPosition(0)
+}
 
-    override fun hideSnackbars() {
-        productUndoSnackbar.dismiss()
-        groupUndoSnackbar.dismiss()
-    }
+override fun hideSnackbars() {
+    productUndoSnackbar.dismiss()
+    groupUndoSnackbar.dismiss()
+}
 }

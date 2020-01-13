@@ -1,11 +1,13 @@
 package ru.netfantazii.handy.core.catalogs
 
+import android.graphics.drawable.NinePatchDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
@@ -59,6 +61,8 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         dragManager.draggingItemAlpha = 0.9f
         dragManager.draggingItemScale = 1.07f
         dragManager.dragStartItemAnimationDuration = 250
+        dragManager.setDraggingItemShadowDrawable(ContextCompat.getDrawable(requireContext(),
+            R.drawable.shadow) as NinePatchDrawable)
 
         val guardManager = RecyclerViewTouchActionGuardManager()
         guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true)
@@ -198,7 +202,7 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         Log.d(TAG, "enterCatalog: ")
         val direction =
             CatalogsFragmentDirections.actionCatalogsFragmentToProductsFragment(catalog.name,
-                catalog.id)
+                catalog.id, catalog.groupExpandStates)
         val navController = NavHostFragment.findNavController(this)
         navController.navigate(direction)
     }

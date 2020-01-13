@@ -2,6 +2,7 @@ package ru.netfantazii.handy.db
 
 import androidx.room.Ignore
 import androidx.room.Relation
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
 import java.util.*
 
@@ -10,9 +11,10 @@ class Catalog(
     creationTime: Calendar = Calendar.getInstance(),
     name: String = "",
     position: Int = 0,
+    groupExpandStates: RecyclerViewExpandableItemManager.SavedState = RecyclerViewExpandableItemManager.SavedState(longArrayOf()),
     val totalElementCount: Int = 0,
     val boughtElementCount: Int = 0
-) : CatalogEntity(id, creationTime, position, name) {
+) : CatalogEntity(id, creationTime, position, name, groupExpandStates) {
     @field:Ignore
     val buyStatus: BuyStatus
 

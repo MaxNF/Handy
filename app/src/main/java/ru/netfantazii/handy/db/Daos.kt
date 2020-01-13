@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.db
 
 import androidx.room.*
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
 
@@ -37,7 +38,7 @@ abstract class BaseDao<T> {
 @Dao
 abstract class CatalogDao : BaseDao<CatalogEntity>() {
     @Transaction
-    @Query("SELECT c.id, c.creation_time, c.name, c.position, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
+    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
     abstract fun getCatalogs(): Observable<MutableList<Catalog>>
 
     @Query("DELETE FROM CatalogEntity")
@@ -67,6 +68,16 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
     open fun addCatalogAndUpdateAll(catalog: CatalogEntity, list: List<CatalogEntity>) {
         addWithDefaultGroup(catalog)
         updateAllCatalogs(list)
+    }
+
+    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c WHERE id = :id")
+    abstract fun getCatalogById(id: Long): Catalog
+
+    @Transaction
+    open fun getCatalogByIdAndUpdateStates(id: Long, expandStates: RecyclerViewExpandableItemManager.SavedState) {
+        val catalog = getCatalogById(id)
+        catalog.groupExpandStates = expandStates
+        update(catalog)
     }
 }
 

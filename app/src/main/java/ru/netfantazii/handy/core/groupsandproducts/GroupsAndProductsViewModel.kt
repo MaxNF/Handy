@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.LocalRepository
@@ -28,6 +29,10 @@ class GroupsAndProductsViewModel(
             val shouldHintBeShown = allProducts.isEmpty() && groups.size == 1
             _newDataReceived.value = Event(shouldHintBeShown)
         }
+    lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
+    fun isGroupExpandStatesInitialized() = ::groupExpandStates.isInitialized
+
+    private val groupsWithUpdatedExpandStatus = mutableListOf<Group>()
 
     private val disposables = CompositeDisposable()
     private var lastRemovedGroup: Group? = null
@@ -214,7 +219,7 @@ class GroupsAndProductsViewModel(
         val previousStatus = product.buyStatus
         val fromPosition = product.position
         val toPosition: Int
-        if (previousStatus == BuyStatus.NOT_BOUGHT){
+        if (previousStatus == BuyStatus.NOT_BOUGHT) {
             toPosition = productList.lastIndex
             product.buyStatus = BuyStatus.BOUGHT
         } else {
@@ -319,7 +324,8 @@ class GroupsAndProductsViewModel(
     override fun onGroupCreateProductClick(group: Group) {
         Log.d(TAG, "onGroupCreateProductClick: ")
         overlayBuffer =
-            BufferObject(OVERLAY_ACTION_PRODUCT_CREATE, createNewProduct(currentCatalogId, group.id))
+            BufferObject(OVERLAY_ACTION_PRODUCT_CREATE,
+                createNewProduct(currentCatalogId, group.id))
         _groupCreateProductClicked.value = Event(group.position)
     }
 
@@ -400,9 +406,13 @@ class GroupsAndProductsViewModel(
         localRepository.removeAllGroups(groupList)
     }
 
+    fun saveExpandStateToDb(groupExpandStates: RecyclerViewExpandableItemManager.SavedState) {
+        localRepository.updateGroupExpandStates(currentCatalogId, groupExpandStates)
+    }
 
     override fun onCleared() {
         disposables.clear()
+        localRepository.updateAllGroups(groupsWithUpdatedExpandStatus)
     }
 }
 

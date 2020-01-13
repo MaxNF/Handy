@@ -1,6 +1,8 @@
 package ru.netfantazii.handy.db
 
 import androidx.room.TypeConverter
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
+import java.lang.NumberFormatException
 import java.util.*
 
 object Converters {
@@ -42,18 +44,33 @@ object Converters {
     }
 
 
-
     @TypeConverter
     @JvmStatic
-    fun calendarToMillis(calendar: Calendar) : Long {
+    fun calendarToMillis(calendar: Calendar): Long {
         return calendar.timeInMillis
     }
 
     @TypeConverter
     @JvmStatic
-    fun millisToCalendar(millis: Long) : Calendar {
+    fun millisToCalendar(millis: Long): Calendar {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = millis
         return calendar
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun groupExpandStatesToString(groupStates: RecyclerViewExpandableItemManager.SavedState) =
+        groupStates.adapterSavedState.joinToString(" ")
+
+    @TypeConverter
+    @JvmStatic
+    fun stringToGroupExpandStates(stringToParse: String): RecyclerViewExpandableItemManager.SavedState {
+        if (stringToParse.isEmpty()) return RecyclerViewExpandableItemManager.SavedState(longArrayOf())
+        val stringList = stringToParse.split(" ")
+        val array = LongArray(stringList.size) {
+                stringList[it].toLong()
+        }
+        return RecyclerViewExpandableItemManager.SavedState(array)
     }
 }

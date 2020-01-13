@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:text="@string/app_name"
-            android:textColor="@color/textColorBlack"
+            android:textColor="@color/appLogoBackgroundColor"
             android:textSize="20sp" />
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_gravity="start"
             android:layout_marginTop="4dp"
             android:text="@string/app_subtitle"
-            android:textColor="@color/textColorBlack"
+            android:textColor="@color/appLogoBackgroundColor"
             android:textSize="14sp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

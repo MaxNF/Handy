@@ -15,6 +15,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     private val TAG = "CatalogsViewModel"
     private var catalogList = mutableListOf<Catalog>()
         set(value) {
+            Log.d(TAG, ": ")
             field = value
             onNewDataReceive(value)
         }

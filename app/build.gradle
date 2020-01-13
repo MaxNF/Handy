@@ -74,7 +74,8 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.0'
 
     // AdvancedRecyclerView
-    implementation 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:1.0.0'
+    // Добавлен как локальная либа (форкнул и изменил SavedState класс, чтобы добавить геттер к массиву)
+    // implementation 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:1.0.0'
 
     // Navigation
     def nav_version = "2.1.0"

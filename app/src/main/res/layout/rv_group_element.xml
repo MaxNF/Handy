@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="ru.netfantazii.handy.R" />
 
         <import type="ru.netfantazii.handy.db.BuyStatus" />
@@ -23,7 +22,6 @@
             name="groupHandler"
             type="ru.netfantazii.handy.core.groupsandproducts.GroupClickHandler" />
     </data>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -86,9 +84,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@{group.name}"
                     android:textColor="?attr/listTextColor"
                     android:textSize="20sp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_element_count"
                     app:layout_constraintStart_toEndOf="@id/iv_add_ingredient"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="@string/hint_overlay_text_field" />

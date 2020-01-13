@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.db
 
 import androidx.room.*
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import java.util.*
 
 abstract class BaseEntity(
@@ -17,7 +18,9 @@ open class CatalogEntity(
     id: Long,
     creationTime: Calendar,
     position: Int,
-    name: String
+    name: String,
+    @field:ColumnInfo(name = "group_expand_states")
+    var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
 ) : BaseEntity(id, creationTime, position, name)
 
 @Entity(

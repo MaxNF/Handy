@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="MyStyle">
     <!--List items-->
     <attr name="catalogNormalColor" format="reference|color" />
     <attr name="catalogSwipeColor" format="reference|color" />
@@ -25,4 +26,5 @@
     <attr name="buyAllButtonColor" format="reference|color"/>
     <attr name="cancelAllButtonColor" format="reference|color"/>
     <attr name="deleteAllButtonColor" format="reference|color"/>
+    </declare-styleable>
 </resources>

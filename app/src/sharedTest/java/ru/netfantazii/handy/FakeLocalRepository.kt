@@ -100,6 +100,11 @@ class FakeLocalRepository : LocalRepository {
         return FakeDisposable()
     }
 
+    override fun removeAllGroups(groupList: List<Group>): Disposable {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return FakeDisposable()
+    }
+
     override fun addAndUpdateGroups(group: Group, list: List<Group>): Disposable {
         throw NotImplementedError("implement it first!")
         return FakeDisposable()
@@ -122,7 +127,8 @@ class FakeLocalRepository : LocalRepository {
     }
 
     override fun updateProductWithDelay(product: Product, delayMillis: Long): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return FakeDisposable()
     }
 
     override fun updateAllProducts(products: List<Product>): Disposable {
