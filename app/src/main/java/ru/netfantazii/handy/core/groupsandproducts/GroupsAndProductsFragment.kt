@@ -75,12 +75,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         expandManager.restoreState(groupExpandStates)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         viewModel.saveExpandStateToDb(expandManager.savedState as RecyclerViewExpandableItemManager.SavedState)
-        Log.d(TAG,
-            "onDestroy: ${(expandManager.savedState as RecyclerViewExpandableItemManager.SavedState).adapterSavedState.joinToString(
-                " ")}")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -224,6 +221,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             createProductClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showOverlay()
+                    expandManager.expandGroup(0) // открываем ALWAYS_ON_TOP группу
                     scrollToBeginOfList()
                 }
             })
@@ -297,6 +295,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             groupCreateProductClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { groupPosition ->
                     showOverlay()
+                    expandManager.expandGroup(groupPosition)
                     scrollToGroup(groupPosition)
                 }
             })

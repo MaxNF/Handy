@@ -29,7 +29,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:marginTop="@{isAlwayOnTopPresent ? (group.position == 1 ? 10 : 0) : 0}">
+        app:marginTop="@{isAlwayOnTopPresent &amp;&amp; group.position == 1 ? 10 : 0}">
 
         <FrameLayout
             android:id="@+id/container"

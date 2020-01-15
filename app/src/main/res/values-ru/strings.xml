@@ -68,7 +68,7 @@
     <string name="help5_2">Вы можете сменить тему или порядок сортировки в настройках.</string>
     <string name="welcome_button_text">Начать</string>
     <string name="rate_app_label">Оценить приложение</string>
-    <string name="unsorted_group_label">Мой список (группа по умолчанию)</string>
+    <string name="unsorted_group_label">Мой список (по умолчанию)</string>
     <string name="app_subtitle">список покупок на каждый день</string>
     <string name="buy_all_title">Отметить все как купленные</string>
     <string name="cancel_all_title">Отметить все как не купленные</string>

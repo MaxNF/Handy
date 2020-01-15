@@ -32,8 +32,6 @@ class GroupsAndProductsViewModel(
     lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
     fun isGroupExpandStatesInitialized() = ::groupExpandStates.isInitialized
 
-    private val groupsWithUpdatedExpandStatus = mutableListOf<Group>()
-
     private val disposables = CompositeDisposable()
     private var lastRemovedGroup: Group? = null
     private var lastRemovedProduct: Product? = null
@@ -285,7 +283,7 @@ class GroupsAndProductsViewModel(
 
     override fun onGroupClick(group: Group) {
         Log.d(TAG, "onGroupClick: ")
-        _groupClicked.value = Event(group.position)
+        _groupClicked.value = Event(filteredGroupList.indexOf(group))
     }
 
     override fun onGroupSwipeStart(group: Group) {
@@ -474,11 +472,11 @@ class GroupsAndProductsViewModel(
 
     fun saveExpandStateToDb(groupExpandStates: RecyclerViewExpandableItemManager.SavedState) {
         localRepository.updateGroupExpandStates(currentCatalogId, groupExpandStates)
+        Log.d(TAG, "saveExpandStateToDb: ")
     }
 
     override fun onCleared() {
         disposables.clear()
-        localRepository.updateAllGroups(groupsWithUpdatedExpandStatus)
     }
 }
 

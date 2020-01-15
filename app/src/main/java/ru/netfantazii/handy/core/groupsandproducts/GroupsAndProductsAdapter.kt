@@ -373,7 +373,7 @@ class GroupsAndProductsAdapter(
         x: Int,
         y: Int
     ): Int =
-        if (groupPosition > 0) SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H else SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_ANY
+        if (groupList[groupPosition].groupType == GroupType.ALWAYS_ON_TOP) SwipeableItemConstants.REACTION_CAN_NOT_SWIPE_ANY else SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H
 
     override fun onGetChildItemSwipeReactionType(
         holder: ProductViewHolder,
