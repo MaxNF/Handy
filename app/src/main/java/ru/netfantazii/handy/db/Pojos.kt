@@ -34,7 +34,7 @@ class Catalog(
     }
 }
 
-class Group(
+open class Group(
     id: Long = 0,
     catalogId: Long,
     creationTime: Calendar = Calendar.getInstance(),

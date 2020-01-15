@@ -10,9 +10,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.LocalRepository
 import ru.netfantazii.handy.core.*
+import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.db.*
 import ru.netfantazii.handy.extensions.*
-import java.lang.IllegalStateException
 import java.lang.UnsupportedOperationException
 import java.util.NoSuchElementException
 
@@ -25,10 +25,9 @@ class GroupsAndProductsViewModel(
     private var groupList = mutableListOf<Group>()
         set(groups) {
             field = groups
-            val allProducts = groups.flatMap { it.productList }
-            val shouldHintBeShown = allProducts.isEmpty() && groups.size == 1
-            _newDataReceived.value = Event(shouldHintBeShown)
+            onNewDataReceive(groups)
         }
+
     lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
     fun isGroupExpandStatesInitialized() = ::groupExpandStates.isInitialized
 
@@ -121,7 +120,23 @@ class GroupsAndProductsViewModel(
             })
     }
 
-    override fun getGroupList(): List<Group> = groupList
+    private fun onNewDataReceive(groups: MutableList<Group>) {
+        val allProducts = groups.flatMap { it.productList }
+        val shouldHintBeShown = allProducts.isEmpty() && groups.size == 1
+        _newDataReceived.value = Event(shouldHintBeShown)
+    }
+
+    override fun getGroupList(): List<Group> = getFilteredGroupList(groupList)
+
+    private fun getFilteredGroupList(groupList: MutableList<Group>): List<Group> {
+        return when {
+            groupList.isEmpty() -> groupList
+            groupList[0].productList.isEmpty() -> {
+                groupList.slice(1..groupList.lastIndex)
+            }
+            else -> groupList
+        }
+    }
 
     override fun onProductClick(group: Group, product: Product) {
         Log.d(TAG, "onProductClick: ")
@@ -168,22 +183,20 @@ class GroupsAndProductsViewModel(
     }
 
     override fun onProductDragSucceed(
-        fromGroup: Int,
+        fromGroup: Group,
         fromPosition: Int,
-        toGroup: Int,
+        toGroup: Group,
         toPosition: Int
     ) {
         Log.d(TAG, "onProductDragSucceed: ")
-        val firstGroup = groupList[fromGroup]
-        val secondGroup = groupList[toGroup]
-        val firstProductList = firstGroup.productList
-        val secondProductList = secondGroup.productList
+        val firstProductList = fromGroup.productList
+        val secondProductList = toGroup.productList
         if (firstProductList == secondProductList) {
             firstProductList.moveAndReassignPositions(fromPosition, toPosition)
             localRepository.updateAllProducts(firstProductList.sliceModified(fromPosition,
                 toPosition))
         } else {
-            firstProductList[fromPosition].groupId = secondGroup.id
+            firstProductList[fromPosition].groupId = toGroup.id
             moveBetweenListsAndReassignPositions(firstProductList,
                 fromPosition,
                 secondProductList,
@@ -194,8 +207,8 @@ class GroupsAndProductsViewModel(
                 addAll(secondProductList)
             }
             localRepository.updateAllProducts(listForUpdating)
-            checkGroupStatusAndUpdatePosition(firstGroup, groupList)
-            checkGroupStatusAndUpdatePosition(secondGroup, groupList)
+            checkGroupStatusAndUpdatePosition(fromGroup, groupList)
+            checkGroupStatusAndUpdatePosition(toGroup, groupList)
         }
         _productDragSucceed.value = Event(Unit)
     }
@@ -232,19 +245,45 @@ class GroupsAndProductsViewModel(
         localRepository.updateAllProducts(productListForUpdating)
     }
 
-
     fun onCreateProductClick() {
         Log.d(TAG, "onCreateProductClick: ")
         // Помещаем в буфер продукт для группы несортированных товаров (самая верхняя).
         // Поэтому id группы берем всегда у groupList[0]
         overlayBuffer = BufferObject(OVERLAY_ACTION_PRODUCT_CREATE,
-            createNewProduct(currentCatalogId, groupList[0].id))
+            createNewProduct(currentCatalogId,
+                groupList[0].id,
+                getNewProductPosition(groupList[0].productList)))
         _createProductClicked.value = Event(Unit)
     }
 
-    override fun onGroupClick(groupPosition: Int) {
+    private fun getNewProductPosition(productList: List<Product>): Int {
+        return when (currentSortOrder) {
+            SortOrder.NEWEST_FIRST -> 0
+            SortOrder.OLDEST_FIRST -> getFirstNotBoughtProductPosition(productList)
+        }
+    }
+
+    private fun getFirstNotBoughtProductPosition(productList: List<Product>): Int {
+        val lastNotBoughtProduct = productList.findLast { it.buyStatus == BuyStatus.NOT_BOUGHT }
+        return if (lastNotBoughtProduct != null) lastNotBoughtProduct.position + 1 else 0
+    }
+
+    private fun getNewGroupPosition(groupList: List<Group>): Int {
+        return when (currentSortOrder) {
+            SortOrder.NEWEST_FIRST -> 1 // добавляем после дефолтной группы!
+            SortOrder.OLDEST_FIRST -> getFirstNotBoughtGroupPosition(groupList)
+        }
+    }
+
+    private fun getFirstNotBoughtGroupPosition(groupList: List<Group>): Int {
+        val listToFindGroup = groupList.subList(1, groupList.size)
+        val lastNotBoughtGroup = listToFindGroup.findLast { it.buyStatus == BuyStatus.NOT_BOUGHT }
+        return if (lastNotBoughtGroup != null) lastNotBoughtGroup.position + 1 else 1
+    }
+
+    override fun onGroupClick(group: Group) {
         Log.d(TAG, "onGroupClick: ")
-        _groupClicked.value = Event(groupPosition)
+        _groupClicked.value = Event(group.position)
     }
 
     override fun onGroupSwipeStart(group: Group) {
@@ -297,47 +336,72 @@ class GroupsAndProductsViewModel(
         Log.d(TAG, "onOverlayEnterClick: ")
         when (overlayBuffer.action) {
             OVERLAY_ACTION_GROUP_CREATE -> {
-                groupList.shiftPositionsToRight(1)
-                localRepository.addAndUpdateGroups(overlayBuffer.bufferObject as Group, groupList)
-                _overlayEnterClicked.value = Event(Unit)
+                addNewGroupToRepo()
             }
             OVERLAY_ACTION_GROUP_RENAME -> {
-                localRepository.addAndUpdateGroups(overlayBuffer.bufferObject as Group, groupList)
-                _overlayEnterClicked.value = Event(Unit)
+                renameGroupAndUpdate()
             }
             OVERLAY_ACTION_PRODUCT_CREATE -> {
-                val groupId = (overlayBuffer.bufferObject as Product).groupId
-                val listForUpdating = groupList.find { it.id == groupId }?.productList
-                    ?: throw UnsupportedOperationException("List for updating can not be null")
-                listForUpdating.shiftPositionsToRight()
-                localRepository.addAndUpdateProducts(overlayBuffer.bufferObject as Product,
-                    listForUpdating)
-                overlayBuffer.replaceObject(createNewProduct(currentCatalogId, groupId))
+                addNewProductToRepo()
             }
             OVERLAY_ACTION_PRODUCT_RENAME -> {
-                localRepository.updateProduct(overlayBuffer.bufferObject as Product)
-                _overlayEnterClicked.value = Event(Unit)
+                renameProductAndUpdate()
             }
         }
+    }
+
+    private fun addNewGroupToRepo() {
+        val groupToAdd = overlayBuffer.bufferObject as Group
+        groupList.add(groupToAdd.position, groupToAdd)
+        groupList.reassignPositions()
+        localRepository.addAndUpdateGroups(groupToAdd, groupList)
+        _overlayEnterClicked.value = Event(Unit)
+    }
+
+    private fun renameGroupAndUpdate() {
+//        localRepository.addAndUpdateGroups(overlayBuffer.bufferObject as Group, groupList)
+        localRepository.updateGroup(overlayBuffer.bufferObject as Group)
+        _overlayEnterClicked.value = Event(Unit)
+    }
+
+    private fun addNewProductToRepo() {
+        val product = overlayBuffer.bufferObject as Product
+        val productList = groupList.find { it.id == product.groupId }?.productList
+            ?: throw UnsupportedOperationException("Group is not found")
+        productList.add(product.position, product)
+        productList.reassignPositions()
+        localRepository.addAndUpdateProducts(overlayBuffer.bufferObject as Product,
+            productList)
+        overlayBuffer.replaceObject(createNewProduct(currentCatalogId,
+            product.groupId,
+            getNewProductPosition(productList)))
+    }
+
+    private fun renameProductAndUpdate() {
+        localRepository.updateProduct(overlayBuffer.bufferObject as Product)
+        _overlayEnterClicked.value = Event(Unit)
     }
 
     override fun onGroupCreateProductClick(group: Group) {
         Log.d(TAG, "onGroupCreateProductClick: ")
         overlayBuffer =
             BufferObject(OVERLAY_ACTION_PRODUCT_CREATE,
-                createNewProduct(currentCatalogId, group.id))
-        _groupCreateProductClicked.value = Event(group.position)
+                createNewProduct(currentCatalogId,
+                    group.id,
+                    getNewProductPosition(group.productList)))
+        _groupCreateProductClicked.value = Event(getGroupList().indexOf(group))
     }
 
     fun onCreateGroupClick() {
         Log.d(TAG, "onCreateGroupClick: ")
-        val newGroup = Group(catalogId = currentCatalogId)
+        val newGroup =
+            Group(catalogId = currentCatalogId, position = getNewGroupPosition(groupList))
         overlayBuffer = BufferObject(OVERLAY_ACTION_GROUP_CREATE, newGroup)
         _createGroupClicked.value = Event(Unit)
     }
 
-    private fun createNewProduct(catalogId: Long, groupId: Long) =
-        Product(catalogId = catalogId, groupId = groupId)
+    private fun createNewProduct(catalogId: Long, groupId: Long, position: Int) =
+        Product(catalogId = catalogId, groupId = groupId, position = position)
 
     fun undoProductRemoval() {
         Log.d(TAG, "undoProductRemoval: ")

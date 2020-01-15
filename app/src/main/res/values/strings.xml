@@ -7,7 +7,7 @@
 
     <!--Preferences-->
     <string name="theme_pref_label">Theme</string>
-    <string name="sorting_pref_label">Sorting</string>
+    <string name="sorting_pref_label">Where to add new elements?</string>
 
     <!--Theme labels-->
     <string name="theme_violet_label">Purple</string>
@@ -35,8 +35,8 @@
     <!--Undo-->
     <string name="catalog_undo_label">The list was deleted</string>
     <string name="recipe_undo_label">The group was deleted</string>
-    <string name="buy_undo_label">The unit was deleted</string>
-    <string name="ingredient_undo_label">The unit was deleted</string>
+    <string name="buy_undo_label">The product was deleted</string>
+    <string name="ingredient_undo_label">The product was deleted</string>
     <string name="undo_action">RESTORE</string>
 
     <!--Headers-->
@@ -44,15 +44,15 @@
 
     <!--Buttons-->
     <string name="fab_create_recipe_action">Add group</string>
-    <string name="fab_create_buy_action">Add unit</string>
-    <string name="hint_recipe_empty">The group is empty, add items please</string>
+    <string name="fab_create_buy_action">Add product</string>
+    <string name="hint_recipe_empty">The group is empty</string>
     <string name="hint_recipe_expand">Tap to expand</string>
     <string name="hint_recipe_collapse">Tap to collapse</string>
 
     <!--Hints-->
     <string name="hint_overlay_text_field">Type name here</string>
     <string name="hint_nothing_to_show">Nothing to show</string>
-    <string name="hint_nothing_to_show_catalogs">Create a new shopping list first</string>
+    <string name="hint_nothing_to_show_catalogs">Please create a new shopping list</string>
     <string name="hint_nothing_to_show_recipe">Please add a new unit or a group</string>
 
     <!--Toasts-->
@@ -84,8 +84,8 @@
 
     <!--Databinding Templates-->
     <string name="element_count_template" translatable="false">%1$s\%2$s</string>
-    <string name="unsorted_group_label">No group</string>
-    <string name="hint_recipe_empty_unsorted">No products found, add one</string>
+    <string name="unsorted_group_label">My list (default group)</string>
+    <string name="hint_recipe_empty_unsorted">No products found</string>
     <string name="buy_all_title">Mark all bought</string>
     <string name="cancel_all_title">Mark all non-bought</string>
     <string name="delete_all_title">Delete all</string>

@@ -11,6 +11,10 @@
         <import type="ru.netfantazii.handy.db.HintType" />
 
         <variable
+            name="isAlwayOnTopPresent"
+            type="Boolean" />
+
+        <variable
             name="group"
             type="ru.netfantazii.handy.db.Group" />
 
@@ -25,7 +29,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:marginTop="@{group.position == 1 ? 10 : 0}">
+        app:marginTop="@{isAlwayOnTopPresent ? (group.position == 1 ? 10 : 0) : 0}">
 
         <FrameLayout
             android:id="@+id/container"
@@ -39,7 +43,7 @@
                 android:id="@+id/area_for_expand_click"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="@{() -> groupHandler.onGroupClick(group.position)}">
+                android:onClick="@{() -> groupHandler.onGroupClick(group)}">
 
                 <ImageButton
                     android:id="@+id/ib_element_edit"

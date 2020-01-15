@@ -22,8 +22,11 @@ import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
+import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
+import ru.netfantazii.handy.db.SortOrder
+import ru.netfantazii.handy.extensions.getSortOrder
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -51,6 +54,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
 
         sp = PreferenceManager.getDefaultSharedPreferences(this)
+        loadPreferencesToMemory()
+
         showWelcomeScreenIfNeeded()
 
     }
@@ -75,6 +80,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         sp.edit().putString(themeKey, themeDefaultValue)
             .putString(sortingKey, sortingDefaultValue)
             .apply()
+    }
+
+    private fun loadPreferencesToMemory() {
+        currentSortOrder = getSortOrder(this)
     }
 
     private fun setFirstLaunchToFalse() {

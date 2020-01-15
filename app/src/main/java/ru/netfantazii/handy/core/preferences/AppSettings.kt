@@ -4,15 +4,18 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.MainActivity
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.db.SortOrder
+import ru.netfantazii.handy.extensions.getSortOrder
+import java.util.NoSuchElementException
 
 const val FIRST_LAUNCH_KEY = "first_launch"
+lateinit var currentSortOrder: SortOrder
 
 class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "AppSettings"
@@ -45,7 +48,10 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val preference: Preference? = findPreference(key)
-        preference?.let { if (key == context!!.getString(R.string.theme_pref_key)) reloadActivity() }
+        preference?.let {
+            if (key == context!!.getString(R.string.theme_pref_key)) reloadActivity()
+            if (key == context!!.getString(R.string.sorting_pref_key)) currentSortOrder = getSortOrder(context!!)
+        }
     }
 
     private fun reloadActivity() {

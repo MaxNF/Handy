@@ -5,7 +5,7 @@
 
     <!--Preferences-->
     <string name="theme_pref_label">Тема</string>
-    <string name="sorting_pref_label">Сортировка</string>
+    <string name="sorting_pref_label">Куда добавлять новые элементы?</string>
 
     <!--Theme names-->
     <string name="theme_violet_label">Фиолетовая</string>
@@ -32,7 +32,7 @@
     <!--Buttons-->
     <string name="fab_create_recipe_action">Добавить группу</string>
     <string name="fab_create_buy_action">Добавить товар</string>
-    <string name="hint_recipe_empty">Группа пуста, добавьте товары</string>
+    <string name="hint_recipe_empty">Группа пуста</string>
     <string name="hint_recipe_expand">Нажмите, чтобы развернуть список</string>
     <string name="hint_recipe_collapse">Нажмите, чтобы свернуть список</string>
 
@@ -45,8 +45,8 @@
     <!--Toasts-->
     <string name="was_bought_toast">\"%s\" куплен</string>
     <string name="was_canceled_toast">Покупка \"%s\" отменена</string>
-    <string name="sorting_newest_first_label">Новые в начале</string>
-    <string name="sorting_oldest_first_label">Старые в начале</string>
+    <string name="sorting_newest_first_label">В начало</string>
+    <string name="sorting_oldest_first_label">В конец</string>
     <string name="dialog_cancel">Отмена</string>
     <string name="dialog_delete_all_msg">Очистить список?</string>
     <string name="dialog_yes">Да</string>
@@ -68,5 +68,10 @@
     <string name="help5_2">Вы можете сменить тему или порядок сортировки в настройках.</string>
     <string name="welcome_button_text">Начать</string>
     <string name="rate_app_label">Оценить приложение</string>
-    <string name="unsorted_group_label">Без группы</string>
+    <string name="unsorted_group_label">Мой список (группа по умолчанию)</string>
+    <string name="app_subtitle">список покупок на каждый день</string>
+    <string name="buy_all_title">Отметить все как купленные</string>
+    <string name="cancel_all_title">Отметить все как не купленные</string>
+    <string name="delete_all_title">Удалить все</string>
+    <string name="hint_recipe_empty_unsorted">Продукты не найдены</string>
 </resources>

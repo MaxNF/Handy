@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
+import androidx.preference.PreferenceManager
+import ru.netfantazii.handy.R
+import ru.netfantazii.handy.db.SortOrder
 
 fun doWithDelay(delayMillis: Long, action: () -> Unit) {
     Handler().postDelayed(action, delayMillis)
@@ -38,3 +41,14 @@ fun pxToDp(px: Int): Float {
     return px / Resources.getSystem().displayMetrics.density
 }
 
+fun getSortOrder(context: Context): SortOrder {
+    val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+    val sortingKey = context.getString(R.string.sorting_pref_key)
+    val sortingNewestFirstValue = context.getString(R.string.sorting_newest_first_value)
+    val sortingOldestFirstValue = context.getString(R.string.sorting_oldest_first_value)
+
+    return when (sharedPref.getString(sortingKey, sortingNewestFirstValue)) {
+        sortingOldestFirstValue -> SortOrder.OLDEST_FIRST
+        else -> SortOrder.NEWEST_FIRST
+    }
+}

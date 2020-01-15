@@ -18,3 +18,7 @@ enum class HintType {
     EXPAND, COLLAPSE, EMPTY, EMPTY_UNSORTED
 }
 
+enum class SortOrder {
+    NEWEST_FIRST, OLDEST_FIRST
+}
+

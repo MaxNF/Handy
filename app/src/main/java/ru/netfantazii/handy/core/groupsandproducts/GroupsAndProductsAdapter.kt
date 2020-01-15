@@ -16,6 +16,7 @@ import ru.netfantazii.handy.databinding.RvProductElementBinding
 import ru.netfantazii.handy.databinding.RvUnsortedGroupElementBinding
 import ru.netfantazii.handy.db.BuyStatus
 import ru.netfantazii.handy.db.Group
+import ru.netfantazii.handy.db.GroupType
 import ru.netfantazii.handy.db.Product
 import java.lang.UnsupportedOperationException
 
@@ -32,11 +33,11 @@ interface ProductClickHandler {
 
     fun onProductEditClick(product: Product)
 
-    fun onProductDragSucceed(fromGroup: Int, fromPosition: Int, toGroup: Int, toPosition: Int)
+    fun onProductDragSucceed(fromGroup: Group, fromPosition: Int, toGroup: Group, toPosition: Int)
 }
 
 interface GroupClickHandler {
-    fun onGroupClick(groupPosition: Int)
+    fun onGroupClick(group: Group)
 
     fun onGroupSwipeStart(group: Group)
 
@@ -57,9 +58,8 @@ interface GroupStorage {
     fun getGroupList(): List<Group>
 }
 
-const val VIEW_TYPE_ALWAYS_ON_TOP = 1
-const val VIEW_TYPE_STANDARD_GROUP = 2
-const val VIEW_TYPE_FIRST_GROUP = 3
+const val VIEW_TYPE_ALWAYS_ON_TOP: Int = 1
+const val VIEW_TYPE_STANDARD_GROUP: Int = 2
 
 open class BaseViewHolder(view: View) :
     AbstractDraggableSwipeableItemViewHolder(view), ExpandableItemViewHolder {
@@ -82,7 +82,8 @@ abstract class BaseGroupViewHolder(rootView: View) : BaseViewHolder(rootView) {
     abstract fun bindData(
         group: Group,
         handler: GroupClickHandler,
-        expandManager: RecyclerViewExpandableItemManager
+        expandManager: RecyclerViewExpandableItemManager,
+        isAlwaysOnTopPresent: Boolean
     )
 }
 
@@ -92,12 +93,15 @@ class GroupViewHolder(private val groupBinding: RvGroupElementBinding) :
     override fun bindData(
         group: Group,
         handler: GroupClickHandler,
-        expandManager: RecyclerViewExpandableItemManager
+        expandManager: RecyclerViewExpandableItemManager,
+        isAlwaysOnTopPresent: Boolean
     ) {
         groupBinding.group = group
         groupBinding.groupHandler = handler
-        groupBinding.executePendingBindings()
         groupBinding.expandManager = expandManager
+        groupBinding.isAlwayOnTopPresent = isAlwaysOnTopPresent
+        groupBinding.executePendingBindings()
+
     }
 }
 
@@ -107,7 +111,8 @@ class UnsortedGroupViewHolder(private val groupBinding: RvUnsortedGroupElementBi
     override fun bindData(
         group: Group,
         handler: GroupClickHandler,
-        expandManager: RecyclerViewExpandableItemManager
+        expandManager: RecyclerViewExpandableItemManager,
+        isAlwaysOnTopPresent: Boolean
     ) {
         groupBinding.group = group
         groupBinding.groupHandler = handler
@@ -147,7 +152,10 @@ class GroupsAndProductsAdapter(
     override fun getChildCount(groupPosition: Int): Int = groupList[groupPosition].productList.size
 
     override fun getGroupItemViewType(groupPosition: Int): Int =
-        if (groupPosition == 0) VIEW_TYPE_ALWAYS_ON_TOP else VIEW_TYPE_STANDARD_GROUP
+        when (groupList[groupPosition].groupType) {
+            GroupType.ALWAYS_ON_TOP -> VIEW_TYPE_ALWAYS_ON_TOP
+            else -> VIEW_TYPE_STANDARD_GROUP
+        }
 
     override fun onCheckCanExpandOrCollapseGroup(
         holder: BaseGroupViewHolder,
@@ -199,12 +207,17 @@ class GroupsAndProductsAdapter(
         groupPosition: Int,
         viewType: Int
     ) {
-        holder.bindData(groupList[groupPosition], groupClickHandler, expandManager)
+        holder.bindData(groupList[groupPosition],
+            groupClickHandler,
+            expandManager,
+            groupList[0].groupType == GroupType.ALWAYS_ON_TOP)
     }
 
 
     override fun onMoveGroupItem(fromGroupPosition: Int, toGroupPosition: Int) {
-        groupClickHandler.onGroupDragSucceed(fromGroupPosition, toGroupPosition)
+        // позиции списка и свойства конкретной группы могут различаться, т.к. список может быть предварительно отфильтрован
+        groupClickHandler.onGroupDragSucceed(groupList[fromGroupPosition].position,
+            groupList[toGroupPosition].position)
     }
 
     override fun onMoveChildItem(
@@ -213,10 +226,13 @@ class GroupsAndProductsAdapter(
         toGroupPosition: Int,
         toChildPosition: Int
     ) {
-        val fromProductList = groupList[fromGroupPosition].productList
+        val fromRealGroupPos = groupList[fromGroupPosition].position
+        val toRealGroupPos = groupList[toGroupPosition].position
+
+        val fromProductList = groupList[fromRealGroupPos].productList
         val draggingProduct = fromProductList[fromChildPosition]
 
-        val toProductList = groupList[toGroupPosition].productList
+        val toProductList = groupList[toRealGroupPos].productList
         val dropProduct = when {
             toProductList.isEmpty() -> null
             toChildPosition > toProductList.lastIndex -> toProductList.last()
@@ -245,9 +261,9 @@ class GroupsAndProductsAdapter(
                 }
             }
 
-        productClickHandler.onProductDragSucceed(fromGroupPosition,
+        productClickHandler.onProductDragSucceed(groupList[fromGroupPosition],
             fromChildPosition,
-            toGroupPosition,
+            groupList[toGroupPosition],
             finalDropPosition)
     }
 
@@ -256,7 +272,7 @@ class GroupsAndProductsAdapter(
         groupPosition: Int,
         x: Int,
         y: Int
-    ): Boolean = groupPosition > 0
+    ): Boolean = if (groupList[0].groupType == GroupType.ALWAYS_ON_TOP) groupPosition > 0 else true
 
     override fun onCheckGroupCanDrop(draggingGroupPosition: Int, dropGroupPosition: Int): Boolean =
         true // на данный момент не используется, для использования нужно включить checkCanDrop(true)
@@ -275,15 +291,16 @@ class GroupsAndProductsAdapter(
     ): ItemDraggableRange {
         return if (groupList[groupPosition].buyStatus == BuyStatus.NOT_BOUGHT) {
             val firstBoughtGroup =
-                groupList.subList(1, groupList.size)
-                    .find { it.buyStatus == BuyStatus.BOUGHT } // не учитываем ALWAYS ON TOP группу
+                // не учитываем ALWAYS ON TOP группу
+                groupList.find { it.groupType != GroupType.ALWAYS_ON_TOP && it.buyStatus == BuyStatus.BOUGHT }
             val firstBoughtGroupPosition =
-                if (firstBoughtGroup != null) firstBoughtGroup.position - 1 else groupCount - 1
-            ItemDraggableRange(1, firstBoughtGroupPosition)
+                if (firstBoughtGroup != null) groupList.indexOf(firstBoughtGroup) - 1 else groupCount - 1
+            val isAlwaysOnTopGroupPresent = groupList[0].groupType == GroupType.ALWAYS_ON_TOP
+            ItemDraggableRange(if (isAlwaysOnTopGroupPresent) 1 else 0, firstBoughtGroupPosition)
         } else {
             val lastNotBoughtGroup = groupList.findLast { it.buyStatus == BuyStatus.NOT_BOUGHT }
             val lastNotBoughtGroupPosition =
-                if (lastNotBoughtGroup != null) lastNotBoughtGroup.position + 1 else 1
+                if (lastNotBoughtGroup != null) groupList.indexOf(lastNotBoughtGroup) + 1 else 1
             ItemDraggableRange(lastNotBoughtGroupPosition, groupCount - 1)
         }
     }
