@@ -1,5 +1,6 @@
 package ru.netfantazii.handy
 
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.Observable
@@ -72,6 +73,13 @@ class FakeLocalRepository : LocalRepository {
         return FakeDisposable()
     }
 
+    override fun updateGroupExpandStates(
+        catalogId: Long,
+        expandStates: RecyclerViewExpandableItemManager.SavedState
+    ): Disposable {
+        return FakeDisposable()
+    }
+
     override fun addGroup(group: Group): Disposable {
         return FakeDisposable()
     }
@@ -101,7 +109,6 @@ class FakeLocalRepository : LocalRepository {
     }
 
     override fun removeAllGroups(groupList: List<Group>): Disposable {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         return FakeDisposable()
     }
 
@@ -127,7 +134,6 @@ class FakeLocalRepository : LocalRepository {
     }
 
     override fun updateProductWithDelay(product: Product, delayMillis: Long): Disposable {
-        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         return FakeDisposable()
     }
 

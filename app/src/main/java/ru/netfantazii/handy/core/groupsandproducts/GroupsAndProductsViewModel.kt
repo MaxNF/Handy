@@ -27,6 +27,7 @@ class GroupsAndProductsViewModel(
             field = groups
             onNewDataReceive(groups)
         }
+    private var filteredGroupList = listOf<Group>()
 
     lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
     fun isGroupExpandStatesInitialized() = ::groupExpandStates.isInitialized
@@ -123,10 +124,11 @@ class GroupsAndProductsViewModel(
     private fun onNewDataReceive(groups: MutableList<Group>) {
         val allProducts = groups.flatMap { it.productList }
         val shouldHintBeShown = allProducts.isEmpty() && groups.size == 1
+        filteredGroupList = getFilteredGroupList(groupList)
         _newDataReceived.value = Event(shouldHintBeShown)
     }
 
-    override fun getGroupList(): List<Group> = getFilteredGroupList(groupList)
+    override fun getGroupList(): List<Group> = filteredGroupList
 
     private fun getFilteredGroupList(groupList: MutableList<Group>): List<Group> {
         return when {

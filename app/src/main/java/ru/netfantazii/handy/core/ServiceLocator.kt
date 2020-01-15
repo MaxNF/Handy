@@ -18,13 +18,12 @@ object ServiceLocator {
 
     fun provideLocalRepository(context: Context): LocalRepository {
         synchronized(this) {
-            //            TODO заменить бд
             return localRepository ?: LocalRepositoryImpl(getDatabaseInstance(context))
         }
     }
 
     private fun getDatabaseInstance(context: Context): ProductDatabase {
-        return productDatabase ?: buildInMemoryDatabase(context)
+        return productDatabase ?: buildDatabase(context)
     }
 
     private fun buildDatabase(context: Context): ProductDatabase {

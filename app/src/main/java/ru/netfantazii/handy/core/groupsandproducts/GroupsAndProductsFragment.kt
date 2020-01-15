@@ -104,7 +104,6 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                 .get(GroupsAndProductsViewModel::class.java)
     }
 
-    // todo сделать загрузку и сохранение статуса открытых и закрытых групп
     override fun createRecyclerView(view: View) {
         dragManager = RecyclerViewDragDropManager()
         dragManager.setInitiateOnMove(false)
