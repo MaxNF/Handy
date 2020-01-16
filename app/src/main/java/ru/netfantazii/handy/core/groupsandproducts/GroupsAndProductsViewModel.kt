@@ -28,6 +28,11 @@ class GroupsAndProductsViewModel(
             onNewDataReceive(groups)
         }
     private var filteredGroupList = listOf<Group>()
+    val shouldHintBeShown: Boolean
+        get() {
+            val allProducts = filteredGroupList.flatMap { it.productList }
+            return allProducts.isEmpty() && filteredGroupList.isEmpty()
+        }
 
     lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
     fun isGroupExpandStatesInitialized() = ::groupExpandStates.isInitialized
@@ -38,8 +43,8 @@ class GroupsAndProductsViewModel(
 
     override lateinit var overlayBuffer: BufferObject
 
-    private val _newDataReceived = MutableLiveData<Event<Boolean>>()
-    val newDataReceived: LiveData<Event<Boolean>> = _newDataReceived
+    private val _newDataReceived = MutableLiveData<Event<Unit>>()
+    val newDataReceived: LiveData<Event<Unit>> = _newDataReceived
 
     private val _productClicked = MutableLiveData<Event<Product>>()
     val productClicked: LiveData<Event<Product>> = _productClicked
@@ -120,10 +125,8 @@ class GroupsAndProductsViewModel(
     }
 
     private fun onNewDataReceive(groups: MutableList<Group>) {
-        val allProducts = groups.flatMap { it.productList }
-        val shouldHintBeShown = allProducts.isEmpty() && groups.size == 1
         filteredGroupList = getFilteredGroupList(groupList)
-        _newDataReceived.value = Event(shouldHintBeShown)
+        _newDataReceived.value = Event(Unit)
     }
 
     override fun getGroupList(): List<Group> = filteredGroupList
@@ -477,6 +480,10 @@ class GroupsAndProductsViewModel(
 
     override fun onCleared() {
         disposables.clear()
+    }
+
+    fun onFragmentStop(groupExpandStates: RecyclerViewExpandableItemManager.SavedState) {
+        saveExpandStateToDb(groupExpandStates)
     }
 }
 

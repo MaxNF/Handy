@@ -36,9 +36,8 @@ import java.lang.UnsupportedOperationException
 
 class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     private val TAG = "GroupsAndProducts"
-    private val groupExpandStatesKey = "group_expand_states"
 
-    val fragmentArgs: GroupsAndProductsFragmentArgs by navArgs()
+    private val fragmentArgs: GroupsAndProductsFragmentArgs by navArgs()
 
     private lateinit var viewModel: GroupsAndProductsViewModel
     private lateinit var recyclerView: RecyclerView
@@ -75,8 +74,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         expandManager.restoreState(groupExpandStates)
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         viewModel.saveExpandStateToDb(expandManager.savedState as RecyclerViewExpandableItemManager.SavedState)
     }
 
@@ -152,13 +151,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             newDataReceived.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { shouldHintBeShown ->
                     refreshRecyclerView()
-                    if (shouldHintBeShown) {
-                        showHint()
-                    } else {
-                        hideHint()
-                    }
                     Log.d(TAG, "subscribeToEvents: ")
                 }
+                if (shouldHintBeShown) showHint() else hideHint()
                 restoreExpandState(viewModel.groupExpandStates)
             })
 

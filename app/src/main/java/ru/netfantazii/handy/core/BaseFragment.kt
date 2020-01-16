@@ -43,6 +43,11 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
         unsubscribeFromEvents()
     }
 
+    override fun onStop() {
+        super.onStop()
+        hideSnackbars()
+    }
+
     protected fun showOverlay() {
         hideSnackbars()
         val overlayFragment = OverlayFragment()

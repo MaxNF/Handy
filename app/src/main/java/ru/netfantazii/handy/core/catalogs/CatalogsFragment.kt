@@ -19,7 +19,6 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
-import com.jakewharton.rxbinding3.material.dismisses
 import com.leinardi.android.speeddial.SpeedDialView
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
@@ -121,14 +120,10 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
         with(viewModel) {
             newDataReceived.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { shouldHintBeShown ->
+                it.getContentIfNotHandled()?.let {
                     refreshRecyclerView()
-                    if (shouldHintBeShown) {
-                        showHint()
-                    } else {
-                        hideHint()
-                    }
                 }
+                if (shouldHintBeShown) showHint() else hideHint()
             })
             allLiveDataList.add(newDataReceived)
 
@@ -213,5 +208,10 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
     override fun hideSnackbars() {
         undoSnackbar.dismiss()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.onFragmentStop()
     }
 }

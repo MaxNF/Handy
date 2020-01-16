@@ -21,8 +21,8 @@
     <string name="theme_gray_label">Gray</string>
 
     <!--Sorting labels-->
-    <string name="sorting_newest_first_label">Newest first</string>
-    <string name="sorting_oldest_first_label">Oldest first</string>
+    <string name="sorting_newest_first_label">To the beginning</string>
+    <string name="sorting_oldest_first_label">To the end</string>
 
     <!--Dialogs-->
     <string name="dialog_delete_all_msg">Clear this list?</string>

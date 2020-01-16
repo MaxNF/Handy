@@ -19,6 +19,9 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
             field = value
             onNewDataReceive(value)
         }
+    private var filteredCatalogList = listOf<Catalog>()
+    val shouldHintBeShown: Boolean
+        get() = filteredCatalogList.isEmpty()
 
     private val disposables = CompositeDisposable()
 
@@ -26,8 +29,8 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override lateinit var overlayBuffer: BufferObject
 
-    private val _newDataReceived = MutableLiveData<Event<Boolean>>()
-    val newDataReceived: LiveData<Event<Boolean>> = _newDataReceived
+    private val _newDataReceived = MutableLiveData<Event<Unit>>()
+    val newDataReceived: LiveData<Event<Unit>> = _newDataReceived
 
     private val _catalogClicked = MutableLiveData<Event<Catalog>>()
     val catalogClicked: LiveData<Event<Catalog>> = _catalogClicked
@@ -65,9 +68,8 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     private fun onNewDataReceive(newList: MutableList<Catalog>) {
         Log.d(TAG, "onNewDataReceive: ")
-        lastRemovedObject?.let { newList.remove(it) }
-        val shouldHintBeShown = newList.isEmpty()
-        _newDataReceived.value = Event(shouldHintBeShown)
+        filteredCatalogList = getFilteredCatalogList(catalogList)
+        _newDataReceived.value = Event(Unit)
     }
 
     private fun subscribeToCatalogsChanges() {
@@ -78,7 +80,14 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
             })
     }
 
-    override fun getCatalogList(): List<Catalog> = catalogList
+    private fun getFilteredCatalogList(catalogList: MutableList<Catalog>): List<Catalog> {
+        val listToFilter = mutableListOf<Catalog>()
+        listToFilter.addAll(catalogList)
+        lastRemovedObject?.let { listToFilter.remove(it) }
+        return listToFilter
+    }
+
+    override fun getCatalogList(): List<Catalog> = filteredCatalogList
 
 
     override fun onCatalogClick(catalog: Catalog) {
@@ -174,7 +183,11 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     }
 
     override fun onCleared() {
+        Log.d(TAG, "onCleared: ")
         disposables.clear()
+    }
+
+    fun onFragmentStop() {
         lastRemovedObject?.let { realRemove(it) }
     }
 }
