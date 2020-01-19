@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_catalogs_fragment_to_products_fragment"
             app:destination="@id/products_fragment" />
+        <action
+            android:id="@+id/action_catalogs_fragment_to_map"
+            app:destination="@id/map" />
     </fragment>
     <fragment
         android:id="@+id/products_fragment"
@@ -52,4 +55,12 @@
         android:id="@+id/action_global_welcomeFragment"
         app:destination="@+id/welcomeFragment"
         app:popUpTo="@+id/catalogs_fragment" />
+    <fragment
+        android:id="@+id/map"
+        android:name="ru.netfantazii.handy.core.notifications.MapFragment"
+        android:label="Map" >
+        <argument
+            android:name="catalogId"
+            app:argType="long" />
+    </fragment>
 </navigation>

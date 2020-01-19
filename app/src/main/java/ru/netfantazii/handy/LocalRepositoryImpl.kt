@@ -1,6 +1,5 @@
 package ru.netfantazii.handy
 
-import androidx.room.RxRoom
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -22,6 +21,7 @@ interface LocalRepository {
         catalogId: Long,
         expandStates: RecyclerViewExpandableItemManager.SavedState
     ): Disposable
+
     fun addGroup(group: Group): Disposable
     fun addGroupWithProducts(group: Group): Disposable
     fun addGroupWithProductsAndUpdateAll(group: Group, list: List<Group>): Disposable
@@ -39,12 +39,17 @@ interface LocalRepository {
     fun updateAllProducts(products: List<Product>): Disposable
     fun removeAndUpdateProducts(product: Product, list: List<Product>): Disposable
     fun addAndUpdateProducts(product: Product, list: List<Product>): Disposable
+    fun addGeofence(geofence: GeofenceEntity): Disposable
+    fun getGeofences(catalogId: Long): Observable<MutableList<GeofenceEntity>>
+    fun removeGeofenceById(id: Long): Disposable
+    fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable
 }
 
 class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     private val catalogDao: CatalogDao = db.getCatalogDao()
     private val groupDao: GroupDao = db.getGroupDao()
     private val productDao: ProductDao = db.getProductDao()
+    private val geofenceDao: GeofenceDao = db.getGeofenceDao()
 
     override fun addCatalog(catalog: Catalog) =
         Completable.fromRunnable { catalogDao.addWithDefaultGroup(catalog) }.subscribeOn(Schedulers.io()).subscribe()!!
@@ -147,4 +152,16 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     override fun addAndUpdateProducts(product: Product, list: List<Product>) =
         Completable.fromRunnable { productDao.addAndUpdateAll(product, list) }.subscribeOn(
             Schedulers.io()).subscribe()!!
+
+    override fun addGeofence(geofence: GeofenceEntity): Disposable =
+        Completable.fromRunnable { geofenceDao.add(geofence) }.subscribeOn(Schedulers.io()).subscribe()!!
+
+    override fun getGeofences(catalogId: Long): Observable<MutableList<GeofenceEntity>> =
+        geofenceDao.getGeofences(catalogId)
+
+    override fun removeGeofenceById(id: Long): Disposable =
+        geofenceDao.removeGeofenceById(id).subscribeOn(Schedulers.io()).subscribe()!!
+
+    override fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable =
+        geofenceDao.removeAllGeofencesFromCatalog(catalogId).subscribeOn(Schedulers.io()).subscribe()!!
 }

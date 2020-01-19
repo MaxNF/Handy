@@ -1,14 +1,12 @@
 package ru.netfantazii.handy.core
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.internal.NavigationMenu
-import com.google.android.material.internal.NavigationMenuItemView
-import com.google.android.material.internal.NavigationMenuView
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import ru.netfantazii.handy.MainActivity
 import ru.netfantazii.handy.R
@@ -22,6 +20,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
     protected lateinit var adapter : Adapter
     protected lateinit var dragManager: RecyclerViewDragDropManager
     protected val allLiveDataList = mutableListOf<LiveData<*>>()
+    protected lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +34,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
         createHints(view)
         setUpFab(view)
         subscribeToEvents()
+        initNavController()
         (activity as MainActivity).uncheckActiveMenuItem()
     }
 
@@ -68,6 +68,10 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
 
     private fun createHints(view: View) {
         hint = view.findViewById(R.id.hint_group)
+    }
+
+    private fun initNavController() {
+        navController = NavHostFragment.findNavController(this)
     }
 
     protected fun disableDragAndDrop() {

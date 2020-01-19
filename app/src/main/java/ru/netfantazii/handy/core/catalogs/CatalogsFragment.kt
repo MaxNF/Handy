@@ -185,7 +185,18 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
                 }
             })
             allLiveDataList.add(overlayEnterClicked)
+
+            catalogNotificationClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { catalog ->
+                    openNotificationFragment(catalog)
+                }
+            })
         }
+    }
+
+    private fun openNotificationFragment(catalog: Catalog) {
+        val direction = CatalogsFragmentDirections.actionCatalogsFragmentToMap(catalog.id)
+        navController.navigate(direction)
     }
 
     private fun showCatalogRemovalSnackbar() {
@@ -198,7 +209,6 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         val direction =
             CatalogsFragmentDirections.actionCatalogsFragmentToProductsFragment(catalog.name,
                 catalog.id, catalog.groupExpandStates)
-        val navController = NavHostFragment.findNavController(this)
         navController.navigate(direction)
     }
 

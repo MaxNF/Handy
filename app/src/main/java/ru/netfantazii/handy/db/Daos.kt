@@ -119,3 +119,16 @@ abstract class GroupDao : BaseDao<GroupEntity>() {
 
 @Dao
 abstract class ProductDao : BaseDao<ProductEntity>()
+
+@Dao
+abstract class GeofenceDao : BaseDao<GeofenceEntity>() {
+
+    @Query("SELECT * FROM GeofenceEntity WHERE catalog_id = :catalogId")
+    abstract fun getGeofences(catalogId: Long): Observable<MutableList<GeofenceEntity>>
+
+    @Query("DELETE FROM GeofenceEntity WHERE id = :geofenceId")
+    abstract fun removeGeofenceById(geofenceId: Long): Completable
+
+    @Query("DELETE FROM GeofenceEntity WHERE catalog_id = :catalogId")
+    abstract fun removeAllGeofencesFromCatalog(catalogId: Long): Completable
+}

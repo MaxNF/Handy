@@ -41,6 +41,15 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_element_count" />
 
+                <ImageButton
+                    android:id="@+id/ib_notification"
+                    style="@style/NotificationImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{() -> handler.onCatalogNotificationClick(catalog)}"
+                    app:layout_constraintEnd_toStartOf="@+id/ib_element_edit"
+                    app:layout_constraintTop_toTopOf="@+id/ib_element_edit" />
+
                 <TextView
                     android:id="@+id/tv_element_count"
                     android:layout_width="wrap_content"
@@ -48,8 +57,9 @@
                     android:text='@{String.valueOf(catalog.boughtElementCount) + "/" + String.valueOf(catalog.totalElementCount)}'
                     android:textColor="?attr/listTextColor"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"
-                    app:layout_constraintEnd_toStartOf="@id/ib_element_edit"
+                    app:layout_constraintEnd_toStartOf="@+id/ib_notification"
                     app:layout_constraintTop_toTopOf="@+id/tv_element_name"
+                    app:layout_constraintVertical_bias="0.8"
                     tools:text="0/2" />
 
                 <TextView

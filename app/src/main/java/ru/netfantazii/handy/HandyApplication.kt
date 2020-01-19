@@ -6,9 +6,5 @@ import ru.netfantazii.handy.db.Catalog
 
 class HandyApplication : Application() {
     val localRepository: LocalRepository
-    get() = ServiceLocator.provideLocalRepository(this)
-
-    override fun onCreate() {
-        super.onCreate()
-    }
+        get() = ServiceLocator.provideLocalRepository(this)
 }

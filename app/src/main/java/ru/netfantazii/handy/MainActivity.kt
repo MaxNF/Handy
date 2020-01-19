@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loadPreferencesToMemory()
 
         showWelcomeScreenIfNeeded()
-
     }
 
     private fun loadTheme() {

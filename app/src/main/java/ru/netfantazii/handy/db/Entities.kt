@@ -61,3 +61,18 @@ open class ProductEntity(
     var buyStatus: BuyStatus
 ) : BaseEntity(id, creationTime, position, name)
 
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = CatalogEntity::class,
+        parentColumns = ["id"], childColumns = ["catalog_id"], onDelete = ForeignKey.CASCADE
+    )]
+)
+class GeofenceEntity(
+    @field:PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    @field:ColumnInfo(name = "catalog_id")
+    val catalogId: Long,
+    val latitude: Double,
+    val longitude: Double,
+    val radius: Float
+)

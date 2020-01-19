@@ -44,6 +44,12 @@
         <!--используем паддинг, чтобы увеличить размер кнопки по краям-->
         <item name="android:padding">15dp</item>
     </style>
+    <style name="NotificationImage">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:src">@drawable/ic_notifications</item>
+        <!--используем паддинг, чтобы увеличить размер кнопки по краям-->
+        <item name="android:padding">15dp</item>
+    </style>
 
     <!--Universal RecyclerView style-->
     <style name="RecyclerViewMain">

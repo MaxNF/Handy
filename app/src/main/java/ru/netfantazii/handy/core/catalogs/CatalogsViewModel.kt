@@ -62,6 +62,9 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     private val _overlayEnterClicked = MutableLiveData<Event<Unit>>()
     val overlayEnterClicked: LiveData<Event<Unit>> = _overlayEnterClicked
 
+    private val _catalogNotificationClicked = MutableLiveData<Event<Catalog>>()
+    val catalogNotificationClicked: LiveData<Event<Catalog>> = _catalogNotificationClicked
+
     init {
         subscribeToCatalogsChanges()
     }
@@ -185,6 +188,10 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     override fun onCleared() {
         Log.d(TAG, "onCleared: ")
         disposables.clear()
+    }
+
+    override fun onCatalogNotificationClick(catalog: Catalog) {
+        _catalogNotificationClicked.value = Event(catalog)
     }
 
     fun onFragmentStop() {

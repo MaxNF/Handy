@@ -45,6 +45,10 @@ interface CatalogClickHandler {
      * Вызывается при успешном перетаскивании каталога.*/
     fun onCatalogDragSucceed(fromPosition: Int, toPosition: Int)
 
+    /**
+     * Вызывается при клике на значок колокольчика у каталога*/
+    fun onCatalogNotificationClick(catalog: Catalog)
+
 }
 
 interface CatalogStorage {
