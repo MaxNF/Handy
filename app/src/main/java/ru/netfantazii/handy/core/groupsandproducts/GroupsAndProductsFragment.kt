@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.core.groupsandproducts
 
-import android.animation.Animator
 import android.graphics.drawable.NinePatchDrawable
 import android.os.Bundle
 import android.util.Log
@@ -28,10 +27,7 @@ import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
-import ru.netfantazii.handy.extensions.doWithDelay
 import ru.netfantazii.handy.extensions.dpToPx
-import ru.netfantazii.handy.extensions.fadeOut
-import ru.netfantazii.handy.extensions.shrink
 import java.lang.UnsupportedOperationException
 
 class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
@@ -399,7 +395,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.toolbar_menu, menu)
+        inflater.inflate(R.menu.groups_toolbar_menu, menu)
     }
 
     private fun showProductRemovalSnackbar() {

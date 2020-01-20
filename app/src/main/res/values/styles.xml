@@ -64,12 +64,13 @@
         <item name="android:textColor">@color/textColorBlack</item>
         <item name="android:textColorHint">@color/textColorGray</item>
         <item name="android:inputType">textCapSentences</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:maxLength">80</item>
-        <item name="android:layout_height">50dp</item>
         <item name="android:hint">@string/hint_overlay_text_field</item>
+    </style>
+
+    <style name="MapSearchEditText" parent="OverlayEditText">
+        <item name="android:hint">@string/map_search_hint</item>
     </style>
 
     <style name="CrossNextToEditText">

@@ -74,4 +74,11 @@
     <string name="cancel_all_title">Отметить все как не купленные</string>
     <string name="delete_all_title">Удалить все</string>
     <string name="hint_recipe_empty_unsorted">Продукты не найдены</string>
+    <string name="delete_all_geofences_title">Удалить все геозоны</string>
+    <string name="apply_geofences">Применить геозоны</string>
+    <string name="seekbar_m_label">м</string>
+    <string name="map_search_hint">Поиск места</string>
+    <string name="geofence_failure">Не удалось добавить геометку. Сообщите в поддержку.</string>
+    <string name="geofence_success">Геометка была добавлена успешно.</string>
+    <string name="geofence_unreg_success">Геометка была успешно удалена.</string>
 </resources>

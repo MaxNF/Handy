@@ -1,11 +1,14 @@
 package ru.netfantazii.handy.core.notifications
 
+import android.util.Log
+import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.LocalRepository
@@ -18,19 +21,47 @@ class MapViewModel(
     private val currentCatalogId: Long
 ) : ViewModel() {
 
+
+    private val TAG = "MapViewModel"
+
     var circleMap = mapOf<Long, Circle>()
         private set(value) {
             field = value
             onNewDataReceive(value)
         }
 
+    var lastCameraPosition: CameraPosition? = null
+    var lastPinPosition: Point? = null
+    private val minSeekBarValue: Int = 100
+    var seekBarValue: Int = 0
+        set(value) {
+            field = value
+            refreshSeekBarValueField(field)
+        }
+
+    val seekBarDisplayValue: ObservableField<String> =
+        ObservableField(minSeekBarValue.toString())
+
+    val nextGeofenceRaidus: Float
+        get() = (seekBarValue + minSeekBarValue).toFloat()
+
     private val disposables = CompositeDisposable()
 
     private val _newDataReceived = MutableLiveData<Event<Unit>>()
     val newDataReceived: LiveData<Event<Unit>> = _newDataReceived
 
+    private val _findMyLocationClicked = MutableLiveData<Event<Unit>>()
+    val findMyLocationClicked: LiveData<Event<Unit>> = _findMyLocationClicked
+
+    private val _applyClicked = MutableLiveData<Event<Unit>>()
+    val applyClicked: LiveData<Event<Unit>> = _applyClicked
+
     init {
         subscribeToGeofencesChanges()
+    }
+
+    private fun refreshSeekBarValueField(value: Int) {
+        seekBarDisplayValue.set((value + minSeekBarValue).toString())
     }
 
     private fun onNewDataReceive(circleMap: Map<Long, Circle>) {
@@ -55,7 +86,7 @@ class MapViewModel(
     fun onMapLongClick(point: Point) {
         val geofence = GeofenceEntity(catalogId = currentCatalogId,
             latitude = point.latitude,
-            longitude = point.longitude, radius = currentRadius)
+            longitude = point.longitude, radius = nextGeofenceRaidus)
         localRepository.addGeofence(geofence)
     }
 
@@ -65,6 +96,15 @@ class MapViewModel(
 
     fun onClearAllClick() {
         localRepository.removeAllGeofencesFromCatalog(currentCatalogId)
+    }
+
+    fun onFindMyLocationClick() {
+        _findMyLocationClicked.value = Event(Unit)
+    }
+
+    fun onApplyClick() {
+        _applyClicked.value = Event(Unit)
+        Log.d(TAG, "onApplyClick: $nextGeofenceRaidus")
     }
 }
 

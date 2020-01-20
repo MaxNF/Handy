@@ -111,6 +111,9 @@ dependencies {
     implementation 'com.yandex.android:mapkit:3.4.0'
     implementation 'com.yandex.android:search:3.4.0'
 
+    // GooglePlay location API
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+
     // Testing
     testImplementation "androidx.room:room-testing:$room_version"
     testImplementation 'junit:junit:4.12'

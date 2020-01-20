@@ -4,58 +4,77 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
-import io.reactivex.schedulers.Schedulers
-import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.LocalRepository
-import ru.netfantazii.handy.core.Event
+import ru.netfantazii.handy.R
+import ru.netfantazii.handy.db.GeofenceEntity
 
-class GeofenceHandler(private val applicationContext: Context, private val catalogId: Long) {
-    val localRepository: LocalRepository = (applicationContext as HandyApplication).localRepository
+class GeofenceHandler(private val context: Context, catalogId: Long) {
     val geofenceCheckCycleMillis = 30000
     val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(applicationContext, NotificationBroadcastReceiver::class.java)
-        PendingIntent.getBroadcast(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intent = Intent(context, NotificationBroadcastReceiver::class.java)
+        intent.action = geofenceIntentAction
+        PendingIntent.getBroadcast(context,
+            catalogId.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT)
     }
+    val geofencingClient = LocationServices.getGeofencingClient(context)
 
-    fun registerGeofence() {
-        localRepository.getGeofences(catalogId).observeOn(Schedulers.newThread())
-            .subscribe { geofenceList ->
-                val readyGeofences = mutableListOf<Geofence>()
-                geofenceList.mapTo(readyGeofences) {
-                    Geofence.Builder()
-                        .setRequestId(it.id.toString())
-                        .setCircularRegion(it.latitude, it.longitude, it.radius)
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                        .setNotificationResponsiveness(geofenceCheckCycleMillis)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                        .build()
-                }
+    fun registerGeofence(geofenceEntity: GeofenceEntity) {
+        val geofence =
+            Geofence.Builder()
+                .setRequestId(geofenceEntity.id.toString())
+                .setCircularRegion(geofenceEntity.latitude,
+                    geofenceEntity.longitude,
+                    geofenceEntity.radius)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setNotificationResponsiveness(geofenceCheckCycleMillis)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .build()
 
-
-                val geofencingClient = LocationServices.getGeofencingClient(applicationContext)
-                geofencingClient.addGeofences(getGeofencingRequest(readyGeofences),
-                    geofencePendingIntent).apply {
-                    addOnSuccessListener {
-                        Toast.makeText(applicationContext, "GEOFENCE ADDED", Toast.LENGTH_SHORT).show()
-                    }
-                    addOnFailureListener {
-                        Toast.makeText(applicationContext, "GEOFENCE NOT ADDED", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        geofencingClient.addGeofences(getGeofencingRequest(geofence),
+            geofencePendingIntent).apply {
+            addOnSuccessListener {
+                Toast.makeText(context,
+                    context.getString(R.string.geofence_success),
+                    Toast.LENGTH_SHORT).show()
             }
+            addOnFailureListener {
+                throw it
+            }
+        }
     }
 
-    fun unregisterGeofence() {
-
+    fun unregisterGeofence(geofenceEntity: GeofenceEntity) {
+        val geofenceRequestId = listOf(geofenceEntity.id.toString())
+        geofencingClient.removeGeofences(geofenceRequestId).apply {
+            addOnSuccessListener {
+                Toast.makeText(context,
+                    context.getString(R.string.geofence_unreg_success),
+                    Toast.LENGTH_SHORT).show()
+            }
+            addOnFailureListener { throw it }
+        }
     }
 
-    private fun getGeofencingRequest(geofenceList: List<Geofence>): GeofencingRequest {
+    fun unregisterAllGeofences() {
+        geofencingClient.removeGeofences(geofencePendingIntent).apply {
+            addOnSuccessListener {
+                Toast.makeText(context,
+                    context.getString(R.string.all_geofences_unreg_success),
+                    Toast.LENGTH_SHORT).show()
+            }
+            addOnFailureListener {
+                throw it
+            }
+        }
+    }
+
+    private fun getGeofencingRequest(geofence: Geofence): GeofencingRequest {
         return GeofencingRequest.Builder().apply {
-            addGeofences(geofenceList)
+            addGeofence(geofence)
         }.build()
     }
 }

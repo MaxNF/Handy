@@ -87,4 +87,14 @@
     <string name="buy_all_title">Mark all bought</string>
     <string name="cancel_all_title">Mark all non-bought</string>
     <string name="delete_all_title">Delete all</string>
+    <string name="delete_all_geofences_title">Delete all geofences</string>
+    <string name="apply_geofences">Apply geofences</string>
+    <string name="seekbar_m_label">m</string>
+    <string name="geofence_success" >Geofence has been successfully added.</string>
+    <string name="geofence_failure">Failed to add geofence. Contact support, please.</string>
+    <string name="all_geofences_unreg_success">All geofences have been successfully removed.</string>
+    <string name="all_geofences_unreg_failure">Failed to remove all geofences. Contact support.</string>
+    <string name="geofence_unreg_success">Geofence has been successfully removed.</string>
+    <string name="notification_channel_name">Handy notification channel</string>
+    <string name="notification_channel_description">Channel for Handy geofence and alarm notifications.</string>
 </resources>

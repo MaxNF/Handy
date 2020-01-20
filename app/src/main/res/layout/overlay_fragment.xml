@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="overlayActions"
@@ -19,7 +20,6 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
             app:endIconDrawable="@drawable/ic_edit_text_cross"
             app:endIconMode="clear_text"
             app:hintEnabled="false">
@@ -27,10 +27,13 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/overlay_text_field"
                 style="@style/OverlayEditText"
+                android:layout_height="50dp"
+                android:paddingTop="10dp"
+                android:background="@android:color/white"
                 android:layout_width="match_parent"
-                android:background="@null"
                 android:imeOptions="actionDone|flagNoExtractUi"
-                android:text="@={overlayActions.overlayBuffer.name}" />
+                android:text="@={overlayActions.overlayBuffer.name}"
+                />
 
         </com.google.android.material.textfield.TextInputLayout>
     </FrameLayout>
