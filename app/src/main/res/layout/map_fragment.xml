@@ -25,31 +25,48 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/search_group"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:boxBackgroundMode="none"
-            app:errorIconDrawable="@null"
-            app:endIconDrawable="@drawable/ic_edit_text_cross"
-            app:endIconMode="clear_text"
-            app:startIconDrawable="@drawable/ic_search"
-            app:hintEnabled="false"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="16dp"
-            app:boxBackgroundColor="@android:color/white"
-            android:background="@android:color/white"
-            android:elevation="8dp">
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/mapview">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/overlay_text_field"
-                style="@style/MapSearchEditText"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:imeOptions="actionSearch|flagNoExtractUi"
-                android:paddingTop="10dp" />
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:elevation="8dp"
+                app:boxBackgroundColor="@android:color/white"
+                app:boxBackgroundMode="none"
+                app:endIconDrawable="@drawable/ic_edit_text_cross"
+                app:endIconMode="clear_text"
+                app:errorIconDrawable="@null"
+                app:hintEnabled="false"
+                app:startIconDrawable="@drawable/ic_search">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/search_text_field"
+                    style="@style/MapSearchEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@null"
+                    android:imeOptions="actionSearch|flagNoExtractUi"
+                    android:paddingTop="10dp"
+                    android:text="@={viewModel.searchValue}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ListView
+                android:id="@+id/suggest_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="invisible" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout2"

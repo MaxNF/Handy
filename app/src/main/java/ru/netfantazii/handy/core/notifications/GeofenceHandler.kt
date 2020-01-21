@@ -10,19 +10,12 @@ import com.google.android.gms.location.LocationServices
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.db.GeofenceEntity
 
-class GeofenceHandler(private val context: Context, catalogId: Long) {
-    val geofenceCheckCycleMillis = 30000
-    val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(context, NotificationBroadcastReceiver::class.java)
-        intent.action = geofenceIntentAction
-        PendingIntent.getBroadcast(context,
-            catalogId.toInt(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
-    }
-    val geofencingClient = LocationServices.getGeofencingClient(context)
+const val INTENT_CATALOG_ID_KEY = "intent_catalog_id_key"
 
-    fun registerGeofence(geofenceEntity: GeofenceEntity) {
+class GeofenceHandler(private val catalogId: Long) {
+    val geofenceCheckCycleMillis = 30000
+
+    fun registerGeofence(context: Context, geofenceEntity: GeofenceEntity) {
         val geofence =
             Geofence.Builder()
                 .setRequestId(geofenceEntity.id.toString())
@@ -34,8 +27,8 @@ class GeofenceHandler(private val context: Context, catalogId: Long) {
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                 .build()
 
-        geofencingClient.addGeofences(getGeofencingRequest(geofence),
-            geofencePendingIntent).apply {
+        LocationServices.getGeofencingClient(context).addGeofences(getGeofencingRequest(geofence),
+            getPendingIntent(context)).apply {
             addOnSuccessListener {
                 Toast.makeText(context,
                     context.getString(R.string.geofence_success),
@@ -47,9 +40,9 @@ class GeofenceHandler(private val context: Context, catalogId: Long) {
         }
     }
 
-    fun unregisterGeofence(geofenceEntity: GeofenceEntity) {
-        val geofenceRequestId = listOf(geofenceEntity.id.toString())
-        geofencingClient.removeGeofences(geofenceRequestId).apply {
+    fun unregisterGeofence(context: Context, geofenceId: Long) {
+        val geofenceRequestId = listOf(geofenceId.toString())
+        LocationServices.getGeofencingClient(context).removeGeofences(geofenceRequestId).apply {
             addOnSuccessListener {
                 Toast.makeText(context,
                     context.getString(R.string.geofence_unreg_success),
@@ -59,22 +52,33 @@ class GeofenceHandler(private val context: Context, catalogId: Long) {
         }
     }
 
-    fun unregisterAllGeofences() {
-        geofencingClient.removeGeofences(geofencePendingIntent).apply {
-            addOnSuccessListener {
-                Toast.makeText(context,
-                    context.getString(R.string.all_geofences_unreg_success),
-                    Toast.LENGTH_SHORT).show()
+    fun unregisterAllGeofences(context: Context) {
+        LocationServices.getGeofencingClient(context).removeGeofences(getPendingIntent(context))
+            .apply {
+                addOnSuccessListener {
+                    Toast.makeText(context,
+                        context.getString(R.string.all_geofences_unreg_success),
+                        Toast.LENGTH_SHORT).show()
+                }
+                addOnFailureListener {
+                    throw it
+                }
             }
-            addOnFailureListener {
-                throw it
-            }
-        }
     }
 
     private fun getGeofencingRequest(geofence: Geofence): GeofencingRequest {
         return GeofencingRequest.Builder().apply {
             addGeofence(geofence)
         }.build()
+    }
+
+    private fun getPendingIntent(context: Context): PendingIntent {
+        val intent = Intent(context, NotificationBroadcastReceiver::class.java)
+        intent.action = geofenceIntentAction
+        intent.putExtra(INTENT_CATALOG_ID_KEY, catalogId)
+        return PendingIntent.getBroadcast(context,
+            catalogId.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT)
     }
 }

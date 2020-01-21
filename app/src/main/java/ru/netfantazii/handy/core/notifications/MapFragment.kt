@@ -3,6 +3,11 @@ package ru.netfantazii.handy.core.notifications
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.MenuItem
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -11,6 +16,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.location.Location
@@ -20,7 +26,11 @@ import com.yandex.mapkit.location.LocationStatus
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.mapkit.search.*
+import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
+import com.yandex.runtime.network.NetworkError
+import com.yandex.runtime.network.RemoteError
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.MapFragmentBinding
@@ -28,7 +38,8 @@ import java.lang.IllegalArgumentException
 
 const val MAP_API_KEY = "3426ee1b-da34-4926-b4f4-df96fdb9a8eb"
 
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), Session.SearchListener, CameraListener,
+    SuggestSession.SuggestListener {
     private val TAG = "MapFragment"
     private val fragmentArgs: MapFragmentArgs by navArgs()
 
@@ -38,11 +49,23 @@ class MapFragment : Fragment() {
     private lateinit var locationManager: LocationManager
     private lateinit var geofenceIconProvider: ImageProvider
     private lateinit var userIconProvider: ImageProvider
+    private lateinit var searchObjectIconProvider: ImageProvider
+    private lateinit var searchObjectCollection: MapObjectCollection
+    private lateinit var searchManager: SearchManager
 
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private var circleFillColor: Int = 0xFF21b843.toInt()
     private var circleStrokeColor: Int = 0x4A3dfc68
     private var circleStrokeWidth: Float = 1.3f
+    private var pinPlacemark: PlacemarkMapObject? = null
+    private val suggestResults = mutableListOf<String>()
+    private lateinit var resultAdapter: ArrayAdapter<String>
+    private lateinit var suggestListView: ListView
+    private val searchAreaSize = 0.2
+    private val suggestResultLimit = 5
+    private val suggestOptions =
+        SuggestOptions().setSuggestTypes(SuggestType.BIZ.value or SuggestType.GEO.value or SuggestType.TRANSIT.value)
+
 
     private val circleTapListener = MapObjectTapListener { mapObject, point ->
         if (mapObject is CircleMapObject) {
@@ -67,9 +90,16 @@ class MapFragment : Fragment() {
         setHasOptionsMenu(true)
         MapKitFactory.setApiKey(MAP_API_KEY)
         MapKitFactory.initialize(context)
+        SearchFactory.initialize(context)
         locationManager = MapKitFactory.getInstance().createLocationManager()
+        searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
+        resultAdapter = ArrayAdapter(context!!,
+            R.layout.lv_suggest_element,
+            R.id.suggestion_text,
+            suggestResults)
         geofenceIconProvider = ImageProvider.fromResource(context, R.drawable.ic_map_logo)
         userIconProvider = ImageProvider.fromResource(context, R.drawable.ic_person_pin_circle)
+        searchObjectIconProvider = ImageProvider.fromResource(context, R.drawable.ic_search_results)
         createViewModel()
         super.onCreate(savedInstanceState)
     }
@@ -80,7 +110,7 @@ class MapFragment : Fragment() {
         viewModel =
             ViewModelProviders.of(this,
                 MapVmFactory(repository,
-                    currentCatalogId))
+                    currentCatalogId, GeofenceHandler(currentCatalogId), activity!!.application))
                 .get(MapViewModel::class.java)
     }
 
@@ -91,24 +121,32 @@ class MapFragment : Fragment() {
     ): View? {
         val binding = MapFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        suggestListView = binding.suggestListView
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mapView = view.findViewById<MapView>(R.id.mapview)
         mapObjects = mapView.map.mapObjects
+        searchObjectCollection = mapObjects.addCollection()
+        suggestListView.adapter = resultAdapter
+        suggestListView.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                beginSearch(suggestResults[position])
+            }
         mapView.map.addInputListener(mapInputListener)
         subscribeToEvents()
         if (viewModel.lastCameraPosition == null) {
             moveToLastKnownLocation()
         } else {
             mapView.map.move(viewModel.lastCameraPosition!!)
-            drawPinIfNotNull(viewModel.lastPinPosition)
+            reDrawPinIfNotNull(viewModel.lastPinPosition)
         }
     }
 
-    private fun drawPinIfNotNull(point: Point?) {
-        point?.let { mapObjects.addPlacemark(it, userIconProvider) }
+    private fun reDrawPinIfNotNull(point: Point?) {
+        pinPlacemark?.let { mapObjects.remove(it) }
+        point?.let { pinPlacemark = mapObjects.addPlacemark(it, userIconProvider) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -152,7 +190,7 @@ class MapFragment : Fragment() {
         val point = Point(latitude, longitude)
         mapView.map.move(getSimpleCamPosition(point),
             Animation(Animation.Type.SMOOTH, 0.5f), null)
-        drawPinIfNotNull(point)
+        reDrawPinIfNotNull(point)
         viewModel.lastPinPosition = point
     }
 
@@ -160,25 +198,26 @@ class MapFragment : Fragment() {
         viewModel.newDataReceived.observe(this, Observer {
             // нужно перерисовать геозоны после поворота экрана, поэтому не обнуляем контент Ивента
             // и используем метод peekContent()
-            it.peekContent().let {
-
-                val diffSearcher = CircleDiffSearcher(mapObjects, viewModel.circleMap)
-                diffSearcher.getRemovedCircles().forEach { mapEntry ->
-                    val circleToRemove = mapEntry.value
-                    val placemarkToRemove = diffSearcher.visiblePlacemarks[mapEntry.key]
-                    mapObjects.remove(circleToRemove)
-                    mapObjects.remove(placemarkToRemove as MapObject)
-                }
-                diffSearcher.getAddedCircles().forEach { mapEntry ->
-                    addCircleWithId(mapEntry.key, mapEntry.value)
-                    addPlacemarkWithId(mapEntry.key, mapEntry.value.center)
-                }
+            val diffSearcher = CircleDiffSearcher(mapObjects, viewModel.circleMap)
+            diffSearcher.getRemovedCircles().forEach { mapEntry ->
+                val circleToRemove = mapEntry.value
+                val placemarkToRemove = diffSearcher.visiblePlacemarks[mapEntry.key]
+                mapObjects.remove(circleToRemove)
+                mapObjects.remove(placemarkToRemove as MapObject)
+            }
+            diffSearcher.getAddedCircles().forEach { mapEntry ->
+                addCircleWithId(mapEntry.key, mapEntry.value)
+                addPlacemarkWithId(mapEntry.key, mapEntry.value.center)
             }
         })
         viewModel.findMyLocationClicked.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
                 moveToUserLocation()
             }
+        })
+
+        viewModel.newSearchValueReceived.observe(this, Observer {
+            requestSuggest(it.peekContent())
         })
     }
 
@@ -200,6 +239,17 @@ class MapFragment : Fragment() {
 
     private fun unsubscribeFromEvents() {
         allLiveDataList.forEach { it.removeObservers(this) }
+    }
+
+    private fun requestSuggest(query: String) {
+        suggestListView.visibility = View.INVISIBLE
+
+        val centerLatitude = mapView.map.cameraPosition.target.latitude
+        val centerLongitude = mapView.map.cameraPosition.target.longitude
+        val boundingBox = BoundingBox(
+            Point(centerLatitude - searchAreaSize, centerLongitude - searchAreaSize),
+            Point(centerLatitude + searchAreaSize, centerLongitude + searchAreaSize))
+        searchManager.createSuggestSession().suggest(query, boundingBox, suggestOptions, this)
     }
 
     override fun onStart() {
@@ -227,6 +277,57 @@ class MapFragment : Fragment() {
 
     private fun getSimpleCamPosition(point: Point): CameraPosition {
         return CameraPosition(point, 15.0f, 0.0f, 10.0f)
+    }
+
+    private fun beginSearch(searchQuery: String) {
+
+    }
+
+    override fun onSearchError(error: Error) {
+        showErrorMessage(error)
+    }
+
+    override fun onSearchResponse(response: Response) {
+        searchObjectCollection.clear()
+        val searchResultPoints = response.collection.children.map { it.obj!!.geometry[0].point }
+        searchResultPoints.forEach { point ->
+            point?.let { addSearchPlacemark(it) }
+        }
+    }
+
+    override fun onResponse(allSuggestions: MutableList<SuggestItem>) {
+        suggestResults.clear()
+        suggestResults.addAll(
+            allSuggestions.subList(0,
+                suggestResultLimit.coerceAtMost(allSuggestions.size)).map { it.displayText ?: "" })
+        resultAdapter.notifyDataSetChanged()
+        suggestListView.visibility = View.VISIBLE
+    }
+
+    override fun onError(error: Error) {
+        showErrorMessage(error)
+    }
+
+    private fun showErrorMessage(error: Error) {
+        val errorMessage = when (error) {
+            is RemoteError -> getString(R.string.map_remote_error)
+            is NetworkError -> getString(R.string.map_network_error)
+            else -> getString(R.string.map_unknown_error)
+        }
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun addSearchPlacemark(point: Point) {
+        searchObjectCollection.addPlacemark(point, searchObjectIconProvider)
+    }
+
+    override fun onCameraPositionChanged(
+        map: Map,
+        cameraPosition: CameraPosition,
+        previousCameraPosition: CameraUpdateSource,
+        finished: Boolean
+    ) {
+        if (finished) beginSearch(viewModel.searchValue)
     }
 }
 
@@ -319,6 +420,4 @@ class CircleDiffSearcher(
         // do nothing
         return true
     }
-
-
 }

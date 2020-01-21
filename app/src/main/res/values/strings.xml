@@ -101,4 +101,9 @@
     <string name="geofence_unreg_success">Geofence has been successfully removed.</string>
     <string name="notification_channel_name">Handy notification channel</string>
     <string name="notification_channel_description">Channel for Handy geofence and alarm notifications.</string>
+    <string name="geofence_notification_title">Geofence crossed</string>
+    <string name="geofence_notification_message">It\'s time to shop!</string>
+    <string name="map_remote_error">Remote Error. Contact support.</string>
+    <string name="map_network_error">Network Error. Please check your Internet connection and try again.</string>
+    <string name="map_unknown_error">Unknown error. Contact support.</string>
 </resources>

@@ -1,11 +1,9 @@
 package ru.netfantazii.handy.core.notifications
 
+import android.app.Application
 import android.util.Log
 import androidx.databinding.ObservableField
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -18,8 +16,10 @@ import kotlin.collections.Map
 
 class MapViewModel(
     private val localRepository: LocalRepository,
-    private val currentCatalogId: Long
-) : ViewModel() {
+    private val currentCatalogId: Long,
+    private val geofenceHandler: GeofenceHandler,
+    application: Application
+) : AndroidViewModel(application) {
 
 
     private val TAG = "MapViewModel"
@@ -28,6 +28,12 @@ class MapViewModel(
         private set(value) {
             field = value
             onNewDataReceive(value)
+        }
+
+    var searchValue = ""
+        set(value) {
+            field = value
+            onNewSearchValueReceive(value)
         }
 
     var lastCameraPosition: CameraPosition? = null
@@ -56,6 +62,9 @@ class MapViewModel(
     private val _applyClicked = MutableLiveData<Event<Unit>>()
     val applyClicked: LiveData<Event<Unit>> = _applyClicked
 
+    private val _newSearchValueReceived = MutableLiveData<Event<String>>()
+    val newSearchValueReceived: LiveData<Event<String>> = _newSearchValueReceived
+
     init {
         subscribeToGeofencesChanges()
     }
@@ -66,6 +75,10 @@ class MapViewModel(
 
     private fun onNewDataReceive(circleMap: Map<Long, Circle>) {
         _newDataReceived.value = Event(Unit)
+    }
+
+    private fun onNewSearchValueReceive(string: String) {
+        _newSearchValueReceived.value = Event(string)
     }
 
     private fun subscribeToGeofencesChanges() {
@@ -88,14 +101,17 @@ class MapViewModel(
             latitude = point.latitude,
             longitude = point.longitude, radius = nextGeofenceRaidus)
         localRepository.addGeofence(geofence)
+        geofenceHandler.registerGeofence(getApplication(), geofence)
     }
 
-    fun onCircleClick(circleId: Long) {
-        localRepository.removeGeofenceById(circleId)
+    fun onCircleClick(geofenceId: Long) {
+        localRepository.removeGeofenceById(geofenceId)
+        geofenceHandler.unregisterGeofence(getApplication(), geofenceId)
     }
 
     fun onClearAllClick() {
         localRepository.removeAllGeofencesFromCatalog(currentCatalogId)
+        geofenceHandler.unregisterAllGeofences(getApplication())
     }
 
     fun onFindMyLocationClick() {
@@ -108,12 +124,17 @@ class MapViewModel(
     }
 }
 
-class MapVmFactory(private val localRepository: LocalRepository, private val catalogId: Long) :
-    ViewModelProvider.Factory {
+class MapVmFactory(
+    private val localRepository: LocalRepository,
+    private val catalogId: Long,
+    private val geofenceHandler: GeofenceHandler,
+    private val application: Application
+) :
+    ViewModelProvider.AndroidViewModelFactory(application) {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
-            return MapViewModel(localRepository, catalogId) as T
+            return MapViewModel(localRepository, catalogId, geofenceHandler, application) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }

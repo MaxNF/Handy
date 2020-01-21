@@ -77,8 +77,12 @@
     <string name="delete_all_geofences_title">Удалить все геозоны</string>
     <string name="apply_geofences">Применить геозоны</string>
     <string name="seekbar_m_label">м</string>
-    <string name="map_search_hint">Поиск места</string>
+    <string name="map_search_hint">Поиск по карте</string>
     <string name="geofence_failure">Не удалось добавить геометку. Сообщите в поддержку.</string>
     <string name="geofence_success">Геометка была добавлена успешно.</string>
     <string name="geofence_unreg_success">Геометка была успешно удалена.</string>
+    <string name="all_geofences_unreg_failure">Не удалось удалить геозоны. Свяжитесь с поддержкой.</string>
+    <string name="all_geofences_unreg_success">Все геозоны были успешно удалены.</string>
+    <string name="geofence_notification_message">Пора делать покупки!</string>
+    <string name="geofence_notification_title">Вы пересекли геометку</string>
 </resources>

@@ -1,10 +1,13 @@
 package ru.netfantazii.handy
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
@@ -27,6 +30,8 @@ import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
 import ru.netfantazii.handy.db.SortOrder
 import ru.netfantazii.handy.extensions.getSortOrder
+
+const val NOTIFICATION_CHANNEL_ID = "Handy notification channel"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -56,6 +61,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         sp = PreferenceManager.getDefaultSharedPreferences(this)
         loadPreferencesToMemory()
 
+        registerNotitificationChannel(this)
         showWelcomeScreenIfNeeded()
     }
 
@@ -115,6 +121,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun navigateToPlayMarket() {
         startActivity(Intent(Intent.ACTION_VIEW,
             Uri.parse("market://details?id=$packageName")))
+    }
+
+
+    private fun registerNotitificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = context.getString(R.string.notification_channel_name)
+            val descriptionText = context.getString(R.string.notification_channel_description)
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
 //    private fun setNavigationIconColor() {
