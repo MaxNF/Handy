@@ -20,10 +20,7 @@ import ru.netfantazii.handy.core.catalogs.CatalogsViewModel
 import ru.netfantazii.handy.core.groupsandproducts.GroupsAndProductsViewModel
 import ru.netfantazii.handy.databinding.OverlayFragmentBinding
 import ru.netfantazii.handy.db.BaseEntity
-import ru.netfantazii.handy.extensions.fadeIn
-import ru.netfantazii.handy.extensions.hideKeyboard
-import ru.netfantazii.handy.extensions.moveCursorToLastChar
-import ru.netfantazii.handy.extensions.showKeyboard
+import ru.netfantazii.handy.extensions.*
 
 const val BUNDLE_ACTION_KEY = "action_key"
 
@@ -94,7 +91,13 @@ class OverlayFragment : Fragment() {
         val textField = rootView.findViewById<TextInputEditText>(R.id.overlay_text_field)
         textField.requestFocus()
         textField.moveCursorToLastChar()
-        addEnterButtonClickListener(textField)
+        textField.addKeyboardButtonClickListener(EditorInfo.IME_ACTION_DONE) {
+            if (overlayActions.overlayBuffer.name.get()!!.isEmpty()) {
+                overlayActions.onOverlayBackgroundClick()
+            } else {
+                overlayActions.onOverlayEnterClick()
+            }
+        }
         startFadeInAnimationAndShowKeyboard(rootView)
     }
 
@@ -111,21 +114,6 @@ class OverlayFragment : Fragment() {
                 }
             }
         })
-    }
-
-    private fun addEnterButtonClickListener(textField: TextInputEditText) {
-        textField.setOnEditorActionListener { _, button: Int, _ ->
-            if (button == EditorInfo.IME_ACTION_DONE) {
-                if (overlayActions.overlayBuffer.name.get()!!.isEmpty()) {
-                    overlayActions.onOverlayBackgroundClick()
-                } else {
-                    overlayActions.onOverlayEnterClick()
-                }
-                true
-            } else {
-                false
-            }
-        }
     }
 
     /**

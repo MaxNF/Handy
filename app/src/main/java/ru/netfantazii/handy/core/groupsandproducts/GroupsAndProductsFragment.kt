@@ -27,6 +27,7 @@ import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
+import ru.netfantazii.handy.db.GroupType
 import ru.netfantazii.handy.extensions.dpToPx
 import java.lang.UnsupportedOperationException
 
@@ -212,7 +213,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             createProductClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showOverlay()
-                    expandManager.expandGroup(0) // открываем ALWAYS_ON_TOP группу
+                    if (viewModel.getGroupList()[0].groupType == GroupType.ALWAYS_ON_TOP) {
+                        expandManager.expandGroup(0)
+                    } // открываем ALWAYS_ON_TOP группу, если она видна на экране
                     scrollToBeginOfList()
                 }
             })

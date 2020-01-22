@@ -36,6 +36,7 @@ class MapViewModel(
             onNewSearchValueReceive(value)
         }
 
+    var lastSearchPoints: List<Point?>? = null
     var lastCameraPosition: CameraPosition? = null
     var lastPinPosition: Point? = null
     private val minSeekBarValue: Int = 100
@@ -78,6 +79,7 @@ class MapViewModel(
     }
 
     private fun onNewSearchValueReceive(string: String) {
+        Log.d(TAG, "onNewSearchValueReceive: ")
         _newSearchValueReceived.value = Event(string)
     }
 
@@ -122,6 +124,10 @@ class MapViewModel(
         _applyClicked.value = Event(Unit)
         Log.d(TAG, "onApplyClick: $nextGeofenceRaidus")
     }
+
+//    fun onSearchButtonClick() {
+//        _newSearchValueReceived.value = Event(searchValue)
+//    }
 }
 
 class MapVmFactory(

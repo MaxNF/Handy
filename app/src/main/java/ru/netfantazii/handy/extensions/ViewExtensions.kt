@@ -3,6 +3,7 @@ package ru.netfantazii.handy.extensions
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.LinearInterpolator
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 
 fun View.fadeIn(): ViewPropertyAnimator {
@@ -51,4 +52,15 @@ fun View.enlarge(): ViewPropertyAnimator {
 
 fun EditText.moveCursorToLastChar() {
     setSelection(length())
+}
+
+fun EditText.addKeyboardButtonClickListener(buttonCode: Int, action: () -> Unit) {
+    this.setOnEditorActionListener { _, button: Int, _ ->
+        if (button == buttonCode) {
+            action()
+            true
+        } else {
+            false
+        }
+    }
 }

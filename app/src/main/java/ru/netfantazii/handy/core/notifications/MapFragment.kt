@@ -1,13 +1,12 @@
 package ru.netfantazii.handy.core.notifications
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.MenuItem
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -34,6 +33,8 @@ import com.yandex.runtime.network.RemoteError
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.MapFragmentBinding
+import ru.netfantazii.handy.extensions.addKeyboardButtonClickListener
+import ru.netfantazii.handy.extensions.hideKeyboard
 import java.lang.IllegalArgumentException
 
 const val MAP_API_KEY = "3426ee1b-da34-4926-b4f4-df96fdb9a8eb"
@@ -61,11 +62,12 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     private val suggestResults = mutableListOf<String>()
     private lateinit var resultAdapter: ArrayAdapter<String>
     private lateinit var suggestListView: ListView
-    private val searchAreaSize = 0.2
+    private val suggestAreaSize = 0.2
     private val suggestResultLimit = 5
     private val suggestOptions =
         SuggestOptions().setSuggestTypes(SuggestType.BIZ.value or SuggestType.GEO.value or SuggestType.TRANSIT.value)
-
+    private lateinit var searchField: EditText
+    private var showSuggestions = false
 
     private val circleTapListener = MapObjectTapListener { mapObject, point ->
         if (mapObject is CircleMapObject) {
@@ -122,6 +124,7 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         val binding = MapFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         suggestListView = binding.suggestListView
+        searchField = binding.searchTextField
         return binding.root
     }
 
@@ -132,16 +135,41 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         suggestListView.adapter = resultAdapter
         suggestListView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                beginSearch(suggestResults[position])
+                showSuggestions = false
+                searchField.setText(suggestResults[position])
+                closeSuggestionsAndSearch(suggestResults[position])
             }
         mapView.map.addInputListener(mapInputListener)
         subscribeToEvents()
+        searchField.addKeyboardButtonClickListener(EditorInfo.IME_ACTION_SEARCH) {
+            closeSuggestionsAndSearch(viewModel.searchValue)
+        }
+        restoreSearchResults()
+        restoreCameraPosition()
+    }
+
+    private fun restoreSearchResults() {
+        viewModel.lastSearchPoints?.let { points ->
+            points.forEach { point ->
+                point?.let { addSearchPlacemark(it) }
+            }
+        }
+    }
+
+    private fun restoreCameraPosition() {
         if (viewModel.lastCameraPosition == null) {
             moveToLastKnownLocation()
         } else {
             mapView.map.move(viewModel.lastCameraPosition!!)
             reDrawPinIfNotNull(viewModel.lastPinPosition)
         }
+    }
+
+    private fun closeSuggestionsAndSearch(searchValue: String) {
+        searchField.clearFocus()
+        suggestListView.visibility = View.GONE
+        hideKeyboard(activity as Activity)
+        beginSearch(searchValue)
     }
 
     private fun reDrawPinIfNotNull(point: Point?) {
@@ -217,7 +245,8 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         })
 
         viewModel.newSearchValueReceived.observe(this, Observer {
-            requestSuggest(it.peekContent())
+            if (showSuggestions) requestSuggest(it.peekContent())
+            showSuggestions = true
         })
     }
 
@@ -242,14 +271,17 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     }
 
     private fun requestSuggest(query: String) {
-        suggestListView.visibility = View.INVISIBLE
-
-        val centerLatitude = mapView.map.cameraPosition.target.latitude
-        val centerLongitude = mapView.map.cameraPosition.target.longitude
-        val boundingBox = BoundingBox(
-            Point(centerLatitude - searchAreaSize, centerLongitude - searchAreaSize),
-            Point(centerLatitude + searchAreaSize, centerLongitude + searchAreaSize))
-        searchManager.createSuggestSession().suggest(query, boundingBox, suggestOptions, this)
+        if (query.isEmpty()) {
+            suggestListView.visibility = View.GONE
+        } else {
+            suggestListView.visibility = View.INVISIBLE
+            val centerLatitude = mapView.map.cameraPosition.target.latitude
+            val centerLongitude = mapView.map.cameraPosition.target.longitude
+            val suggestArea = BoundingBox(
+                Point(centerLatitude - suggestAreaSize, centerLongitude - suggestAreaSize),
+                Point(centerLatitude + suggestAreaSize, centerLongitude + suggestAreaSize))
+            searchManager.createSuggestSession().suggest(query, suggestArea, suggestOptions, this)
+        }
     }
 
     override fun onStart() {
@@ -280,7 +312,10 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     }
 
     private fun beginSearch(searchQuery: String) {
-
+        searchManager.submit(searchQuery,
+            VisibleRegionUtils.toPolygon(mapView.map.visibleRegion),
+            SearchOptions(),
+            this)
     }
 
     override fun onSearchError(error: Error) {
@@ -290,16 +325,16 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     override fun onSearchResponse(response: Response) {
         searchObjectCollection.clear()
         val searchResultPoints = response.collection.children.map { it.obj!!.geometry[0].point }
-        searchResultPoints.forEach { point ->
-            point?.let { addSearchPlacemark(it) }
-        }
+        viewModel.lastSearchPoints = searchResultPoints
+        searchResultPoints.forEach { point -> point?.let { addSearchPlacemark(it) } }
     }
 
     override fun onResponse(allSuggestions: MutableList<SuggestItem>) {
         suggestResults.clear()
-        suggestResults.addAll(
-            allSuggestions.subList(0,
-                suggestResultLimit.coerceAtMost(allSuggestions.size)).map { it.displayText ?: "" })
+        val resutltsToAdd = allSuggestions.slice(0 until
+                suggestResultLimit.coerceAtMost(allSuggestions.size)).map { it.displayText ?: "" }
+            .toSet()
+        suggestResults.addAll(resutltsToAdd)
         resultAdapter.notifyDataSetChanged()
         suggestListView.visibility = View.VISIBLE
     }

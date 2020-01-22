@@ -85,4 +85,10 @@
     <string name="all_geofences_unreg_success">Все геозоны были успешно удалены.</string>
     <string name="geofence_notification_message">Пора делать покупки!</string>
     <string name="geofence_notification_title">Вы пересекли геометку</string>
+    <string name="map_network_error">Ошибка сети. Проверьте ваше Интернет соединение и попробуйте снова.</string>
+    <string name="map_remote_error">Ошибка доступа. Обратитесь в поддержку.</string>
+    <string name="map_unknown_error">Неизвестная ошибка. Обратитесь в поддержку.</string>
+    <string name="notification_channel_description">Пересечение геозон и напоминания о покупках.</string>
+    <string name="notification_channel_name">Канал уведомление Хэнди</string>
+    <string name="radius_label">радиус</string>
 </resources>
