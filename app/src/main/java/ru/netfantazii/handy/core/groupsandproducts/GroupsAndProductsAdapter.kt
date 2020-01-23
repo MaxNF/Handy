@@ -226,13 +226,10 @@ class GroupsAndProductsAdapter(
         toGroupPosition: Int,
         toChildPosition: Int
     ) {
-        val fromRealGroupPos = groupList[fromGroupPosition].position
-        val toRealGroupPos = groupList[toGroupPosition].position
-
-        val fromProductList = groupList[fromRealGroupPos].productList
+        val fromProductList = groupList[fromGroupPosition].productList
         val draggingProduct = fromProductList[fromChildPosition]
 
-        val toProductList = groupList[toRealGroupPos].productList
+        val toProductList = groupList[toGroupPosition].productList
         val dropProduct = when {
             toProductList.isEmpty() -> null
             toChildPosition > toProductList.lastIndex -> toProductList.last()
