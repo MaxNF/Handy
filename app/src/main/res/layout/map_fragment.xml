@@ -77,18 +77,19 @@
         <FrameLayout
             android:id="@+id/seekbar_frame"
             android:layout_width="40dp"
-            android:layout_height="180dp"
+            android:layout_height="220dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/seekbar_value_group"
             app:layout_constraintEnd_toEndOf="@+id/fab_my_location"
             app:layout_constraintStart_toStartOf="@+id/fab_my_location">
 
             <SeekBar
+                android:theme="@style/Widget.AppCompat.SeekBar.Discrete"
                 android:id="@+id/geofence_seekbar"
-                android:layout_width="180dp"
+                android:layout_width="220dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:max="900"
+                android:max="8"
                 android:progress="@={viewModel.seekBarValue}"
                 android:rotation="270" />
         </FrameLayout>

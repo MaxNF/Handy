@@ -1,19 +1,18 @@
 package ru.netfantazii.handy.core.notifications
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.Notification
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.opengl.Visibility
-import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.navigation.NavDeepLinkBuilder
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
-import java.lang.IllegalStateException
 import java.util.NoSuchElementException
 
 const val alarmIntentAction = "ru.netfantazii.handy.ALARM_GOES_OFF"
@@ -21,31 +20,54 @@ const val geofenceIntentAction = "ru.netfantazii.handy.GEOFENCE_IS_CROSSED"
 
 class NotificationBroadcastReceiver : BroadcastReceiver() {
     private val TAG = "NotificationBroadcastRe"
+    private lateinit var context: Context
+    private lateinit var onNotificationClickIntent: PendingIntent
+    private var notificationId = 0
+
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "onReceive: broadcast received")
-        val catalogId = intent.getLongExtra(INTENT_CATALOG_ID_KEY, -1)
+        this.context = context
+        val catalogId = intent.getLongExtra(BUNDLE_CATALOG_ID_KEY, -1)
+        val catalogName = intent.getStringExtra(BUNDLE_CATALOG_NAME_KEY)
+        val groupExpandState: RecyclerViewExpandableItemManager.SavedState? =
+            intent.getParcelableExtra(BUNDLE_EXPAND_STATE_KEY)
+        notificationId = catalogId.toInt()
+
+        val arguments = Bundle()
+        with(arguments) {
+            putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
+            putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
+            putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
+        }
+
+        onNotificationClickIntent = NavDeepLinkBuilder(context)
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.products_fragment)
+            .setArguments(arguments)
+            .createPendingIntent()
+
         if (catalogId == -1L) throw NoSuchElementException("Wrong catalogId.")
         when (intent.action) {
-            alarmIntentAction -> sendAlarmNotification(catalogId, context)
-            geofenceIntentAction -> sendGeofenceNotification(catalogId, context)
+            alarmIntentAction -> sendAlarmNotification()
+            geofenceIntentAction -> sendGeofenceNotification()
             else -> throw NoSuchElementException("Unknown intent action.")
         }
     }
 
-    private fun sendAlarmNotification(catalogId: Long, context: Context) {
+    private fun sendAlarmNotification() {
         Log.d(TAG, "sendAlarmNotification: ")
     }
 
-    private fun sendGeofenceNotification(catalogId: Long, context: Context) {
+    private fun sendGeofenceNotification() {
         Log.d(TAG, "sendGeofenceNotification: ")
         val title = context.getString(R.string.geofence_notification_title)
         val message = context.getString(R.string.geofence_notification_message)
         NotificationManagerCompat.from(context)
-            .notify(catalogId.toInt(), createNotification(title, message, context))
+            .notify(notificationId, createNotification(title, message))
     }
 
-    private fun createNotification(title: String, message: String, context: Context) =
-        NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+    private fun createNotification(title: String, message: String): Notification {
+        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle(title)
             .setContentText(message)
@@ -53,5 +75,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(true)
+            .setContentIntent(onNotificationClickIntent)
             .build()
+    }
 }

@@ -83,8 +83,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     }
 
     private fun setCatalogName() {
-        val currentCatalogName = fragmentArgs.catalogName
-        activity!!.toolbar.title = currentCatalogName
+        activity!!.toolbar.title = fragmentArgs.catalogName
     }
 
     override fun createViewModel() {

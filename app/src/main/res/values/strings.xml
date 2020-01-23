@@ -107,4 +107,6 @@
     <string name="map_network_error">Network Error. Please check your Internet connection and try again.</string>
     <string name="map_unknown_error">Unknown error. Contact support.</string>
     <string name="radius_label">radius</string>
+    <string name="alarm_label">Alarm</string>
+    <string name="geofences_label">Geofences</string>
 </resources>

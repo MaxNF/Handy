@@ -13,6 +13,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.BoundingBox
@@ -42,7 +44,6 @@ const val MAP_API_KEY = "3426ee1b-da34-4926-b4f4-df96fdb9a8eb"
 class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     SuggestSession.SuggestListener {
     private val TAG = "MapFragment"
-    private val fragmentArgs: MapFragmentArgs by navArgs()
 
     private lateinit var mapView: MapView
     private lateinit var viewModel: MapViewModel
@@ -58,7 +59,10 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     private var circleFillColor: Int = 0xFF21b843.toInt()
     private var circleStrokeColor: Int = 0x4A3dfc68
     private var circleStrokeWidth: Float = 1.3f
-    private var pinPlacemark: PlacemarkMapObject? = null
+
+    //    private var pinPlacemark: PlacemarkMapObject? = null
+    private lateinit var pinObjectCollection: MapObjectCollection
+
     private val suggestResults = mutableListOf<String>()
     private lateinit var resultAdapter: ArrayAdapter<String>
     private lateinit var suggestListView: ListView
@@ -89,6 +93,7 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate: ")
         setHasOptionsMenu(true)
         MapKitFactory.setApiKey(MAP_API_KEY)
         MapKitFactory.initialize(context)
@@ -108,11 +113,18 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
 
     private fun createViewModel() {
         val repository = (requireContext().applicationContext as HandyApplication).localRepository
-        val currentCatalogId = fragmentArgs.catalogId
+        val currentCatalogId = arguments!!.getLong(BUNDLE_CATALOG_ID_KEY)
+        val catalogName = arguments!!.getString(BUNDLE_CATALOG_NAME_KEY)
+        val groupExpandState =
+            arguments!!.getParcelable<RecyclerViewExpandableItemManager.SavedState>(
+                BUNDLE_EXPAND_STATE_KEY)
+
         viewModel =
             ViewModelProviders.of(this,
                 MapVmFactory(repository,
-                    currentCatalogId, GeofenceHandler(currentCatalogId), activity!!.application))
+                    currentCatalogId,
+                    GeofenceHandler(currentCatalogId, catalogName!!, groupExpandState!!),
+                    activity!!.application))
                 .get(MapViewModel::class.java)
     }
 
@@ -121,17 +133,18 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "onCreateView: ")
         val binding = MapFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        mapView = binding.mapview
         suggestListView = binding.suggestListView
         searchField = binding.searchTextField
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mapView = view.findViewById<MapView>(R.id.mapview)
+        Log.d(TAG, "onViewCreated: ")
         mapObjects = mapView.map.mapObjects
-        searchObjectCollection = mapObjects.addCollection()
         suggestListView.adapter = resultAdapter
         suggestListView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
@@ -144,11 +157,16 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         searchField.addKeyboardButtonClickListener(EditorInfo.IME_ACTION_SEARCH) {
             closeSuggestionsAndSearch(viewModel.searchValue)
         }
+
+        searchObjectCollection = mapObjects.addCollection()
+        pinObjectCollection = mapObjects.addCollection()
+
         restoreSearchResults()
         restoreCameraPosition()
     }
 
     private fun restoreSearchResults() {
+        searchObjectCollection.clear()
         viewModel.lastSearchPoints?.let { points ->
             points.forEach { point ->
                 point?.let { addSearchPlacemark(it) }
@@ -173,8 +191,8 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     }
 
     private fun reDrawPinIfNotNull(point: Point?) {
-        pinPlacemark?.let { mapObjects.remove(it) }
-        point?.let { pinPlacemark = mapObjects.addPlacemark(it, userIconProvider) }
+        pinObjectCollection.clear()
+        point?.let { pinObjectCollection.addPlacemark(it, userIconProvider) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -188,7 +206,8 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     }
 
     private fun moveToLastKnownLocation() {
-        FusedLocationProviderClient(context!!).lastLocation
+        val locationProvider = LocationServices.getFusedLocationProviderClient(context!!)
+        locationProvider.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
                     Log.d(TAG, "moveToLastKnownLocation: 1")
@@ -225,7 +244,6 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     private fun subscribeToEvents() {
         viewModel.newDataReceived.observe(this, Observer {
             // нужно перерисовать геозоны после поворота экрана, поэтому не обнуляем контент Ивента
-            // и используем метод peekContent()
             val diffSearcher = CircleDiffSearcher(mapObjects, viewModel.circleMap)
             diffSearcher.getRemovedCircles().forEach { mapEntry ->
                 val circleToRemove = mapEntry.value
@@ -285,12 +303,14 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     }
 
     override fun onStart() {
+        Log.d(TAG, "onStart: ")
         super.onStart()
         mapView.onStart()
         MapKitFactory.getInstance().onStart()
     }
 
     override fun onStop() {
+        Log.d(TAG, "onStop: ")
         mapView.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()

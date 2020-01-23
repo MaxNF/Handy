@@ -40,9 +40,10 @@ class MapViewModel(
     var lastCameraPosition: CameraPosition? = null
     var lastPinPosition: Point? = null
     private val minSeekBarValue: Int = 100
+    private val seekBarOneSegment = 50
     var seekBarValue: Int = 0
         set(value) {
-            field = value
+            field = value * seekBarOneSegment
             refreshSeekBarValueField(field)
         }
 
@@ -99,6 +100,7 @@ class MapViewModel(
         }.toMap()
 
     fun onMapLongClick(point: Point) {
+        Log.d(TAG, "onMapLongClick: $nextGeofenceRaidus")
         val geofence = GeofenceEntity(catalogId = currentCatalogId,
             latitude = point.latitude,
             longitude = point.longitude, radius = nextGeofenceRaidus)

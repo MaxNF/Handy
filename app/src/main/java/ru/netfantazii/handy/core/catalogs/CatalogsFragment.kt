@@ -195,7 +195,8 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     }
 
     private fun openNotificationFragment(catalog: Catalog) {
-        val direction = CatalogsFragmentDirections.actionCatalogsFragmentToMap(catalog.id)
+        val direction = CatalogsFragmentDirections.actionCatalogsFragmentToMap(catalog.id,
+            catalog.name, catalog.groupExpandStates)
         navController.navigate(direction)
     }
 

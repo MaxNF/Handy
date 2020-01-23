@@ -15,7 +15,7 @@
             app:destination="@id/products_fragment" />
         <action
             android:id="@+id/action_catalogs_fragment_to_map"
-            app:destination="@id/map" />
+            app:destination="@id/notifications" />
     </fragment>
     <fragment
         android:id="@+id/products_fragment"
@@ -38,7 +38,7 @@
         android:label="@string/settings_fragment_label" />
     <action
         android:id="@+id/action_global_appSettings"
-        app:destination="@id/navigation_app_settings"/>
+        app:destination="@id/navigation_app_settings" />
     <fragment
         android:id="@+id/navigation_help_fragment"
         android:name="ru.netfantazii.handy.core.help.HelpFragment"
@@ -56,11 +56,17 @@
         app:destination="@+id/welcomeFragment"
         app:popUpTo="@+id/catalogs_fragment" />
     <fragment
-        android:id="@+id/map"
-        android:name="ru.netfantazii.handy.core.notifications.MapFragment"
-        android:label="Map" >
+        android:id="@+id/notifications"
+        android:name="ru.netfantazii.handy.core.notifications.NotificationTabFragment"
+        android:label="Notifications">
         <argument
             android:name="catalogId"
             app:argType="long" />
+        <argument
+            android:name="catalogName"
+            app:argType="string" />
+        <argument
+            android:name="groupExpandStates"
+            app:argType="com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager$SavedState" />
     </fragment>
 </navigation>
