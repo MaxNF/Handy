@@ -12,11 +12,12 @@ import com.google.android.gms.location.LocationServices
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.db.GeofenceEntity
-import kotlin.math.log
 
 const val BUNDLE_CATALOG_ID_KEY = "catalogId"
 const val BUNDLE_CATALOG_NAME_KEY = "catalogName"
 const val BUNDLE_EXPAND_STATE_KEY = "groupExpandStates"
+const val BUNDLE_GEOFENCE_IDS_KEY = "geofenceIds"
+const val BUNDLE_FROM_NOTIFICATION_KEY = "fromNotification"
 const val BUNDLE_KEY = "bundle_key"
 
 class GeofenceHandler(
@@ -87,7 +88,7 @@ class GeofenceHandler(
 
     private fun getPendingIntent(context: Context): PendingIntent {
         val intent = Intent(context, NotificationBroadcastReceiver::class.java)
-        intent.action = geofenceIntentAction
+        intent.action = GEOFENCE_INTENT_ACTION
         val bundle = Bundle()
         bundle.putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
         bundle.putString(BUNDLE_CATALOG_NAME_KEY, catalogName)

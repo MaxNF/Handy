@@ -209,7 +209,7 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         Log.d(TAG, "enterCatalog: ")
         val direction =
             CatalogsFragmentDirections.actionCatalogsFragmentToProductsFragment(catalog.name,
-                catalog.id, catalog.groupExpandStates)
+                catalog.id, catalog.groupExpandStates, false)
         navController.navigate(direction)
     }
 

@@ -109,4 +109,5 @@
     <string name="radius_label">radius</string>
     <string name="alarm_label">Alarm</string>
     <string name="geofences_label">Geofences</string>
+    <string name="notification_cancel_label">Not now (remove notification)</string>
 </resources>

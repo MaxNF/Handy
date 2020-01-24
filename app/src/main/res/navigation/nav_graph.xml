@@ -31,6 +31,14 @@
         <argument
             android:name="groupExpandStates"
             app:argType="com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager$SavedState" />
+        <argument
+            android:name="fromNotification"
+            app:argType="boolean" />
+        <argument
+            android:name="geofenceIds"
+            app:argType="long[]"
+            android:defaultValue="@null"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/navigation_app_settings"
