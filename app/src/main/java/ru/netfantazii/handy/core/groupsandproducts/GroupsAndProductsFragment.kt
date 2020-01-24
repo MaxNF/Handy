@@ -28,6 +28,7 @@ import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
+import ru.netfantazii.handy.db.GroupType
 import ru.netfantazii.handy.extensions.doWithDelay
 import ru.netfantazii.handy.extensions.dpToPx
 import ru.netfantazii.handy.extensions.fadeOut
@@ -216,7 +217,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             createProductClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showOverlay()
-                    expandManager.expandGroup(0) // открываем ALWAYS_ON_TOP группу
+                    if (viewModel.getGroupList().isNotEmpty() && viewModel.getGroupList()[0].groupType == GroupType.ALWAYS_ON_TOP) {
+                        expandManager.expandGroup(0)
+                        saveExpandState()
+                    } // открываем ALWAYS_ON_TOP группу, если она видна на экране
                     scrollToBeginOfList()
                 }
             })
@@ -235,10 +239,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                     } else {
                         Log.d(TAG, "subscribeToGroupEvents: expanded")
                         expandManager.expandGroup(groupPosition)
+                        saveExpandState()
                     }
                     Log.d(TAG, "subscribeToGroupEvents: ")
-                    viewModel.groupExpandStates =
-                        expandManager.savedState as RecyclerViewExpandableItemManager.SavedState
+                    saveExpandState()
                 }
             })
             allLiveDataList.add(groupClicked)
@@ -292,6 +296,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                     showOverlay()
                     expandManager.expandGroup(groupPosition)
                     scrollToGroup(groupPosition)
+                    saveExpandState()
                 }
             })
         }
@@ -400,6 +405,11 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_menu, menu)
+    }
+
+    private fun saveExpandState() {
+        viewModel.groupExpandStates =
+            expandManager.savedState as RecyclerViewExpandableItemManager.SavedState
     }
 
     private fun showProductRemovalSnackbar() {
