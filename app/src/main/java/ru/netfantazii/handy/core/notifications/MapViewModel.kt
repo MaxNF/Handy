@@ -4,11 +4,14 @@ import android.app.Application
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
+import com.google.android.gms.tasks.OnSuccessListener
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.LocalRepository
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.db.GeofenceEntity
@@ -104,8 +107,11 @@ class MapViewModel(
         val geofence = GeofenceEntity(catalogId = currentCatalogId,
             latitude = point.latitude,
             longitude = point.longitude, radius = nextGeofenceRaidus)
-        localRepository.addGeofence(geofence)
-        geofenceHandler.registerGeofence(getApplication(), geofence)
+        disposables.add(localRepository.addGeofence(geofence).subscribe(Consumer {
+            geofence.id = it
+            geofenceHandler.registerGeofence(getApplication(), geofence)
+        }))
+
     }
 
     fun onCircleClick(geofenceId: Long) {

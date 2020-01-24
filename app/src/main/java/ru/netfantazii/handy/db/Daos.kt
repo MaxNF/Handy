@@ -4,6 +4,7 @@ import androidx.room.*
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 abstract class BaseDao<T> {
@@ -131,4 +132,7 @@ abstract class GeofenceDao : BaseDao<GeofenceEntity>() {
 
     @Query("DELETE FROM GeofenceEntity WHERE catalog_id = :catalogId")
     abstract fun removeAllGeofencesFromCatalog(catalogId: Long): Completable
+
+    @Insert
+    abstract fun addGeofenceAndGetId(geofenceEntity: GeofenceEntity): Single<Long>
 }

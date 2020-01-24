@@ -69,7 +69,7 @@ open class ProductEntity(
 )
 class GeofenceEntity(
     @field:PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    var id: Long = 0,
     @field:ColumnInfo(name = "catalog_id")
     val catalogId: Long,
     val latitude: Double,

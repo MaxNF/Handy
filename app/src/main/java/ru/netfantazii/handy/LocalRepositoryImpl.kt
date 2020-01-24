@@ -3,6 +3,7 @@ package ru.netfantazii.handy
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.db.*
@@ -39,7 +40,7 @@ interface LocalRepository {
     fun updateAllProducts(products: List<Product>): Disposable
     fun removeAndUpdateProducts(product: Product, list: List<Product>): Disposable
     fun addAndUpdateProducts(product: Product, list: List<Product>): Disposable
-    fun addGeofence(geofence: GeofenceEntity): Disposable
+    fun addGeofence(geofence: GeofenceEntity): Single<Long>
     fun getGeofences(catalogId: Long): Observable<MutableList<GeofenceEntity>>
     fun removeGeofenceById(id: Long): Disposable
     fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable
@@ -153,8 +154,8 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
         Completable.fromRunnable { productDao.addAndUpdateAll(product, list) }.subscribeOn(
             Schedulers.io()).subscribe()!!
 
-    override fun addGeofence(geofence: GeofenceEntity): Disposable =
-        Completable.fromRunnable { geofenceDao.add(geofence) }.subscribeOn(Schedulers.io()).subscribe()!!
+    override fun addGeofence(geofence: GeofenceEntity): Single<Long> =
+        geofenceDao.addGeofenceAndGetId(geofence).subscribeOn(Schedulers.io())
 
     override fun getGeofences(catalogId: Long): Observable<MutableList<GeofenceEntity>> =
         geofenceDao.getGeofences(catalogId)

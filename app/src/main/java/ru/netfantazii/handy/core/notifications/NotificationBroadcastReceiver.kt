@@ -27,10 +27,16 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "onReceive: broadcast received")
         this.context = context
-        val catalogId = intent.getLongExtra(BUNDLE_CATALOG_ID_KEY, -1)
-        val catalogName = intent.getStringExtra(BUNDLE_CATALOG_NAME_KEY)
+
+        val bundle = intent.extras!!.getBundle(BUNDLE_KEY)!!
+
+        val catalogId = bundle.getLong(BUNDLE_CATALOG_ID_KEY)
+        val catalogName = bundle.getString(BUNDLE_CATALOG_NAME_KEY)
         val groupExpandState: RecyclerViewExpandableItemManager.SavedState? =
-            intent.getParcelableExtra(BUNDLE_EXPAND_STATE_KEY)
+            bundle.getParcelable(BUNDLE_EXPAND_STATE_KEY)
+
+        Log.d(TAG, "onReceive: $catalogId, $catalogName")
+
         notificationId = catalogId.toInt()
 
         val arguments = Bundle()
@@ -46,7 +52,6 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .setArguments(arguments)
             .createPendingIntent()
 
-        if (catalogId == -1L) throw NoSuchElementException("Wrong catalogId.")
         when (intent.action) {
             alarmIntentAction -> sendAlarmNotification()
             geofenceIntentAction -> sendGeofenceNotification()

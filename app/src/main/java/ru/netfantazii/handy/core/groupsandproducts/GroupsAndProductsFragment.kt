@@ -212,7 +212,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             createProductClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showOverlay()
-                    if (viewModel.getGroupList()[0].groupType == GroupType.ALWAYS_ON_TOP) {
+                    if (viewModel.getGroupList().isNotEmpty() && viewModel.getGroupList()[0].groupType == GroupType.ALWAYS_ON_TOP) {
                         expandManager.expandGroup(0)
                     } // открываем ALWAYS_ON_TOP группу, если она видна на экране
                     scrollToBeginOfList()

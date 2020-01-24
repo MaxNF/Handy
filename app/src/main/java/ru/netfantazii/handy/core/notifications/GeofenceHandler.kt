@@ -3,6 +3,8 @@ package ru.netfantazii.handy.core.notifications
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
@@ -10,19 +12,23 @@ import com.google.android.gms.location.LocationServices
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.db.GeofenceEntity
+import kotlin.math.log
 
-const val BUNDLE_CATALOG_ID_KEY = "intent_catalog_id_key"
-const val BUNDLE_CATALOG_NAME_KEY = "intent_catalog_name_key"
-const val BUNDLE_EXPAND_STATE_KEY = "intent_saved_state_key"
+const val BUNDLE_CATALOG_ID_KEY = "catalogId"
+const val BUNDLE_CATALOG_NAME_KEY = "catalogName"
+const val BUNDLE_EXPAND_STATE_KEY = "groupExpandStates"
+const val BUNDLE_KEY = "bundle_key"
 
 class GeofenceHandler(
     private val catalogId: Long,
     private val catalogName: String,
     private val groupExpandState: RecyclerViewExpandableItemManager.SavedState
 ) {
-    val geofenceCheckCycleMillis = 30000
+    private val TAG = "GeofenceHandler"
+    private val geofenceCheckCycleMillis = 30000
 
     fun registerGeofence(context: Context, geofenceEntity: GeofenceEntity) {
+        Log.d(TAG, "registerGeofence: ${geofenceEntity.id}")
         val geofence =
             Geofence.Builder()
                 .setRequestId(geofenceEntity.id.toString())
@@ -82,9 +88,11 @@ class GeofenceHandler(
     private fun getPendingIntent(context: Context): PendingIntent {
         val intent = Intent(context, NotificationBroadcastReceiver::class.java)
         intent.action = geofenceIntentAction
-        intent.putExtra(BUNDLE_CATALOG_ID_KEY, catalogId)
-        intent.putExtra(BUNDLE_CATALOG_NAME_KEY, catalogName)
-        intent.putExtra(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
+        val bundle = Bundle()
+        bundle.putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
+        bundle.putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
+        bundle.putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
+        intent.putExtra(BUNDLE_KEY, bundle)
         return PendingIntent.getBroadcast(context,
             catalogId.toInt(),
             intent,
