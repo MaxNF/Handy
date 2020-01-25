@@ -15,6 +15,7 @@ import org.junit.runner.RunWith
 import ru.netfantazii.handy.db.*
 import java.io.IOException
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseTest {
@@ -46,7 +47,7 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testEmptyCatalog() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
         val catalogs = catalogDao.getCatalogs().test().values()[0]
 
         assertThat(catalogs.size, `is`(1)) // В базу добавлен только один каталог
@@ -61,9 +62,9 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testMultipleCatalogs() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
+        catalogDao.add(createFakeCatalog())
+        catalogDao.add(createFakeCatalog())
         val catalogs = catalogDao.getCatalogs().test().values()[0]
 
         assertThat(catalogs.size, `is`(3)) // В базу добавлено 3 каталога
@@ -75,8 +76,8 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testEmptyGroup() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
+        groupDao.add(createFakeGroup(1))
         val groups = groupDao.getGroups(1).test().values()[0]
 
         assertThat(groups.size, `is`(1)) // Кол-во групп в каталоге: 1
@@ -87,10 +88,10 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testBoughtGroupAndCatalog() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
-        productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT)).test().assertComplete()
-        productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT)).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
+        groupDao.add(createFakeGroup(1))
+        productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT))
+        productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT))
         val catalogs = catalogDao.getCatalogs().test().values()[0]
 
         assertThat(catalogs.size, `is`(1))
@@ -117,10 +118,10 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testNotBoughtGroupAndCatalog() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
-        productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT)).test().assertComplete()
-        productDao.add(createFakeProduct(1, 1, BuyStatus.NOT_BOUGHT)).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
+        groupDao.add(createFakeGroup(1))
+        productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT))
+        productDao.add(createFakeProduct(1, 1, BuyStatus.NOT_BOUGHT))
         val catalogs = catalogDao.getCatalogs().test().values()[0]
 
         assertThat(catalogs.size, `is`(1)) // В базу добавлен только один каталог
@@ -148,30 +149,9 @@ class DatabaseTest {
 
     @Test
     @Throws(IOException::class)
-    fun testDeleteAllGroupsExceptWithAlwaysOnTopType() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
-        groupDao.add(createFakeTopGroup(1)).test().assertComplete()
-
-        val groupsBeforeDeletion = groupDao.getGroups(1).test().values()[0]
-        assertThat(groupsBeforeDeletion.size, `is`(3)) // В каталоге перед удалением 3 группы
-
-        groupDao.removeAllGroups(1).test().assertComplete()
-        val groupsAfterDeletion = groupDao.getGroups(1).test().values()[0]
-        assertThat(
-            groupsAfterDeletion.size,
-            `is`(1)
-        ) // В группе должен остаться только один (первый продукт)
-        assertThat(groupsAfterDeletion[0].groupType,
-            `is`(GroupType.ALWAYS_ON_TOP)) // Оставшаяся группа имеет тип ALWAYS_ON_TOP
-    }
-
-    @Test
-    @Throws(IOException::class)
     fun testUpdateAllCatalogs() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
+        catalogDao.add(createFakeCatalog())
 
         val catalogsBeforeUpdate = catalogDao.getCatalogs().test().values()[0]
         val firstCatalogBeforeUpdate = catalogsBeforeUpdate[0]
@@ -180,7 +160,7 @@ class DatabaseTest {
         firstCatalogBeforeUpdate.name = "updated1"
         secondCatalogBeforeUpdate.name = "updated2"
         val updatedCatalogs = listOf(firstCatalogBeforeUpdate, secondCatalogBeforeUpdate)
-        catalogDao.updateAll(updatedCatalogs).test().assertComplete()
+        catalogDao.updateAll(updatedCatalogs)
 
         val catalogsAfterUpdate = catalogDao.getCatalogs().test().values()[0]
         val firstCatalogAfterUpdate = catalogsAfterUpdate[0]
@@ -199,9 +179,9 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testUpdateAllGroups() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
+        groupDao.add(createFakeGroup(1))
+        groupDao.add(createFakeGroup(1))
 
         val groupsBeforeUpdate = groupDao.getGroups(1).test().values()[0]
         val group1BeforeUpdate = groupsBeforeUpdate[0]
@@ -210,7 +190,7 @@ class DatabaseTest {
         group1BeforeUpdate.name = "updated1"
         group2BeforeUpdate.name = "updated2"
         val updatedGroups = listOf(group1BeforeUpdate, group2BeforeUpdate)
-        groupDao.updateAll(updatedGroups).test().assertComplete()
+        groupDao.updateAll(updatedGroups)
 
         val groupsAfterUpdate = groupDao.getGroups(1).test().values()[0]
         val group1AfterUpdate = groupsAfterUpdate[0]
@@ -229,10 +209,10 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testUpdateAllProducts() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
-        productDao.add(createFakeProduct(1, 1, BuyStatus.NOT_BOUGHT)).test().assertComplete()
-        productDao.add(createFakeProduct(1, 1, BuyStatus.NOT_BOUGHT)).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
+        groupDao.add(createFakeGroup(1))
+        productDao.add(createFakeProduct(1, 1, BuyStatus.NOT_BOUGHT))
+        productDao.add(createFakeProduct(1, 1, BuyStatus.NOT_BOUGHT))
 
         val groupBeforeUpdate = groupDao.getGroups(1).test().values()[0]
         val productsBeforeUpdate = groupBeforeUpdate[0].productList
@@ -242,7 +222,7 @@ class DatabaseTest {
         product1BeforeUpdate.name = "update1"
         product2BeforeUpdate.name = "update2"
         val updatedProducts = listOf(product1BeforeUpdate, product2BeforeUpdate)
-        productDao.updateAll(updatedProducts).test().assertComplete()
+        productDao.updateAll(updatedProducts)
 
         val groupsAfterUpdate = groupDao.getGroups(1).test().values()[0]
         val productsAfterUpdate = groupsAfterUpdate[0].productList
@@ -262,9 +242,9 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testGroupType() {
-        catalogDao.add(createFakeCatalog()).test().assertComplete()
-        groupDao.add(createFakeGroup(1)).test().assertComplete()
-        groupDao.add(createFakeTopGroup(1)).test().assertComplete()
+        catalogDao.add(createFakeCatalog())
+        groupDao.add(createFakeGroup(1))
+        groupDao.add(createFakeTopGroup(1))
 
         val groups = groupDao.getGroups(1).test().values()[0]
         assertThat(groups[0].groupType,
@@ -275,10 +255,10 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testSortingOrder() {
-        catalogDao.add(createFakeCatalog("1", position = 0)).test().assertComplete()
-        catalogDao.add(createFakeCatalog("2", position = 3)).test().assertComplete()
-        catalogDao.add(createFakeCatalog("0", position = 1)).test().assertComplete()
-        catalogDao.add(createFakeCatalog("3", position = 2)).test().assertComplete()
+        catalogDao.add(createFakeCatalog("1", position = 0))
+        catalogDao.add(createFakeCatalog("2", position = 3))
+        catalogDao.add(createFakeCatalog("0", position = 1))
+        catalogDao.add(createFakeCatalog("3", position = 2))
 
         val catalogs = catalogDao.getCatalogs().test().values()[0]
         assertThat(catalogs[0].name, `is`("1"))
@@ -290,11 +270,25 @@ class DatabaseTest {
     @Test
     @Throws(IOException::class)
     fun testDefaultGroupCreated_DefaultGroupCreated() {
-        catalogDao.addWithDefaultGroup(createFakeCatalog("1", position = 0)).test().assertComplete()
+        catalogDao.addWithDefaultGroup(createFakeCatalog("1", position = 0))
         val groups = groupDao.getGroups(1).test().values()[0]
         assertThat(groups, not(empty()))
         assertThat(groups[0].groupType, `is`(GroupType.ALWAYS_ON_TOP))
         assertThat(groups[0].expandStatus, `is`(ExpandStatus.EXPANDED))
         assertThat(groups[0].name, `is`("default group"))
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun testAddAlarmTimeToCatalog_SuccessfullyAdded() {
+        val calendarToAdd = Calendar.getInstance()
+        calendarToAdd.timeInMillis = 5
+        catalogDao.add(createFakeCatalog())
+        val catalog = catalogDao.getCatalogs().test().values()[0]
+        assertThat(catalog[0].id, `is`(1L))
+        catalogDao.addAlarmTime(1L, calendarToAdd).test().assertComplete()
+        val addedCalendar = catalogDao.getCatalogAlarmTime(1).test().values()[0]
+        assertThat(addedCalendar, `is`(notNullValue()))
+        assertThat(addedCalendar!!.timeInMillis, `is`(5L))
     }
 }

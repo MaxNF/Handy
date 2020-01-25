@@ -110,4 +110,10 @@
     <string name="alarm_label">Alarm</string>
     <string name="geofences_label">Geofences</string>
     <string name="notification_cancel_label">Not now (remove notification)</string>
+    <string name="switcher_on_label">ON</string>
+    <string name="switcher_off_label">OFF</string>
+    <string name="alarm_time_label">Time</string>
+    <string name="alarm_date_label">Date</string>
+    <string name="alarm_notification_action_label">Change the alarm time</string>
+    <string name="alarm_went_off_title">The alarm went off</string>
 </resources>

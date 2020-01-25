@@ -44,15 +44,31 @@ object Converters {
     }
 
 
+//    @TypeConverter
+//    @JvmStatic
+//    fun calendarToMillis(calendar: Calendar): Long {
+//        return calendar.timeInMillis
+//    }
+//
+//    @TypeConverter
+//    @JvmStatic
+//    fun millisToCalendar(millis: Long): Calendar {
+//        val calendar = Calendar.getInstance()
+//        calendar.timeInMillis = millis
+//        return calendar
+//    }
+
+
     @TypeConverter
     @JvmStatic
-    fun calendarToMillis(calendar: Calendar): Long {
-        return calendar.timeInMillis
+    fun nullableCalendarToMillis(calendar: Calendar?): Long {
+        return calendar?.timeInMillis ?: 0L
     }
 
     @TypeConverter
     @JvmStatic
-    fun millisToCalendar(millis: Long): Calendar {
+    fun millisToNullableCalendar(millis: Long): Calendar? {
+        if (millis == 0L) return null
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = millis
         return calendar

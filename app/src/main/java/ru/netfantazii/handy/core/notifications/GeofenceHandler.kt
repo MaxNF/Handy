@@ -17,7 +17,7 @@ const val BUNDLE_CATALOG_ID_KEY = "catalogId"
 const val BUNDLE_CATALOG_NAME_KEY = "catalogName"
 const val BUNDLE_EXPAND_STATE_KEY = "groupExpandStates"
 const val BUNDLE_GEOFENCE_IDS_KEY = "geofenceIds"
-const val BUNDLE_FROM_NOTIFICATION_KEY = "fromNotification"
+const val BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY = "fromNotification"
 const val BUNDLE_KEY = "bundle_key"
 
 class GeofenceHandler(
@@ -42,16 +42,21 @@ class GeofenceHandler(
                 .build()
 
         LocationServices.getGeofencingClient(context).addGeofences(getGeofencingRequest(geofence),
-            getPendingIntent(context)).apply {
-            addOnSuccessListener {
-                Toast.makeText(context,
-                    context.getString(R.string.geofence_success),
-                    Toast.LENGTH_SHORT).show()
+            getPendingIntentForNotification(context,
+                catalogId,
+                catalogName,
+                groupExpandState,
+                GEOFENCE_INTENT_ACTION))
+            .apply {
+                addOnSuccessListener {
+                    Toast.makeText(context,
+                        context.getString(R.string.geofence_success),
+                        Toast.LENGTH_SHORT).show()
+                }
+                addOnFailureListener {
+                    throw it
+                }
             }
-            addOnFailureListener {
-                throw it
-            }
-        }
     }
 
     fun unregisterGeofence(context: Context, geofenceId: Long) {
@@ -67,7 +72,12 @@ class GeofenceHandler(
     }
 
     fun unregisterAllGeofences(context: Context) {
-        LocationServices.getGeofencingClient(context).removeGeofences(getPendingIntent(context))
+        LocationServices.getGeofencingClient(context)
+            .removeGeofences(getPendingIntentForNotification(context,
+                catalogId,
+                catalogName,
+                groupExpandState,
+                GEOFENCE_INTENT_ACTION))
             .apply {
                 addOnSuccessListener {
                     Toast.makeText(context,
@@ -85,18 +95,24 @@ class GeofenceHandler(
             addGeofence(geofence)
         }.build()
     }
+}
 
-    private fun getPendingIntent(context: Context): PendingIntent {
-        val intent = Intent(context, NotificationBroadcastReceiver::class.java)
-        intent.action = GEOFENCE_INTENT_ACTION
-        val bundle = Bundle()
-        bundle.putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
-        bundle.putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
-        bundle.putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
-        intent.putExtra(BUNDLE_KEY, bundle)
-        return PendingIntent.getBroadcast(context,
-            catalogId.toInt(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT)
-    }
+fun getPendingIntentForNotification(
+    context: Context,
+    catalogId: Long,
+    catalogName: String,
+    groupExpandState: RecyclerViewExpandableItemManager.SavedState,
+    action: String
+): PendingIntent {
+    val intent = Intent(context, NotificationBroadcastReceiver::class.java)
+    intent.action = action
+    val bundle = Bundle()
+    bundle.putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
+    bundle.putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
+    bundle.putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
+    intent.putExtra(BUNDLE_KEY, bundle)
+    return PendingIntent.getBroadcast(context,
+        catalogId.toInt(),
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT)
 }

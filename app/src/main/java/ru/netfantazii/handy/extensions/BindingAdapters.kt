@@ -1,11 +1,13 @@
 package ru.netfantazii.handy.extensions
 
-import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.core.preferences.ThemeColor
+import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.db.HintType
 
 @BindingAdapter("app:backgroundSrc")
@@ -56,4 +58,23 @@ fun setHintText(view: TextView, type: HintType) {
             view.context.getString(R.string.hint_recipe_empty_unsorted)
         HintType.EMPTY -> view.text = view.context.getString(R.string.hint_recipe_empty)
     }
+}
+
+@BindingAdapter("app:isViewDimmed")
+fun setViewDimmed(view: View, dimmed: Boolean) {
+    view.setBackgroundColor(
+        if (dimmed) ContextCompat.getColor(view.context,
+            R.color.inactiveWindowColor) else getThemeColor(view.context,
+            ThemeColor.MAIN_BACKGROUND_COLOR)
+    )
+}
+
+@BindingAdapter("app:isTextDimmed")
+fun setTextDimmed(textView: TextView, dimmed: Boolean) {
+//    textView.setTextColor(
+//        if (dimmed) ContextCompat.getColor(textView.context,
+//            R.color.textColorGray) else getThemeColor(textView.context,
+//            ThemeColor.TOOLBAR_ELEMENT_COLOR)
+//    )
+    textView.alpha = if (dimmed) 0.5f else 1f
 }

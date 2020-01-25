@@ -1,120 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorPrimary"
-    android:orientation="vertical">
+<layout>
 
-    <ScrollView
-        android:id="@+id/scroll_view"
+    <data>
+
+        <variable
+            name="viewModel"
+            type="ru.netfantazii.handy.core.notifications.alarm.AlarmViewModel" />
+
+        <variable
+            name="datePicker"
+            type="android.widget.DatePicker" />
+
+        <variable
+            name="timePicker"
+            type="android.widget.TimePicker" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="?attr/mainBackground"
-        app:layout_constraintBottom_toTopOf="@+id/toggle_background"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:background="?attr/colorPrimary"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/toggle_background"
+            app:layout_constraintTop_toTopOf="parent"
+            app:isViewDimmed="@{viewModel.switchStatus}">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/date_picker_view" />
+
+                <TextView
+                    android:id="@+id/date_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/alarm_date_label"
+                    android:textColor="@color/textColorGray"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <DatePicker
+                    android:enabled="@{!viewModel.switchStatus}"
+                    android:id="@+id/date_picker_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:calendarViewShown="false"
+                    android:datePickerMode="spinner"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/time_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/alarm_time_label"
+                    android:textColor="@color/textColorGray"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/date_picker_view" />
+
+                <TimePicker
+                    android:enabled="@{!viewModel.switchStatus}"
+                    android:id="@+id/time_picker_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:timePickerMode="spinner"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/date_picker_view" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toggle_background"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="32dp"
-                android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/date_picker" />
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <TextView
-                android:id="@+id/date_label"
+                android:id="@+id/alarm_off_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Date"
-                android:textColor="@color/textColorGray"
-                android:textSize="18sp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/switcher_off_label"
+                app:isTextDimmed="@{viewModel.switchStatus}"
+                android:textColor="?attr/toolbarElementColor"
+                app:layout_constraintBottom_toBottomOf="@+id/button_toggle_alarm"
+                app:layout_constraintEnd_toStartOf="@+id/button_toggle_alarm"
+                app:layout_constraintTop_toTopOf="@+id/button_toggle_alarm" />
+
+            <Switch
+                android:id="@+id/button_toggle_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:checked="@={viewModel.switchStatus}"
+                android:onClick="@{() -> viewModel.onSwitchClick(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), timePicker.getHour(), timePicker.getMinute())}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <DatePicker
-                android:id="@+id/date_picker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:calendarViewShown="false"
-                android:datePickerMode="spinner"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/date_label" />
-
             <TextView
-                android:id="@+id/time_label"
+                android:id="@+id/alarm_on_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Time"
-                android:textColor="@color/textColorGray"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/date_picker" />
-
-            <TimePicker
-                android:id="@+id/time_picker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:timePickerMode="spinner"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/time_label" />
+                android:layout_marginStart="8dp"
+                android:text="@string/switcher_on_label"
+                app:isTextDimmed="@{!viewModel.switchStatus}"
+                android:textColor="?attr/toolbarElementColor"
+                app:layout_constraintBottom_toBottomOf="@+id/button_toggle_alarm"
+                app:layout_constraintStart_toEndOf="@+id/button_toggle_alarm"
+                app:layout_constraintTop_toTopOf="@+id/button_toggle_alarm" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/toggle_background"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/alarm_off_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="OFF"
-            android:textColor="?attr/toolbarElementColor"
-            app:layout_constraintBottom_toBottomOf="@+id/button_toggle_alarm"
-            app:layout_constraintEnd_toStartOf="@+id/button_toggle_alarm"
-            app:layout_constraintTop_toTopOf="@+id/button_toggle_alarm" />
-
-        <Switch
-            android:id="@+id/button_toggle_alarm"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_gravity="center_horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/alarm_on_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="ON"
-            android:textColor="?attr/toolbarElementColor"
-            app:layout_constraintBottom_toBottomOf="@+id/button_toggle_alarm"
-            app:layout_constraintStart_toEndOf="@+id/button_toggle_alarm"
-            app:layout_constraintTop_toTopOf="@+id/button_toggle_alarm" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

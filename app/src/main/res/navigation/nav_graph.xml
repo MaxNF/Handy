@@ -15,7 +15,7 @@
             app:destination="@id/products_fragment" />
         <action
             android:id="@+id/action_catalogs_fragment_to_map"
-            app:destination="@id/notifications" />
+            app:destination="@id/notifications_fragment" />
     </fragment>
     <fragment
         android:id="@+id/products_fragment"
@@ -64,7 +64,7 @@
         app:destination="@+id/welcomeFragment"
         app:popUpTo="@+id/catalogs_fragment" />
     <fragment
-        android:id="@+id/notifications"
+        android:id="@+id/notifications_fragment"
         android:name="ru.netfantazii.handy.core.notifications.NotificationTabFragment"
         android:label="Notifications">
         <argument

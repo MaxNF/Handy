@@ -5,6 +5,7 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import java.util.*
 
 @Dao
 abstract class BaseDao<T> {
@@ -39,7 +40,7 @@ abstract class BaseDao<T> {
 @Dao
 abstract class CatalogDao : BaseDao<CatalogEntity>() {
     @Transaction
-    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
+    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
     abstract fun getCatalogs(): Observable<MutableList<Catalog>>
 
     @Query("DELETE FROM CatalogEntity")
@@ -65,17 +66,29 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
     @Update
     abstract fun updateAllCatalogs(list: List<CatalogEntity>)
 
+    @Query("SELECT alarm_time FROM catalogentity WHERE id = :catalogId")
+    abstract fun getCatalogAlarmTime(catalogId: Long): Observable<Calendar?>
+
+    @Query("UPDATE catalogentity SET alarm_time = :calendar WHERE id = :catalogId")
+    abstract fun addAlarmTime(catalogId: Long, calendar: Calendar?): Completable
+
+    @Query("UPDATE catalogentity SET alarm_time = 0 WHERE id = :catalogId")
+    abstract fun removeAlarmTime(catalogId: Long): Completable
+
     @Transaction
     open fun addCatalogAndUpdateAll(catalog: CatalogEntity, list: List<CatalogEntity>) {
         addWithDefaultGroup(catalog)
         updateAllCatalogs(list)
     }
 
-    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c WHERE id = :id")
+    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c WHERE id = :id")
     abstract fun getCatalogById(id: Long): Catalog
 
     @Transaction
-    open fun getCatalogByIdAndUpdateStates(id: Long, expandStates: RecyclerViewExpandableItemManager.SavedState) {
+    open fun getCatalogByIdAndUpdateStates(
+        id: Long,
+        expandStates: RecyclerViewExpandableItemManager.SavedState
+    ) {
         val catalog = getCatalogById(id)
         catalog.groupExpandStates = expandStates
         update(catalog)

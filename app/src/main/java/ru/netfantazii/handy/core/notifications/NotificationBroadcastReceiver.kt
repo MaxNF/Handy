@@ -67,8 +67,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
 
     private fun sendAlarmNotification() {
         Log.d(TAG, "sendAlarmNotification: ")
-        val title = ""
-        val message = ""
+        val title = context.getString(R.string.alarm_went_off_title)
+        val message = context.getString(R.string.geofence_notification_message)
         NotificationManagerCompat.from(context)
             .notify(notificationId, createAlarmNotification(title, message))
     }
@@ -86,12 +86,18 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
         with(arguments) {
             putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
             putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
+            putBoolean(BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, false)
             putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
-            putBoolean(BUNDLE_FROM_NOTIFICATION_KEY, true)
         }
-        val pendingIntent = NavDeepLinkBuilder(context)
+        val toCatalogPendingIntent = NavDeepLinkBuilder(context)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.products_fragment)
+            .setArguments(arguments)
+            .createPendingIntent()
+
+        val toSetAlarmPendingIntent = NavDeepLinkBuilder(context)
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.notifications_fragment)
             .setArguments(arguments)
             .createPendingIntent()
 
@@ -103,10 +109,13 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
+            .setContentIntent(toCatalogPendingIntent)
             .addAction(0,
                 context.getString(R.string.notification_cancel_label),
                 onCancelClickIntent)
+            .addAction(0,
+                context.getString(R.string.alarm_notification_action_label),
+                toSetAlarmPendingIntent)
             .build()
     }
 
@@ -120,7 +129,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
             putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
             putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
-            putBoolean(BUNDLE_FROM_NOTIFICATION_KEY, true)
+            putBoolean(BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, true)
             putLongArray(BUNDLE_GEOFENCE_IDS_KEY, geofenceIds)
         }
         val pendingIntent = NavDeepLinkBuilder(context)

@@ -12,9 +12,10 @@ class Catalog(
     name: String = "",
     position: Int = 0,
     groupExpandStates: RecyclerViewExpandableItemManager.SavedState = RecyclerViewExpandableItemManager.SavedState(longArrayOf()),
+    alarmTime: Calendar? = null,
     val totalElementCount: Int = 0,
     val boughtElementCount: Int = 0
-) : CatalogEntity(id, creationTime, position, name, groupExpandStates) {
+) : CatalogEntity(id, creationTime, position, name, groupExpandStates, alarmTime) {
     @field:Ignore
     val buyStatus: BuyStatus
 

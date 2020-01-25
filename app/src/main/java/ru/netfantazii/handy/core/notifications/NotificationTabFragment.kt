@@ -9,9 +9,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.core.notifications.alarm.AlarmFragment
+import ru.netfantazii.handy.core.notifications.map.MapFragment
 import java.lang.UnsupportedOperationException
 
 class NotificationTabFragment : Fragment() {
@@ -61,19 +62,15 @@ class NotificationTabAdapter(
 ) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = 2
     override fun createFragment(position: Int): Fragment {
+        val arguments = Bundle()
+        with(arguments) {
+            putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
+            putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
+            putParcelable(BUNDLE_EXPAND_STATE_KEY, expandStates)
+        }
         return when (position) {
-            0 -> AlarmFragment()
-            1 -> {
-                val arguments = Bundle()
-                with(arguments) {
-                    putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
-                    putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
-                    putParcelable(BUNDLE_EXPAND_STATE_KEY, expandStates)
-                }
-                val mapFragment = MapFragment()
-                mapFragment.arguments = arguments
-                mapFragment
-            }
+            0 -> AlarmFragment().apply { this.arguments = arguments }
+            1 -> MapFragment().apply { this.arguments = arguments }
             else -> throw UnsupportedOperationException("No fragment for position #$position")
         }
     }

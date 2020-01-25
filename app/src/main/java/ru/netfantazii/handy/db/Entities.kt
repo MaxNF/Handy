@@ -20,7 +20,9 @@ open class CatalogEntity(
     position: Int,
     name: String,
     @field:ColumnInfo(name = "group_expand_states")
-    var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
+    var groupExpandStates: RecyclerViewExpandableItemManager.SavedState,
+    @field:ColumnInfo(name = "alarm_time")
+    var alarmTime: Calendar?
 ) : BaseEntity(id, creationTime, position, name)
 
 @Entity(

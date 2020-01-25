@@ -1,11 +1,11 @@
 package ru.netfantazii.handy
 
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
-import io.reactivex.Completable
-import io.reactivex.CompletableObserver
+import io.reactivex.*
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import ru.netfantazii.handy.db.Catalog
+import ru.netfantazii.handy.db.GeofenceEntity
 import ru.netfantazii.handy.db.Group
 import ru.netfantazii.handy.db.Product
 import java.util.*
@@ -148,6 +148,38 @@ class FakeLocalRepository : LocalRepository {
 
     override fun addAndUpdateProducts(product: Product, list: List<Product>): Disposable {
         throw NotImplementedError("implement it first!")
+        return FakeDisposable()
+    }
+
+    override fun addGeofence(geofence: GeofenceEntity): Single<Long> {
+        return object : Single<Long>() {
+            override fun subscribeActual(observer: SingleObserver<in Long>) {
+//
+            }
+        }
+    }
+
+    override fun getGeofences(catalogId: Long): Observable<MutableList<GeofenceEntity>> {
+        return Observable.just(mutableListOf())
+    }
+
+    override fun removeGeofenceById(id: Long): Disposable {
+        return FakeDisposable()
+    }
+
+    override fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable {
+        return FakeDisposable()
+    }
+
+    override fun getCatalogAlarmTime(catalogId: Long): Observable<Calendar?> {
+        return Observable.just(Calendar.getInstance())
+    }
+
+    override fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable {
+        return FakeDisposable()
+    }
+
+    override fun removeCatalogAlarmTime(catalogId: Long): Disposable {
         return FakeDisposable()
     }
 }

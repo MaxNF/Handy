@@ -7,6 +7,7 @@ import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.db.*
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 interface LocalRepository {
@@ -44,6 +45,9 @@ interface LocalRepository {
     fun getGeofences(catalogId: Long): Observable<MutableList<GeofenceEntity>>
     fun removeGeofenceById(id: Long): Disposable
     fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable
+    fun getCatalogAlarmTime(catalogId: Long): Observable<Calendar?>
+    fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable
+    fun removeCatalogAlarmTime(catalogId: Long): Disposable
 }
 
 class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
@@ -165,4 +169,13 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
 
     override fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable =
         geofenceDao.removeAllGeofencesFromCatalog(catalogId).subscribeOn(Schedulers.io()).subscribe()!!
+
+    override fun getCatalogAlarmTime(catalogId: Long): Observable<Calendar?> =
+        catalogDao.getCatalogAlarmTime(catalogId)
+
+    override fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable =
+        catalogDao.addAlarmTime(catalogId, calendar).subscribeOn(Schedulers.io()).subscribe()!!
+
+    override fun removeCatalogAlarmTime(catalogId: Long): Disposable =
+        catalogDao.removeAlarmTime(catalogId).subscribeOn(Schedulers.io()).subscribe()
 }

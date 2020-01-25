@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.core.notifications
+package ru.netfantazii.handy.core.notifications.map
 
 import android.app.Activity
 import android.os.Bundle
@@ -11,8 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.navArgs
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import com.yandex.mapkit.Animation
@@ -34,6 +32,7 @@ import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.core.notifications.*
 import ru.netfantazii.handy.databinding.MapFragmentBinding
 import ru.netfantazii.handy.extensions.addKeyboardButtonClickListener
 import ru.netfantazii.handy.extensions.hideKeyboard
@@ -121,9 +120,13 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
 
         viewModel =
             ViewModelProviders.of(this,
-                MapVmFactory(repository,
+                MapVmFactory(
+                    repository,
                     currentCatalogId,
-                    GeofenceHandler(currentCatalogId, catalogName!!, groupExpandState!!),
+                    GeofenceHandler(
+                        currentCatalogId,
+                        catalogName!!,
+                        groupExpandState!!),
                     activity!!.application))
                 .get(MapViewModel::class.java)
     }
@@ -244,7 +247,10 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     private fun subscribeToEvents() {
         viewModel.newDataReceived.observe(this, Observer {
             // нужно перерисовать геозоны после поворота экрана, поэтому не обнуляем контент Ивента
-            val diffSearcher = CircleDiffSearcher(mapObjects, viewModel.circleMap)
+            val diffSearcher =
+                CircleDiffSearcher(
+                    mapObjects,
+                    viewModel.circleMap)
             diffSearcher.getRemovedCircles().forEach { mapEntry ->
                 val circleToRemove = mapEntry.value
                 val placemarkToRemove = diffSearcher.visiblePlacemarks[mapEntry.key]

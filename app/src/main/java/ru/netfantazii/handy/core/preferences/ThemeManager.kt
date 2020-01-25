@@ -11,7 +11,7 @@ enum class ThemeColor {
     COLOR_PRIMARY, COLOR_PRIMARY_DARK, COLOR_ACCENT, CATALOG_NORMAL_COLOR, CATALOG_SWIPE_COLOR,
     BOUGHT_NORMAL_COLOR, BOUGHT_SWIPE_COLOR, NOT_BOUGHT_NORMAL_COLOR, NOT_BOUGHT_SWIPE_COLOR,
     TOOLBAR_ELEMENT_COLOR, ICONS_COLOR, OVERLAY_BACKGROUND_COLOR, SPEED_DIAL_LABEL_BACKGROUND, SPEED_DIAL_LABEL_COLOR,
-    SWIPE_BACKGROUND_COLOR, FAB_ICON_TINT, SNACK_BAR_ACTION_COLOR
+    SWIPE_BACKGROUND_COLOR, FAB_ICON_TINT, SNACK_BAR_ACTION_COLOR, MAIN_BACKGROUND_COLOR
 }
 
 fun getThemeColor(context: Context, themeColor: ThemeColor?): Int {
@@ -57,6 +57,7 @@ fun getThemeColor(context: Context, themeColor: ThemeColor?): Int {
         SNACK_BAR_ACTION_COLOR -> theme.resolveAttribute(R.attr.snackbarActionColor,
             typedValue,
             true)
+        MAIN_BACKGROUND_COLOR -> theme.resolveAttribute(R.attr.mainBackground, typedValue, true)
     }
     return typedValue.data
 }

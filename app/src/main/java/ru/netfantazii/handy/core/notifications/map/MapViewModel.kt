@@ -1,19 +1,18 @@
-package ru.netfantazii.handy.core.notifications
+package ru.netfantazii.handy.core.notifications.map
 
 import android.app.Application
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
-import com.google.android.gms.tasks.OnSuccessListener
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.LocalRepository
 import ru.netfantazii.handy.core.Event
+import ru.netfantazii.handy.core.notifications.GeofenceHandler
 import ru.netfantazii.handy.db.GeofenceEntity
 import kotlin.collections.Map
 
@@ -148,7 +147,11 @@ class MapVmFactory(
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
-            return MapViewModel(localRepository, catalogId, geofenceHandler, application) as T
+            return MapViewModel(
+                localRepository,
+                catalogId,
+                geofenceHandler,
+                application) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }
