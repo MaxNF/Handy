@@ -129,7 +129,7 @@ class CatalogsAdapter(
     }
 
     override fun onItemDragFinished(fromPosition: Int, toPosition: Int, result: Boolean) {
-//        notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 
     override fun onSwipeItem(
