@@ -1,8 +1,10 @@
 package ru.netfantazii.handy.extensions
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
+import android.os.Build
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
 import androidx.preference.PreferenceManager
@@ -53,4 +55,13 @@ fun getSortOrder(context: Context): SortOrder {
         sortingOldestFirstValue -> SortOrder.OLDEST_FIRST
         else -> SortOrder.NEWEST_FIRST
     }
+}
+
+fun getRequiredMapPermissions(): Array<String> {
+    val permissions = mutableListOf(Manifest.permission.INTERNET,
+        Manifest.permission.ACCESS_FINE_LOCATION)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    }
+    return permissions.toTypedArray()
 }

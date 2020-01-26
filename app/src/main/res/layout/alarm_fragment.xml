@@ -124,7 +124,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
                 android:checked="@={viewModel.switchStatus}"
-                android:onClick="@{() -> viewModel.onSwitchClick(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), timePicker.getHour(), timePicker.getMinute())}"
+                android:onClick="@{() -> viewModel.onSwitchClick(datePicker, timePicker)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

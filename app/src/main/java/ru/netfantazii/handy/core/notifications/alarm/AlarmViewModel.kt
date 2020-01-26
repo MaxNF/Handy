@@ -1,7 +1,10 @@
 package ru.netfantazii.handy.core.notifications.alarm
 
 import android.app.Application
+import android.os.Build
 import android.util.Log
+import android.widget.DatePicker
+import android.widget.TimePicker
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
@@ -56,16 +59,27 @@ class AlarmViewModel(
         _newDataReceived.value = Event(value)
     }
 
-    fun onSwitchClick(
-        year: Int,
-        month: Int,
-        dayOfMonth: Int,
-        hour: Int,
-        minute: Int
-    ) {
+    fun onSwitchClick(datePicker: DatePicker, timePicker: TimePicker) {
         Log.d(TAG, "onCheckedChanged: ")
+        val hour: Int
+        val minute: Int
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            hour = timePicker.hour
+            minute = timePicker.minute
+        } else {
+            hour = timePicker.currentHour
+            minute = timePicker.currentMinute
+        }
+
         val calendar =
-            Calendar.getInstance().apply { set(year, month, dayOfMonth, hour, minute, 0) }
+            Calendar.getInstance().apply {
+                set(datePicker.year,
+                    datePicker.month,
+                    datePicker.dayOfMonth,
+                    hour,
+                    minute,
+                    0)
+            }
         if (switchStatus.get()!!) applyAlarm(calendar) else cancelAlarm()
     }
 

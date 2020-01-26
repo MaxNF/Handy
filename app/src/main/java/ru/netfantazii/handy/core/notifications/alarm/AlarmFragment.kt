@@ -2,12 +2,14 @@ package ru.netfantazii.handy.core.notifications.alarm
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProviders
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.HandyApplication
@@ -21,6 +23,8 @@ class AlarmFragment : Fragment() {
     lateinit var viewModel: AlarmViewModel
     lateinit var datePicker: DatePicker
     lateinit var timePicker: TimePicker
+    private val allLiveDataList = mutableListOf<LiveData<*>>()
+    private val TAG = "AlarmFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,5 +86,15 @@ class AlarmFragment : Fragment() {
                 }
             }
         })
+        allLiveDataList.add(viewModel.newDataReceived)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        unsubscribeFromEvents()
+    }
+
+    private fun unsubscribeFromEvents() {
+        allLiveDataList.forEach { it.removeObservers(this) }
     }
 }
