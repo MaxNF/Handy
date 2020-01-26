@@ -1,26 +1,17 @@
 package ru.netfantazii.handy.core.notifications.alarm
 
-import android.app.AlarmManager
 import android.app.Application
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
-import com.yandex.mapkit.Version
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.LocalRepository
 import ru.netfantazii.handy.core.Event
-import ru.netfantazii.handy.core.notifications.ALARM_INTENT_ACTION
-import ru.netfantazii.handy.core.notifications.GeofenceHandler
-import ru.netfantazii.handy.core.notifications.NotificationBroadcastReceiver
-import ru.netfantazii.handy.core.notifications.getPendingIntentForNotification
+import ru.netfantazii.handy.extensions.registerAlarm
+import ru.netfantazii.handy.extensions.unregisterAlarm
 import java.util.*
-import kotlin.math.log
 
 class AlarmViewModel(
     application: Application,
@@ -54,7 +45,8 @@ class AlarmViewModel(
         disposables.add(localRepository.getCatalogAlarmTime(currentCatalogId).observeOn(
             AndroidSchedulers.mainThread()).subscribe {
             Log.d(TAG, "subscribeToAlarmChanges: 2")
-            time = it
+            time = if (it.isEmpty()) null else
+                it[0]
         })
     }
 
@@ -72,41 +64,21 @@ class AlarmViewModel(
         minute: Int
     ) {
         Log.d(TAG, "onCheckedChanged: ")
-        val calendar = Calendar.getInstance().apply { set(year, month, dayOfMonth, hour, minute, 0) }
-        if (switchStatus.get()!!) registerAlarm(calendar) else unregisterAlarm()
+        val calendar =
+            Calendar.getInstance().apply { set(year, month, dayOfMonth, hour, minute, 0) }
+        if (switchStatus.get()!!) applyAlarm(calendar) else cancelAlarm()
     }
 
-    private fun registerAlarm(calendar: Calendar) {
+    private fun applyAlarm(calendar: Calendar) {
         Log.d(TAG, "registerAlarm: ")
         localRepository.addCatalogAlarmTime(currentCatalogId, calendar)
-        val alarmManager =
-            (getApplication() as Context).getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val pendingIntent = getPendingIntentForNotification(getApplication(),
-            currentCatalogId,
-            catalogName,
-            expandStates,
-            ALARM_INTENT_ACTION)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                pendingIntent)
-        } else {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-        }
+        registerAlarm(getApplication(), currentCatalogId, catalogName, expandStates, calendar)
     }
 
-    private fun unregisterAlarm() {
+    private fun cancelAlarm() {
         Log.d(TAG, "unregisterAlarm: ")
         localRepository.removeCatalogAlarmTime(currentCatalogId)
-        val alarmManager =
-            (getApplication() as Context).getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val pendingIntent = getPendingIntentForNotification(getApplication(),
-            currentCatalogId,
-            catalogName,
-            expandStates,
-            ALARM_INTENT_ACTION)
-        alarmManager.cancel(pendingIntent)
+        unregisterAlarm(getApplication(), currentCatalogId)
     }
 
     override fun onCleared() {

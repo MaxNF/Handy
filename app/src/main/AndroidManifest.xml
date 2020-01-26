@@ -29,6 +29,7 @@
                 <action android:name="ru.netfantazii.handy.GEOFENCE_IS_CROSSED" />
             </intent-filter>
         </receiver>
+        <service android:name=".core.notifications.NotificationService" />
     </application>
 
 </manifest>

@@ -1,25 +1,33 @@
 package ru.netfantazii.handy.core.notifications.map
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
+import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.LocalRepository
+import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.Event
-import ru.netfantazii.handy.core.notifications.GeofenceHandler
 import ru.netfantazii.handy.db.GeofenceEntity
+import ru.netfantazii.handy.extensions.registerGeofence
+import ru.netfantazii.handy.extensions.unregisterAllGeofences
+import ru.netfantazii.handy.extensions.unregisterGeofence
 import kotlin.collections.Map
 
 class MapViewModel(
     private val localRepository: LocalRepository,
     private val currentCatalogId: Long,
-    private val geofenceHandler: GeofenceHandler,
+    private val catalogName: String,
+    private val groupExpandStates: RecyclerViewExpandableItemManager.SavedState,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -108,19 +116,33 @@ class MapViewModel(
             longitude = point.longitude, radius = nextGeofenceRaidus)
         disposables.add(localRepository.addGeofence(geofence).subscribe(Consumer {
             geofence.id = it
-            geofenceHandler.registerGeofence(getApplication(), geofence)
+            registerGeofence(getApplication(),
+                geofence,
+                currentCatalogId,
+                catalogName,
+                groupExpandStates) {
+                val context = getApplication<HandyApplication>()
+                Toast.makeText(context,
+                    context.getString(R.string.geofence_success),
+                    Toast.LENGTH_SHORT).show()
+            }
         }))
 
     }
 
     fun onCircleClick(geofenceId: Long) {
         localRepository.removeGeofenceById(geofenceId)
-        geofenceHandler.unregisterGeofence(getApplication(), geofenceId)
+        unregisterGeofence(getApplication(), geofenceId) {
+            val context = getApplication<HandyApplication>()
+            Toast.makeText(context,
+                context.getString(R.string.geofence_unreg_success),
+                Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun onClearAllClick() {
         localRepository.removeAllGeofencesFromCatalog(currentCatalogId)
-        geofenceHandler.unregisterAllGeofences(getApplication())
+        unregisterAllGeofences(getApplication(), currentCatalogId)
     }
 
     fun onFindMyLocationClick() {
@@ -140,7 +162,8 @@ class MapViewModel(
 class MapVmFactory(
     private val localRepository: LocalRepository,
     private val catalogId: Long,
-    private val geofenceHandler: GeofenceHandler,
+    private val catalogName: String,
+    private val groupExpandStates: RecyclerViewExpandableItemManager.SavedState,
     private val application: Application
 ) :
     ViewModelProvider.AndroidViewModelFactory(application) {
@@ -150,7 +173,8 @@ class MapVmFactory(
             return MapViewModel(
                 localRepository,
                 catalogId,
-                geofenceHandler,
+                catalogName,
+                groupExpandStates,
                 application) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")

@@ -45,7 +45,7 @@ interface LocalRepository {
     fun getGeofences(catalogId: Long): Observable<MutableList<GeofenceEntity>>
     fun removeGeofenceById(id: Long): Disposable
     fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable
-    fun getCatalogAlarmTime(catalogId: Long): Observable<Calendar?>
+    fun getCatalogAlarmTime(catalogId: Long): Observable<List<Calendar>>
     fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable
     fun removeCatalogAlarmTime(catalogId: Long): Disposable
 }
@@ -170,7 +170,7 @@ class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
     override fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable =
         geofenceDao.removeAllGeofencesFromCatalog(catalogId).subscribeOn(Schedulers.io()).subscribe()!!
 
-    override fun getCatalogAlarmTime(catalogId: Long): Observable<Calendar?> =
+    override fun getCatalogAlarmTime(catalogId: Long): Observable<List<Calendar>> =
         catalogDao.getCatalogAlarmTime(catalogId)
 
     override fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable =

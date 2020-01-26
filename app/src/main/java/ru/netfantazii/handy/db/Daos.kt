@@ -67,7 +67,7 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
     abstract fun updateAllCatalogs(list: List<CatalogEntity>)
 
     @Query("SELECT alarm_time FROM catalogentity WHERE id = :catalogId")
-    abstract fun getCatalogAlarmTime(catalogId: Long): Observable<Calendar?>
+    abstract fun getCatalogAlarmTime(catalogId: Long): Observable<List<Calendar>>
 
     @Query("UPDATE catalogentity SET alarm_time = :calendar WHERE id = :catalogId")
     abstract fun addAlarmTime(catalogId: Long, calendar: Calendar?): Completable

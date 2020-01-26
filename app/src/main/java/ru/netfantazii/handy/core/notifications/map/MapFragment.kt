@@ -32,10 +32,11 @@ import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.core.notifications.*
+import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_ID_KEY
+import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_NAME_KEY
+import ru.netfantazii.handy.core.notifications.BUNDLE_EXPAND_STATE_KEY
 import ru.netfantazii.handy.databinding.MapFragmentBinding
-import ru.netfantazii.handy.extensions.addKeyboardButtonClickListener
-import ru.netfantazii.handy.extensions.hideKeyboard
+import ru.netfantazii.handy.extensions.*
 import java.lang.IllegalArgumentException
 
 const val MAP_API_KEY = "3426ee1b-da34-4926-b4f4-df96fdb9a8eb"
@@ -113,20 +114,18 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     private fun createViewModel() {
         val repository = (requireContext().applicationContext as HandyApplication).localRepository
         val currentCatalogId = arguments!!.getLong(BUNDLE_CATALOG_ID_KEY)
-        val catalogName = arguments!!.getString(BUNDLE_CATALOG_NAME_KEY)
+        val catalogName = arguments!!.getString(BUNDLE_CATALOG_NAME_KEY)!!
         val groupExpandState =
             arguments!!.getParcelable<RecyclerViewExpandableItemManager.SavedState>(
-                BUNDLE_EXPAND_STATE_KEY)
+                BUNDLE_EXPAND_STATE_KEY)!!
 
         viewModel =
             ViewModelProviders.of(this,
                 MapVmFactory(
                     repository,
                     currentCatalogId,
-                    GeofenceHandler(
-                        currentCatalogId,
-                        catalogName!!,
-                        groupExpandState!!),
+                    catalogName,
+                    groupExpandState,
                     activity!!.application))
                 .get(MapViewModel::class.java)
     }

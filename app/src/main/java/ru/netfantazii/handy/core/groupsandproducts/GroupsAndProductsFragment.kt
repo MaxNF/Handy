@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.BaseFragment
-import ru.netfantazii.handy.core.notifications.GeofenceHandler
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
@@ -49,16 +48,6 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         if (!viewModel.isGroupExpandStatesInitialized()) {
             Log.d(TAG, "onCreate: not init")
             viewModel.groupExpandStates = fragmentArgs.groupExpandStates
-        }
-
-        if (fragmentArgs.fromNotification) {
-            if (fragmentArgs.geofenceIds == null) throw IllegalArgumentException("Geofence ids are not specified")
-            val geofenceHandler = GeofenceHandler(fragmentArgs.catalogId,
-                fragmentArgs.catalogName,
-                fragmentArgs.groupExpandStates)
-            viewModel.removeActivatedGeofences(fragmentArgs.geofenceIds!!,
-                geofenceHandler,
-                context!!)
         }
     }
 

@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_ID_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_NAME_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_EXPAND_STATE_KEY

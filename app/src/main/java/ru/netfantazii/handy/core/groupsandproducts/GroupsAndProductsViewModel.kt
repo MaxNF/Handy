@@ -11,7 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.LocalRepository
 import ru.netfantazii.handy.core.*
-import ru.netfantazii.handy.core.notifications.GeofenceHandler
+import ru.netfantazii.handy.extensions.unregisterGeofence
 import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.db.*
 import ru.netfantazii.handy.extensions.*
@@ -478,17 +478,6 @@ class GroupsAndProductsViewModel(
     fun saveExpandStateToDb(groupExpandStates: RecyclerViewExpandableItemManager.SavedState) {
         localRepository.updateGroupExpandStates(currentCatalogId, groupExpandStates)
         Log.d(TAG, "saveExpandStateToDb: ")
-    }
-
-    fun removeActivatedGeofences(
-        geofenceIds: LongArray,
-        geofenceHandler: GeofenceHandler,
-        context: Context
-    ) {
-        geofenceIds.forEach {
-            localRepository.removeGeofenceById(it)
-            geofenceHandler.unregisterGeofence(context, it)
-        }
     }
 
     override fun onCleared() {
