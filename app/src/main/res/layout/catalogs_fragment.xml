@@ -36,7 +36,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_list"
-                android:paddingTop="10dp"
+                android:paddingTop="15dp"
                 android:paddingBottom="80dp"
                 style="@style/RecyclerViewMain"
                 android:layout_width="match_parent"

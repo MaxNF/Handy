@@ -38,17 +38,10 @@
         <item name="android:textSize">12sp</item>
     </style>
     <!--EditImage style-->
-    <style name="EditImage">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:src">@drawable/ic_edit</item>
+    <style name="RvElementIconStyle">
         <!--используем паддинг, чтобы увеличить размер кнопки по краям-->
-        <item name="android:padding">15dp</item>
-    </style>
-    <style name="NotificationImage">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:src">@drawable/ic_notifications</item>
-        <!--используем паддинг, чтобы увеличить размер кнопки по краям-->
-        <item name="android:padding">15dp</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
     </style>
 
     <!--Universal RecyclerView style-->

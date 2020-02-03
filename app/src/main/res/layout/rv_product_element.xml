@@ -39,9 +39,9 @@
 
                 <ImageButton
                     android:id="@+id/ib_element_edit"
-                    style="@style/EditImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/RvElementIconStyle"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_edit"
                     android:onClick="@{() -> productHandler.onProductEditClick(product)}"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"
                     app:layout_constraintEnd_toEndOf="parent"

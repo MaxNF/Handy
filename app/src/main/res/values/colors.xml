@@ -24,4 +24,6 @@
     <color name="mainBackgroundWhite">#FFFFFF</color>
     <color name="appLogoBackgroundColor">#0c2a2a</color>
     <color name="inactiveWindowColor">#DADADA</color>
+    <color name="blackSemiTransparent80">#CD000000</color>
+    <color name="blackSemiTransparent60">#99000000</color>
 </resources>

@@ -20,8 +20,8 @@
         <item name="boughtSwipeColor">@color/boughtSwipeColor</item>
         <item name="notBoughtNormalColor">@color/notBoughtColor</item>
         <item name="notBoughtSwipeColor">@color/notBoughtSwipeColor</item>
-        <item name="listIconsColor">@color/listIconsColorBlack</item>
-        <item name="listTextColor">@color/textColorBlack</item>
+        <item name="listIconsColor">@color/blackSemiTransparent80</item>
+        <item name="listTextColor">@color/blackSemiTransparent80</item>
         <!--Other colors-->
         <item name="overlayBackgroundColor">@color/overlayColor</item>
         <item name="speedDialActionLabelBackground">@color/speedDialActionBackground</item>

@@ -2,7 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="catalog"
             type="ru.netfantazii.handy.db.Catalog" />
@@ -15,7 +17,8 @@
     <FrameLayout
         style="@style/ListElementElevation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp">
 
         <FrameLayout
             android:id="@+id/container"
@@ -33,33 +36,48 @@
 
                 <ImageButton
                     android:id="@+id/ib_element_edit"
-                    style="@style/EditImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/RvElementIconStyle"
+                    android:background="@android:color/transparent"
                     android:onClick="@{() -> handler.onCatalogEditClick(catalog)}"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_element_count"
+                    android:src="@drawable/ic_edit"
+                    app:layout_constraintBottom_toBottomOf="@+id/ib_notification"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/tv_element_count" />
+                    app:layout_constraintTop_toTopOf="@+id/ib_notification" />
 
                 <ImageButton
                     android:id="@+id/ib_notification"
-                    style="@style/NotificationImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/RvElementIconStyle"
+                    android:background="@android:color/transparent"
                     android:onClick="@{() -> handler.onCatalogNotificationClick(catalog)}"
+                    android:src="@drawable/ic_notification"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"
                     app:layout_constraintEnd_toStartOf="@+id/ib_element_edit"
-                    app:layout_constraintTop_toTopOf="@+id/ib_element_edit" />
+                    app:layout_constraintTop_toTopOf="@+id/tv_element_name" />
+
+                <ImageButton
+                    android:id="@+id/ib_share"
+                    style="@style/RvElementIconStyle"
+                    android:background="@android:color/transparent"
+                    android:onClick="@{() -> handler.onCatalogNotificationClick(catalog)}"
+                    android:src="@drawable/ic_share"
+                    app:layout_constraintBottom_toBottomOf="@+id/ib_notification"
+                    app:layout_constraintEnd_toStartOf="@+id/ib_notification"
+                    app:layout_constraintTop_toTopOf="@+id/ib_notification" />
 
                 <TextView
                     android:id="@+id/tv_element_count"
+                    style="@style/SecondaryTextSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:alpha="0.6"
                     android:text='@{String.valueOf(catalog.boughtElementCount) + "/" + String.valueOf(catalog.totalElementCount)}'
-                    android:textColor="?attr/listTextColor"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"
-                    app:layout_constraintEnd_toStartOf="@+id/ib_notification"
-                    app:layout_constraintTop_toTopOf="@+id/tv_element_name"
-                    app:layout_constraintVertical_bias="0.8"
+                    android:textColor="@color/textColorBlack"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_element_name"
                     tools:text="0/2" />
 
                 <TextView
@@ -68,18 +86,44 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@{catalog.name}"
                     android:textColor="?attr/listTextColor"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/tv_element_count"
+                    app:layout_constraintEnd_toStartOf="@+id/ib_share"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Text" />
+
+                <FrameLayout
+                    android:id="@+id/stripe_container"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_element_count"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_element_count"
+                    app:layout_constraintTop_toTopOf="@+id/tv_element_count"
+                    app:layout_constraintVertical_bias="0.55">
+
+                    <View
+                        android:id="@+id/stripe_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        android:alpha="0.7"
+                        android:background="@android:color/white" />
+
+                    <View
+                        android:id="@+id/stripe_main"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        android:background="@android:color/holo_green_light"
+                        app:stripeWidth="@{ (float) catalog.boughtElementCount / (float) catalog.totalElementCount }" />
+                </FrameLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
     </FrameLayout>

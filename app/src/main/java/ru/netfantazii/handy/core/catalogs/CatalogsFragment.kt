@@ -87,7 +87,7 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         swipeManager.attachRecyclerView(recyclerView)
         dragManager.attachRecyclerView(recyclerView)
 
-        recyclerView.addItemDecoration(RecyclerViewDecorator())
+//        recyclerView.addItemDecoration(RecyclerViewDecorator())
     }
 
     override fun createSnackbars(view: View) {

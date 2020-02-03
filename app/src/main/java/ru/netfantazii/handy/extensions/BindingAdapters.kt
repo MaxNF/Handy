@@ -1,6 +1,8 @@
 package ru.netfantazii.handy.extensions
 
+import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -9,6 +11,8 @@ import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.db.HintType
+
+private val TAG = "BindingAdapters"
 
 @BindingAdapter("app:backgroundSrc")
 fun setViewHolderBackground(view: View, colorResId: Int) {
@@ -71,10 +75,16 @@ fun setViewDimmed(view: View, dimmed: Boolean) {
 
 @BindingAdapter("app:isTextDimmed")
 fun setTextDimmed(textView: TextView, dimmed: Boolean) {
-//    textView.setTextColor(
-//        if (dimmed) ContextCompat.getColor(textView.context,
-//            R.color.textColorGray) else getThemeColor(textView.context,
-//            ThemeColor.TOOLBAR_ELEMENT_COLOR)
-//    )
     textView.alpha = if (dimmed) 0.5f else 1f
+}
+
+@BindingAdapter("app:stripeWidth")
+fun setStripeWidth(view: View, percent: Float) {
+    view.post {
+        val maxWidth = (view.parent as View).width
+        val setWidth = (percent * maxWidth).toInt()
+        val params = FrameLayout.LayoutParams(view.layoutParams)
+        params.width = setWidth
+        view.layoutParams = params
+    }
 }
