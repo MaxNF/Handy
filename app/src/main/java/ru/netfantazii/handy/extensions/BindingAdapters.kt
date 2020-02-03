@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.extensions
 
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -82,9 +81,9 @@ fun setTextDimmed(textView: TextView, dimmed: Boolean) {
 fun setStripeWidth(view: View, percent: Float) {
     view.post {
         val maxWidth = (view.parent as View).width
-        val setWidth = (percent * maxWidth).toInt()
+        val widthToSet = (percent * maxWidth).toInt()
         val params = FrameLayout.LayoutParams(view.layoutParams)
-        params.width = setWidth
+        params.width = widthToSet
         view.layoutParams = params
     }
 }
