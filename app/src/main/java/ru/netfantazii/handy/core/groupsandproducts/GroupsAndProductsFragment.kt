@@ -266,9 +266,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             allLiveDataList.add(groupSwipeCanceled)
 
             groupEditClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { group ->
+                it.getContentIfNotHandled()?.let { groupId ->
                     showOverlay()
-                    scrollToGroup(group.position)
+                    scrollToGroup(groupId)
                 }
             })
             allLiveDataList.add(groupEditClicked)

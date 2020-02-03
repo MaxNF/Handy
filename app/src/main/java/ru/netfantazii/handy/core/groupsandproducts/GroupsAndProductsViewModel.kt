@@ -90,8 +90,8 @@ class GroupsAndProductsViewModel(
     private val _groupSwipeCanceled = MutableLiveData<Event<Group>>()
     val groupSwipeCanceled: LiveData<Event<Group>> = _groupSwipeCanceled
 
-    private val _groupEditClicked = MutableLiveData<Event<Group>>()
-    val groupEditClicked: LiveData<Event<Group>> = _groupEditClicked
+    private val _groupEditClicked = MutableLiveData<Event<Int>>()
+    val groupEditClicked: LiveData<Event<Int>> = _groupEditClicked
 
     private val _groupDragSucceed = MutableLiveData<Event<Unit>>()
     val groupDragSucceed: LiveData<Event<Unit>> = _groupDragSucceed
@@ -322,7 +322,8 @@ class GroupsAndProductsViewModel(
     override fun onGroupEditClick(group: Group) {
         Log.d(TAG, "onGroupEditClick: ")
         overlayBuffer = BufferObject(OVERLAY_ACTION_GROUP_RENAME, group)
-        _groupEditClicked.value = Event(group)
+        val groupPosition = getGroupList().indexOf(group)
+        _groupEditClicked.value = Event(groupPosition)
     }
 
     override fun onGroupDragSucceed(fromPosition: Int, toPosition: Int) {
