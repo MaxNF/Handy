@@ -7,7 +7,7 @@
 
         <variable
             name="catalog"
-            type="ru.netfantazii.handy.db.Catalog" />
+            type="ru.netfantazii.handy.model.Catalog" />
 
         <variable
             name="handler"

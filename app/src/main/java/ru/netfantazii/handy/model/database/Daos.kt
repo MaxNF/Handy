@@ -1,10 +1,11 @@
-package ru.netfantazii.handy.db
+package ru.netfantazii.handy.model.database
 
 import androidx.room.*
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import ru.netfantazii.handy.model.*
 import java.util.*
 
 @Dao
@@ -55,11 +56,12 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
     @Transaction
     open fun addWithDefaultGroup(catalog: CatalogEntity) {
         val catalogId = addAndReturnId(catalog)
-        val defaultGroup = Group(catalogId = catalogId,
-            name = "default group",
-            groupType = GroupType.ALWAYS_ON_TOP,
-            position = 0,
-            expandStatus = ExpandStatus.EXPANDED)
+        val defaultGroup =
+            Group(catalogId = catalogId,
+                name = "default group",
+                groupType = GroupType.ALWAYS_ON_TOP,
+                position = 0,
+                expandStatus = ExpandStatus.EXPANDED)
         addDefaultGroup(defaultGroup)
     }
 

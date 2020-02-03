@@ -4,10 +4,11 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import io.reactivex.*
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import ru.netfantazii.handy.db.Catalog
-import ru.netfantazii.handy.db.GeofenceEntity
-import ru.netfantazii.handy.db.Group
-import ru.netfantazii.handy.db.Product
+import ru.netfantazii.handy.model.Catalog
+import ru.netfantazii.handy.model.database.GeofenceEntity
+import ru.netfantazii.handy.model.Group
+import ru.netfantazii.handy.model.Product
+import ru.netfantazii.handy.repositories.LocalRepository
 import java.util.*
 
 class FakeDisposable : Disposable {

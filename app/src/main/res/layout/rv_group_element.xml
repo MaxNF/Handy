@@ -6,9 +6,9 @@
     <data>
         <import type="ru.netfantazii.handy.R" />
 
-        <import type="ru.netfantazii.handy.db.BuyStatus" />
+        <import type="ru.netfantazii.handy.model.BuyStatus" />
 
-        <import type="ru.netfantazii.handy.db.HintType" />
+        <import type="ru.netfantazii.handy.model.HintType" />
 
         <variable
             name="isAlwayOnTopPresent"
@@ -16,7 +16,7 @@
 
         <variable
             name="group"
-            type="ru.netfantazii.handy.db.Group" />
+            type="ru.netfantazii.handy.model.Group" />
 
         <variable
             name="expandManager"

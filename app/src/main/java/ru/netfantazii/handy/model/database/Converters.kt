@@ -1,8 +1,10 @@
-package ru.netfantazii.handy.db
+package ru.netfantazii.handy.model.database
 
 import androidx.room.TypeConverter
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
-import java.lang.NumberFormatException
+import ru.netfantazii.handy.model.BuyStatus
+import ru.netfantazii.handy.model.ExpandStatus
+import ru.netfantazii.handy.model.GroupType
 import java.util.*
 
 object Converters {

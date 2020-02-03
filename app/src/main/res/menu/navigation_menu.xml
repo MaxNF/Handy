@@ -6,6 +6,11 @@
         android:checkableBehavior="single">
 
         <item
+            android:id="@+id/manage_contacts"
+            android:icon="@drawable/ic_contacts"
+            android:title="@string/contacts_fragment_label" />
+
+        <item
             android:id="@+id/navigation_app_settings"
             android:icon="@drawable/ic_settings_icon"
             android:title="@string/settings_fragment_label" />

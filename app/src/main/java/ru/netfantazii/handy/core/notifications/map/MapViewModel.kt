@@ -1,7 +1,6 @@
 package ru.netfantazii.handy.core.notifications.map
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.databinding.ObservableField
@@ -14,10 +13,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.LocalRepository
+import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.Event
-import ru.netfantazii.handy.db.GeofenceEntity
+import ru.netfantazii.handy.model.database.GeofenceEntity
 import ru.netfantazii.handy.extensions.registerGeofence
 import ru.netfantazii.handy.extensions.unregisterAllGeofences
 import ru.netfantazii.handy.extensions.unregisterGeofence
@@ -111,9 +110,10 @@ class MapViewModel(
 
     fun onMapLongClick(point: Point) {
         Log.d(TAG, "onMapLongClick: $nextGeofenceRaidus")
-        val geofence = GeofenceEntity(catalogId = currentCatalogId,
-            latitude = point.latitude,
-            longitude = point.longitude, radius = nextGeofenceRaidus)
+        val geofence =
+            GeofenceEntity(catalogId = currentCatalogId,
+                latitude = point.latitude,
+                longitude = point.longitude, radius = nextGeofenceRaidus)
         disposables.add(localRepository.addGeofence(geofence).subscribe(Consumer {
             geofence.id = it
             registerGeofence(getApplication(),

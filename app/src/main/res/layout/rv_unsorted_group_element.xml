@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="ru.netfantazii.handy.db.BuyStatus" />
+        <import type="ru.netfantazii.handy.model.BuyStatus" />
 
-        <import type="ru.netfantazii.handy.db.HintType" />
+        <import type="ru.netfantazii.handy.model.HintType" />
 
-        <import type="ru.netfantazii.handy.db.ExpandStatus" />
+        <import type="ru.netfantazii.handy.model.ExpandStatus" />
 
         <import type="ru.netfantazii.handy.R" />
 
@@ -17,7 +17,7 @@
 
         <variable
             name="group"
-            type="ru.netfantazii.handy.db.Group" />
+            type="ru.netfantazii.handy.model.Group" />
 
         <variable
             name="expandManager"

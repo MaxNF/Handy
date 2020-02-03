@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/contact_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="39dp"
+        tools:layout_editor_absoluteY="100dp"
+        tools:text="Name test" />
+
+    <ImageButton
+        android:id="@+id/contact_edit_button"
+        style="@style/RvElementIconStyle"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_edit"
+        tools:layout_editor_absoluteX="279dp"
+        tools:layout_editor_absoluteY="50dp" />
+
+    <ImageButton
+        android:id="@+id/contact_delete_button"
+        style="@style/RvElementIconStyle"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_cancel"
+        tools:layout_editor_absoluteX="168dp"
+        tools:layout_editor_absoluteY="154dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

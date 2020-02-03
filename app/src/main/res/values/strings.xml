@@ -120,4 +120,5 @@
     <string name="need_permission_message">The app needs permissions to work with the map</string>
     <string name="grant_permission_label">Grant permissions</string>
     <string name="grant_perm_manually_message">It seems that you denied permissions. Please grant permissions manually from the phone settings to be able to use geofence notifications.</string>
+    <string name="contacts_fragment_label">Contacts</string>
 </resources>

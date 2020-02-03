@@ -17,16 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/contacts_button"
-        android:layout_height="60dp"
-        android:layout_width="60dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_contacts"
-        app:layout_constraintEnd_toEndOf="@+id/app_logo"
-        app:layout_constraintStart_toStartOf="@+id/app_logo"
-        app:layout_constraintTop_toBottomOf="@+id/app_logo" />
-
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"

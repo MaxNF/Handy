@@ -3,10 +3,9 @@ package ru.netfantazii.handy.core
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import androidx.room.Room
-import kotlinx.coroutines.runBlocking
-import ru.netfantazii.handy.LocalRepository
-import ru.netfantazii.handy.LocalRepositoryImpl
-import ru.netfantazii.handy.db.ProductDatabase
+import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.repositories.LocalRepositoryImpl
+import ru.netfantazii.handy.model.database.ProductDatabase
 
 object ServiceLocator {
     private var productDatabase: ProductDatabase? = null
@@ -18,7 +17,8 @@ object ServiceLocator {
 
     fun provideLocalRepository(context: Context): LocalRepository {
         synchronized(this) {
-            return localRepository ?: LocalRepositoryImpl(getDatabaseInstance(context))
+            return localRepository ?: LocalRepositoryImpl(
+                getDatabaseInstance(context))
         }
     }
 

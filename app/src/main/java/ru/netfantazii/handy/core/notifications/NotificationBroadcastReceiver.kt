@@ -12,7 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.GeofencingEvent
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.LocalRepository
+import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import java.util.NoSuchElementException

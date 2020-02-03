@@ -5,13 +5,13 @@
 
     <data>
         <import type="ru.netfantazii.handy.R" />
-        <import type="ru.netfantazii.handy.db.BuyStatus" />
+        <import type="ru.netfantazii.handy.model.BuyStatus" />
         <variable
             name="parentGroup"
-            type="ru.netfantazii.handy.db.Group" />
+            type="ru.netfantazii.handy.model.Group" />
         <variable
             name="product"
-            type="ru.netfantazii.handy.db.Product" />
+            type="ru.netfantazii.handy.model.Product" />
         <variable
             name="productHandler"
             type="ru.netfantazii.handy.core.groupsandproducts.ProductClickHandler" />

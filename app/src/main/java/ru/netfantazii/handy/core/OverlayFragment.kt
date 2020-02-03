@@ -19,7 +19,7 @@ import ru.netfantazii.handy.core.catalogs.CatalogsFragment
 import ru.netfantazii.handy.core.catalogs.CatalogsViewModel
 import ru.netfantazii.handy.core.groupsandproducts.GroupsAndProductsViewModel
 import ru.netfantazii.handy.databinding.OverlayFragmentBinding
-import ru.netfantazii.handy.db.BaseEntity
+import ru.netfantazii.handy.model.database.BaseEntity
 import ru.netfantazii.handy.extensions.*
 
 const val BUNDLE_ACTION_KEY = "action_key"

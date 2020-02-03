@@ -1,6 +1,4 @@
-package ru.netfantazii.handy.db
-
-import androidx.room.TypeConverter
+package ru.netfantazii.handy.model
 
 enum class BuyStatus(val number: Int) {
     BOUGHT(1), NOT_BOUGHT(2)

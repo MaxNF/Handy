@@ -10,9 +10,8 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.MainActivity
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.db.SortOrder
+import ru.netfantazii.handy.model.SortOrder
 import ru.netfantazii.handy.extensions.getSortOrder
-import java.util.NoSuchElementException
 
 const val FIRST_LAUNCH_KEY = "first_launch"
 lateinit var currentSortOrder: SortOrder

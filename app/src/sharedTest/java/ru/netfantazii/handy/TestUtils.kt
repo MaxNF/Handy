@@ -1,6 +1,6 @@
 package ru.netfantazii.handy
 
-import ru.netfantazii.handy.db.*
+import ru.netfantazii.handy.model.*
 
 fun createFakeCatalog(name: String = "fake catalog", position: Int = 0, id: Long = 0): Catalog {
     return Catalog(

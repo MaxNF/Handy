@@ -8,10 +8,8 @@ import android.os.Build
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
 import androidx.preference.PreferenceManager
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.db.SortOrder
+import ru.netfantazii.handy.model.SortOrder
 
 fun doWithDelay(delayMillis: Long, action: () -> Unit) {
     Handler().postDelayed(action, delayMillis)

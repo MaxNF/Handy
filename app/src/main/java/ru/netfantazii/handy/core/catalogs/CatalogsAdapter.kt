@@ -13,7 +13,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.RvCatalogElementBinding
-import ru.netfantazii.handy.db.Catalog
+import ru.netfantazii.handy.model.Catalog
 import java.lang.UnsupportedOperationException
 
 interface CatalogClickHandler {

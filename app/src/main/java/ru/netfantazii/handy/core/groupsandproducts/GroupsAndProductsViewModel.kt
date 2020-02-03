@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.core.groupsandproducts
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,11 +8,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import ru.netfantazii.handy.LocalRepository
+import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.core.*
-import ru.netfantazii.handy.extensions.unregisterGeofence
 import ru.netfantazii.handy.core.preferences.currentSortOrder
-import ru.netfantazii.handy.db.*
+import ru.netfantazii.handy.model.*
 import ru.netfantazii.handy.extensions.*
 import java.lang.UnsupportedOperationException
 import java.util.NoSuchElementException

@@ -1,4 +1,4 @@
-package ru.netfantazii.handy
+package ru.netfantazii.handy.repositories
 
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
@@ -6,7 +6,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import ru.netfantazii.handy.db.*
+import ru.netfantazii.handy.model.*
+import ru.netfantazii.handy.model.database.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -50,7 +51,8 @@ interface LocalRepository {
     fun removeCatalogAlarmTime(catalogId: Long): Disposable
 }
 
-class LocalRepositoryImpl(db: ProductDatabase) : LocalRepository {
+class LocalRepositoryImpl(db: ProductDatabase) :
+    LocalRepository {
     private val catalogDao: CatalogDao = db.getCatalogDao()
     private val groupDao: GroupDao = db.getGroupDao()
     private val productDao: ProductDao = db.getProductDao()

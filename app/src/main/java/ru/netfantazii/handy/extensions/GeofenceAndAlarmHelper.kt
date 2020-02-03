@@ -14,7 +14,7 @@ import com.google.android.gms.location.LocationServices
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
-import ru.netfantazii.handy.db.GeofenceEntity
+import ru.netfantazii.handy.model.database.GeofenceEntity
 import java.util.*
 
 const val GEOFENCE_CHECK_CYCLE_MILLIS = 30000

@@ -1,6 +1,6 @@
 package ru.netfantazii.handy.extensions
 
-import ru.netfantazii.handy.db.BaseEntity
+import ru.netfantazii.handy.model.database.BaseEntity
 
 /**
  * Передвигает элемент внутри списка с одной позиции на другую. В конце пересчитывает позиции всех элементов.*/

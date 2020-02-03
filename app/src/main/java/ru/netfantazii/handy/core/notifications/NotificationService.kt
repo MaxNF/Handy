@@ -1,15 +1,13 @@
 package ru.netfantazii.handy.core.notifications
 
-import android.app.AlarmManager
 import android.app.IntentService
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.LocalRepository
+import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.*
 import java.lang.UnsupportedOperationException

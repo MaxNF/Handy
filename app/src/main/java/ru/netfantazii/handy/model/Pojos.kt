@@ -1,9 +1,12 @@
-package ru.netfantazii.handy.db
+package ru.netfantazii.handy.model
 
 import androidx.room.Ignore
 import androidx.room.Relation
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.model.database.CatalogEntity
+import ru.netfantazii.handy.model.database.GroupEntity
+import ru.netfantazii.handy.model.database.ProductEntity
 import java.util.*
 
 class Catalog(

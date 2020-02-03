@@ -1,17 +1,13 @@
 package ru.netfantazii.handy.core.catalogs
 
 import androidx.fragment.app.testing.launchFragmentInContainer
-import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -20,8 +16,6 @@ import ru.netfantazii.handy.FakeLocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.ServiceLocator
 import ru.netfantazii.handy.createFakeCatalog
-import ru.netfantazii.handy.db.Catalog
-import java.util.EnumSet.allOf
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)

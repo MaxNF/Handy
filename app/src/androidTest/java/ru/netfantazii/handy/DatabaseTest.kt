@@ -12,9 +12,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import ru.netfantazii.handy.db.*
+import ru.netfantazii.handy.model.*
 import java.io.IOException
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import ru.netfantazii.handy.model.database.CatalogDao
+import ru.netfantazii.handy.model.database.GroupDao
+import ru.netfantazii.handy.model.database.ProductDao
+import ru.netfantazii.handy.model.database.ProductDatabase
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)

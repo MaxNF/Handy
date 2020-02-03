@@ -10,7 +10,7 @@ import androidx.lifecycle.*
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import ru.netfantazii.handy.LocalRepository
+import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.extensions.registerAlarm
 import ru.netfantazii.handy.extensions.unregisterAlarm

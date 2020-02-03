@@ -27,7 +27,7 @@ import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
-import ru.netfantazii.handy.db.GroupType
+import ru.netfantazii.handy.model.GroupType
 import ru.netfantazii.handy.extensions.dpToPx
 import java.lang.UnsupportedOperationException
 

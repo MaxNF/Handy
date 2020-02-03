@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import ru.netfantazii.handy.*
 import ru.netfantazii.handy.core.*
-import ru.netfantazii.handy.db.Catalog
+import ru.netfantazii.handy.model.Catalog
 import ru.netfantazii.handy.extensions.*
+import ru.netfantazii.handy.repositories.LocalRepository
 
 
 class CatalogsViewModel(private val localRepository: LocalRepository) : ViewModel(),

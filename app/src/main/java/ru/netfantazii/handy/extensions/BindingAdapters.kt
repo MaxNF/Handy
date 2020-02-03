@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
-import ru.netfantazii.handy.db.HintType
+import ru.netfantazii.handy.model.HintType
 
 private val TAG = "BindingAdapters"
 
