@@ -3,10 +3,15 @@ package ru.netfantazii.handy.core.contacts
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import ru.netfantazii.handy.model.Contact
 
 interface ContactsClickHandler {
     fun onContactDeleteClick()
     fun onContactEditClick()
+}
+
+interface ContactsStorage {
+    fun getContacts(): List<Contact>
 }
 
 class ContactsViewHolder(view: View) : RecyclerView.ViewHolder(view) {

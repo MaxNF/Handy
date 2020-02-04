@@ -2,11 +2,16 @@ package ru.netfantazii.handy.core.contacts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.repositories.RemoteRepository
 
 class ContactsViewModel(private val remoteRepository: RemoteRepository) : ViewModel(),
-    DialogClickHandler, ContactsClickHandler {
+    DialogClickHandler, ContactsClickHandler, ContactsStorage {
 
+
+    override fun getContacts(): List<Contact> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     fun onAddContactClick() {
 
@@ -27,6 +32,7 @@ class ContactsViewModel(private val remoteRepository: RemoteRepository) : ViewMo
     override fun onContactEditClick() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
 
 }
 

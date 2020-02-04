@@ -16,6 +16,7 @@ abstract class BaseEntity(
     var name: String
 )
 
+// todo добавить поле, которое указывает на то, родной каталог или присланный
 @Entity
 open class CatalogEntity(
     id: Long,

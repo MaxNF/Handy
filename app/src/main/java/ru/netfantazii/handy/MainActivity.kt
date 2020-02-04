@@ -24,8 +24,10 @@ import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
 import ru.netfantazii.handy.extensions.getSortOrder
+import ru.netfantazii.handy.model.User
 
 const val NOTIFICATION_CHANNEL_ID = "Handy notification channel"
+var user: User? = null
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "968164334928",
+    "firebase_url": "https://handy-shopping-app.firebaseio.com",
+    "project_id": "handy-shopping-app",
+    "storage_bucket": "handy-shopping-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968164334928:android:1b07b9297eb60a6fb96055",
+        "android_client_info": {
+          "package_name": "ru.netfantazii.handy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "968164334928-7c3tvdkkaeeo8501ln42roi9ftc4t88s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.netfantazii.handy",
+            "certificate_hash": "9f13373486dd15a463aec9b3e037f18a10f3bdf4"
+          }
+        },
+        {
+          "client_id": "968164334928-oeic0eanjurlt8h88uheujpc0on4h029.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnk7RvYeHH0Adknxb5RHP7def4TcYjcwE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "968164334928-oeic0eanjurlt8h88uheujpc0on4h029.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

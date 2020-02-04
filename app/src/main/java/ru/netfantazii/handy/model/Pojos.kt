@@ -92,3 +92,7 @@ class Product(
         else this.id == (other as Product).id
     }
 }
+
+data class Contact(val name: String, val secret: String)
+
+data class User(val name: String, val email: String, val imageUri: String)
