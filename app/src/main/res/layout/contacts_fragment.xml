@@ -9,11 +9,27 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/hint_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/nothing_to_show2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/hint_nothing_to_show_contacts"
+                android:textColor="@color/textColorGray" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/contacts_recycler_view"
@@ -32,7 +48,7 @@
             android:layout_marginBottom="16dp"
             android:onClick="@{() -> viewModel.onAddContactClick()}"
             app:backgroundTint="?attr/colorAccent"
-            app:srcCompat="@drawable/ic_plus_sign"
+            app:srcCompat="@drawable/ic_add_contact"
             app:tint="?attr/fabIconTintColor" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

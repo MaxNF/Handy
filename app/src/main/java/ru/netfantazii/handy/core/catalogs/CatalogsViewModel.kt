@@ -65,6 +65,9 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
     private val _catalogNotificationClicked = MutableLiveData<Event<Catalog>>()
     val catalogNotificationClicked: LiveData<Event<Catalog>> = _catalogNotificationClicked
 
+    private val _catalogShareClicked = MutableLiveData<Event<Catalog>>()
+    val catalogShareClicked: LiveData<Event<Catalog>> = _catalogShareClicked
+
     init {
         subscribeToCatalogsChanges()
     }
@@ -192,6 +195,10 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override fun onCatalogNotificationClick(catalog: Catalog) {
         _catalogNotificationClicked.value = Event(catalog)
+    }
+
+    override fun onCatalogShareClick(catalog: Catalog) {
+        _catalogShareClicked.value = Event(catalog)
     }
 
     fun onFragmentStop() {

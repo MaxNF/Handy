@@ -49,6 +49,10 @@ interface CatalogClickHandler {
      * Вызывается при клике на значок колокольчика у каталога*/
     fun onCatalogNotificationClick(catalog: Catalog)
 
+    /**
+     * Вызывается при клике на значок "поделиться" у каталога*/
+    fun onCatalogShareClick(catalog: Catalog)
+
 }
 
 interface CatalogStorage {
@@ -58,8 +62,8 @@ interface CatalogStorage {
 class CatalogViewHolder(private val catalogBinding: RvCatalogElementBinding) :
     AbstractDraggableSwipeableItemViewHolder(catalogBinding.root) {
 
-    private val container = catalogBinding.root.findViewById<View>(R.id.container)
-    val draghandle = catalogBinding.root.findViewById<View>(R.id.drag_handle)
+    private val container = catalogBinding.container
+    val draghandle = catalogBinding.dragHandle
 
     override fun getSwipeableContainerView(): View = container
 
@@ -136,16 +140,14 @@ class CatalogsAdapter(
         holder: CatalogViewHolder,
         position: Int,
         result: Int
-    ): SwipeResultAction? {
-        return when (result) {
-            SwipeableItemConstants.RESULT_SWIPED_RIGHT,
-            SwipeableItemConstants.RESULT_SWIPED_LEFT -> SwipeDeleteResult(catalogList[position])
-            SwipeableItemConstants.RESULT_CANCELED -> {
-                catalogClickHandler.onCatalogSwipeCancel(catalogList[position])
-                null
-            }
-            else -> throw UnsupportedOperationException("Unsupported swipe type")
+    ): SwipeResultAction? = when (result) {
+        SwipeableItemConstants.RESULT_SWIPED_RIGHT,
+        SwipeableItemConstants.RESULT_SWIPED_LEFT -> SwipeDeleteResult(catalogList[position])
+        SwipeableItemConstants.RESULT_CANCELED -> {
+            catalogClickHandler.onCatalogSwipeCancel(catalogList[position])
+            null
         }
+        else -> throw UnsupportedOperationException("Unsupported swipe type")
     }
 
     override fun onGetSwipeReactionType(
@@ -153,9 +155,8 @@ class CatalogsAdapter(
         position: Int,
         x: Int,
         y: Int
-    ): Int {
-        return SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H
-    }
+    ): Int = SwipeableItemConstants.REACTION_CAN_SWIPE_BOTH_H
+
 
     override fun onSwipeItemStarted(holder: CatalogViewHolder, position: Int) {
         catalogClickHandler.onCatalogSwipeStart(catalogList[position])

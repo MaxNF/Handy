@@ -2,11 +2,13 @@ package ru.netfantazii.handy.model.database
 
 class RemoteDbSchema {
     companion object {
-        val COLLECTION_USERS = "users"
+        val COLLECTION_USERS = "users" // id документа = uid пользователя
         val USER_SHORT_ID =
             "short_id" // секретный код, генерируется автоматически с помощью cloud function
         val USER_DEVICE_TOKENS = "device_tokens" // ["token 1", "token 2", "token 3"]
-        val USER_FRIEND_LIST = "friend_list"
+
+        val COLLECTION_FRIENDS = "friends" // id документа = uid пользователя
+        val FRIEND_LIST = "friend_list"
         /* {
             Маша : "AH3sRz1"
             Саша : "Os7kSMQ"
@@ -31,6 +33,7 @@ class RemoteDbSchema {
         val MESSAGE_TO_SECRET =
             "to_secret" // секретный код по которому ищем получателя в базе и оттуда вытаскиваем девайс токены
         val MESSAGE_CATALOG_NAME = "catalog_name" // название каталога для пересылки
+        val MESSAGE_CATALOG_COMMENT = "catalog_comment" // Комментарий к посылаемому каталогу
         val MESSAGE_CATALOG_CONTENT = "catalog_content"
         /* {
           default : {

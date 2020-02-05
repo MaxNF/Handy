@@ -6,6 +6,8 @@ import androidx.room.Room
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.repositories.LocalRepositoryImpl
 import ru.netfantazii.handy.model.database.ProductDatabase
+import ru.netfantazii.handy.repositories.RemoteRepository
+import ru.netfantazii.handy.repositories.RemoteRepositoryImpl
 
 object ServiceLocator {
     private var productDatabase: ProductDatabase? = null
@@ -13,13 +15,35 @@ object ServiceLocator {
     var localRepository: LocalRepository? = null
         @VisibleForTesting set
 
+    @Volatile
+    var remoteRepository: RemoteRepository? = null
+        @VisibleForTesting set
+
     private val lock = Any()
 
     fun provideLocalRepository(context: Context): LocalRepository {
         synchronized(this) {
-            return localRepository ?: LocalRepositoryImpl(
-                getDatabaseInstance(context))
+            return localRepository ?: createLocalRepository(context)
         }
+    }
+
+    private fun createLocalRepository(context: Context): LocalRepository {
+        val localRepository = LocalRepositoryImpl(
+            getDatabaseInstance(context))
+        this.localRepository = localRepository
+        return localRepository
+    }
+
+    fun provideRemoteRepository(context: Context): RemoteRepository {
+        synchronized(this) {
+            return remoteRepository ?: createRemoteRepository()
+        }
+    }
+
+    private fun createRemoteRepository(): RemoteRepository {
+        val remoteRepository = RemoteRepositoryImpl()
+        this.remoteRepository = remoteRepository
+        return remoteRepository
     }
 
     private fun getDatabaseInstance(context: Context): ProductDatabase {
@@ -41,7 +65,7 @@ object ServiceLocator {
     }
 
     @VisibleForTesting
-    fun resetRepository() {
+    fun resetLocalRepository() {
         synchronized(lock) {
             localRepository?.removeAllCatalogs()
             productDatabase?.apply {
@@ -50,6 +74,12 @@ object ServiceLocator {
             }
             productDatabase = null
             localRepository = null
+        }
+    }
+
+    fun resetRemoteRepository() {
+        synchronized(lock) {
+
         }
     }
 }

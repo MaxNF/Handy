@@ -73,7 +73,7 @@
                     android:id="@+id/ib_share"
                     style="@style/RvElementIconStyle"
                     android:background="@android:color/transparent"
-                    android:onClick="@{() -> handler.onCatalogNotificationClick(catalog)}"
+                    android:onClick="@{() -> handler.onCatalogShareClick(catalog)}"
                     android:src="@drawable/ic_share"
                     app:layout_constraintBottom_toBottomOf="@+id/ib_notification"
                     app:layout_constraintEnd_toStartOf="@+id/ib_notification"

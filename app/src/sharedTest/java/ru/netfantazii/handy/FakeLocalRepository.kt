@@ -172,8 +172,8 @@ class FakeLocalRepository : LocalRepository {
         return FakeDisposable()
     }
 
-    override fun getCatalogAlarmTime(catalogId: Long): Observable<Calendar?> {
-        return Observable.just(Calendar.getInstance())
+    override fun getCatalogAlarmTime(catalogId: Long): Observable<List<Calendar>> {
+        return Observable.just(listOf(Calendar.getInstance()))
     }
 
     override fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable {

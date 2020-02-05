@@ -84,8 +84,6 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         guardManager.attachRecyclerView(recyclerView)
         swipeManager.attachRecyclerView(recyclerView)
         dragManager.attachRecyclerView(recyclerView)
-
-//        recyclerView.addItemDecoration(RecyclerViewDecorator())
     }
 
     override fun createSnackbars(view: View) {
@@ -189,6 +187,14 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
                     openNotificationFragment(catalog)
                 }
             })
+            allLiveDataList.add(catalogNotificationClicked)
+
+            catalogShareClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { catalog ->
+                    openShareFragment(catalog)
+                }
+            })
+            allLiveDataList.add(catalogShareClicked)
         }
     }
 
@@ -208,6 +214,12 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         val direction =
             CatalogsFragmentDirections.actionCatalogsFragmentToProductsFragment(catalog.name,
                 catalog.id, catalog.groupExpandStates, false)
+        navController.navigate(direction)
+    }
+
+    private fun openShareFragment(catalog: Catalog) {
+        val direction = CatalogsFragmentDirections.actionCatalogsFragmentToShareFragment(catalog.id,
+            catalog.name, catalog.totalElementCount.toString())
         navController.navigate(direction)
     }
 

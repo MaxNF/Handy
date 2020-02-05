@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_catalogs_fragment_to_map"
             app:destination="@id/notifications_fragment" />
+        <action
+            android:id="@+id/action_catalogs_fragment_to_shareFragment"
+            app:destination="@id/shareFragment" />
     </fragment>
     <fragment
         android:id="@+id/products_fragment"
@@ -76,5 +79,19 @@
         <argument
             android:name="groupExpandStates"
             app:argType="com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager$SavedState" />
+    </fragment>
+    <fragment
+        android:id="@+id/shareFragment"
+        android:name="ru.netfantazii.handy.core.share.ShareFragment"
+        android:label="ShareFragment">
+        <argument
+            android:name="catalogId"
+            app:argType="long" />
+        <argument
+            android:name="catalogName"
+            app:argType="string" />
+        <argument
+            android:name="totalProducts"
+            app:argType="string" />
     </fragment>
 </navigation>

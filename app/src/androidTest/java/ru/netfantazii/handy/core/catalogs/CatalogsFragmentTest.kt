@@ -52,7 +52,7 @@ class CatalogsFragmentTest {
 
     @After
     fun cleanupDb() {
-        ServiceLocator.resetRepository()
+        ServiceLocator.resetLocalRepository()
     }
 
     @Test

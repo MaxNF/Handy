@@ -121,4 +121,9 @@
     <string name="grant_permission_label">Grant permissions</string>
     <string name="grant_perm_manually_message">It seems that you denied permissions. Please grant permissions manually from the phone settings to be able to use geofence notifications.</string>
     <string name="contacts_fragment_label">Contacts</string>
+    <string name="send_label">Send</string>
+    <string name="recipient_label">Recipient</string>
+    <string name="total_products_label">Total products:</string>
+    <string name="contact_undo_label">The contact was deleted</string>
+    <string name="hint_nothing_to_show_contacts">Please add a new contact</string>
 </resources>
