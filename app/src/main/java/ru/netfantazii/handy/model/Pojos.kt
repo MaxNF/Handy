@@ -1,7 +1,9 @@
 package ru.netfantazii.handy.model
 
+import android.net.Uri
 import androidx.room.Ignore
 import androidx.room.Relation
+import com.google.firebase.Timestamp
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.model.database.CatalogEntity
@@ -14,7 +16,8 @@ class Catalog(
     creationTime: Calendar = Calendar.getInstance(),
     name: String = "",
     position: Int = 0,
-    groupExpandStates: RecyclerViewExpandableItemManager.SavedState = RecyclerViewExpandableItemManager.SavedState(longArrayOf()),
+    groupExpandStates: RecyclerViewExpandableItemManager.SavedState = RecyclerViewExpandableItemManager.SavedState(
+        longArrayOf()),
     alarmTime: Calendar? = null,
     val totalElementCount: Int = 0,
     val boughtElementCount: Int = 0
@@ -61,7 +64,8 @@ open class Group(
 
     init {
         buyStatus = calculateStatus(productList)
-        statusColor = if (buyStatus == BuyStatus.BOUGHT) R.color.boughtColor else R.color.notBoughtColor
+        statusColor =
+            if (buyStatus == BuyStatus.BOUGHT) R.color.boughtColor else R.color.notBoughtColor
         productList.sortBy { it.position }
 
     }
@@ -93,6 +97,11 @@ class Product(
     }
 }
 
-data class Contact(val name: String, val secret: String)
+data class Contact(
+    var name: String,
+    var secret: String,
+    val date: Long = 0,
+    val isValid: Boolean = true
+)
 
-data class User(val name: String, val email: String, val imageUri: String)
+data class User(val name: String, val email: String, val imageUri: Uri?)

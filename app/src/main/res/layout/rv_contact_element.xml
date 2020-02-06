@@ -30,6 +30,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:textColor="?attr/listTextColor"
+            android:text="@{contact.name}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Name test" />
@@ -39,6 +40,7 @@
             style="@style/RvElementIconStyle"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_edit"
+            android:onClick="@{() -> handler.onContactEditClick(contact)}"
             app:layout_constraintBottom_toBottomOf="@+id/contact_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/contact_name" />

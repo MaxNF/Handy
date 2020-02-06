@@ -39,6 +39,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     lateinit var localRepository: LocalRepository
 
     override fun onReceive(context: Context, intent: Intent) {
+        // todo обработать получение каталогов
+
         this.context = context
         if (intent.action == CANCEL_NOTIFICATION_ACTION) {
             val notificationId = intent.getIntExtra(BUNDLE_NOTIFICATION_ID_KEY, -1)

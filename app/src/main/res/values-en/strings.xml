@@ -121,4 +121,15 @@
     <string name="total_products_label">Total products:</string>
     <string name="contact_undo_label">The contact was deleted</string>
     <string name="hint_nothing_to_show_contacts">Please add a new contact</string>
+    <string name="secret_code_hint">Secret code</string>
+    <string name="name_hint">Name</string>
+    <string name="apply_button">Apply</string>
+    <string name="contact_not_valid">A secret code from this user was changed. Ask for a new one.</string>
+    <string name="name_duplicate_error">Such name already exists</string>
+    <string name="secret_length_error">Secret code must be 7 character long</string>
+    <string name="secret_pattern_error">Secret code must contain only numbers and latin characters</string>
+    <string name="contacts_retrieve_error">Network error while updating contact list</string>
+    <string name="contacts_remove_error">Error while removing contact from cloud database</string>
+    <string name="contacts_create_error">Error while creating contact in cloud database</string>
+    <string name="contacts_update_error">Error while updating contact in cloud database</string>
 </resources>

@@ -2,12 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
     <data>
-
         <variable
             name="viewModel"
             type="ru.netfantazii.handy.core.share.ShareViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -162,6 +161,7 @@
             android:text="@string/send_label"
             android:textAllCaps="true"
             android:textColor="?attr/fabIconTintColor"
+            android:onClick='@{() -> viewModel.sendCatalog("", "")}'
             app:backgroundTint="?attr/colorAccent"
             app:icon="@drawable/ic_send"
             app:iconTint="?attr/fabIconTintColor"

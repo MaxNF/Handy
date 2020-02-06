@@ -20,3 +20,6 @@ enum class SortOrder {
     NEWEST_FIRST, OLDEST_FIRST
 }
 
+enum class ContactDialogAction {
+    CREATE, RENAME, RENAME_NOT_VALID
+}

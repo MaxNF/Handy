@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.model.SortOrder
@@ -62,4 +63,12 @@ fun getRequiredMapPermissions(): Array<String> {
         permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
     }
     return permissions.toTypedArray()
+}
+
+fun showShortToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
+fun showLongToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 }

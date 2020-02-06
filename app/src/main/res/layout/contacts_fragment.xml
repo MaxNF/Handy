@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="ru.netfantazii.handy.core.contacts.ContactsViewModel" />
+            type="ru.netfantazii.handy.NetworkViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

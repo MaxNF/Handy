@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View"/>
+        <import type="ru.netfantazii.handy.model.ContactDialogAction"/>
+        <variable
+            name="contact"
+            type="ru.netfantazii.handy.model.Contact" />
+        <variable
+            name="action"
+            type="ru.netfantazii.handy.model.ContactDialogAction" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/name_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:endIconDrawable="@drawable/ic_edit_text_cross"
+            app:endIconMode="clear_text"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:enabled="@{action != ContactDialogAction.RENAME_NOT_VALID ? true : false}"
+                android:id="@+id/name_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:hint="@string/name_hint"
+                android:inputType="textMultiLine"
+                android:maxLength="32"
+                android:paddingTop="10dp"
+                android:textColor="@color/textColorBlack"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/secret_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:endIconDrawable="@drawable/ic_edit_text_cross"
+            app:endIconMode="clear_text"
+            app:hintEnabled="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name_input_layout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:enabled="@{action == ContactDialogAction.CREATE ? true : false}"
+                android:id="@+id/secret_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:hint="@string/secret_code_hint"
+                android:maxLength="7"
+                android:paddingTop="10dp"
+                android:textColor="@color/textColorBlack"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/contact_not_valid_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/contact_not_valid"
+            android:textSize="14sp"
+            android:visibility="@{action == ContactDialogAction.RENAME_NOT_VALID ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/secret_input_layout"
+            app:layout_constraintTop_toBottomOf="@+id/secret_input_layout" />
+
+        <TextView
+            android:id="@+id/name_duplicate_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0"
+            android:text="@string/name_duplicate_error"
+            android:textSize="14sp"
+            android:visibility="@{action != ContactDialogAction.RENAME_NOT_VALID ? View.VISIBLE : View.GONE}"
+            app:layout_constraintStart_toStartOf="@+id/name_input_layout"
+            app:layout_constraintTop_toBottomOf="@+id/name_input_layout" />
+
+        <TextView
+            android:id="@+id/secret_length_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0"
+            android:text="@string/secret_length_error"
+            android:textSize="14sp"
+            android:visibility="@{action == ContactDialogAction.CREATE ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/secret_input_layout"
+            app:layout_constraintTop_toBottomOf="@+id/secret_input_layout" />
+
+        <TextView
+            android:id="@+id/secret_pattern_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0"
+            android:text="@string/secret_pattern_error"
+            android:textSize="14sp"
+            android:visibility="@{action == ContactDialogAction.CREATE ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/secret_input_layout"
+            app:layout_constraintTop_toBottomOf="@+id/secret_input_layout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

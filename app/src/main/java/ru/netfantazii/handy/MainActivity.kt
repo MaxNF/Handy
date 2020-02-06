@@ -9,20 +9,29 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
+import ru.netfantazii.handy.databinding.NavigationHeaderBinding
 import ru.netfantazii.handy.extensions.getSortOrder
 import ru.netfantazii.handy.model.User
 
@@ -37,6 +46,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var sp: SharedPreferences
+    private lateinit var viewModel: NetworkViewModel
+    private val allLiveDataList = mutableListOf<LiveData<*>>()
+    private lateinit var signInClient: GoogleSignInClient
+    private val SIGN_IN_REQUEST_CODE = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +70,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         sp = PreferenceManager.getDefaultSharedPreferences(this)
         loadPreferencesToMemory()
 
+        val header = navigationView.getHeaderView(0)
+        val binding = NavigationHeaderBinding.bind(header)
+        binding.viewModel = createNetworkViewModel()
+        buildSignInClient()
+
         registerNotitificationChannel(this)
         showWelcomeScreenIfNeeded()
+    }
+
+    private fun buildSignInClient() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .requestProfile()
+            .build()
+
+        signInClient = GoogleSignIn.getClient(this, gso)
+    }
+
+    private fun createNetworkViewModel(): NetworkViewModel {
+        val remoteRepository =
+            (applicationContext as HandyApplication).remoteRepository
+        viewModel = ViewModelProviders.of(
+            this,
+            NetworkVmFactory(remoteRepository)
+        ).get(NetworkViewModel::class.java)
+        return viewModel
     }
 
     private fun loadTheme() {
@@ -134,18 +172,56 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-//    private fun setNavigationIconColor() {
-//        val attrs = intArrayOf(R.attr.fabIconTintColor)
-//        val typedArray = obtainStyledAttributes(R.style.Base, attrs)
-//        val titleColor = typedArray.getColor(0, Color.TRANSPARENT)
-//        val black = ContextCompat.getColor(this, R.color.fabIconTintColorBlack)
-//        if (titleColor == black) {
-//            navigationView.itemIconTintList =
-//                ContextCompat.getColorStateList(this, R.color.appLogoBackgroundColor)
-//            navigationView.itemTextColor =
-//                ContextCompat.getColorStateList(this, R.color.appLogoBackgroundColor)
-//        }
-//        Log.d(TAG, "setNavigationIconColor: $titleColor")
-//        typedArray.recycle()
-//    }
+    override fun onStart() {
+        super.onStart()
+        subscribeToEvents()
+        // todo возможно сделать silentSignIn() в гугл аккаунт
+    }
+
+    private fun subscribeToEvents() {
+        val owner = this
+        with(viewModel) {
+            signInClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    val signInIntent = signInClient.signInIntent
+                    startActivityForResult(signInIntent, SIGN_IN_REQUEST_CODE)
+                }
+            })
+            allLiveDataList.add(signInClicked)
+
+            signOutClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    // todo если пользователь находится во фрагментах требующих авторизации (список друзей, отправка каталога), то выйти из них
+                }
+            })
+            allLiveDataList.add(signOutClicked)
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SIGN_IN_REQUEST_CODE) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                if (task.isSuccessful) {
+                    viewModel.signInToFirebase(task.result!!)
+                } else {
+                    Toast.makeText(this, "Sign in task is not successful", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } catch (e: ApiException) {
+                Toast.makeText(this, "ApiException", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unsubscribeFromEvents()
+    }
+
+    private fun unsubscribeFromEvents() {
+        allLiveDataList.forEach { it.removeObservers(this) }
+    }
 }
