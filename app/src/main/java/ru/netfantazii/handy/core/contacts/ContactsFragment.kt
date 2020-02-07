@@ -27,7 +27,7 @@ import ru.netfantazii.handy.model.ContactDialogAction
 class ContactsFragment : Fragment() {
     private lateinit var hint: View
     private lateinit var adapter: ContactsAdapter
-    private lateinit var undoSnackbar: Snackbar
+    private lateinit var deleteSnackbar: Snackbar
     private lateinit var viewModel: NetworkViewModel
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private lateinit var recyclerView: RecyclerView
@@ -83,8 +83,8 @@ class ContactsFragment : Fragment() {
     }
 
     private fun createSnackbars(view: View) {
-        val coordinatorLayout = view.findViewById<CoordinatorLayout>(R.id.coordinator_layout)
-        undoSnackbar = Snackbar.make(
+        val coordinatorLayout = view.findViewById<CoordinatorLayout>(R.id.coordinatorLayout)
+        deleteSnackbar = Snackbar.make(
             coordinatorLayout,
             getString(R.string.contact_undo_label),
             Snackbar.LENGTH_SHORT)

@@ -19,6 +19,7 @@ import ru.netfantazii.handy.core.contacts.DialogClickHandler
 import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.ContactDialogAction
 import ru.netfantazii.handy.model.User
+import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.RemoteRepository
 import java.lang.UnsupportedOperationException
 
@@ -34,6 +35,9 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
             field = value
             onNewDataReceive()
         }
+
+    val isSending = ObservableField<Boolean>()
+    val sendingCatalogName = ObservableField<String>()
 
     private val _contactSwipePerformed = MutableLiveData<Event<Contact>>()
     val contactSwipePerformed: LiveData<Event<Contact>> = _contactSwipePerformed
@@ -56,8 +60,8 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val _signInComplete = MutableLiveData<Event<Unit>>()
     val signInComplete: LiveData<Event<Unit>> = _signInComplete
 
-    private val _signInError = MutableLiveData<Event<Unit>>()
-    val signInError: LiveData<Event<Unit>> = _signInError
+    private val _firebaseSignInError = MutableLiveData<Event<Unit>>()
+    val firebaseSignInError: LiveData<Event<Unit>> = _firebaseSignInError
 
     private val _retrievingContactsError = MutableLiveData<Event<Unit>>()
     val retrievingContactsError: LiveData<Event<Unit>> = _retrievingContactsError
@@ -70,6 +74,15 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
 
     private val _removingContactError = MutableLiveData<Event<Unit>>()
     val removingContactError: LiveData<Event<Unit>> = _removingContactError
+
+    private val _startingToSendCatalog = MutableLiveData<Event<String>>()
+    val startingToSendCatalog: LiveData<Event<String>> = _startingToSendCatalog
+
+    private val _catalogSentSuccessfully = MutableLiveData<Event<String>>()
+    val catalogSentSuccessfully: LiveData<Event<String>> = _catalogSentSuccessfully
+
+    private val _catalogSentError = MutableLiveData<Event<String>>()
+    val catalogSentError: LiveData<Event<String>> = _catalogSentError
 
     val user = ObservableField<User>()
 
@@ -104,7 +117,7 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
         _signOutClicked.value = Event(Unit)
     }
 
-    private fun onRevokeAccessClicked() {
+    fun revokeAccess() {
 
     }
 
@@ -122,7 +135,7 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
                     firebaseUser.email ?: "",
                     firebaseUser.photoUrl))
             }, {
-                _signInError.value = Event(Unit)
+                _firebaseSignInError.value = Event(Unit)
                 it.printStackTrace()
             }))
     }
@@ -162,6 +175,28 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
                     throw UnsupportedOperationException("Can't create or update invalid contacts")
                 }
             })
+    }
+
+    fun sendCatalog(catalogContent: Map<String, Any>) {
+        val catalogName = catalogContent[RemoteDbSchema.MESSAGE_CATALOG_NAME] as String
+        _startingToSendCatalog.value = Event(catalogName)
+        isSending.set(true)
+        sendingCatalogName.set(catalogName)
+        disposables.add(remoteRepository.sendCatalog(catalogContent)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                isSending.set(false)
+                _catalogSentSuccessfully.value = Event(catalogName)
+            }, {
+                isSending.set(false)
+                _catalogSentError.value = Event(catalogName)
+                it.printStackTrace()
+            }))
+    }
+
+    fun deleteAccount() {
+        Log.d(TAG, "deleteAccount: ")
     }
 
     override fun nameHasDuplicates(name: String): Boolean = contacts.any { it.name == name }

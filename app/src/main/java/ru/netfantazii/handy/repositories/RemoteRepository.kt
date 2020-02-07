@@ -9,10 +9,7 @@ import ru.netfantazii.handy.model.Contact
 
 interface RemoteRepository {
     fun sendCatalog(
-        secret: String,
-        catalogName: String,
-        catalogComment: String,
-        catalogContent: Map<String, Map<String, Any>>
+        catalogContent: Map<String, Any>
     ): Completable
 
     fun signInToFirebase(credential: AuthCredential): Completable
@@ -25,12 +22,7 @@ interface RemoteRepository {
 }
 
 class RemoteRepositoryImpl : RemoteRepository {
-    override fun sendCatalog(
-        secret: String,
-        catalogName: String,
-        catalogComment: String,
-        catalogContent: Map<String, Map<String, Any>>
-    ): Completable {
+    override fun sendCatalog(catalogContent: Map<String, Any>): Completable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

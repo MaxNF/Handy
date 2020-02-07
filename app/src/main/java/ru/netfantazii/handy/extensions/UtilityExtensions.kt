@@ -3,6 +3,7 @@ package ru.netfantazii.handy.extensions
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Build
 import android.os.Handler
@@ -71,4 +72,9 @@ fun showShortToast(context: Context, message: String) {
 
 fun showLongToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+}
+
+fun reloadActivity(activity: Activity) {
+    val intent = activity.intent
+    activity.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
 }

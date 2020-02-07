@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?android:attr/selectableItemBackground"
     android:baselineAligned="false"
     android:clipToPadding="false"
@@ -14,37 +15,29 @@
 
     <include layout="@layout/image_frame_local" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="16dp"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@android:id/title"
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button"
+            android:id="@+id/delete_account_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceListItem"
-            android:textColor="@color/textColorBlack" />
+            android:textColor="?attr/toolbarElementColor"
+            android:text="Delete account"/>
 
         <TextView
-            android:id="@android:id/summary"
-            style="@style/PreferenceSummaryTextStyleLocal"
+            android:id="@+id/pref_delete_acc_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@android:id/title"
-            android:layout_alignStart="@android:id/title"
-            android:layout_alignLeft="@android:id/title"
-            android:layout_gravity="start"
-            android:maxLines="10"
-            android:textAlignment="viewStart"
-            android:textColor="@color/textColorGray" />
+            android:text="This will delete only the friend list and other metadata from the cloud" />
 
-    </RelativeLayout>
-
+    </LinearLayout>
     <!-- Preference should place its actual preference widget here. -->
     <LinearLayout
         android:id="@android:id/widget_frame"
@@ -55,6 +48,5 @@
         android:paddingStart="16dp"
         android:paddingLeft="16dp"
         android:paddingEnd="0dp"
-        android:paddingRight="0dp"/>
-
+        android:paddingRight="0dp" />
 </LinearLayout>

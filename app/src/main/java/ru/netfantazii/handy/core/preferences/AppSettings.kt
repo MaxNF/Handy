@@ -1,17 +1,24 @@
 package ru.netfantazii.handy.core.preferences
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.databinding.Observable
+import androidx.databinding.ObservableField
+import androidx.lifecycle.ViewModelProviders
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.MainActivity
+import ru.netfantazii.handy.NetworkViewModel
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.customviews.MyPreferenceButton
 import ru.netfantazii.handy.model.SortOrder
 import ru.netfantazii.handy.extensions.getSortOrder
+import ru.netfantazii.handy.extensions.reloadActivity
+import ru.netfantazii.handy.model.User
 
 const val FIRST_LAUNCH_KEY = "first_launch"
 lateinit var currentSortOrder: SortOrder
@@ -19,6 +26,15 @@ lateinit var currentSortOrder: SortOrder
 class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val TAG = "AppSettings"
     private lateinit var sp: SharedPreferences
+    lateinit var viewModel: NetworkViewModel
+    lateinit var deleteAccPref: MyPreferenceButton
+    private val userChangedCallback = object :
+        Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+            val user = (sender as ObservableField<User>).get()
+            deleteAccPref!!.isVisible = user != null
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -29,6 +45,11 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
         setPreferencesFromResource(R.xml.pref, rootKey)
         sp = PreferenceManager.getDefaultSharedPreferences(context)
         sp.registerOnSharedPreferenceChangeListener(this)
+
+        viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
+        deleteAccPref = findPreference("delete_account_button")!!
+        deleteAccPref!!.isVisible = viewModel.user.get() != null
+        deleteAccPref.setButtonAction { viewModel.deleteAccount() }
     }
 
     override fun setDivider(divider: Drawable?) {
@@ -48,13 +69,24 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val preference: Preference? = findPreference(key)
         preference?.let {
-            if (key == context!!.getString(R.string.theme_pref_key)) reloadActivity()
-            if (key == context!!.getString(R.string.sorting_pref_key)) currentSortOrder = getSortOrder(context!!)
+            if (key == context!!.getString(R.string.theme_pref_key)) reloadActivity(activity!!)
+            if (key == context!!.getString(R.string.sorting_pref_key)) currentSortOrder =
+                getSortOrder(context!!)
         }
     }
 
-    private fun reloadActivity() {
-        val intent = activity!!.intent
-        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
+    override fun onStart() {
+        super.onStart()
+        viewModel.user.addOnPropertyChangedCallback(userChangedCallback)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume: ")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.user.removeOnPropertyChangedCallback(userChangedCallback)
     }
 }

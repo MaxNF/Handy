@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="ru.netfantazii.handy.NetworkViewModel" />
     </data>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="16dp"
@@ -58,12 +59,23 @@
             tools:text="@string/app_subtitle"/>
 
         <com.shobhitpuri.custombuttons.GoogleSignInButton
-            android:text='@{viewModel.user == null ? "Sign in with Google" : "Sign out" }'
+            android:text='@{viewModel.user == null ? "Sign in" : "Sign out" }'
             android:onClick="@{() -> viewModel.onGoogleButtonClick()}"
             android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_marginTop="16dp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/revoke_access_hing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/revoke_access_hint"
+        android:textColor="@color/blackSemiTransparent60"
+        android:textSize="12sp"
+        android:visibility="@{viewModel.user == null ? View.GONE : View.VISIBLE}"
+        app:layout_constraintStart_toStartOf="@+id/user_info_group"
+        app:layout_constraintTop_toBottomOf="@+id/user_info_group" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

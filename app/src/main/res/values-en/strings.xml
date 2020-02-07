@@ -132,4 +132,10 @@
     <string name="contacts_remove_error">Error while removing contact from cloud database</string>
     <string name="contacts_create_error">Error while creating contact in cloud database</string>
     <string name="contacts_update_error">Error while updating contact in cloud database</string>
+    <string name="catalog_was_sent_successfully">List \"%1$s\" was sent successfully</string>
+    <string name="catalog_was_not_sent_error">Error while sending \"%1$s\" list</string>
+    <string name="signin_error">Error while signing in</string>
+    <string name="revoke_is_successful">Your account has been disconnected from the app</string>
+    <string name="revoke_access_hint">Tap long to revoke access</string>
+    <string name="progress_bar_text">List \"%1$s\" is being sent...</string>
 </resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ListPreference
         android:layout="@layout/pref_category_view"
@@ -23,5 +24,12 @@
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"/>
 
+    <ru.netfantazii.handy.customviews.MyPreferenceButton
+        android:key="delete_account_button"
+        android:title="Delete account?"
+        android:summary="Friend list will be deleted permanently"
+        android:layout="@layout/delete_account_pref_button"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"/>
 
 </PreferenceScreen>

@@ -11,14 +11,15 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.get
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
@@ -31,8 +32,11 @@ import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
+import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
 import ru.netfantazii.handy.extensions.getSortOrder
+import ru.netfantazii.handy.extensions.reloadActivity
+import ru.netfantazii.handy.extensions.showShortToast
 import ru.netfantazii.handy.model.User
 
 const val NOTIFICATION_CHANNEL_ID = "Handy notification channel"
@@ -54,12 +58,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadTheme()
-        setContentView(R.layout.activity_main)
+        val mainBinding: ActivityMainBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_main)
+        createNetworkViewModel()
+        mainBinding.viewModel = viewModel
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = mainBinding.toolbar
         setSupportActionBar(toolbar)
 
-        drawerLayout = findViewById(R.id.navigation_drawer)
+        drawerLayout = mainBinding.navigationDrawer
         navigationView = drawerLayout.findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
@@ -71,8 +78,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loadPreferencesToMemory()
 
         val header = navigationView.getHeaderView(0)
-        val binding = NavigationHeaderBinding.bind(header)
-        binding.viewModel = createNetworkViewModel()
+        val drawerHeaderBinding = NavigationHeaderBinding.bind(header)
+        drawerHeaderBinding.viewModel = viewModel
+        drawerHeaderBinding.signInButton.setOnLongClickListener {
+            signInClient.revokeAccess().addOnCompleteListener {
+                if (it.isSuccessful) showShortToast(this, getString(R.string.revoke_is_successful))
+            }
+            true
+        }
+
         buildSignInClient()
 
         registerNotitificationChannel(this)
@@ -191,12 +205,45 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             signOutClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
-                    // todo если пользователь находится во фрагментах требующих авторизации (список друзей, отправка каталога), то выйти из них
+                    val insideShareFragment =
+                        navController.currentDestination == navController.graph[R.id.shareFragment]
+                    val insideContactsFragment =
+                        navController.currentDestination == navController.graph[R.id.contactsFragment]
+
+                    if (insideShareFragment || insideContactsFragment) {
+                        val popedSuccessfuly =
+                            navController.popBackStack(navController.graph.startDestination, false)
+                        if (!popedSuccessfuly) {
+                            reloadActivity(this@MainActivity)
+                        }
+                    }
                 }
             })
             allLiveDataList.add(signOutClicked)
-        }
 
+            catalogSentSuccessfully.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { catalogName ->
+                    showShortToast(this@MainActivity,
+                        getString(R.string.catalog_was_sent_successfully, catalogName))
+                }
+            })
+            allLiveDataList.add(catalogSentSuccessfully)
+
+            catalogSentError.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { catalogName ->
+                    showShortToast(this@MainActivity,
+                        getString(R.string.catalog_was_not_sent_error, catalogName))
+                }
+            })
+            allLiveDataList.add(catalogSentError)
+
+            firebaseSignInError.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    showShortToast(this@MainActivity, getString(R.string.signin_error))
+                    this@MainActivity.signInClient.signOut()
+                }
+            })
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
