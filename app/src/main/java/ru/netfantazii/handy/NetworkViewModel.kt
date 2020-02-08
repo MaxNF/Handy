@@ -1,5 +1,6 @@
 package ru.netfantazii.handy
 
+import android.content.Context
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
@@ -16,6 +17,7 @@ import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.core.contacts.ContactsClickHandler
 import ru.netfantazii.handy.core.contacts.ContactsStorage
 import ru.netfantazii.handy.core.contacts.DialogClickHandler
+import ru.netfantazii.handy.extensions.copyTextToClipboard
 import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.ContactDialogAction
 import ru.netfantazii.handy.model.User
@@ -84,6 +86,9 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val _catalogSentError = MutableLiveData<Event<String>>()
     val catalogSentError: LiveData<Event<String>> = _catalogSentError
 
+    private val _secretCopied = MutableLiveData<Event<Unit>>()
+    val secretCopied: LiveData<Event<Unit>> = _secretCopied
+
     val user = ObservableField<User>()
 
     private fun subscribeToContactUpdates() {
@@ -133,7 +138,7 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
                 val firebaseUser = FirebaseAuth.getInstance().currentUser!!
                 user.set(User(firebaseUser.displayName ?: "",
                     firebaseUser.email ?: "",
-                    firebaseUser.photoUrl))
+                    firebaseUser.photoUrl, "asd"))
             }, {
                 _firebaseSignInError.value = Event(Unit)
                 it.printStackTrace()
@@ -213,6 +218,16 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
 
     override fun onCleared() {
         disposables.clear()
+    }
+
+    fun copySecretToClipboard(context: Context) {
+        copyTextToClipboard(context, user.get()?.secret ?: "", "secret_code_value")
+        _secretCopied.value = Event(Unit)
+        Log.d(TAG, "copySecretToClipboard: ")
+    }
+
+    fun reloadSecretCode() {
+        Log.d(TAG, "reloadSecretCode: ")
     }
 }
 

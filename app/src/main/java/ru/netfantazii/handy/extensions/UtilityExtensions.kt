@@ -1,7 +1,10 @@
 package ru.netfantazii.handy.extensions
 
 import android.Manifest
+import android.R.attr.label
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
@@ -12,6 +15,7 @@ import android.widget.Toast
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.model.SortOrder
+
 
 fun doWithDelay(delayMillis: Long, action: () -> Unit) {
     Handler().postDelayed(action, delayMillis)
@@ -77,4 +81,11 @@ fun showLongToast(context: Context, message: String) {
 fun reloadActivity(activity: Activity) {
     val intent = activity.intent
     activity.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
+}
+
+fun copyTextToClipboard(context: Context, text: String, description: String) {
+    val clipboard: ClipboardManager? =
+        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+    val clip = ClipData.newPlainText(description, text)
+    clipboard?.setPrimaryClip(clip)
 }

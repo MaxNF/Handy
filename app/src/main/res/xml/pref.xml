@@ -28,7 +28,7 @@
         android:key="delete_account_button"
         android:title="Delete account?"
         android:summary="Friend list will be deleted permanently"
-        android:layout="@layout/delete_account_pref_button"
+        android:layout="@layout/pref_account_control_buttons"
         app:allowDividerAbove="true"
         app:allowDividerBelow="true"/>
 

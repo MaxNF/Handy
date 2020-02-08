@@ -32,7 +32,10 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
         Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
             val user = (sender as ObservableField<User>).get()
-            deleteAccPref!!.isVisible = user != null
+            if (user != null) {
+                deleteAccPref.setNewSecretToView(user.secret)
+            }
+            deleteAccPref.isVisible = user != null
         }
     }
 
@@ -48,8 +51,13 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
 
         viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
         deleteAccPref = findPreference("delete_account_button")!!
-        deleteAccPref!!.isVisible = viewModel.user.get() != null
-        deleteAccPref.setButtonAction { viewModel.deleteAccount() }
+//        deleteAccPref!!.isVisible = viewModel.user.get() != null
+        deleteAccPref.setDeleteAccountAction { viewModel.deleteAccount() }
+        deleteAccPref.setCopySecretAction { viewModel.copySecretToClipboard(requireContext()) }
+        deleteAccPref.setGetNewSecretAction { viewModel.reloadSecretCode() }
+
+        val threadName = Thread.currentThread().name
+        Log.d(TAG, "onCreatePreferences: $threadName")
     }
 
     override fun setDivider(divider: Drawable?) {
@@ -82,7 +90,6 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "onResume: ")
     }
 
     override fun onStop() {

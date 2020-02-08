@@ -243,6 +243,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     this@MainActivity.signInClient.signOut()
                 }
             })
+            allLiveDataList.add(firebaseSignInError)
+
+            secretCopied.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    showShortToast(this@MainActivity, getString(R.string.secret_is_copied))
+                }
+            })
         }
     }
 

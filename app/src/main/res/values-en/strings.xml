@@ -138,4 +138,5 @@
     <string name="revoke_is_successful">Your account has been disconnected from the app</string>
     <string name="revoke_access_hint">Tap long to revoke access</string>
     <string name="progress_bar_text">List \"%1$s\" is being sent...</string>
+    <string name="secret_is_copied">The secret code is copied to clipboard!</string>
 </resources>
