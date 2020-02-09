@@ -42,6 +42,7 @@ class RemoteDbSchema {
         val MESSAGE_DATE = "date" // генерируется с помощью cloud function (из контекста)
         val MESSAGE_FROM_NAME = "from_name" // генерируется с помощью cloud function
         val MESSAGE_FROM_EMAIL = "from_email" // генерируется с помощью cloud function
+        val FROM_IMAGE = "from_img" // генерируется с помощью cloud function
         val MESSAGE_TO_SECRET =
             "to_secret" // секретный код по которому ищем получателя в базе и оттуда вытаскиваем девайс токены
         val MESSAGE_CATALOG_NAME = "catalog_name" // название каталога для пересылки
@@ -62,6 +63,8 @@ class RemoteDbSchema {
                     }
            }
          */
+
+        val MESSAGE_ID_KEY = "message_id"
 
 
     }

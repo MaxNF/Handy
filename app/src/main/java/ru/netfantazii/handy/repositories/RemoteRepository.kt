@@ -3,6 +3,7 @@ package ru.netfantazii.handy.repositories
 import com.google.firebase.auth.AuthCredential
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import ru.netfantazii.handy.model.Catalog
 import ru.netfantazii.handy.model.Contact
@@ -13,12 +14,13 @@ interface RemoteRepository {
     ): Completable
 
     fun signInToFirebase(credential: AuthCredential): Completable
-    fun changeSecret(): Completable
-    fun addAndUpdateUser(currentDeviceToken: String): Completable
+    fun changeSecret(): Single<String>
+    fun addUserUpdateTokenGetSecret(currentDeviceToken: String): Single<String>
     fun getContacts(): Observable<List<Contact>>
     fun addContact(contact: Contact): Completable
     fun removeContact(contact: Contact): Completable
     fun updateContact(contact: Contact): Completable
+    fun deleteAccount(): Completable
 }
 
 class RemoteRepositoryImpl : RemoteRepository {
@@ -26,11 +28,11 @@ class RemoteRepositoryImpl : RemoteRepository {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun changeSecret(): Completable {
+    override fun changeSecret(): Single<String> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun addAndUpdateUser(currentDeviceToken: String): Completable {
+    override fun addUserUpdateTokenGetSecret(currentDeviceToken: String): Single<String> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -47,6 +49,10 @@ class RemoteRepositoryImpl : RemoteRepository {
     }
 
     override fun updateContact(contact: Contact): Completable {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun deleteAccount(): Completable {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
