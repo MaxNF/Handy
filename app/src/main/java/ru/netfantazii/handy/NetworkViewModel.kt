@@ -159,7 +159,13 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
         disposables.add(
             when (action) {
                 ContactDialogAction.CREATE -> {
-                    remoteRepository.addContact(contact).subscribeOn(Schedulers.io())
+                    val name = contact.name
+                    val shortId = contact.secret
+                    val newContactData = mapOf(
+                        RemoteDbSchema.FRIEND_NAME to name,
+                        RemoteDbSchema.FRIEND_SHORT_ID to shortId
+                    )
+                    remoteRepository.addContact(newContactData).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()).subscribe({
                             // do nothing
                         }, {

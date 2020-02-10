@@ -8,7 +8,10 @@ class RemoteDbSchema {
         val USER_DEVICE_TOKENS = "device_tokens" // ["token 1", "token 2", "token 3"]
 
         val COLLECTION_FRIENDS = "friends" // id документа = uid пользователя
-        val FRIEND_LIST = "friend_list"
+        val FRIEND_SHORT_ID = "short_id"
+        val FRIEND_NAME = "name"
+        val FRIEND_TIME = "creation_time"
+        val FRIEND_VALID = "valid"
         /*  Секретный код - ключ. Сортировка по дате создания. Valid означает есть ли пользователь
         с таким секретным кодом в бд (проверяется при добавлении и при отправке сообщения). При добавлении
         невалидного ключа просто выдаем ошибку и отменяем добавление. Если вдруг ключ стал не валидным
@@ -42,7 +45,7 @@ class RemoteDbSchema {
         val MESSAGE_DATE = "date" // генерируется с помощью cloud function (из контекста)
         val MESSAGE_FROM_NAME = "from_name" // генерируется с помощью cloud function
         val MESSAGE_FROM_EMAIL = "from_email" // генерируется с помощью cloud function
-        val FROM_IMAGE = "from_img" // генерируется с помощью cloud function
+        val MESSAGE_FROM_IMAGE = "from_img" // генерируется с помощью cloud function
         val MESSAGE_TO_SECRET =
             "to_secret" // секретный код по которому ищем получателя в базе и оттуда вытаскиваем девайс токены
         val MESSAGE_CATALOG_NAME = "catalog_name" // название каталога для пересылки
@@ -67,5 +70,14 @@ class RemoteDbSchema {
         val MESSAGE_ID_KEY = "message_id"
 
 
+    }
+}
+
+class CloudFunctions {
+    companion object{
+        val UPDATE_USER_AND_TOKEN = "saveDeviceTokenAndGetSecret"
+        val CHANGE_SECRET = "changeAndGetShortId"
+        val DELETE_TOKEN = "deleteTokenOnLogout"
+        val ADD_CONTACT = "addNewContact"
     }
 }
