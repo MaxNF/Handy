@@ -211,9 +211,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         navController.currentDestination == navController.graph[R.id.contactsFragment]
 
                     if (insideShareFragment || insideContactsFragment) {
-                        val popedSuccessfuly =
+                        val pokedSuccessfully =
                             navController.popBackStack(navController.graph.startDestination, false)
-                        if (!popedSuccessfuly) {
+                        if (!pokedSuccessfully) {
                             reloadActivity(this@MainActivity)
                         }
                     }
@@ -250,6 +250,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     showShortToast(this@MainActivity, getString(R.string.secret_is_copied))
                 }
             })
+            allLiveDataList.add(secretCopied)
+
+            startingToSendCatalog.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    // do nothing
+                }
+            })
+            allLiveDataList.add(startingToSendCatalog)
+
         }
     }
 

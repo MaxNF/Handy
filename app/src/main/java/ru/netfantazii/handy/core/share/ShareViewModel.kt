@@ -16,15 +16,14 @@ class ShareViewModel(
     private val catalogId: Long,
     val catalogName: String,
     val totalProducts: String,
-    private val localRepository: LocalRepository,
-    private val remoteRepository: RemoteRepository
+    private val localRepository: LocalRepository
 ) : ViewModel() {
 
     private val _sendClicked = MutableLiveData<Event<Map<String, Any>>>()
     val sendClicked: LiveData<Event<Map<String, Any>>> = _sendClicked
 
     private val disposables = CompositeDisposable()
-    private lateinit var parsedGroups: Map<String, Map<String, Any>>
+    private lateinit var parsedGroups: List<Map<String, Any>>
     var secret: String = ""
     var comment: String = ""
 
@@ -40,8 +39,13 @@ class ShareViewModel(
             })
     }
 
-    private fun parseGroups(groupList: List<Group>): Map<String, Map<String, Any>> {
-        return mapOf()
+    private fun parseGroups(groupList: List<Group>): List<Map<String, Any>> {
+        return groupList.map { group ->
+            val products = group.productList.map { it.name }
+            mapOf(
+                RemoteDbSchema.MESSAGE_GROUP_NAME to group.name,
+                RemoteDbSchema.MESSAGE_GROUP_PRODUCTS to products)
+        }
     }
 
     fun onSendClick() {
@@ -59,8 +63,7 @@ class ShareVmFactory(
     private val catalogId: Long,
     private val catalogName: String,
     private val totalProducts: String,
-    private val localRepository: LocalRepository,
-    private val remoteRepository: RemoteRepository
+    private val localRepository: LocalRepository
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -68,8 +71,7 @@ class ShareVmFactory(
             return ShareViewModel(catalogId,
                 catalogName,
                 totalProducts,
-                localRepository,
-                remoteRepository) as T
+                localRepository) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }

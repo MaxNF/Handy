@@ -156,15 +156,16 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     }
 
     override fun onEditYesClick(action: ContactDialogAction, contact: Contact) {
+        val name = contact.name
+        val shortId = contact.secret
+        val newContactData = mapOf(
+            RemoteDbSchema.FRIEND_NAME to name,
+            RemoteDbSchema.FRIEND_SHORT_ID to shortId
+        )
         disposables.add(
             when (action) {
                 ContactDialogAction.CREATE -> {
-                    val name = contact.name
-                    val shortId = contact.secret
-                    val newContactData = mapOf(
-                        RemoteDbSchema.FRIEND_NAME to name,
-                        RemoteDbSchema.FRIEND_SHORT_ID to shortId
-                    )
+
                     remoteRepository.addContact(newContactData).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()).subscribe({
                             // do nothing
@@ -174,7 +175,7 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
                         })
                 }
                 ContactDialogAction.RENAME -> {
-                    remoteRepository.updateContact(contact).subscribeOn(Schedulers.io())
+                    remoteRepository.updateContact(newContactData).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()).subscribe({
                             // do nothing
                         }, {
