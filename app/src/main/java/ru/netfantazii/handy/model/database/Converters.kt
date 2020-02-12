@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.model.database
 
-import android.net.Uri
 import androidx.room.TypeConverter
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.model.BuyStatus
@@ -46,6 +45,22 @@ object Converters {
         return groupType.number
     }
 
+
+//    @TypeConverter
+//    @JvmStatic
+//    fun calendarToMillis(calendar: Calendar): Long {
+//        return calendar.timeInMillis
+//    }
+//
+//    @TypeConverter
+//    @JvmStatic
+//    fun millisToCalendar(millis: Long): Calendar {
+//        val calendar = Calendar.getInstance()
+//        calendar.timeInMillis = millis
+//        return calendar
+//    }
+
+
     @TypeConverter
     @JvmStatic
     fun nullableCalendarToMillis(calendar: Calendar?): Long {
@@ -72,16 +87,8 @@ object Converters {
         if (stringToParse.isEmpty()) return RecyclerViewExpandableItemManager.SavedState(longArrayOf())
         val stringList = stringToParse.split(" ")
         val array = LongArray(stringList.size) {
-            stringList[it].toLong()
+                stringList[it].toLong()
         }
         return RecyclerViewExpandableItemManager.SavedState(array)
     }
-
-    @TypeConverter
-    @JvmStatic
-    fun uriToString(uri: Uri) = uri.toString()
-
-    @TypeConverter
-    @JvmStatic
-    fun stringToUri(string: String) = Uri.parse(string)
 }
