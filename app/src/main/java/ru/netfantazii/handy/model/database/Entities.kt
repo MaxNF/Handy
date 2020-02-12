@@ -10,7 +10,7 @@ import java.util.*
 
 abstract class BaseEntity(
     @field:PrimaryKey(autoGenerate = true)
-    val id: Long,
+    var id: Long,
     @field:ColumnInfo(name = "creation_time")
     val creationTime: Calendar,
     var position: Int,

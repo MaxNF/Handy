@@ -20,11 +20,13 @@ import java.util.NoSuchElementException
 const val ALARM_INTENT_ACTION = "ru.netfantazii.handy.ALARM_GOES_OFF"
 const val GEOFENCE_INTENT_ACTION = "ru.netfantazii.handy.GEOFENCE_IS_CROSSED"
 const val CANCEL_NOTIFICATION_ACTION = "ru.netfantazii.handy.CANCEL_NOTIFICATION"
+
 const val BUNDLE_NOTIFICATION_ID_KEY = "notification_id"
 const val BUNDLE_CATALOG_ID_KEY = "catalogId"
 const val BUNDLE_CATALOG_NAME_KEY = "catalogName"
 const val BUNDLE_EXPAND_STATE_KEY = "groupExpandStates"
 const val BUNDLE_GEOFENCE_IDS_KEY = "geofenceIds"
+//todo проверить и убрать поле BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, если нигде больше не используется
 const val BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY = "fromNotification"
 const val BUNDLE_KEY = "bundle_key"
 

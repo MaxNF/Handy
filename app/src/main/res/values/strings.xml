@@ -144,4 +144,6 @@
     <string name="revoke_access_hint">Tap long to revoke access</string>
     <string name="progress_bar_text">List \"%1$s\" is being sent...</string>
     <string name="secret_is_copied">The secret code is copied to clipboard!</string>
+    <string name="catalog_received_notification_title">You have received a catalog!</string>
+    <string name="catalog_received_notification_message">Catalog\'s name: %1$s\nFrom: %2$s\nCommentary: %3$s</string>
 </resources>

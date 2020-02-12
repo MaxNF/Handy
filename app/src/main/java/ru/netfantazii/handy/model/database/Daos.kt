@@ -44,10 +44,11 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
     open fun addCatalogWithNetInfo(
         catalog: CatalogEntity,
         catalogNetInfoEntity: CatalogNetInfoEntity
-    ) {
+    ):  Long {
         val catalogId = addAndReturnId(catalog)
         catalogNetInfoEntity.catalogId = catalogId
         addCatalogNetInfo(catalogNetInfoEntity)
+        return catalogId
     }
 
     @Insert
