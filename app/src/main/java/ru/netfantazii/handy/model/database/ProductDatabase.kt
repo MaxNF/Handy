@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [CatalogEntity::class, GroupEntity::class, ProductEntity::class, GeofenceEntity::class],
+@Database(entities = [CatalogEntity::class, GroupEntity::class, ProductEntity::class, GeofenceEntity::class, CatalogNetInfoEntity::class],
     version = 1)
 @TypeConverters(Converters::class)
 abstract class ProductDatabase : RoomDatabase() {
