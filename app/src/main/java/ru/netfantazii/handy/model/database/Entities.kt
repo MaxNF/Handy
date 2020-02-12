@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.model.database
 
+import android.net.Uri
 import androidx.room.*
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.model.BuyStatus
@@ -26,7 +27,9 @@ open class CatalogEntity(
     @field:ColumnInfo(name = "group_expand_states")
     var groupExpandStates: RecyclerViewExpandableItemManager.SavedState,
     @field:ColumnInfo(name = "alarm_time")
-    var alarmTime: Calendar?
+    var alarmTime: Calendar?,
+    @field:ColumnInfo(name = "from_network")
+    var fromNetwork: Boolean
 ) : BaseEntity(id, creationTime, position, name)
 
 @Entity(
@@ -67,6 +70,7 @@ open class ProductEntity(
     var buyStatus: BuyStatus
 ) : BaseEntity(id, creationTime, position, name)
 
+// todo сделать удаление напоминаний при удалении каталогов
 @Entity(
     foreignKeys = [ForeignKey(
         entity = CatalogEntity::class,
@@ -81,4 +85,27 @@ class GeofenceEntity(
     val latitude: Double,
     val longitude: Double,
     val radius: Float
+)
+
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = CatalogEntity::class,
+        parentColumns = ["id"], childColumns = ["catalog_id"], onDelete = ForeignKey.CASCADE
+    )]
+)
+class CatalogNetInfoEntity(
+var id: Long = 0,
+@field:ColumnInfo(name = "catalog_id")
+var catalogId: Long = 0, // изначально 0, потом ИД присваивается сразу после добавления родительского каталога в БД и получения его ИД
+@field:ColumnInfo(name = "receive_time")
+val receiveTime: Calendar,
+@field:ColumnInfo(name = "from_name")
+val fromName: String,
+@field:ColumnInfo(name = "from_email")
+val fromEmail: String,
+@field:ColumnInfo(name = "from_image")
+val fromImage: Uri,
+val commentary: String
+
+
 )

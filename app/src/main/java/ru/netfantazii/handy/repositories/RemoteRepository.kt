@@ -25,11 +25,11 @@ interface RemoteRepository {
     fun removeContact(contact: Contact): Completable
     fun updateContact(contactData: Map<String, String>): Completable
     fun deleteAccount(): Completable
-    fun downloadCatalog(messageId: String): Single<Map<String, Any>>
+    fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>>
 }
 
 class RemoteRepositoryImpl : RemoteRepository {
-    override fun downloadCatalog(messageId: String): Single<Map<String, Any>> {
+    override fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>> {
         return Single.create { emitter ->
             val task =
                 Firebase.firestore.collection(RemoteDbSchema.COLLECTION_MESSAGES)

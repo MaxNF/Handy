@@ -41,6 +41,19 @@ abstract class BaseDao<T> {
 @Dao
 abstract class CatalogDao : BaseDao<CatalogEntity>() {
     @Transaction
+    open fun addCatalogWithNetInfo(
+        catalog: CatalogEntity,
+        catalogNetInfoEntity: CatalogNetInfoEntity
+    ) {
+        val catalogId = addAndReturnId(catalog)
+        catalogNetInfoEntity.catalogId = catalogId
+        addCatalogNetInfo(catalogNetInfoEntity)
+    }
+
+    @Insert
+    abstract fun addCatalogNetInfo(catalogNetInfoEntity: CatalogNetInfoEntity)
+
+    @Transaction
     @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
     abstract fun getCatalogs(): Observable<MutableList<Catalog>>
 

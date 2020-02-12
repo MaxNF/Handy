@@ -49,6 +49,7 @@ interface LocalRepository {
     fun getCatalogAlarmTime(catalogId: Long): Observable<List<Calendar>>
     fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable
     fun removeCatalogAlarmTime(catalogId: Long): Disposable
+    fun addCatalogWithNetInfo(catalog: Catalog, catalogNetInfo: CatalogNetInfoEntity): Completable
 }
 
 class LocalRepositoryImpl(db: ProductDatabase) :
@@ -180,4 +181,7 @@ class LocalRepositoryImpl(db: ProductDatabase) :
 
     override fun removeCatalogAlarmTime(catalogId: Long): Disposable =
         catalogDao.removeAlarmTime(catalogId).subscribeOn(Schedulers.io()).subscribe()
+
+    override fun addCatalogWithNetInfo(catalog: Catalog, catalogNetInfo: CatalogNetInfoEntity) =
+        Completable.fromRunnable { catalogDao.addCatalogWithNetInfo(catalog, catalogNetInfo) }
 }
