@@ -17,7 +17,6 @@ abstract class BaseEntity(
     var name: String
 )
 
-// todo добавить поле, которое указывает на то, родной каталог или присланный
 @Entity
 open class CatalogEntity(
     id: Long,
@@ -94,18 +93,17 @@ class GeofenceEntity(
     )]
 )
 class CatalogNetInfoEntity(
-var id: Long = 0,
-@field:ColumnInfo(name = "catalog_id")
-var catalogId: Long = 0, // изначально 0, потом ИД присваивается сразу после добавления родительского каталога в БД и получения его ИД
-@field:ColumnInfo(name = "receive_time")
-val receiveTime: Calendar,
-@field:ColumnInfo(name = "from_name")
-val fromName: String,
-@field:ColumnInfo(name = "from_email")
-val fromEmail: String,
-@field:ColumnInfo(name = "from_image")
-val fromImage: Uri,
-val commentary: String
-
-
+    @field:PrimaryKey(autoGenerate = true)
+    var id: Long = 0,
+    @field:ColumnInfo(name = "catalog_id")
+    var catalogId: Long = 0, // изначально 0, потом ИД присваивается сразу после добавления родительского каталога в БД и получения его ИД
+    @field:ColumnInfo(name = "receive_time")
+    val receiveTime: Calendar,
+    @field:ColumnInfo(name = "from_name")
+    val fromName: String,
+    @field:ColumnInfo(name = "from_email")
+    val fromEmail: String,
+    @field:ColumnInfo(name = "from_image")
+    val fromImage: Uri,
+    val commentary: String
 )

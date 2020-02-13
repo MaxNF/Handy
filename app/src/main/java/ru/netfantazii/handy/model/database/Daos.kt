@@ -44,7 +44,7 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
     open fun addCatalogWithNetInfo(
         catalog: CatalogEntity,
         catalogNetInfoEntity: CatalogNetInfoEntity
-    ):  Long {
+    ): Long {
         val catalogId = addAndReturnId(catalog)
         catalogNetInfoEntity.catalogId = catalogId
         addCatalogNetInfo(catalogNetInfoEntity)
@@ -55,7 +55,7 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
     abstract fun addCatalogNetInfo(catalogNetInfoEntity: CatalogNetInfoEntity)
 
     @Transaction
-    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
+    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, c.from_network, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
     abstract fun getCatalogs(): Observable<MutableList<Catalog>>
 
     @Query("DELETE FROM CatalogEntity")
@@ -97,7 +97,7 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
         updateAllCatalogs(list)
     }
 
-    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c WHERE id = :id")
+    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, c.from_network, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c WHERE id = :id")
     abstract fun getCatalogById(id: Long): Catalog
 
     @Transaction
@@ -164,4 +164,10 @@ abstract class GeofenceDao : BaseDao<GeofenceEntity>() {
 
     @Insert
     abstract fun addGeofenceAndGetId(geofenceEntity: GeofenceEntity): Single<Long>
+}
+
+@Dao
+abstract class CatalogNetInfoDao : BaseDao<CatalogNetInfoEntity>() {
+    @Query("SELECT * FROM CatalogNetInfoEntity WHERE catalog_id = :catalogId")
+    abstract fun getCatalogNetInfo(catalogId: Long): Single<CatalogNetInfoEntity>
 }

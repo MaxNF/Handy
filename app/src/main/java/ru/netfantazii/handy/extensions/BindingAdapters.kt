@@ -1,15 +1,22 @@
 package ru.netfantazii.handy.extensions
 
+import android.net.Uri
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import jp.wasabeef.glide.transformations.CropCircleWithBorderTransformation
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.model.HintType
+import java.text.DateFormat
+import java.util.*
+
 
 private val TAG = "BindingAdapters"
 
@@ -86,4 +93,19 @@ fun setStripeWidth(view: View, percent: Float) {
         params.width = widthToSet
         view.layoutParams = params
     }
+}
+
+@BindingAdapter("app:formatCalendar")
+fun formatCalendar(view: TextView, calendar: Calendar) {
+    val formatter = DateFormat.getDateInstance(
+        DateFormat.LONG)
+    formatter.timeZone = calendar.timeZone
+    val formatted = formatter.format(calendar.time)
+    view.text = formatted
+}
+
+@BindingAdapter("app:downloadImageFromUri")
+fun downloadWithGlide(view: ImageView, uri: Uri) {
+    Glide.with(view.context).load(uri).transform(CropCircleWithBorderTransformation()).centerCrop()
+        .into(view)
 }

@@ -2,6 +2,7 @@ package ru.netfantazii.handy.repositories
 
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.ktx.Firebase
@@ -10,6 +11,7 @@ import io.reactivex.Observable
 import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.database.CloudFunctions
 import ru.netfantazii.handy.model.database.RemoteDbSchema
+import java.lang.IllegalArgumentException
 import java.lang.UnsupportedOperationException
 
 interface RemoteRepository {
@@ -26,6 +28,8 @@ interface RemoteRepository {
     fun updateContact(contactData: Map<String, String>): Completable
     fun deleteAccount(): Completable
     fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>>
+    fun addToken(token: String, uid: String): Completable
+    fun removeToken(token: String, uid: String): Completable
 }
 
 class RemoteRepositoryImpl : RemoteRepository {
@@ -152,4 +156,19 @@ class RemoteRepositoryImpl : RemoteRepository {
             task.addOnFailureListener { emitter.onError(it) }
         }
     }
+
+    override fun addToken(token: String, uid: String): Completable = Completable.create { emitter ->
+        val task = Firebase.firestore.collection(RemoteDbSchema.COLLECTION_USERS).document(uid)
+            .update(RemoteDbSchema.USER_DEVICE_TOKENS, FieldValue.arrayUnion(token))
+        task.addOnSuccessListener { emitter.onComplete() }
+        task.addOnFailureListener { emitter.onError(it) }
+    }
+
+    override fun removeToken(token: String, uid: String): Completable =
+        Completable.create { emitter ->
+            val task = Firebase.firestore.collection(RemoteDbSchema.COLLECTION_USERS).document(uid)
+                .update(RemoteDbSchema.USER_DEVICE_TOKENS, FieldValue.arrayRemove(token))
+            task.addOnSuccessListener { emitter.onComplete() }
+            task.addOnFailureListener { emitter.onError(it) }
+        }
 }

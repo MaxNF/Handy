@@ -4,14 +4,16 @@ import android.util.Log
 import androidx.lifecycle.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.core.*
 import ru.netfantazii.handy.model.Catalog
 import ru.netfantazii.handy.extensions.*
+import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
 import ru.netfantazii.handy.repositories.LocalRepository
 
 
 class CatalogsViewModel(private val localRepository: LocalRepository) : ViewModel(),
-    CatalogClickHandler, CatalogStorage, OverlayActions {
+    CatalogClickHandler, CatalogStorage, OverlayActions, DialogClickHandler {
     private val TAG = "CatalogsViewModel"
     private var catalogList = mutableListOf<Catalog>()
         set(value) {
@@ -67,6 +69,15 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     private val _catalogShareClicked = MutableLiveData<Event<Catalog>>()
     val catalogShareClicked: LiveData<Event<Catalog>> = _catalogShareClicked
+
+    private val _catalogEnvelopeClicked = MutableLiveData<Event<Unit>>()
+    val catalogEnvelopeClicked: LiveData<Event<Unit>> = _catalogEnvelopeClicked
+
+    private val _catalogAndNetInfoReceived =
+        MutableLiveData<Event<Pair<Catalog, CatalogNetInfoEntity>>>()
+    override val catalogAndNetInfoReceived: LiveData<Event<Pair<Catalog, CatalogNetInfoEntity>>> =
+        _catalogAndNetInfoReceived
+
 
     init {
         subscribeToCatalogsChanges()
@@ -203,6 +214,19 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     fun onFragmentStop() {
         lastRemovedObject?.let { realRemove(it) }
+    }
+
+    override fun onCatalogEnvelopeClick(catalog: Catalog) {
+        fetchCatalogWithNetInfo(catalog)
+
+    }
+
+    private fun fetchCatalogWithNetInfo(catalog: Catalog) {
+        disposables.add(localRepository.getCatalogNetInfo(catalog.id).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe { netInfo ->
+                _catalogAndNetInfoReceived.value = Event(Pair(catalog, netInfo))
+            })
+        _catalogEnvelopeClicked.value = Event(Unit)
     }
 }
 

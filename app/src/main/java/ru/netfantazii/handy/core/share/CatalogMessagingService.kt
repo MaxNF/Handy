@@ -4,25 +4,38 @@ import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.PersistableBundle
 import android.util.Log
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.model.database.RemoteDbSchema
+import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.repositories.RemoteRepository
 
 class CatalogMessagingService : FirebaseMessagingService() {
+    private val preferenceTokenKey = "prev_token"
     private val TAG = "CatalogMessagingService"
     private lateinit var downloader: CloudToLocalDownloader
+    private lateinit var remoteRepository: RemoteRepository
+    private lateinit var localRepository: LocalRepository
+
+    override fun onCreate() {
+        super.onCreate()
+        remoteRepository = (application as HandyApplication).remoteRepository
+        localRepository = (application as HandyApplication).localRepository
+        downloader = CloudToLocalDownloader(localRepository, remoteRepository, applicationContext)
+    }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val remoteRepository = (application as HandyApplication).remoteRepository
-        val localRepository = (application as HandyApplication).localRepository
         val messageId = message.data["message_id"] as String
-        downloader = CloudToLocalDownloader(localRepository, remoteRepository, applicationContext)
         downloader.downloadCatalogToLocalDb(messageId, 5L) {
             planDownload(messageId)
         }
@@ -45,14 +58,20 @@ class CatalogMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Log.d(TAG, "new message token received: $token")
-        val remoteRepository = (application as HandyApplication).remoteRepository
-        // todo Сделать запись токена при вызове этого метода в sharedPreferences. После очередного
-        // вызова этого метода, берем старый токен и вызываем у БД удаление (вручную, не http вызовом,
-        // чтобы удалить даже при потерянном соединении)
+        val uid = FirebaseAuth.getInstance().uid ?: return
+        val sp = PreferenceManager.getDefaultSharedPreferences(this)
+        val previousToken = sp.getString(preferenceTokenKey, null)
+        putNewTokenToPreferences(sp, token)
+        if (previousToken != null) {
+            remoteRepository.removeToken(previousToken, uid).subscribe()
+        }
+        remoteRepository.addToken(token, uid).subscribe()
+    }
 
-        // todo также возможно стоит немного пересмотреть механизм удаления токенов из облака. сделать не массив,
-        // а мапу, которая также содержит дату создания токена и переодически с логином или логаутом
-        // пользователя - делать проверку на актуальность токена (допустим с переодичностью раз в 6 месяцев или один год)
+    private fun putNewTokenToPreferences(sp: SharedPreferences, token: String) {
+        sp.edit(true) {
+            putString(preferenceTokenKey, token)
+        }
     }
 
 }

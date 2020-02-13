@@ -110,7 +110,7 @@ class ContactsFragment : Fragment() {
 
             contactSwipePerformed.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { contact ->
-                    launchDeleteDialog(contact)
+                    showDeleteDialog(contact)
                 }
             })
             allLiveDataList.add(contactSwipePerformed)
@@ -119,14 +119,14 @@ class ContactsFragment : Fragment() {
                 it.getContentIfNotHandled()?.let { contact ->
                     val action =
                         if (contact.isValid) ContactDialogAction.RENAME else ContactDialogAction.RENAME_NOT_VALID
-                    launchEditDialog(action, contact)
+                    showEditDialog(action, contact)
                 }
             })
             allLiveDataList.add(contactEditClicked)
 
             addContactClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
-                    launchEditDialog(ContactDialogAction.CREATE, null)
+                    showEditDialog(ContactDialogAction.CREATE, null)
                 }
             })
             allLiveDataList.add(addContactClicked)
@@ -175,11 +175,11 @@ class ContactsFragment : Fragment() {
         allLiveDataList.forEach { it.removeObservers(this) }
     }
 
-    private fun launchEditDialog(action: ContactDialogAction, contact: Contact?) {
+    private fun showEditDialog(action: ContactDialogAction, contact: Contact?) {
         EditContactDialog(action, contact).show(childFragmentManager, "edit_dialog")
     }
 
-    private fun launchDeleteDialog(contact: Contact) {
+    private fun showDeleteDialog(contact: Contact) {
         DeleteContactDialog(contact).show(childFragmentManager, "edit_dialog")
     }
 }

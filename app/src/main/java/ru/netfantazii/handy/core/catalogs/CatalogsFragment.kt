@@ -195,6 +195,13 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
                 }
             })
             allLiveDataList.add(catalogShareClicked)
+
+            catalogEnvelopeClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    showNetInfoDialog()
+                }
+            })
+            allLiveDataList.add(catalogEnvelopeClicked)
         }
     }
 
@@ -225,6 +232,10 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
     private fun scrollToBeginOfList() {
         recyclerView.scrollToPosition(0)
+    }
+
+    private fun showNetInfoDialog() {
+        CatalogNetInfoDialog().show(childFragmentManager, "net_info_dialog")
     }
 
     override fun hideSnackbars() {

@@ -50,14 +50,16 @@ interface LocalRepository {
     fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable
     fun removeCatalogAlarmTime(catalogId: Long): Disposable
     fun addCatalogWithNetInfo(catalog: Catalog, catalogNetInfo: CatalogNetInfoEntity): Single<Long>
+    fun getCatalogNetInfo(catalogId: Long): Single<CatalogNetInfoEntity>
 }
 
 class LocalRepositoryImpl(db: ProductDatabase) :
     LocalRepository {
-    private val catalogDao: CatalogDao = db.getCatalogDao()
-    private val groupDao: GroupDao = db.getGroupDao()
-    private val productDao: ProductDao = db.getProductDao()
-    private val geofenceDao: GeofenceDao = db.getGeofenceDao()
+    private val catalogDao = db.getCatalogDao()
+    private val groupDao = db.getGroupDao()
+    private val productDao = db.getProductDao()
+    private val geofenceDao = db.getGeofenceDao()
+    private val netInfoDao = db.getCatalogNetInfoDao()
 
     override fun addCatalog(catalog: Catalog) =
         Completable.fromRunnable { catalogDao.addWithDefaultGroup(catalog) }.subscribeOn(Schedulers.io()).subscribe()!!
@@ -184,4 +186,7 @@ class LocalRepositoryImpl(db: ProductDatabase) :
 
     override fun addCatalogWithNetInfo(catalog: Catalog, catalogNetInfo: CatalogNetInfoEntity) =
         Single.fromCallable<Long> { catalogDao.addCatalogWithNetInfo(catalog, catalogNetInfo) }
+
+    override fun getCatalogNetInfo(catalogId: Long): Single<CatalogNetInfoEntity> =
+        netInfoDao.getCatalogNetInfo(catalogId)
 }

@@ -8,7 +8,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import ru.netfantazii.handy.NetworkViewModel
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.databinding.EditContactLayoutBinding
+import ru.netfantazii.handy.databinding.EditContactDialogBinding
 import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.ContactDialogAction
 
@@ -21,8 +21,6 @@ interface DialogClickHandler {
     fun onEditYesClick(action: ContactDialogAction, contact: Contact)
     fun nameHasDuplicates(name: String): Boolean
 }
-
-// todo заменить строки на ресурсы с шаблонном
 
 open class BaseDialog : DialogFragment() {
     protected lateinit var dialogClickHandler: DialogClickHandler
@@ -39,8 +37,8 @@ class EditContactDialog(private val action: ContactDialogAction, private val con
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
-        val dialogView = inflater.inflate(R.layout.edit_contact_layout, null)
-        val binding = EditContactLayoutBinding.bind(dialogView)
+        val dialogView = inflater.inflate(R.layout.edit_contact_dialog, null)
+        val binding = EditContactDialogBinding.bind(dialogView)
 
         binding.contact = contact
         val nameEditText = binding.nameEditText

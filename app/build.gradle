@@ -144,6 +144,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
+    // Glide Transformations
+    implementation 'jp.wasabeef:glide-transformations:4.1.0'
+
     // Testing
     testImplementation "androidx.room:room-testing:$room_version"
     testImplementation 'junit:junit:4.12'

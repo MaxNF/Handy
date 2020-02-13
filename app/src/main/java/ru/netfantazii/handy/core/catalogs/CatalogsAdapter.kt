@@ -53,6 +53,7 @@ interface CatalogClickHandler {
      * Вызывается при клике на значок "поделиться" у каталога*/
     fun onCatalogShareClick(catalog: Catalog)
 
+    fun onCatalogEnvelopeClick(catalog: Catalog)
 }
 
 interface CatalogStorage {

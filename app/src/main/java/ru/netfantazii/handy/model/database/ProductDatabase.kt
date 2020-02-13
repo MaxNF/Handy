@@ -12,4 +12,5 @@ abstract class ProductDatabase : RoomDatabase() {
     abstract fun getGroupDao(): GroupDao
     abstract fun getProductDao(): ProductDao
     abstract fun getGeofenceDao(): GeofenceDao
+    abstract fun getCatalogNetInfoDao(): CatalogNetInfoDao
 }
