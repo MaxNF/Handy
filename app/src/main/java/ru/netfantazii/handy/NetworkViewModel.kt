@@ -115,11 +115,12 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
         _signInClicked.value = Event(Unit)
     }
 
-    private fun signOut() {
+    fun signOut() {
         Log.d(TAG, "signOut: ")
         FirebaseAuth.getInstance().signOut()
         user.set(null)
         _signOutClicked.value = Event(Unit)
+        //todo сделать удаление токена при выходе. переделать обл. функции, чтобы удаляла ДО логаута, логаут уже после (неважно успех или неудача)
     }
 
     fun revokeAccess() {
@@ -132,18 +133,32 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
 
     fun signInToFirebase(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-        disposables.add(remoteRepository.signInToFirebase(credential).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe({
+        disposables.add(remoteRepository.signInToFirebase(credential)
+            .andThen(remoteRepository.addUserUpdateTokenGetSecret())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
                 _signInComplete.value = Event(Unit)
                 val firebaseUser = FirebaseAuth.getInstance().currentUser!!
                 user.set(User(firebaseUser.displayName ?: "",
                     firebaseUser.email ?: "",
-                    firebaseUser.photoUrl, "asd"))
+                    firebaseUser.photoUrl, it))
+
             }, {
-                _firebaseSignInError.value = Event(Unit)
+                signOut()
                 it.printStackTrace()
+                _firebaseSignInError.value = Event(Unit)
             }))
     }
+
+//    private fun addUserToDbAndGetSecret() {
+//        disposables.add(remoteRepository.addUserUpdateTokenGetSecret().subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread()).subscribe({}, {
+//                signOut()
+//                _firebaseSignInError.value = Event(Unit)
+//                it.printStackTrace()
+//            })
+//    }
 
     override fun onDeleteYesClick(contact: Contact) {
         disposables.add(remoteRepository.removeContact(contact).subscribeOn(Schedulers.io())

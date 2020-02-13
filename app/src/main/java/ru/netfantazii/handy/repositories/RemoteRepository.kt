@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.repositories
 
+import android.util.Log
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -11,7 +12,6 @@ import io.reactivex.Observable
 import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.database.CloudFunctions
 import ru.netfantazii.handy.model.database.RemoteDbSchema
-import java.lang.IllegalArgumentException
 import java.lang.UnsupportedOperationException
 
 interface RemoteRepository {
@@ -21,7 +21,7 @@ interface RemoteRepository {
 
     fun signInToFirebase(credential: AuthCredential): Completable
     fun changeSecret(): Single<String>
-    fun addUserUpdateTokenGetSecret(currentDeviceToken: String): Single<String>
+    fun addUserUpdateTokenGetSecret(): Single<String>
     fun getContacts(): Observable<List<Contact>>
     fun addContact(contactData: Map<String, String>): Completable
     fun removeContact(contact: Contact): Completable
@@ -33,6 +33,10 @@ interface RemoteRepository {
 }
 
 class RemoteRepositoryImpl : RemoteRepository {
+    private val TAG = "RemoteRepositoryImpl"
+    private val firestoreHttpsEuWest1 =
+        FirebaseFunctions.getInstance(CloudFunctions.REGION_EU_WEST1)
+
     override fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>> {
         return Single.create { emitter ->
             val task =
@@ -63,19 +67,25 @@ class RemoteRepositoryImpl : RemoteRepository {
     override fun changeSecret(): Single<String> {
         return Single.create<String> { emitter ->
             val task =
-                FirebaseFunctions.getInstance().getHttpsCallable(CloudFunctions.CHANGE_SECRET)
+                firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.CHANGE_SECRET)
                     .call()
             task.addOnSuccessListener { emitter.onSuccess(it.data as String) }
             task.addOnFailureListener { emitter.onError(it) }
         }
     }
 
-    override fun addUserUpdateTokenGetSecret(currentDeviceToken: String): Single<String> {
+    override fun addUserUpdateTokenGetSecret(): Single<String> {
         return Single.create<String> { emitter ->
-            val task = FirebaseFunctions.getInstance()
-                .getHttpsCallable(CloudFunctions.UPDATE_USER_AND_TOKEN).call()
-            task.addOnSuccessListener { emitter.onSuccess(it.data as String) }
-            task.addOnFailureListener { emitter.onError(it) }
+            val task = firestoreHttpsEuWest1
+                .getHttpsCallable(CloudFunctions.UPDATE_USER_AND_TOKEN)
+                .call()
+
+            task.addOnSuccessListener {
+                emitter.onSuccess(it.data as String)
+            }
+            task.addOnFailureListener {
+                emitter.onError(it)
+            }
         }
     }
 
@@ -108,7 +118,7 @@ class RemoteRepositoryImpl : RemoteRepository {
     override fun addContact(contactData: Map<String, String>): Completable {
         return Completable.create { emitter ->
             val task =
-                FirebaseFunctions.getInstance().getHttpsCallable(CloudFunctions.ADD_CONTACT)
+                firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.ADD_CONTACT)
                     .call(contactData)
             task.addOnCompleteListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
@@ -118,7 +128,7 @@ class RemoteRepositoryImpl : RemoteRepository {
     override fun removeContact(contact: Contact): Completable {
         return Completable.create { emitter ->
             val task =
-                FirebaseFunctions.getInstance().getHttpsCallable(CloudFunctions.DELETE_CONTACT)
+                firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.DELETE_CONTACT)
                     .call()
             task.addOnSuccessListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
@@ -128,7 +138,7 @@ class RemoteRepositoryImpl : RemoteRepository {
     override fun updateContact(contactData: Map<String, String>): Completable {
         return Completable.create { emitter ->
             val task =
-                FirebaseFunctions.getInstance().getHttpsCallable(CloudFunctions.UPDATE_CONTACT)
+                firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.UPDATE_CONTACT)
                     .call()
             task.addOnSuccessListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }

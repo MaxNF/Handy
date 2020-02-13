@@ -51,10 +51,11 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
 
         viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
         deleteAccPref = findPreference("delete_account_button")!!
-//        deleteAccPref!!.isVisible = viewModel.user.get() != null
+        deleteAccPref!!.isVisible = viewModel.user.get() != null
         deleteAccPref.setDeleteAccountAction { viewModel.deleteAccount() }
         deleteAccPref.setCopySecretAction { viewModel.copySecretToClipboard(requireContext()) }
         deleteAccPref.setGetNewSecretAction { viewModel.reloadSecretCode() }
+        deleteAccPref.setNewSecretToView(viewModel.user.get()?.secret ?: "n/a")
 
         val threadName = Thread.currentThread().name
         Log.d(TAG, "onCreatePreferences: $threadName")

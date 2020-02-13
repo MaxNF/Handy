@@ -105,7 +105,11 @@ fun formatCalendar(view: TextView, calendar: Calendar) {
 }
 
 @BindingAdapter("app:downloadImageFromUri")
-fun downloadWithGlide(view: ImageView, uri: Uri) {
-    Glide.with(view.context).load(uri).transform(CropCircleWithBorderTransformation()).centerCrop()
-        .into(view)
+fun downloadWithGlide(view: ImageView, uri: Uri?) {
+    if (uri == null) {
+        view.setImageResource(R.mipmap.ic_launcher_round)
+    } else {
+        Glide.with(view).load(uri).transform(CropCircleWithBorderTransformation(0, 0))
+            .into(view)
+    }
 }

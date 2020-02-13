@@ -81,14 +81,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val drawerHeaderBinding = NavigationHeaderBinding.bind(header)
         drawerHeaderBinding.viewModel = viewModel
         drawerHeaderBinding.signInButton.setOnLongClickListener {
-            signInClient.revokeAccess().addOnCompleteListener {
-                if (it.isSuccessful) showShortToast(this, getString(R.string.revoke_is_successful))
+            if (viewModel.user.get() != null) {
+                signInClient.revokeAccess().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        showShortToast(this, getString(R.string.revoke_is_successful))
+                        viewModel.signOut()
+                    }
+                }
             }
             true
         }
 
         buildSignInClient()
-
         registerNotitificationChannel(this)
         showWelcomeScreenIfNeeded()
     }
@@ -266,15 +270,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SIGN_IN_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                if (task.isSuccessful) {
-                    viewModel.signInToFirebase(task.result!!)
-                } else {
-                    Toast.makeText(this, "Sign in task is not successful", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            } catch (e: ApiException) {
-                Toast.makeText(this, "ApiException", Toast.LENGTH_SHORT).show()
+            task.addOnSuccessListener {
+                viewModel.signInToFirebase(it)
+            }
+            task.addOnFailureListener {
+                it.printStackTrace()
+                showShortToast(this, "Error while logging in")
             }
         }
     }

@@ -67,6 +67,8 @@ object RemoteDbSchema {
 }
 
 object CloudFunctions {
+    const val REGION_EU_WEST1 = "europe-west1"
+
     const val UPDATE_USER_AND_TOKEN = "saveDeviceTokenAndGetSecret"
     const val CHANGE_SECRET = "changeAndGetShortId"
     const val DELETE_TOKEN = "deleteTokenOnLogout"

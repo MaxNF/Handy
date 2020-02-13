@@ -293,6 +293,6 @@ class DatabaseTest {
         catalogDao.addAlarmTime(1L, calendarToAdd).test().assertComplete()
         val addedCalendar = catalogDao.getCatalogAlarmTime(1).test().values()[0]
         assertThat(addedCalendar, `is`(notNullValue()))
-        assertThat(addedCalendar!!.timeInMillis, `is`(5L))
+        assertThat(addedCalendar[0].timeInMillis, `is`(5L))
     }
 }

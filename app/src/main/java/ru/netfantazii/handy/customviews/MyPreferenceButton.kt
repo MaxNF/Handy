@@ -26,6 +26,7 @@ class MyPreferenceButton(
     private var cachedDeleteAccAction: ((v: View) -> Unit)? = null
     private var cachedCopySecretAction: ((v: View) -> Unit)? = null
     private var cachedGetNewSecretAction: ((v: View) -> Unit)? = null
+    private var cachedSecretCode: String? = null
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
@@ -50,6 +51,11 @@ class MyPreferenceButton(
             getNewSecretButton.setOnClickListener(cachedGetNewSecretAction)
             cachedGetNewSecretAction = null
         }
+
+        if (cachedSecretCode != null) {
+            secretCodeTextView.text = cachedSecretCode
+            cachedSecretCode = null
+        }
     }
 
     fun setDeleteAccountAction(action: (v: View) -> Unit) {
@@ -70,7 +76,7 @@ class MyPreferenceButton(
     fun setNewSecretToView(secret: String) {
         if (::secretCodeTextView.isInitialized) {
             secretCodeTextView.text = secret
-        }
+        } else cachedSecretCode = secret
     }
 
     fun removeDeleteAccountAction() {

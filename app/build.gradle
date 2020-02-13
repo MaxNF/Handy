@@ -128,14 +128,14 @@ dependencies {
 
     // Firebase
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
-    implementation 'com.google.firebase:firebase-firestore-ktx:21.3.1'
-    implementation 'com.google.firebase:firebase-functions-ktx:19.0.1'
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.4.0'
+    implementation 'com.google.firebase:firebase-functions-ktx:19.0.2'
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
-    implementation 'com.google.firebase:firebase-auth:19.2.0'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
 
-    // Google play auth
+    // Google play + Firebase auth
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
 
     // Customizable Google SignIn button
     implementation 'com.shobhitpuri.custombuttons:google-signin:1.1.0'
