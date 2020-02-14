@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
+import androidx.databinding.library.baseAdapters.BR
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -31,7 +32,7 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
     private val userChangedCallback = object :
         Observable.OnPropertyChangedCallback() {
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            val user = (sender as ObservableField<User>).get()
+            val user = (sender as ObservableField<User?>).get()
             if (user != null) {
                 deleteAccPref.setNewSecretToView(user.secret)
             }

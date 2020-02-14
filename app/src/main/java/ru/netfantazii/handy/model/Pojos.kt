@@ -2,6 +2,7 @@ package ru.netfantazii.handy.model
 
 import android.net.Uri
 import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
 import androidx.databinding.ObservableField
 import androidx.room.Ignore
 import androidx.room.Relation
@@ -111,5 +112,6 @@ data class User(
     val name: String,
     val email: String,
     val imageUri: Uri?,
+    @get:Bindable
     var secret: String
 ) : BaseObservable()

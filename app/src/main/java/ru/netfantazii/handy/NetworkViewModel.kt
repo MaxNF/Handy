@@ -3,6 +3,7 @@ package ru.netfantazii.handy
 import android.content.Context
 import android.util.Log
 import androidx.databinding.ObservableField
+import androidx.databinding.library.baseAdapters.BR
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,9 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.ktx.Firebase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -92,7 +90,10 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val _secretCopied = MutableLiveData<Event<Unit>>()
     val secretCopied: LiveData<Event<Unit>> = _secretCopied
 
-    val user = ObservableField<User>()
+    private val _changingSecretFailed = MutableLiveData<Event<Unit>>()
+    val changingSecretFailed: LiveData<Event<Unit>> = _changingSecretFailed
+
+    val user = ObservableField<User?>()
 
     private fun subscribeToContactUpdates() {
         disposables.add(remoteRepository.getContacts().subscribeOn(Schedulers.io())
@@ -254,15 +255,16 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
 
     fun reloadSecretCode() {
         Log.d(TAG, "reloadSecretCode: ")
-        remoteRepository.changeSecret()
+        disposables.add(remoteRepository.changeSecret()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({newSecret ->
+            .subscribe({ newSecret ->
                 user.get()!!.secret = newSecret
-                user.notifyPropertyChanged()
-            },{
-
-            })
+                user.notifyPropertyChanged(BR.secret)
+            }, {
+                it.printStackTrace()
+                _changingSecretFailed.value = Event(Unit)
+            }))
 
     }
 }

@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -26,7 +25,6 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.currentSortOrder
@@ -263,6 +261,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             })
             allLiveDataList.add(startingToSendCatalog)
 
+            changingSecretFailed.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    showShortToast(this@MainActivity, getString(R.string.changing_secret_failed_message))
+                }
+            })
+            allLiveDataList.add(changingSecretFailed)
         }
     }
 
