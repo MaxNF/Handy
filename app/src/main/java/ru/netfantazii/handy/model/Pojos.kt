@@ -7,6 +7,7 @@ import androidx.databinding.ObservableField
 import androidx.room.Ignore
 import androidx.room.Relation
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.AuthCredential
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.model.database.CatalogEntity
@@ -113,5 +114,6 @@ data class User(
     val email: String,
     val imageUri: Uri?,
     @get:Bindable
-    var secret: String
+    var secret: String,
+    val credential: AuthCredential
 ) : BaseObservable()

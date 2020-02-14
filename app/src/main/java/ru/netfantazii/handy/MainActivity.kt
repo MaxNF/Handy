@@ -9,9 +9,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
+import androidx.databinding.ObservableField
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -263,10 +266,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             changingSecretFailed.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
-                    showShortToast(this@MainActivity, getString(R.string.changing_secret_failed_message))
+                    showShortToast(this@MainActivity,
+                        getString(R.string.changing_secret_failed_message))
                 }
             })
             allLiveDataList.add(changingSecretFailed)
+
+            accountDeletedSuccessfully.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    showShortToast(this@MainActivity,
+                        getString(R.string.account_deleted_successfully))
+                }
+            })
+            allLiveDataList.add(accountDeletedSuccessfully)
+
+            accountDeletionFailed.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    showShortToast(this@MainActivity, getString(R.string.account_deletion_failed))
+                }
+            })
+            allLiveDataList.add(accountDeletionFailed)
+
+            user.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+                override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                    val user = (sender as ObservableField<User?>).get()
+                    navigationView.menu.findItem(R.id.contactsFragment).isVisible =
+                        user != null
+                }
+            })
         }
     }
 

@@ -30,6 +30,7 @@ interface RemoteRepository {
     fun addToken(token: String, uid: String): Completable
     fun removeToken(token: String, uid: String): Completable
     fun removeTokenOnLogout(): Completable
+    fun reauthentificateInFirebase(credential: AuthCredential): Completable
 }
 
 class RemoteRepositoryImpl : RemoteRepository {
@@ -145,36 +146,32 @@ class RemoteRepositoryImpl : RemoteRepository {
         }
     }
 
-    override fun deleteAccount(): Completable {
-        return Completable.create { emitter ->
-            val user = FirebaseAuth.getInstance().currentUser
-
-            if (user == null) {
-                emitter.onError(UnsupportedOperationException("User is not logged in"))
-            } else {
-                val task = user.delete()
-                task.addOnSuccessListener { emitter.onComplete() }
-                task.addOnFailureListener { emitter.onError(it) }
-            }
-        }
-    }
-
-    override fun signInToFirebase(credential: AuthCredential): Completable {
-        return Completable.create { emitter ->
-            val task = FirebaseAuth.getInstance().signInWithCredential(credential)
+    override fun deleteAccount() = Completable.create { emitter ->
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            emitter.onError(UnsupportedOperationException("User is not logged in"))
+        } else {
+            val task = user.delete()
             task.addOnSuccessListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
         }
     }
 
-    override fun addToken(token: String, uid: String): Completable = Completable.create { emitter ->
+    override fun signInToFirebase(credential: AuthCredential) =
+        Completable.create { emitter ->
+            val task = FirebaseAuth.getInstance().signInWithCredential(credential)
+            task.addOnSuccessListener { emitter.onComplete() }
+            task.addOnFailureListener { emitter.onError(it) }
+        }
+
+    override fun addToken(token: String, uid: String) = Completable.create { emitter ->
         val task = Firebase.firestore.collection(RemoteDbSchema.COLLECTION_USERS).document(uid)
             .update(RemoteDbSchema.USER_DEVICE_TOKENS, FieldValue.arrayUnion(token))
         task.addOnSuccessListener { emitter.onComplete() }
         task.addOnFailureListener { emitter.onError(it) }
     }
 
-    override fun removeToken(token: String, uid: String): Completable =
+    override fun removeToken(token: String, uid: String) =
         Completable.create { emitter ->
             val task = Firebase.firestore.collection(RemoteDbSchema.COLLECTION_USERS).document(uid)
                 .update(RemoteDbSchema.USER_DEVICE_TOKENS, FieldValue.arrayRemove(token))
@@ -182,10 +179,23 @@ class RemoteRepositoryImpl : RemoteRepository {
             task.addOnFailureListener { emitter.onError(it) }
         }
 
-    override fun removeTokenOnLogout(): Completable = Completable.create { emitter ->
+    override fun removeTokenOnLogout() = Completable.create { emitter ->
         val task =
             firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.DELETE_TOKEN_ON_LOGOUT).call()
         task.addOnSuccessListener { emitter.onComplete() }
         task.addOnFailureListener { emitter.onError(it) }
     }
+
+    override fun reauthentificateInFirebase(credential: AuthCredential) =
+        Completable.create { emitter ->
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser == null) {
+                emitter.onError(IllegalArgumentException("Current user is null!"))
+            } else {
+                val task = currentUser.reauthenticate(credential)
+                task.addOnSuccessListener { emitter.onComplete() }
+                task.addOnFailureListener { emitter.onError(it) }
+            }
+        }
+
 }

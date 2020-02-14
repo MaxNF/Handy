@@ -1,5 +1,7 @@
 package ru.netfantazii.handy.core.preferences
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -8,6 +10,7 @@ import android.view.View
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
 import androidx.databinding.library.baseAdapters.BR
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -53,7 +56,7 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
         viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
         deleteAccPref = findPreference("delete_account_button")!!
         deleteAccPref!!.isVisible = viewModel.user.get() != null
-        deleteAccPref.setDeleteAccountAction { viewModel.deleteAccount() }
+        deleteAccPref.setDeleteAccountAction { showConfirmationDialog() }
         deleteAccPref.setCopySecretAction { viewModel.copySecretToClipboard(requireContext()) }
         deleteAccPref.setGetNewSecretAction { viewModel.reloadSecretCode() }
         deleteAccPref.setNewSecretToView(viewModel.user.get()?.secret ?: "n/a")
@@ -97,5 +100,24 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
     override fun onStop() {
         super.onStop()
         viewModel.user.removeOnPropertyChangedCallback(userChangedCallback)
+    }
+
+    private fun showConfirmationDialog() {
+        val dialog = DeleteAccConfirmDialog()
+        dialog.show(childFragmentManager, "delete_acc_dialog")
+    }
+}
+
+class DeleteAccConfirmDialog : DialogFragment() {
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
+        return AlertDialog.Builder(context)
+            .setTitle(getString(R.string.are_you_sure))
+            .setPositiveButton(getString(R.string.dialog_yes)) { _, _ ->
+                viewModel.onDeleteAccountYesClick()
+            }
+            .setNegativeButton(getString(R.string.dialog_cancel), null)
+            .create()
     }
 }

@@ -148,4 +148,7 @@
     <string name="catalog_received_notification_message">Catalog\'s name: %1$s\nFrom: %2$s\nCommentary: %3$s</string>
     <string name="dialog_ok_button">OK</string>
     <string name="changing_secret_failed_message">Generating a new secret code has failed</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="account_deleted_successfully">Your account has been successfully deleted</string>
+    <string name="account_deletion_failed">Failed to delete the account</string>
 </resources>

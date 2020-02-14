@@ -8,11 +8,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.GoogleAuthProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.core.contacts.ContactsClickHandler
@@ -31,6 +35,7 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val TAG = "NetworkViewModel"
 
     private val disposables = CompositeDisposable()
+    private lateinit var contactsUpdateDisposable: Disposable
 
     private var contacts: List<Contact> = listOf()
         set(value) {
@@ -93,16 +98,27 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val _changingSecretFailed = MutableLiveData<Event<Unit>>()
     val changingSecretFailed: LiveData<Event<Unit>> = _changingSecretFailed
 
+    private val _accountDeletedSuccessfully = MutableLiveData<Event<Unit>>()
+    val accountDeletedSuccessfully: LiveData<Event<Unit>> = _accountDeletedSuccessfully
+
+    private val _accountDeletionFailed = MutableLiveData<Event<Unit>>()
+    val accountDeletionFailed: LiveData<Event<Unit>> = _accountDeletionFailed
+
     val user = ObservableField<User?>()
 
     private fun subscribeToContactUpdates() {
-        disposables.add(remoteRepository.getContacts().subscribeOn(Schedulers.io())
+        contactsUpdateDisposable = remoteRepository.getContacts().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 contacts = it
             }, {
                 _retrievingContactsError.value = Event(Unit)
                 it.printStackTrace()
-            }))
+            })
+        disposables.add(contactsUpdateDisposable)
+    }
+
+    private fun unsubscribeFromContactsUpdates() {
+        contactsUpdateDisposable.dispose()
     }
 
     private fun onNewDataReceive() {
@@ -120,16 +136,26 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     }
 
     fun signOut() {
-        remoteRepository.removeTokenOnLogout()
+        disposables.add(remoteRepository.removeTokenOnLogout()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doAfterTerminate {
                 FirebaseAuth.getInstance().signOut()
-                _signOutClicked.value = Event(Unit)
-                user.set(null)
+                doSignOutCompanionOperations()
             }
-            .subscribe()
-        //todo сделать удаление токена при выходе. переделать обл. функции, чтобы удаляла ДО логаута, логаут уже после (неважно успех или неудача)
+            .subscribe({
+                //do nothing
+            }, {
+                Log.e(TAG, "signOut: failed ")
+                // пропускаем исключения, т.к. нам по факту не важно, успешен был логаут или нет)
+            }))
+    }
+
+    // Дополнительные методы для очищения ресурсов и обновления интерфейса после логаута
+    private fun doSignOutCompanionOperations() {
+        _signOutClicked.value = Event(Unit)
+        user.set(null)
+        unsubscribeFromContactsUpdates()
     }
 
     fun onAddContactClick() {
@@ -147,23 +173,14 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
                 val firebaseUser = FirebaseAuth.getInstance().currentUser!!
                 user.set(User(firebaseUser.displayName ?: "",
                     firebaseUser.email ?: "",
-                    firebaseUser.photoUrl, it))
-
+                    firebaseUser.photoUrl, it, credential))
+                subscribeToContactUpdates()
             }, {
                 signOut()
                 it.printStackTrace()
                 _firebaseSignInError.value = Event(Unit)
             }))
     }
-
-//    private fun addUserToDbAndGetSecret() {
-//        disposables.add(remoteRepository.addUserUpdateTokenGetSecret().subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread()).subscribe({}, {
-//                signOut()
-//                _firebaseSignInError.value = Event(Unit)
-//                it.printStackTrace()
-//            })
-//    }
 
     override fun onDeleteYesClick(contact: Contact) {
         disposables.add(remoteRepository.removeContact(contact).subscribeOn(Schedulers.io())
@@ -227,11 +244,24 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
             }))
     }
 
-    fun deleteAccount() {
-        Log.d(TAG, "deleteAccount: ")
+    fun onDeleteAccountYesClick() {
+        Log.d(TAG, "onDeleteAccountYesClick: ")
+        disposables.add(remoteRepository.reauthentificateInFirebase(user.get()!!.credential)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .andThen(remoteRepository.deleteAccount())
+            .subscribe({
+                _accountDeletedSuccessfully.value = Event(Unit)
+                doSignOutCompanionOperations()
+            },
+                {
+                    it.printStackTrace()
+                    _accountDeletionFailed.value = Event(Unit)
+                }))
     }
 
-    override fun nameHasDuplicates(name: String): Boolean = contacts.any { it.name == name }
+    override fun nameHasDuplicates(name: String): Boolean =
+        contacts.any { it.name == name }
 
     override fun onContactSwipePerform(contact: Contact) {
         _contactSwipePerformed.value = Event(contact)
