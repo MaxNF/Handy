@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.model
 
 import android.net.Uri
+import androidx.databinding.BaseObservable
 import androidx.databinding.ObservableField
 import androidx.room.Ignore
 import androidx.room.Relation
@@ -110,5 +111,5 @@ data class User(
     val name: String,
     val email: String,
     val imageUri: Uri?,
-    val secret: String
-)
+    var secret: String
+) : BaseObservable()

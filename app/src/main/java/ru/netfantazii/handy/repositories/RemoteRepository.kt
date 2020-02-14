@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.repositories
 
-import android.util.Log
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -30,6 +29,7 @@ interface RemoteRepository {
     fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>>
     fun addToken(token: String, uid: String): Completable
     fun removeToken(token: String, uid: String): Completable
+    fun removeTokenOnLogout(): Completable
 }
 
 class RemoteRepositoryImpl : RemoteRepository {
@@ -181,4 +181,11 @@ class RemoteRepositoryImpl : RemoteRepository {
             task.addOnSuccessListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
         }
+
+    override fun removeTokenOnLogout(): Completable = Completable.create { emitter ->
+        val task =
+            firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.DELETE_TOKEN_ON_LOGOUT).call()
+        task.addOnSuccessListener { emitter.onComplete() }
+        task.addOnFailureListener { emitter.onError(it) }
+    }
 }

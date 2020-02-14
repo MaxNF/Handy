@@ -71,7 +71,7 @@ object CloudFunctions {
 
     const val UPDATE_USER_AND_TOKEN = "saveDeviceTokenAndGetSecret"
     const val CHANGE_SECRET = "changeAndGetShortId"
-    const val DELETE_TOKEN = "deleteTokenOnLogout"
+    const val DELETE_TOKEN_ON_LOGOUT = "deleteTokenOnLogout"
     const val ADD_CONTACT = "addNewContact"
     const val DELETE_CONTACT = "deleteContact"
     const val UPDATE_CONTACT = "updateContact"

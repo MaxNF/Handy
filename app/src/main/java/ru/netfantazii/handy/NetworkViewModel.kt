@@ -10,6 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.ktx.Firebase
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -116,15 +119,16 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     }
 
     fun signOut() {
-        Log.d(TAG, "signOut: ")
-        FirebaseAuth.getInstance().signOut()
-        user.set(null)
-        _signOutClicked.value = Event(Unit)
+        remoteRepository.removeTokenOnLogout()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doAfterTerminate {
+                FirebaseAuth.getInstance().signOut()
+                _signOutClicked.value = Event(Unit)
+                user.set(null)
+            }
+            .subscribe()
         //todo сделать удаление токена при выходе. переделать обл. функции, чтобы удаляла ДО логаута, логаут уже после (неважно успех или неудача)
-    }
-
-    fun revokeAccess() {
-
     }
 
     fun onAddContactClick() {
@@ -250,6 +254,16 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
 
     fun reloadSecretCode() {
         Log.d(TAG, "reloadSecretCode: ")
+        remoteRepository.changeSecret()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({newSecret ->
+                user.get()!!.secret = newSecret
+                user.notifyPropertyChanged()
+            },{
+
+            })
+
     }
 }
 
