@@ -10,12 +10,16 @@ import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.leanback.app.ProgressBarManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -29,6 +33,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import io.reactivex.plugins.RxJavaPlugins
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
@@ -37,8 +44,11 @@ import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
 import ru.netfantazii.handy.extensions.getSortOrder
 import ru.netfantazii.handy.extensions.reloadActivity
+import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
+import ru.netfantazii.handy.model.PbOperations
 import ru.netfantazii.handy.model.User
+import ru.netfantazii.handy.model.database.ErrorCodes
 
 const val NOTIFICATION_CHANNEL_ID = "Handy notification channel"
 var user: User? = null
@@ -55,6 +65,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private lateinit var signInClient: GoogleSignInClient
     private val SIGN_IN_REQUEST_CODE = 0
+    private lateinit var progressBar: ProgressBar
+    private lateinit var pbManager: ProgressBarManager
+    private lateinit var pbText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +76,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             DataBindingUtil.setContentView(this, R.layout.activity_main)
         createNetworkViewModel()
         mainBinding.viewModel = viewModel
+        pbManager = ProgressBarManager()
+        pbManager.setProgressBarView(mainBinding.progressBarContainer)
+        pbText = mainBinding.progressBarDescription
 
         val toolbar = mainBinding.toolbar
         setSupportActionBar(toolbar)
@@ -70,6 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout = mainBinding.navigationDrawer
         navigationView = drawerLayout.findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
+        setInitialMenuItemsVisibility(navigationView)
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
@@ -77,6 +94,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         sp = PreferenceManager.getDefaultSharedPreferences(this)
         loadPreferencesToMemory()
+        disableFirestorePersistence()
 
         val header = navigationView.getHeaderView(0)
         val drawerHeaderBinding = NavigationHeaderBinding.bind(header)
@@ -96,6 +114,51 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         buildSignInClient()
         registerNotitificationChannel(this)
         showWelcomeScreenIfNeeded()
+
+        setUpErrorHandler()
+    }
+
+    private fun setUpErrorHandler() {
+        RxJavaPlugins.setErrorHandler { e ->
+            when (e.cause?.message) {
+                ErrorCodes.DATA_PAYLOAD_IS_NULL -> {
+                    showLongToast(this, "Data payload error")
+                    e.printStackTrace()
+                }
+                ErrorCodes.FOUND_USER_DUPLICATE -> {
+                    showLongToast(this, "Found user duplicate")
+                    e.printStackTrace()
+                }
+                ErrorCodes.INSTANCE_ID_TOKEN_NOT_FOUND -> {
+                    showLongToast(this, "Instance Id token not found")
+                    e.printStackTrace()
+                }
+                ErrorCodes.MESSAGE_IS_EMPTY -> {
+                    showLongToast(this, "Message is empty")
+                    e.printStackTrace()
+                }
+                ErrorCodes.USER_IS_NOT_FOUND -> {
+                    showLongToast(this, getString(R.string.user_not_found_error))
+                    e.printStackTrace()
+                }
+                ErrorCodes.NO_MESSAGES_SENT -> {
+                    showLongToast(this, getString(R.string.no_messages_sent_error))
+                    e.printStackTrace()
+                }
+                ErrorCodes.USER_IS_NOT_LOGGED_IN -> null
+                else -> {
+                    showLongToast(this, getString(R.string.uknown_error_occured))
+                    e.printStackTrace()
+                }
+            }
+            viewModel.hidePb()
+        }
+    }
+
+    private fun setInitialMenuItemsVisibility(navigationView: NavigationView) {
+        val menu = navigationView.menu
+        val contactsMenuItem = menu.findItem(R.id.contactsFragment)
+        contactsMenuItem.isVisible = viewModel.user.get() != null
     }
 
     private fun buildSignInClient() {
@@ -234,14 +297,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             })
             allLiveDataList.add(catalogSentSuccessfully)
 
-            catalogSentError.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { catalogName ->
-                    showShortToast(this@MainActivity,
-                        getString(R.string.catalog_was_not_sent_error, catalogName))
-                }
-            })
-            allLiveDataList.add(catalogSentError)
-
             firebaseSignInError.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showShortToast(this@MainActivity, getString(R.string.signin_error))
@@ -287,6 +342,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             })
             allLiveDataList.add(accountDeletionFailed)
 
+            showProgressBar.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { operation ->
+                    showGlobalProgressBar(operation)
+                }
+            })
+            allLiveDataList.add(showProgressBar)
+
+            hideProgressBar.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    hideGlobalProgressBar()
+                }
+            })
+
             user.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                     val user = (sender as ObservableField<User?>).get()
@@ -295,6 +363,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             })
         }
+    }
+
+    private fun showGlobalProgressBar(operation: PbOperations) {
+        val text = when (operation) {
+            PbOperations.UPDATING_CLOUD_DATABASE -> "updating cloud database"
+            PbOperations.DELETING_ACCOUNT -> "deleting account"
+            PbOperations.SENDING_CATALOG -> "sending catalog"
+            PbOperations.SIGNING_OUT -> "signing out"
+            PbOperations.SIGNING_IN -> "signing in"
+        }
+        pbText.text = text
+        pbManager.show()
+    }
+
+    private fun hideGlobalProgressBar() {
+        pbManager.hide()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -309,6 +393,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 showShortToast(this, "Error while logging in")
             }
         }
+    }
+
+    private fun disableFirestorePersistence() {
+        val db = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(true)
+            .build()
+        db.firestoreSettings = settings
     }
 
     override fun onStop() {

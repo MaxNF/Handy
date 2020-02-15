@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.repositories
 
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -12,6 +13,7 @@ import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.database.CloudFunctions
 import ru.netfantazii.handy.model.database.RemoteDbSchema
 import java.lang.UnsupportedOperationException
+import java.util.*
 
 interface RemoteRepository {
     fun sendCatalog(
@@ -23,7 +25,7 @@ interface RemoteRepository {
     fun addUserUpdateTokenGetSecret(): Single<String>
     fun getContacts(): Observable<List<Contact>>
     fun addContact(contactData: Map<String, String>): Completable
-    fun removeContact(contact: Contact): Completable
+    fun removeContact(contactData: Map<String, String>): Completable
     fun updateContact(contactData: Map<String, String>): Completable
     fun deleteAccount(): Completable
     fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>>
@@ -105,8 +107,11 @@ class RemoteRepositoryImpl : RemoteRepository {
                                 val contactData = entry.value as Map<String, Any>
                                 val secret = entry.key
                                 val name = contactData[RemoteDbSchema.FRIEND_NAME] as String
-                                val date = contactData[RemoteDbSchema.FRIEND_TIME] as Long
+                                val firebaseTimestamp =
+                                    contactData[RemoteDbSchema.FRIEND_TIME] as Timestamp
                                 val isValid = contactData[RemoteDbSchema.FRIEND_VALID] as Boolean
+                                val date = Calendar.getInstance()
+                                    .apply { time = firebaseTimestamp.toDate() }
                                 Contact(name, secret, date, isValid)
                             } ?: listOf()
                             emitter.onNext(result)
@@ -126,11 +131,11 @@ class RemoteRepositoryImpl : RemoteRepository {
         }
     }
 
-    override fun removeContact(contact: Contact): Completable {
+    override fun removeContact(contactData: Map<String, String>): Completable {
         return Completable.create { emitter ->
             val task =
                 firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.DELETE_CONTACT)
-                    .call()
+                    .call(contactData)
             task.addOnSuccessListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
         }
@@ -140,7 +145,7 @@ class RemoteRepositoryImpl : RemoteRepository {
         return Completable.create { emitter ->
             val task =
                 firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.UPDATE_CONTACT)
-                    .call()
+                    .call(contactData)
             task.addOnSuccessListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
         }

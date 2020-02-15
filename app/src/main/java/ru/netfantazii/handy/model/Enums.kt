@@ -21,5 +21,9 @@ enum class SortOrder {
 }
 
 enum class ContactDialogAction {
-    CREATE, RENAME, RENAME_NOT_VALID
+    CREATE, RENAME, RENAME_NOT_VALID, DELETE
+}
+
+enum class PbOperations() {
+    SENDING_CATALOG, SIGNING_OUT, SIGNING_IN, UPDATING_CLOUD_DATABASE, DELETING_ACCOUNT
 }

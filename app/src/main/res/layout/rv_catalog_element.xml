@@ -29,9 +29,7 @@
             android:background="@color/catalogColor"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            android:onClick="@{()->handler.onCatalogClick(catalog)}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:onClick="@{()->handler.onCatalogClick(catalog)}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/drag_handle"
@@ -144,7 +142,6 @@
                 </FrameLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </FrameLayout>
     </FrameLayout>
 </layout>

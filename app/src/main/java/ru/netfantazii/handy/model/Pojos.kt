@@ -105,7 +105,7 @@ class Product(
 data class Contact(
     var name: String,
     var secret: String,
-    val date: Long = 0,
+    val date: Calendar = Calendar.getInstance(),
     val isValid: Boolean = true
 )
 

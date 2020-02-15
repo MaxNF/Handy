@@ -59,6 +59,7 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
         deleteAccPref.setDeleteAccountAction { showConfirmationDialog() }
         deleteAccPref.setCopySecretAction { viewModel.copySecretToClipboard(requireContext()) }
         deleteAccPref.setGetNewSecretAction { viewModel.reloadSecretCode() }
+        // todo сделать диалоговое сообщение с предупреждением, что нужно будет заново отослать контактам код, также сделать лимит на обновление (раз в 1 минут)
         deleteAccPref.setNewSecretToView(viewModel.user.get()?.secret ?: "n/a")
 
         val threadName = Thread.currentThread().name
@@ -91,10 +92,6 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
     override fun onStart() {
         super.onStart()
         viewModel.user.addOnPropertyChangedCallback(userChangedCallback)
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onStop() {

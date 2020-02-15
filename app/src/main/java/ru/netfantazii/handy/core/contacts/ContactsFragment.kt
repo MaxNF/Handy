@@ -31,6 +31,7 @@ class ContactsFragment : Fragment() {
     private lateinit var viewModel: NetworkViewModel
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private lateinit var recyclerView: RecyclerView
+    private lateinit var binding: ContactsFragmentBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,47 +44,30 @@ class ContactsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = ContactsFragmentBinding.inflate(inflater, container, false)
+        binding = ContactsFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        createRecyclerView(view)
-        createSnackbars(view)
-        createHints(view)
+        createRecyclerView()
+        createSnackbars()
+        createHints()
         subscribeToEvents()
-        subscribeToErrors()
         (activity as MainActivity).uncheckActiveMenuItem()
     }
 
-    private fun createRecyclerView(view: View) {
-        val guardManager = RecyclerViewTouchActionGuardManager()
-        guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true)
-        guardManager.isEnabled = true
-
-        val swipeManager = RecyclerViewSwipeManager()
-
+    private fun createRecyclerView() {
         adapter = ContactsAdapter(viewModel, viewModel)
-        val wrappedAdapter = swipeManager.createWrappedAdapter(adapter)
-
-        recyclerView = view.findViewById(R.id.contacts_recycler_view)
+        recyclerView = binding.contactsRecyclerView
         val layoutManager = LinearLayoutManager(context)
-
-        val animator = SwipeDismissItemAnimator()
-        animator.supportsChangeAnimations = false
-
-        recyclerView.itemAnimator = animator
         recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = wrappedAdapter
-
-        guardManager.attachRecyclerView(recyclerView)
-        swipeManager.attachRecyclerView(recyclerView)
+        recyclerView.adapter = adapter
     }
 
-    private fun createSnackbars(view: View) {
-        val coordinatorLayout = view.findViewById<CoordinatorLayout>(R.id.coordinatorLayout)
+    private fun createSnackbars() {
+        val coordinatorLayout = binding.coordinatorLayout
         deleteSnackbar = Snackbar.make(
             coordinatorLayout,
             getString(R.string.contact_undo_label),
@@ -94,8 +78,8 @@ class ContactsFragment : Fragment() {
             })
     }
 
-    private fun createHints(view: View) {
-        hint = view.findViewById(R.id.hint_group)
+    private fun createHints() {
+        hint = binding.hintGroup
     }
 
     private fun subscribeToEvents() {
@@ -109,60 +93,25 @@ class ContactsFragment : Fragment() {
             allLiveDataList.add(contactsUpdated)
 
             contactSwipePerformed.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { contact ->
-                    showDeleteDialog(contact)
+                it.getContentIfNotHandled()?.let {
+                    showDeleteDialog()
                 }
             })
             allLiveDataList.add(contactSwipePerformed)
 
             contactEditClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { contact ->
-                    val action =
-                        if (contact.isValid) ContactDialogAction.RENAME else ContactDialogAction.RENAME_NOT_VALID
-                    showEditDialog(action, contact)
+                it.getContentIfNotHandled()?.let {
+                    showEditDialog()
                 }
             })
             allLiveDataList.add(contactEditClicked)
 
             addContactClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
-                    showEditDialog(ContactDialogAction.CREATE, null)
+                    showEditDialog()
                 }
             })
             allLiveDataList.add(addContactClicked)
-        }
-    }
-
-    private fun subscribeToErrors() {
-        val owner = this
-        with(viewModel) {
-            retrievingContactsError.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    showLongToast(requireContext(), getString(R.string.contacts_retrieve_error))
-                }
-            })
-            allLiveDataList.add(retrievingContactsError)
-
-            updatingContactError.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    showLongToast(requireContext(), getString(R.string.contacts_update_error))
-                }
-            })
-            allLiveDataList.add(updatingContactError)
-
-            creatingContactError.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    showLongToast(requireContext(), getString(R.string.contacts_create_error))
-                }
-            })
-            allLiveDataList.add(creatingContactError)
-
-            removingContactError.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let {
-                    showLongToast(requireContext(), getString(R.string.contacts_remove_error))
-                }
-            })
-            allLiveDataList.add(removingContactError)
         }
     }
 
@@ -175,11 +124,11 @@ class ContactsFragment : Fragment() {
         allLiveDataList.forEach { it.removeObservers(this) }
     }
 
-    private fun showEditDialog(action: ContactDialogAction, contact: Contact?) {
-        EditContactDialog(action, contact).show(childFragmentManager, "edit_dialog")
+    private fun showEditDialog() {
+        EditContactDialog().show(childFragmentManager, "edit_dialog")
     }
 
-    private fun showDeleteDialog(contact: Contact) {
-        DeleteContactDialog(contact).show(childFragmentManager, "edit_dialog")
+    private fun showDeleteDialog() {
+        DeleteContactDialog().show(childFragmentManager, "edit_dialog")
     }
 }

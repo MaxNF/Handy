@@ -8,11 +8,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.GoogleAuthProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -25,6 +22,7 @@ import ru.netfantazii.handy.core.contacts.DialogClickHandler
 import ru.netfantazii.handy.extensions.copyTextToClipboard
 import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.ContactDialogAction
+import ru.netfantazii.handy.model.PbOperations
 import ru.netfantazii.handy.model.User
 import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.RemoteRepository
@@ -37,6 +35,8 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val disposables = CompositeDisposable()
     private lateinit var contactsUpdateDisposable: Disposable
 
+    lateinit var dialogBuffer: Pair<ContactDialogAction, Contact?>
+
     private var contacts: List<Contact> = listOf()
         set(value) {
             Log.d(TAG, ": ")
@@ -44,14 +44,13 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
             onNewDataReceive()
         }
 
-    val isSending = ObservableField<Boolean>()
     val sendingCatalogName = ObservableField<String>()
 
-    private val _contactSwipePerformed = MutableLiveData<Event<Contact>>()
-    val contactSwipePerformed: LiveData<Event<Contact>> = _contactSwipePerformed
+    private val _contactSwipePerformed = MutableLiveData<Event<Unit>>()
+    val contactSwipePerformed: LiveData<Event<Unit>> = _contactSwipePerformed
 
-    private val _contactEditClicked = MutableLiveData<Event<Contact>>()
-    val contactEditClicked: LiveData<Event<Contact>> = _contactEditClicked
+    private val _contactEditClicked = MutableLiveData<Event<Unit>>()
+    val contactEditClicked: LiveData<Event<Unit>> = _contactEditClicked
 
     private val _addContactClicked = MutableLiveData<Event<Unit>>()
     val addContactClicked: LiveData<Event<Unit>> = _addContactClicked
@@ -71,26 +70,11 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val _firebaseSignInError = MutableLiveData<Event<Unit>>()
     val firebaseSignInError: LiveData<Event<Unit>> = _firebaseSignInError
 
-    private val _retrievingContactsError = MutableLiveData<Event<Unit>>()
-    val retrievingContactsError: LiveData<Event<Unit>> = _retrievingContactsError
-
-    private val _updatingContactError = MutableLiveData<Event<Unit>>()
-    val updatingContactError: LiveData<Event<Unit>> = _updatingContactError
-
-    private val _creatingContactError = MutableLiveData<Event<Unit>>()
-    val creatingContactError: LiveData<Event<Unit>> = _creatingContactError
-
-    private val _removingContactError = MutableLiveData<Event<Unit>>()
-    val removingContactError: LiveData<Event<Unit>> = _removingContactError
-
     private val _startingToSendCatalog = MutableLiveData<Event<String>>()
     val startingToSendCatalog: LiveData<Event<String>> = _startingToSendCatalog
 
     private val _catalogSentSuccessfully = MutableLiveData<Event<String>>()
     val catalogSentSuccessfully: LiveData<Event<String>> = _catalogSentSuccessfully
-
-    private val _catalogSentError = MutableLiveData<Event<String>>()
-    val catalogSentError: LiveData<Event<String>> = _catalogSentError
 
     private val _secretCopied = MutableLiveData<Event<Unit>>()
     val secretCopied: LiveData<Event<Unit>> = _secretCopied
@@ -104,16 +88,19 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val _accountDeletionFailed = MutableLiveData<Event<Unit>>()
     val accountDeletionFailed: LiveData<Event<Unit>> = _accountDeletionFailed
 
+    private val _showProgressBar = MutableLiveData<Event<PbOperations>>()
+    val showProgressBar: LiveData<Event<PbOperations>> = _showProgressBar
+
+    private val _hideProgressBar = MutableLiveData<Event<Unit>>()
+    val hideProgressBar: LiveData<Event<Unit>> = _hideProgressBar
+
     val user = ObservableField<User?>()
 
     private fun subscribeToContactUpdates() {
         contactsUpdateDisposable = remoteRepository.getContacts().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe({
+            .observeOn(AndroidSchedulers.mainThread()).subscribe {
                 contacts = it
-            }, {
-                _retrievingContactsError.value = Event(Unit)
-                it.printStackTrace()
-            })
+            }
         disposables.add(contactsUpdateDisposable)
     }
 
@@ -131,24 +118,29 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     }
 
     private fun signIn() {
-        Log.d(TAG, "signIn: ")
+        showPb(PbOperations.SIGNING_IN)
         _signInClicked.value = Event(Unit)
     }
 
+    fun showPb(operation: PbOperations) {
+        _showProgressBar.value = Event(operation)
+    }
+
+    fun hidePb() {
+        _hideProgressBar.value = Event(Unit)
+    }
+
     fun signOut() {
+        showPb(PbOperations.SIGNING_OUT)
         disposables.add(remoteRepository.removeTokenOnLogout()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doAfterTerminate {
                 FirebaseAuth.getInstance().signOut()
                 doSignOutCompanionOperations()
+                hidePb()
             }
-            .subscribe({
-                //do nothing
-            }, {
-                Log.e(TAG, "signOut: failed ")
-                // пропускаем исключения, т.к. нам по факту не важно, успешен был логаут или нет)
-            }))
+            .subscribe())
     }
 
     // Дополнительные методы для очищения ресурсов и обновления интерфейса после логаута
@@ -159,37 +151,36 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     }
 
     fun onAddContactClick() {
+        dialogBuffer = Pair(ContactDialogAction.CREATE, null)
         _addContactClicked.value = Event(Unit)
     }
 
+    // вызывается автоматически следом за успешной операцией входа в гугл аккаунт
     fun signInToFirebase(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         disposables.add(remoteRepository.signInToFirebase(credential)
             .andThen(remoteRepository.addUserUpdateTokenGetSecret())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+            .subscribe { token ->
                 _signInComplete.value = Event(Unit)
                 val firebaseUser = FirebaseAuth.getInstance().currentUser!!
                 user.set(User(firebaseUser.displayName ?: "",
                     firebaseUser.email ?: "",
-                    firebaseUser.photoUrl, it, credential))
+                    firebaseUser.photoUrl, token, credential))
                 subscribeToContactUpdates()
-            }, {
-                signOut()
-                it.printStackTrace()
-                _firebaseSignInError.value = Event(Unit)
-            }))
+                hidePb()
+            })
     }
 
     override fun onDeleteYesClick(contact: Contact) {
-        disposables.add(remoteRepository.removeContact(contact).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe({
-
-            }, {
-                _removingContactError.value = Event(Unit)
-                it.printStackTrace()
-            }))
+        val shortId = contact.secret
+        val contactDataToDelete = mapOf(
+            RemoteDbSchema.FRIEND_SHORT_ID to shortId
+        )
+        showPb(PbOperations.UPDATING_CLOUD_DATABASE)
+        disposables.add(remoteRepository.removeContact(contactDataToDelete).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe { hidePb() })
     }
 
     override fun onEditYesClick(action: ContactDialogAction, contact: Contact) {
@@ -199,29 +190,22 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
             RemoteDbSchema.FRIEND_NAME to name,
             RemoteDbSchema.FRIEND_SHORT_ID to shortId
         )
+        showPb(PbOperations.UPDATING_CLOUD_DATABASE)
         disposables.add(
             when (action) {
                 ContactDialogAction.CREATE -> {
-
                     remoteRepository.addContact(newContactData).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                            // do nothing
-                        }, {
-                            _creatingContactError.value = Event(Unit)
-                            it.printStackTrace()
-                        })
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe()
                 }
                 ContactDialogAction.RENAME -> {
                     remoteRepository.updateContact(newContactData).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                            // do nothing
-                        }, {
-                            _updatingContactError.value = Event(Unit)
-                            it.printStackTrace()
-                        })
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe()
                 }
                 ContactDialogAction.RENAME_NOT_VALID -> {
                     throw UnsupportedOperationException("Can't create or update invalid contacts")
+                }
+                ContactDialogAction.DELETE -> {
+                    throw UnsupportedOperationException("Deletion should be performed in the corresponded method")
                 }
             })
     }
@@ -229,46 +213,46 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     fun sendCatalog(catalogContent: Map<String, Any>) {
         val catalogName = catalogContent[RemoteDbSchema.MESSAGE_CATALOG_NAME] as String
         _startingToSendCatalog.value = Event(catalogName)
-        isSending.set(true)
         sendingCatalogName.set(catalogName)
+
+        showPb(PbOperations.SENDING_CATALOG)
         disposables.add(remoteRepository.sendCatalog(catalogContent)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                isSending.set(false)
+            .subscribe {
                 _catalogSentSuccessfully.value = Event(catalogName)
-            }, {
-                isSending.set(false)
-                _catalogSentError.value = Event(catalogName)
-                it.printStackTrace()
-            }))
+                hidePb()
+            })
     }
 
     fun onDeleteAccountYesClick() {
         Log.d(TAG, "onDeleteAccountYesClick: ")
+        showPb(PbOperations.DELETING_ACCOUNT)
         disposables.add(remoteRepository.reauthentificateInFirebase(user.get()!!.credential)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .andThen(remoteRepository.deleteAccount())
-            .subscribe({
+            .subscribe {
                 _accountDeletedSuccessfully.value = Event(Unit)
                 doSignOutCompanionOperations()
-            },
-                {
-                    it.printStackTrace()
-                    _accountDeletionFailed.value = Event(Unit)
-                }))
+                hidePb()
+            })
     }
 
     override fun nameHasDuplicates(name: String): Boolean =
         contacts.any { it.name == name }
 
-    override fun onContactSwipePerform(contact: Contact) {
-        _contactSwipePerformed.value = Event(contact)
+    override fun onContactDeleteClick(contact: Contact) {
+        dialogBuffer = Pair(ContactDialogAction.DELETE, contact)
+        _contactSwipePerformed.value = Event(Unit)
     }
 
     override fun onContactEditClick(contact: Contact) {
-        _contactEditClicked.value = Event(contact)
+        Log.d(TAG, "onContactEditClick: ")
+        val action =
+            if (contact.isValid) ContactDialogAction.RENAME else ContactDialogAction.RENAME_NOT_VALID
+        dialogBuffer = Pair(action, contact)
+        _contactEditClicked.value = Event(Unit)
     }
 
     override fun getContacts(): List<Contact> = contacts
@@ -285,17 +269,15 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
 
     fun reloadSecretCode() {
         Log.d(TAG, "reloadSecretCode: ")
+        showPb(PbOperations.UPDATING_CLOUD_DATABASE)
         disposables.add(remoteRepository.changeSecret()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ newSecret ->
+            .subscribe { newSecret ->
                 user.get()!!.secret = newSecret
                 user.notifyPropertyChanged(BR.secret)
-            }, {
-                it.printStackTrace()
-                _changingSecretFailed.value = Event(Unit)
-            }))
-
+                hidePb()
+            })
     }
 }
 

@@ -18,12 +18,12 @@ object RemoteDbSchema {
      {
         AH3Rsz1 : {
             name : "Маша",
-            creation_time : date
+            creation_time : date,
             valid : true
             },
         Os7kSMQ : {
             name : "Саша",
-            creation_time : date
+            creation_time : date,
             valid : true
             }
       }
@@ -75,5 +75,16 @@ object CloudFunctions {
     const val ADD_CONTACT = "addNewContact"
     const val DELETE_CONTACT = "deleteContact"
     const val UPDATE_CONTACT = "updateContact"
+
+}
+
+object ErrorCodes {
+    const val USER_IS_NOT_LOGGED_IN = "001 (user is not logged in)"
+    const val MESSAGE_IS_EMPTY = "002 (message is empty)"
+    const val FOUND_USER_DUPLICATE = "003 (found user duplicate)"
+    const val NO_MESSAGES_SENT = "004 (no messages sent)"
+    const val USER_IS_NOT_FOUND = "005 (user is not found)"
+    const val INSTANCE_ID_TOKEN_NOT_FOUND = "006 (instance id token not found)"
+    const val DATA_PAYLOAD_IS_NULL = "007 (data payload is null)"
 
 }

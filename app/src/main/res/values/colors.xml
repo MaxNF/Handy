@@ -27,4 +27,5 @@
     <color name="blackSemiTransparent80">#CD000000</color>
     <color name="blackSemiTransparent60">#99000000</color>
     <color name="badgeColor">#DD4C4C</color>
+    <color name="textColorInactive">#66000000</color>
 </resources>

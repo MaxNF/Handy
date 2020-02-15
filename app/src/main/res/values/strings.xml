@@ -151,4 +151,7 @@
     <string name="are_you_sure">Are you sure?</string>
     <string name="account_deleted_successfully">Your account has been successfully deleted</string>
     <string name="account_deletion_failed">Failed to delete the account</string>
+    <string name="uknown_error_occured">Uknown error occured. Try again or contact the developer.</string>
+    <string name="user_not_found_error">The secret code is not correct. Check the spelling and try again.</string>
+    <string name="no_messages_sent_error">No messages were delivered. The user is not logged in the app.</string>
 </resources>
