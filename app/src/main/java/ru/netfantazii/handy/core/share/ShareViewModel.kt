@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.core.Event
+import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.Group
 import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
@@ -24,7 +25,6 @@ class ShareViewModel(
 
     private val disposables = CompositeDisposable()
     private lateinit var parsedGroups: List<Map<String, Any>>
-    var secret: String = ""
     var comment: String = ""
 
     init {
@@ -48,9 +48,9 @@ class ShareViewModel(
         }
     }
 
-    fun onSendClick() {
+    fun onSendClick(contact: Contact) {
         val content = mapOf(
-            RemoteDbSchema.MESSAGE_TO_SECRET to secret,
+            RemoteDbSchema.MESSAGE_TO_SECRET to contact.secret,
             RemoteDbSchema.MESSAGE_CATALOG_NAME to catalogName,
             RemoteDbSchema.MESSAGE_CATALOG_COMMENT to comment,
             RemoteDbSchema.MESSAGE_CATALOG_CONTENT to parsedGroups

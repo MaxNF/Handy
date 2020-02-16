@@ -21,6 +21,7 @@ interface ContactsClickHandler {
 
 interface ContactsStorage {
     fun getContacts(): List<Contact>
+    fun getValidContacts(): List<Contact>
 }
 
 class ContactsViewHolder(private val binding: RvContactElementBinding) :

@@ -20,6 +20,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
 import com.leinardi.android.speeddial.SpeedDialView
 import ru.netfantazii.handy.HandyApplication
+import ru.netfantazii.handy.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
@@ -67,7 +68,8 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
         val swipeManager = RecyclerViewSwipeManager()
 
-        adapter = CatalogsAdapter(viewModel, viewModel)
+        val networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
+        adapter = CatalogsAdapter(viewModel, viewModel, networkViewModel.user)
         var wrappedAdapter = dragManager.createWrappedAdapter(adapter)
         wrappedAdapter = swipeManager.createWrappedAdapter(wrappedAdapter)
 
@@ -220,7 +222,7 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         Log.d(TAG, "enterCatalog: ")
         val direction =
             CatalogsFragmentDirections.actionCatalogsFragmentToProductsFragment(catalog.name,
-                catalog.id, catalog.groupExpandStates, false)
+                catalog.id, catalog.groupExpandStates)
         navController.navigate(direction)
     }
 

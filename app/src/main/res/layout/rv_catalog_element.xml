@@ -4,16 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View" />
-
+        <import type="androidx.databinding.ObservableField" />
+        <import type="ru.netfantazii.handy.model.User"/>
         <variable
             name="catalog"
             type="ru.netfantazii.handy.model.Catalog" />
-
         <variable
             name="handler"
             type="ru.netfantazii.handy.core.catalogs.CatalogClickHandler" />
+        <variable
+            name="user"
+            type="androidx.databinding.ObservableField&lt;User>" />
     </data>
 
     <FrameLayout
@@ -77,6 +79,7 @@
                     android:background="@android:color/transparent"
                     android:onClick="@{() -> handler.onCatalogShareClick(catalog)}"
                     android:src="@drawable/ic_share"
+                    android:visibility="@{user == null ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="@+id/ib_notification"
                     app:layout_constraintEnd_toStartOf="@+id/ib_notification"
                     app:layout_constraintTop_toTopOf="@+id/ib_notification" />

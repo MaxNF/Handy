@@ -122,7 +122,7 @@
     <string name="grant_perm_manually_message">It seems that you denied permissions. Please grant permissions manually from the phone settings to be able to use geofence notifications.</string>
     <string name="contacts_fragment_label">Contacts</string>
     <string name="send_label">Send</string>
-    <string name="recipient_label">Recipient</string>
+    <string name="recipient_label">Recipient:</string>
     <string name="total_products_label">Total products:</string>
     <string name="contact_undo_label">The contact was deleted</string>
     <string name="hint_nothing_to_show_contacts">Please add a new contact</string>
@@ -154,4 +154,9 @@
     <string name="uknown_error_occured">Uknown error occured. Try again or contact the developer.</string>
     <string name="user_not_found_error">The secret code is not correct. Check the spelling and try again.</string>
     <string name="no_messages_sent_error">No messages were delivered. The user is not logged in the app.</string>
+    <string name="message_failed_incorrect_secret_error">Sending has failed. The user has changed the secret code. Ask him for a new one.</string>
+    <string name="contact_dialog_name_blank_error">The name can not be blank</string>
+    <string name="contact_dialog_name_duplicate_error">The user with this name already exists</string>
+    <string name="contact_dialog_secret_length_error">The code must be 7 characters long</string>
+    <string name="contact_dialog_secret_pattern_error">The code must contain only numbers and latin characters</string>
 </resources>

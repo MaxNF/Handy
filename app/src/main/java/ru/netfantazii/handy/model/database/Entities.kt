@@ -40,7 +40,7 @@ open class CatalogEntity(
 open class GroupEntity(
     id: Long,
     @field:ColumnInfo(name = "catalog_id")
-    val catalogId: Long,
+    var catalogId: Long,
     creationTime: Calendar,
     @field:ColumnInfo(name = "group_type")
     val groupType: GroupType,
@@ -59,7 +59,7 @@ open class GroupEntity(
 open class ProductEntity(
     id: Long,
     @field:ColumnInfo(name = "catalog_id")
-    val catalogId: Long,
+    var catalogId: Long,
     @field:ColumnInfo(name = "group_id")
     var groupId: Long,
     creationTime: Calendar,

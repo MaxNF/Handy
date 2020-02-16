@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.extensions
 
+import android.graphics.Paint
 import android.net.Uri
 import android.view.View
 import android.widget.FrameLayout
@@ -111,5 +112,12 @@ fun downloadWithGlide(view: ImageView, uri: Uri?) {
     } else {
         Glide.with(view).load(uri).transform(CropCircleWithBorderTransformation(0, 0))
             .into(view)
+    }
+}
+
+@BindingAdapter("app:isTextCrossed")
+fun crossText(view: TextView, isCrossed: Boolean) {
+    if (isCrossed) {
+        view.apply { paintFlags = paintFlags or Paint.STRIKE_THRU_TEXT_FLAG }
     }
 }

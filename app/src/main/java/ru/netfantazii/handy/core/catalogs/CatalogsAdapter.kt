@@ -3,6 +3,7 @@ package ru.netfantazii.handy.core.catalogs
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.ObservableField
 import androidx.recyclerview.widget.RecyclerView
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange
@@ -14,6 +15,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeabl
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.RvCatalogElementBinding
 import ru.netfantazii.handy.model.Catalog
+import ru.netfantazii.handy.model.User
 import java.lang.UnsupportedOperationException
 
 interface CatalogClickHandler {
@@ -68,16 +70,18 @@ class CatalogViewHolder(private val catalogBinding: RvCatalogElementBinding) :
 
     override fun getSwipeableContainerView(): View = container
 
-    fun bindData(catalog: Catalog, handler: CatalogClickHandler) {
+    fun bindData(catalog: Catalog, handler: CatalogClickHandler, user: ObservableField<User?>) {
         catalogBinding.catalog = catalog
         catalogBinding.handler = handler
+        catalogBinding.user = user
         catalogBinding.executePendingBindings() //В ресайклервью нужно сразу связать данные!
     }
 }
 
 class CatalogsAdapter(
     private val catalogClickHandler: CatalogClickHandler,
-    private val catalogStorage: CatalogStorage
+    private val catalogStorage: CatalogStorage,
+    private val user: ObservableField<User?>
 ) :
     RecyclerView.Adapter<CatalogViewHolder>(),
     DraggableItemAdapter<CatalogViewHolder>, SwipeableItemAdapter<CatalogViewHolder> {
@@ -102,7 +106,7 @@ class CatalogsAdapter(
     override fun getItemId(position: Int): Long = catalogList[position].id
 
     override fun onBindViewHolder(holder: CatalogViewHolder, position: Int) {
-        holder.bindData(catalogList[position], catalogClickHandler)
+        holder.bindData(catalogList[position], catalogClickHandler, user)
     }
 
     override fun onGetItemDraggableRange(

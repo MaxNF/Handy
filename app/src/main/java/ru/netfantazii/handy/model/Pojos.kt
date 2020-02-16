@@ -55,7 +55,7 @@ open class Group(
     position: Int = 1,
     expandStatus: ExpandStatus = ExpandStatus.EXPANDED,
     @Relation(entity = ProductEntity::class, parentColumn = "id", entityColumn = "group_id")
-    val productList: MutableList<Product> = mutableListOf()
+    var productList: MutableList<Product> = mutableListOf()
 ) : GroupEntity(id, catalogId, creationTime, groupType, position, name, expandStatus) {
     @field:Ignore
     var buyStatus: BuyStatus
@@ -107,7 +107,11 @@ data class Contact(
     var secret: String,
     val date: Calendar = Calendar.getInstance(),
     val isValid: Boolean = true
-)
+) {
+    override fun toString(): String {
+        return name
+    }
+}
 
 data class User(
     val name: String,

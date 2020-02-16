@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputEditText
 import ru.netfantazii.handy.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.EditContactDialogBinding
+import ru.netfantazii.handy.extensions.showShortToast
 import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.ContactDialogAction
 import java.lang.IllegalArgumentException
@@ -32,7 +33,6 @@ open class BaseDialog : DialogFragment() {
     }
 }
 
-// todo сделать работу через буфер (вью модел) а то слишком гемморно все эти данные сохранять при переворотах
 class EditContactDialog :
     BaseDialog() {
     private lateinit var viewModel: NetworkViewModel
@@ -45,7 +45,7 @@ class EditContactDialog :
     private var contact: Contact? = null
 
     private val secretMaxLength = 7
-    private val secretAllowablePattern = "^a-zA-Z0-9"
+    private val secretAllowablePattern = "[^a-zA-Z0-9]"
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
@@ -71,17 +71,25 @@ class EditContactDialog :
             val name = nameEditText.text.toString()
             val secret = secretEditText.text.toString()
 
-            // todo сделать анимации сообщений об ошибках
+            if (name.isBlank()) {
+                showShortToast(requireContext(),
+                    getString(R.string.contact_dialog_name_blank_error))
+                return@setOnClickListener
+            }
+
             if (nameHasDuplicates(name)) {
-                // анимация ошибки контакт с таким именем уже есть
+                showShortToast(requireContext(),
+                    getString(R.string.contact_dialog_name_duplicate_error))
                 return@setOnClickListener
             }
             if (secretLengthIsNotValid(secret)) {
-                // анимация ошибки длина должна быть 7 символов
+                showShortToast(requireContext(),
+                    getString(R.string.contact_dialog_secret_length_error))
                 return@setOnClickListener
             }
             if (secretPatternDoesNotMatch(secret)) {
-                // анимация ошибки только цифры и буквы англ. алфавита
+                showShortToast(requireContext(),
+                    getString(R.string.contact_dialog_secret_pattern_error))
                 return@setOnClickListener
             }
             applyAndDismiss(name, secret, dialog)
@@ -93,7 +101,7 @@ class EditContactDialog :
     private fun secretLengthIsNotValid(secret: String) = secret.length != secretMaxLength
 
     private fun secretPatternDoesNotMatch(secret: String) =
-        Regex(secretAllowablePattern).matches(secret)
+        Regex(secretAllowablePattern).containsMatchIn(secret)
 
     private fun applyAndDismiss(name: String, secret: String, dialog: AlertDialog) {
         when (action) {

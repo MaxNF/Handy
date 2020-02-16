@@ -15,6 +15,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
@@ -22,7 +23,7 @@ import ru.netfantazii.handy.repositories.RemoteRepository
 
 class CatalogMessagingService : FirebaseMessagingService() {
     private val preferenceTokenKey = "prev_token"
-    private val TAG = "CatalogMessagingService"
+    private val TAG = "nettt"
     private lateinit var downloader: CloudToLocalDownloader
     private lateinit var remoteRepository: RemoteRepository
     private lateinit var localRepository: LocalRepository
@@ -39,6 +40,8 @@ class CatalogMessagingService : FirebaseMessagingService() {
         downloader.downloadCatalogToLocalDb(messageId, 5L) {
             planDownload(messageId)
         }
+
+        Log.d(TAG, "onMessageReceived: thread ${Thread.currentThread().name}")
     }
 
     private fun planDownload(messageId: String) {
@@ -63,9 +66,10 @@ class CatalogMessagingService : FirebaseMessagingService() {
         val previousToken = sp.getString(preferenceTokenKey, null)
         putNewTokenToPreferences(sp, token)
         if (previousToken != null) {
-            remoteRepository.removeToken(previousToken, uid).subscribe()
+            remoteRepository.removeToken(previousToken, uid).subscribeOn(Schedulers.io())
+                .subscribe()
         }
-        remoteRepository.addToken(token, uid).subscribe()
+        remoteRepository.addToken(token, uid).subscribeOn(Schedulers.io()).subscribe()
     }
 
     private fun putNewTokenToPreferences(sp: SharedPreferences, token: String) {

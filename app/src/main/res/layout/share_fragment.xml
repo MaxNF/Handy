@@ -2,11 +2,22 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
+        <import type="ru.netfantazii.handy.model.Contact" />
+
         <variable
             name="viewModel"
             type="ru.netfantazii.handy.core.share.ShareViewModel" />
 
+        <variable
+            name="networkViewModel"
+            type="ru.netfantazii.handy.NetworkViewModel" />
+
+        <variable
+            name="spinner"
+            type="android.widget.Spinner" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,15 +38,16 @@
 
             <TextView
                 android:id="@+id/catalog_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:text="@{viewModel.catalogName}"
                 android:textColor="@color/textColorBlack"
                 android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/product_count_container"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Продукты" />
+                tools:text="asdasdasdasdddddddddddddddddddddddddddddddd" />
 
             <LinearLayout
                 android:id="@+id/product_count_container"
@@ -59,7 +71,6 @@
 
                 <TextView
                     android:id="@+id/total_elements_value"
-                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -67,6 +78,7 @@
                     android:text="@{viewModel.totalProducts}"
                     android:textColor="?attr/fabIconTintColor"
                     android:textSize="16sp"
+                    android:textStyle="bold"
                     tools:text="7" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -149,6 +161,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="?actionBarItemBackground"
+                android:onClick="@{()-> networkViewModel.onAddContactClick()}"
                 android:src="@drawable/ic_add_contact"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -158,10 +171,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:onClick='@{() -> viewModel.onSendClick((Contact) spinner.selectedItem)}'
             android:text="@string/send_label"
             android:textAllCaps="true"
             android:textColor="?attr/fabIconTintColor"
-            android:onClick='@{() -> viewModel.onSendClick()}'
             app:backgroundTint="?attr/colorAccent"
             app:icon="@drawable/ic_send"
             app:iconTint="?attr/fabIconTintColor"

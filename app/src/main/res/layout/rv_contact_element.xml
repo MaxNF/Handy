@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="contact"
             type="ru.netfantazii.handy.model.Contact" />
@@ -34,15 +36,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:alpha="@{contact.valid ? 1f : 0.5f}"
                 android:gravity="center"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp"
                 android:paddingTop="8dp"
+                android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
                 android:text="@{contact.name}"
                 android:textColor="?attr/listTextColor"
                 android:textSize="22sp"
-                app:layout_constraintEnd_toStartOf="@+id/contact_edit_button"
+                app:layout_constraintEnd_toEndOf="@+id/secret_code"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Name test Name test Name test Name test" />
@@ -53,8 +56,9 @@
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:alpha="@{contact.valid ? 1f : 0.5f}"
                 android:background="#59000000"
-                app:layout_constraintEnd_toStartOf="@id/contact_edit_button"
+                app:layout_constraintEnd_toEndOf="@+id/secret_code"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/contact_name" />
 
@@ -64,9 +68,11 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_gravity="center_horizontal"
+                android:alpha="@{contact.valid ? 1f : 0.5f}"
                 android:gravity="center"
                 android:text="@{contact.secret}"
                 android:textColor="?attr/listTextColor"
+                app:isTextCrossed="@{!contact.valid}"
                 app:layout_constraintBottom_toBottomOf="@+id/contact_delete_button"
                 app:layout_constraintEnd_toStartOf="@+id/contact_delete_button"
                 app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +83,9 @@
                 android:id="@+id/contact_edit_button"
                 style="@style/RvElementIconStyle"
                 android:layout_height="50dp"
+                android:alpha="@{contact.valid ? 1f : 0.5f}"
                 android:background="@android:color/transparent"
+                android:clickable="@{contact.valid ? true : false}"
                 android:onClick="@{() -> handler.onContactEditClick(contact)}"
                 android:src="@drawable/ic_edit"
                 app:layout_constraintBottom_toBottomOf="@+id/contact_name"

@@ -41,6 +41,7 @@ class RemoteRepositoryImpl : RemoteRepository {
         FirebaseFunctions.getInstance(CloudFunctions.REGION_EU_WEST1)
 
     override fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>> {
+//        Thread.sleep(6000)
         return Single.create { emitter ->
             val task =
                 Firebase.firestore.collection(RemoteDbSchema.COLLECTION_MESSAGES)
@@ -57,14 +58,11 @@ class RemoteRepositoryImpl : RemoteRepository {
         }
     }
 
-    override fun sendCatalog(catalogContent: Map<String, Any>): Completable {
-        return Completable.create { emitter ->
-            val task =
-                Firebase.firestore.collection(RemoteDbSchema.COLLECTION_MESSAGES)
-                    .add(catalogContent)
-            task.addOnSuccessListener { emitter.onComplete() }
-            task.addOnFailureListener { emitter.onError(it) }
-        }
+    override fun sendCatalog(catalogContent: Map<String, Any>) = Completable.create { emitter ->
+        val task =
+            firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.SEND_CATALOG).call(catalogContent)
+        task.addOnSuccessListener { emitter.onComplete() }
+        task.addOnFailureListener { emitter.onError(it) }
     }
 
     override fun changeSecret(): Single<String> {

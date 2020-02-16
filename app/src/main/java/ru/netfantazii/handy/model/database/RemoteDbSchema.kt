@@ -40,7 +40,8 @@ object RemoteDbSchema {
      */
 
     const val COLLECTION_MESSAGES = "messages"
-    const val MESSAGE_DATE = "date" // генерируется с помощью cloud function (из контекста)
+    const val MESSAGE_CREATION_TIME =
+        "creation_time" // генерируется с помощью cloud function (из контекста)
     const val MESSAGE_FROM_NAME = "from_name" // генерируется с помощью cloud function
     const val MESSAGE_FROM_EMAIL = "from_email" // генерируется с помощью cloud function
     const val MESSAGE_FROM_IMAGE = "from_img" // генерируется с помощью cloud function
@@ -68,7 +69,7 @@ object RemoteDbSchema {
 
 object CloudFunctions {
     const val REGION_EU_WEST1 = "europe-west1"
-
+    const val SEND_CATALOG = "writeCatalogToDbAndSendFcm"
     const val UPDATE_USER_AND_TOKEN = "saveDeviceTokenAndGetSecret"
     const val CHANGE_SECRET = "changeAndGetShortId"
     const val DELETE_TOKEN_ON_LOGOUT = "deleteTokenOnLogout"
@@ -86,5 +87,5 @@ object ErrorCodes {
     const val USER_IS_NOT_FOUND = "005 (user is not found)"
     const val INSTANCE_ID_TOKEN_NOT_FOUND = "006 (instance id token not found)"
     const val DATA_PAYLOAD_IS_NULL = "007 (data payload is null)"
-
+    const val MESSAGE_FAILED_DUE_INCORRECT_SECRET = "008 (message failed due incorrect secret)"
 }

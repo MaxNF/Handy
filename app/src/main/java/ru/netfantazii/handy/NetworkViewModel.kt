@@ -257,6 +257,8 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
 
     override fun getContacts(): List<Contact> = contacts
 
+    override fun getValidContacts(): List<Contact> = contacts.filter { it.isValid }
+
     override fun onCleared() {
         disposables.clear()
     }

@@ -6,19 +6,24 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
 import ru.netfantazii.handy.model.Catalog
+import ru.netfantazii.handy.model.Group
+import ru.netfantazii.handy.model.Product
 import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
 import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.repositories.RemoteRepository
 import java.util.*
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -30,21 +35,50 @@ class CloudToLocalDownloader(
     private val remoteRepository: RemoteRepository,
     private val context: Context
 ) {
+    private val TAG = "nettt"
     private val disposables = CompositeDisposable()
 
+    //    fun downloadCatalogToLocalDb(
+//        messageId: String,
+//        failTimeoutSec: Long,
+//        timeoutAction: () -> Unit
+//    ) {
+//        val catalogData = remoteRepository.downloadCatalogDataFromMessage(messageId)
+//            .timeout(failTimeoutSec, TimeUnit.SECONDS).blockingGet()
+//        val catalogName = catalogData[RemoteDbSchema.MESSAGE_CATALOG_NAME] as String
+//        val catalog = Catalog(name = catalogName)
+//        val receiveTime = Calendar.getInstance()
+//        val fromName = catalogData[RemoteDbSchema.MESSAGE_FROM_NAME] as String
+//        val fromEmail = catalogData[RemoteDbSchema.MESSAGE_FROM_EMAIL] as String
+//        val fromImage = catalogData[RemoteDbSchema.MESSAGE_FROM_IMAGE] as String
+//        val commentary = catalogData[RemoteDbSchema.MESSAGE_CATALOG_COMMENT] as String
+//        val catalogNetInfo = CatalogNetInfoEntity(receiveTime = receiveTime,
+//            fromEmail = fromEmail,
+//            fromName = fromName,
+//            fromImage = Uri.parse(fromImage),
+//            commentary = commentary)
+//
+//        disposables.add(localRepository.addCatalogWithNetInfo(catalog, catalogNetInfo)
+//            .subscribe { _ ->
+//                sendCatalogReceivedNotification(catalog, catalogNetInfo)
+//            })
+//    }
     fun downloadCatalogToLocalDb(
         messageId: String,
         failTimeoutSec: Long,
         timeoutAction: () -> Unit
     ) {
+        Log.d(TAG, "downloadCatalogToLocalDb: start, thread ${Thread.currentThread().name}")
+        val latch = CountDownLatch(1)
         disposables.add(remoteRepository.downloadCatalogDataFromMessage(messageId)
             .timeout(failTimeoutSec, TimeUnit.SECONDS)
-            .subscribe({ catalogData ->
+            .subscribeOn(Schedulers.io())
+            .flatMap { catalogData ->
+                Log.d(TAG,
+                    "downloadCatalogToLocalDb: flatmap, thread ${Thread.currentThread().name}")
                 val catalogName = catalogData[RemoteDbSchema.MESSAGE_CATALOG_NAME] as String
                 val catalog = Catalog(name = catalogName)
-
-                val dateMs = catalogData[RemoteDbSchema.MESSAGE_DATE] as Date
-                val receiveTime = Calendar.getInstance().apply { time = dateMs }
+                val receiveTime = Calendar.getInstance()
                 val fromName = catalogData[RemoteDbSchema.MESSAGE_FROM_NAME] as String
                 val fromEmail = catalogData[RemoteDbSchema.MESSAGE_FROM_EMAIL] as String
                 val fromImage = catalogData[RemoteDbSchema.MESSAGE_FROM_IMAGE] as String
@@ -54,27 +88,55 @@ class CloudToLocalDownloader(
                     fromName = fromName,
                     fromImage = Uri.parse(fromImage),
                     commentary = commentary)
+                // todo сделать различие между дефолтной группой и остальными
+                val groups =
+                    (catalogData[RemoteDbSchema.MESSAGE_CATALOG_CONTENT] as List<Map<String, Any>>).map { groupContent ->
+                        val group =
+                            Group(name = groupContent[RemoteDbSchema.MESSAGE_GROUP_NAME] as String,
+                                catalogId = 0L)
 
-                addCatalogToLocalDb(catalog, catalogNetInfo)
-                sendCatalogReceivedNotification(catalog, catalogNetInfo)
+                        group.productList =
+                            (groupContent[RemoteDbSchema.MESSAGE_GROUP_PRODUCTS] as List<String>).map { productName ->
+                                Product(name = productName, catalogId = 0, groupId = 0)
+                            }.toMutableList()
+                        group
+                    }
+
+                localRepository.addCatalogWithNetInfoAndProducts(catalog, groups, catalogNetInfo)
+                    .subscribeOn(Schedulers.io())
+                    .map {
+                        Log.d(TAG,
+                            "downloadCatalogToLocalDb: map: thread ${Thread.currentThread().name}")
+                        Pair(catalog, catalogNetInfo)
+                    }
+            }
+            .subscribe({ (first, second) ->
+                Log.d(TAG,
+                    "downloadCatalogToLocalDb: success thread ${Thread.currentThread().name}")
+                sendCatalogReceivedNotification(first, second)
+                latch.countDown()
             }, {
+                Log.d(TAG, "downloadCatalogToLocalDb: ")
+                it.printStackTrace()
                 if (it is TimeoutException) {
                     timeoutAction()
                 }
+                latch.countDown()
             }))
+        latch.await()
     }
 
-    private fun addCatalogToLocalDb(
-        catalog: Catalog,
-        catalogNetInfo: CatalogNetInfoEntity
-    ): Catalog {
-        disposables.add(localRepository.addCatalogWithNetInfo(catalog, catalogNetInfo)
-            .subscribe { id ->
-                catalog.id = id
-            })
-        assert(catalog.id != 0L)
-        return catalog
-    }
+//    private fun addCatalogToLocalDb(
+//        catalog: Catalog,
+//        catalogNetInfo: CatalogNetInfoEntity
+//    ): Catalog {
+//        disposables.add(localRepository.addCatalogWithNetInfoAndProducts(catalog, catalogNetInfo)
+//            .subscribe { id ->
+//                catalog.id = id
+//            })
+//        assert(catalog.id != 0L)
+//        return catalog
+//    }
 
     private fun sendCatalogReceivedNotification(
         catalog: Catalog,

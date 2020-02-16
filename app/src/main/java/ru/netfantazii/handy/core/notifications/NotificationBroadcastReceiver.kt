@@ -27,7 +27,6 @@ const val BUNDLE_CATALOG_NAME_KEY = "catalogName"
 const val BUNDLE_EXPAND_STATE_KEY = "groupExpandStates"
 const val BUNDLE_GEOFENCE_IDS_KEY = "geofenceIds"
 //todo проверить и убрать поле BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, если нигде больше не используется
-const val BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY = "fromNotification"
 const val BUNDLE_KEY = "bundle_key"
 
 class NotificationBroadcastReceiver : BroadcastReceiver() {
@@ -140,7 +139,6 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     private fun alarmArguments() = Bundle().apply {
         putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
         putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
-        putBoolean(BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, false)
         putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
         putInt(BUNDLE_NOTIFICATION_ID_KEY, notificationId)
     }
@@ -179,7 +177,6 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
         putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
         putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
         putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)
-        putBoolean(BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, true)
         putLongArray(BUNDLE_GEOFENCE_IDS_KEY, geofenceIds)
     }
 

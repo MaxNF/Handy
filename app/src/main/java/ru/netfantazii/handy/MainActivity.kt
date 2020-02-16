@@ -145,7 +145,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     showLongToast(this, getString(R.string.no_messages_sent_error))
                     e.printStackTrace()
                 }
-                ErrorCodes.USER_IS_NOT_LOGGED_IN -> null
+                ErrorCodes.MESSAGE_FAILED_DUE_INCORRECT_SECRET -> {
+                    showLongToast(this, getString(R.string.message_failed_incorrect_secret_error))
+                }
+
+                ErrorCodes.USER_IS_NOT_LOGGED_IN -> {
+                    showLongToast(this, "Authentication error. Not logged in")
+                }
                 else -> {
                     showLongToast(this, getString(R.string.uknown_error_occured))
                     e.printStackTrace()

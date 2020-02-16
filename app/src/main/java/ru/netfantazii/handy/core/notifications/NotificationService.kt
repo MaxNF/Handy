@@ -107,7 +107,6 @@ class NotificationService : IntentService("notification_service") {
     private fun alarmArguments(): Bundle = Bundle().apply {
         putLong(BUNDLE_CATALOG_ID_KEY, catalogId())
         putString(BUNDLE_CATALOG_NAME_KEY, catalogName())
-        putBoolean(BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, false)
         putParcelable(BUNDLE_EXPAND_STATE_KEY, expandState())
     }
 
@@ -115,7 +114,6 @@ class NotificationService : IntentService("notification_service") {
         putLong(BUNDLE_CATALOG_ID_KEY, catalogId())
         putString(BUNDLE_CATALOG_NAME_KEY, catalogName())
         putParcelable(BUNDLE_EXPAND_STATE_KEY, expandState())
-        putBoolean(BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, true)
         putLongArray(BUNDLE_GEOFENCE_IDS_KEY, geofenceIds())
     }
 

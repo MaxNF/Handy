@@ -41,15 +41,33 @@ abstract class BaseDao<T> {
 @Dao
 abstract class CatalogDao : BaseDao<CatalogEntity>() {
     @Transaction
-    open fun addCatalogWithNetInfo(
+    open fun addCatalogWithGroupsAndNetInfo(
         catalog: CatalogEntity,
+        groupList: List<Group>,
         catalogNetInfoEntity: CatalogNetInfoEntity
     ): Long {
         val catalogId = addAndReturnId(catalog)
+
+        groupList.forEach { group ->
+            group.catalogId = catalogId
+            val groupId = addGroupAndReturnId(group)
+            group.productList.forEach { product ->
+                product.catalogId = catalogId
+                product.groupId = groupId
+            }
+            addProductList(group.productList)
+        }
+
         catalogNetInfoEntity.catalogId = catalogId
         addCatalogNetInfo(catalogNetInfoEntity)
         return catalogId
     }
+
+    @Insert
+    abstract fun addGroupAndReturnId(group: GroupEntity): Long
+
+    @Insert
+    abstract fun addProductList(products: List<ProductEntity>)
 
     @Insert
     abstract fun addCatalogNetInfo(catalogNetInfoEntity: CatalogNetInfoEntity)
