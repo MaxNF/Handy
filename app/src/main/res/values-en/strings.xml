@@ -154,4 +154,6 @@
     <string name="contact_dialog_name_duplicate_error">The user with this name already exists</string>
     <string name="contact_dialog_secret_length_error">The code must be 7 characters long</string>
     <string name="contact_dialog_secret_pattern_error">The code must contain only numbers and latin characters</string>
+    <string name="share">Share</string>
+    <string name="set_notification">Set notification</string>
 </resources>
