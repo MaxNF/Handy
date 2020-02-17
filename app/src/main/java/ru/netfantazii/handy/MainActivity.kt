@@ -141,7 +141,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     e.printStackTrace()
                 }
                 ErrorCodes.MESSAGE_FAILED_DUE_INCORRECT_SECRET -> {
-                    showLongToast(this, getString(R.string.message_failed_incorrect_secret_error))
+                    showLongToast(this,
+                        getString(R.string.message_failed_incorrect_secret_error))
                 }
 
                 ErrorCodes.USER_IS_NOT_LOGGED_IN -> {

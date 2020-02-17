@@ -41,12 +41,14 @@ abstract class BaseDao<T> {
 @Dao
 abstract class CatalogDao : BaseDao<CatalogEntity>() {
     @Transaction
-    open fun addCatalogWithGroupsAndNetInfo(
+    open fun addCatalogWithNetInfoAndProductsAndUpdatePositions(
         catalog: CatalogEntity,
         groupList: List<Group>,
-        catalogNetInfoEntity: CatalogNetInfoEntity
+        catalogNetInfoEntity: CatalogNetInfoEntity,
+        catalogListToUpdate: List<Catalog>
     ): Long {
         val catalogId = addAndReturnId(catalog)
+        updateAllCatalogs(catalogListToUpdate)
 
         groupList.forEach { group ->
             group.catalogId = catalogId
@@ -62,6 +64,10 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
         addCatalogNetInfo(catalogNetInfoEntity)
         return catalogId
     }
+
+    @Transaction
+    @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, c.from_network, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalElementCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtElementCount FROM CatalogEntity c ORDER BY c.position ASC")
+    abstract fun getCatalogsSignleTime(): Single<MutableList<Catalog>>
 
     @Insert
     abstract fun addGroupAndReturnId(group: GroupEntity): Long

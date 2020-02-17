@@ -14,6 +14,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.core.preferences.currentSortOrder
+import ru.netfantazii.handy.model.Catalog
 import ru.netfantazii.handy.model.SortOrder
 
 
@@ -88,4 +90,11 @@ fun copyTextToClipboard(context: Context, text: String, description: String) {
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
     val clip = ClipData.newPlainText(description, text)
     clipboard?.setPrimaryClip(clip)
+}
+
+fun getNewCatalogPosition(catalogList: List<Catalog>): Int {
+    return when (currentSortOrder) {
+        SortOrder.NEWEST_FIRST -> 0
+        SortOrder.OLDEST_FIRST -> catalogList.size
+    }
 }

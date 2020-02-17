@@ -15,11 +15,9 @@ import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
+import ru.netfantazii.handy.extensions.getNewCatalogPosition
 import ru.netfantazii.handy.extensions.reassignPositions
-import ru.netfantazii.handy.model.Catalog
-import ru.netfantazii.handy.model.Group
-import ru.netfantazii.handy.model.GroupType
-import ru.netfantazii.handy.model.Product
+import ru.netfantazii.handy.model.*
 import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
 import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
@@ -40,31 +38,6 @@ class CloudToLocalDownloader(
     private val TAG = "nettt"
     private val disposables = CompositeDisposable()
 
-    //    fun downloadCatalogToLocalDb(
-//        messageId: String,
-//        failTimeoutSec: Long,
-//        timeoutAction: () -> Unit
-//    ) {
-//        val catalogData = remoteRepository.downloadCatalogDataFromMessage(messageId)
-//            .timeout(failTimeoutSec, TimeUnit.SECONDS).blockingGet()
-//        val catalogName = catalogData[RemoteDbSchema.MESSAGE_CATALOG_NAME] as String
-//        val catalog = Catalog(name = catalogName)
-//        val receiveTime = Calendar.getInstance()
-//        val fromName = catalogData[RemoteDbSchema.MESSAGE_FROM_NAME] as String
-//        val fromEmail = catalogData[RemoteDbSchema.MESSAGE_FROM_EMAIL] as String
-//        val fromImage = catalogData[RemoteDbSchema.MESSAGE_FROM_IMAGE] as String
-//        val commentary = catalogData[RemoteDbSchema.MESSAGE_CATALOG_COMMENT] as String
-//        val catalogNetInfo = CatalogNetInfoEntity(receiveTime = receiveTime,
-//            fromEmail = fromEmail,
-//            fromName = fromName,
-//            fromImage = Uri.parse(fromImage),
-//            commentary = commentary)
-//
-//        disposables.add(localRepository.addCatalogWithNetInfo(catalog, catalogNetInfo)
-//            .subscribe { _ ->
-//                sendCatalogReceivedNotification(catalog, catalogNetInfo)
-//            })
-//    }
     fun downloadCatalogToLocalDb(
         messageId: String,
         failTimeoutSec: Long,
@@ -73,47 +46,34 @@ class CloudToLocalDownloader(
         Log.d(TAG, "downloadCatalogToLocalDb: start, thread ${Thread.currentThread().name}")
         val latch = CountDownLatch(1)
         disposables.add(remoteRepository.downloadCatalogDataFromMessage(messageId)
-            .timeout(failTimeoutSec, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
+            .timeout(failTimeoutSec, TimeUnit.SECONDS)
             .flatMap { catalogData ->
+                localRepository.getCatalogsSignleTime().subscribeOn(Schedulers.io())
+                    .map { catalogList ->
+                        Pair(catalogData, catalogList)
+                    }
+            }
+            .flatMap { (catalogData, catalogList) ->
                 Log.d(TAG,
                     "downloadCatalogToLocalDb: flatmap, thread ${Thread.currentThread().name}")
-                val catalogName = catalogData[RemoteDbSchema.MESSAGE_CATALOG_NAME] as String
-                val catalog = Catalog(name = catalogName, fromNetwork = true)
-                val receiveTime = Calendar.getInstance()
-                val fromName = catalogData[RemoteDbSchema.MESSAGE_FROM_NAME] as String
-                val fromEmail = catalogData[RemoteDbSchema.MESSAGE_FROM_EMAIL] as String
-                val fromImage = catalogData[RemoteDbSchema.MESSAGE_FROM_IMAGE] as String
-                val commentary = catalogData[RemoteDbSchema.MESSAGE_CATALOG_COMMENT] as String
-                val catalogNetInfo = CatalogNetInfoEntity(receiveTime = receiveTime,
-                    fromEmail = fromEmail,
-                    fromName = fromName,
-                    fromImage = Uri.parse(fromImage),
-                    commentary = commentary)
-                // todo сделать различие между дефолтной группой и остальными
-                val groupsArray =
-                    (catalogData[RemoteDbSchema.MESSAGE_CATALOG_CONTENT] as List<Map<String, Any>>)
-                val parsedGroups = groupsArray.mapIndexed { index, groupContent ->
-                    val groupType = if (index == 0) GroupType.ALWAYS_ON_TOP else GroupType.STANDARD
 
-                    val group =
-                        Group(name = groupContent[RemoteDbSchema.MESSAGE_GROUP_NAME] as String,
-                            catalogId = 0L, groupType = groupType)
+                val catalog = parseCatalog(catalogData)
+                val catalogPosition = getNewCatalogPosition(catalogList)
+                catalogList.add(catalogPosition, catalog)
+                catalogList.reassignPositions()
 
-                    group.productList =
-                        (groupContent[RemoteDbSchema.MESSAGE_GROUP_PRODUCTS] as List<String>).map { productName ->
-                            Product(name = productName, catalogId = 0, groupId = 0)
-                        }.toMutableList()
-
-                    group
-                }
+                val catalogNetInfo = parseNetInfo(catalogData)
+                val parsedGroups = parseGroups(catalogData)
                 parsedGroups.reassignPositions()
 
-                localRepository.addCatalogWithNetInfoAndProducts(catalog,
+                localRepository.addCatalogWithNetInfoAndProductsAndUpdatePositions(catalog,
                     parsedGroups,
-                    catalogNetInfo)
+                    catalogNetInfo,
+                    catalogList)
                     .subscribeOn(Schedulers.io())
-                    .map {
+                    .map { catalogId ->
+                        catalog.id = catalogId
                         Log.d(TAG,
                             "downloadCatalogToLocalDb: map: thread ${Thread.currentThread().name}")
                         Pair(catalog, catalogNetInfo)
@@ -137,17 +97,44 @@ class CloudToLocalDownloader(
         latch.await()
     }
 
-//    private fun addCatalogToLocalDb(
-//        catalog: Catalog,
-//        catalogNetInfo: CatalogNetInfoEntity
-//    ): Catalog {
-//        disposables.add(localRepository.addCatalogWithNetInfoAndProducts(catalog, catalogNetInfo)
-//            .subscribe { id ->
-//                catalog.id = id
-//            })
-//        assert(catalog.id != 0L)
-//        return catalog
-//    }
+    private fun parseGroups(catalogData: Map<String, Any>): List<Group> {
+        val groupsArray =
+            (catalogData[RemoteDbSchema.MESSAGE_CATALOG_CONTENT] as List<Map<String, Any>>)
+        val groups = groupsArray.mapIndexed { index, groupContent ->
+            val groupType = if (index == 0) GroupType.ALWAYS_ON_TOP else GroupType.STANDARD
+
+            val group =
+                Group(name = groupContent[RemoteDbSchema.MESSAGE_GROUP_NAME] as String,
+                    catalogId = 0L, groupType = groupType)
+
+            group.productList =
+                (groupContent[RemoteDbSchema.MESSAGE_GROUP_PRODUCTS] as List<String>).map { productName ->
+                    Product(name = productName, catalogId = 0, groupId = 0)
+                }.toMutableList()
+
+            group
+        }
+        return groups
+    }
+
+    private fun parseCatalog(catalogData: Map<String, Any>): Catalog {
+        val catalogName = catalogData[RemoteDbSchema.MESSAGE_CATALOG_NAME] as String
+        return Catalog(name = catalogName, fromNetwork = true)
+    }
+
+    private fun parseNetInfo(catalogData: Map<String, Any>): CatalogNetInfoEntity {
+        val receiveTime = Calendar.getInstance()
+        val fromName = catalogData[RemoteDbSchema.MESSAGE_FROM_NAME] as String
+        val fromEmail = catalogData[RemoteDbSchema.MESSAGE_FROM_EMAIL] as String
+        val fromImage = catalogData[RemoteDbSchema.MESSAGE_FROM_IMAGE] as String
+        val commentary = catalogData[RemoteDbSchema.MESSAGE_CATALOG_COMMENT] as String
+        return CatalogNetInfoEntity(
+            receiveTime = receiveTime,
+            fromEmail = fromEmail,
+            fromName = fromName,
+            fromImage = Uri.parse(fromImage),
+            commentary = commentary)
+    }
 
     private fun sendCatalogReceivedNotification(
         catalog: Catalog,

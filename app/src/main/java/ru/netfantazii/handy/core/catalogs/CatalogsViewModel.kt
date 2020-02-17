@@ -169,13 +169,6 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
         _createCatalogClicked.value = Event(Unit)
     }
 
-    private fun getNewCatalogPosition(catalogList: List<Catalog>): Int {
-        return when (currentSortOrder) {
-            SortOrder.NEWEST_FIRST -> 0
-            SortOrder.OLDEST_FIRST -> catalogList.size
-        }
-    }
-
     fun undoRemoval() {
         Log.d(TAG, "undoRemoval: ")
         lastRemovedObject?.let {

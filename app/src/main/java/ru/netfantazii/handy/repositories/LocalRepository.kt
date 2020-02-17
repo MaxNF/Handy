@@ -49,13 +49,15 @@ interface LocalRepository {
     fun getCatalogAlarmTime(catalogId: Long): Observable<List<Calendar>>
     fun addCatalogAlarmTime(catalogId: Long, calendar: Calendar): Disposable
     fun removeCatalogAlarmTime(catalogId: Long): Disposable
-    fun addCatalogWithNetInfoAndProducts(
+    fun addCatalogWithNetInfoAndProductsAndUpdatePositions(
         catalog: Catalog,
         groupList: List<Group>,
-        catalogNetInfo: CatalogNetInfoEntity
+        catalogNetInfo: CatalogNetInfoEntity,
+        catalogListToUpdate: List<Catalog>
     ): Single<Long>
 
     fun getCatalogNetInfo(catalogId: Long): Single<CatalogNetInfoEntity>
+    fun getCatalogsSignleTime(): Single<MutableList<Catalog>>
 }
 
 class LocalRepositoryImpl(db: ProductDatabase) :
@@ -189,17 +191,22 @@ class LocalRepositoryImpl(db: ProductDatabase) :
     override fun removeCatalogAlarmTime(catalogId: Long): Disposable =
         catalogDao.removeAlarmTime(catalogId).subscribeOn(Schedulers.io()).subscribe()
 
-    override fun addCatalogWithNetInfoAndProducts(
+    override fun addCatalogWithNetInfoAndProductsAndUpdatePositions(
         catalog: Catalog,
         groupList: List<Group>,
-        catalogNetInfo: CatalogNetInfoEntity
+        catalogNetInfo: CatalogNetInfoEntity,
+        catalogListToUpdate: List<Catalog>
     ) =
         Single.fromCallable<Long> {
-            catalogDao.addCatalogWithGroupsAndNetInfo(catalog,
+            catalogDao.addCatalogWithNetInfoAndProductsAndUpdatePositions(catalog,
                 groupList,
-                catalogNetInfo)
+                catalogNetInfo,
+                catalogListToUpdate)
         }
 
     override fun getCatalogNetInfo(catalogId: Long): Single<CatalogNetInfoEntity> =
         netInfoDao.getCatalogNetInfo(catalogId)
+
+    override fun getCatalogsSignleTime(): Single<MutableList<Catalog>> = catalogDao.getCatalogsSignleTime()
+
 }

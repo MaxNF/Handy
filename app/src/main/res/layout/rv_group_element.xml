@@ -11,6 +11,10 @@
         <import type="ru.netfantazii.handy.model.HintType" />
 
         <variable
+            name="positionInFilteredList"
+            type="int" />
+
+        <variable
             name="isAlwayOnTopPresent"
             type="Boolean" />
 
@@ -104,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
                     android:textColor="@color/blackSemiTransparent60"
-                    app:hintText="@{group.productList.empty ? HintType.EMPTY : expandManager.isGroupExpanded(group.position) ? HintType.COLLAPSE : HintType.EXPAND}"
+                    app:hintText="@{group.productList.empty ? HintType.EMPTY : expandManager.isGroupExpanded(positionInFilteredList) ? HintType.COLLAPSE : HintType.EXPAND}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_element_name"
                     app:layout_constraintTop_toBottomOf="@id/tv_element_name" />

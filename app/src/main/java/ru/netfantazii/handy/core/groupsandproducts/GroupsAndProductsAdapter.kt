@@ -83,7 +83,8 @@ abstract class BaseGroupViewHolder(rootView: View) : BaseViewHolder(rootView) {
         group: Group,
         handler: GroupClickHandler,
         expandManager: RecyclerViewExpandableItemManager,
-        isAlwaysOnTopPresent: Boolean
+        isAlwaysOnTopPresent: Boolean,
+        positionInFilteredList: Int
     )
 }
 
@@ -94,12 +95,14 @@ class GroupViewHolder(private val groupBinding: RvGroupElementBinding) :
         group: Group,
         handler: GroupClickHandler,
         expandManager: RecyclerViewExpandableItemManager,
-        isAlwaysOnTopPresent: Boolean
+        isAlwaysOnTopPresent: Boolean,
+        positionInFilteredList: Int
     ) {
         groupBinding.group = group
         groupBinding.groupHandler = handler
         groupBinding.expandManager = expandManager
         groupBinding.isAlwayOnTopPresent = isAlwaysOnTopPresent
+        groupBinding.positionInFilteredList = positionInFilteredList
         groupBinding.executePendingBindings()
 
     }
@@ -112,12 +115,15 @@ class UnsortedGroupViewHolder(private val groupBinding: RvUnsortedGroupElementBi
         group: Group,
         handler: GroupClickHandler,
         expandManager: RecyclerViewExpandableItemManager,
-        isAlwaysOnTopPresent: Boolean
+        isAlwaysOnTopPresent: Boolean,
+        positionInFilteredList: Int
     ) {
         groupBinding.group = group
         groupBinding.groupHandler = handler
-        groupBinding.executePendingBindings()
         groupBinding.expandManager = expandManager
+        groupBinding.positionInFilteredList = positionInFilteredList
+        groupBinding.executePendingBindings()
+
     }
 }
 
@@ -210,7 +216,8 @@ class GroupsAndProductsAdapter(
         holder.bindData(groupList[groupPosition],
             groupClickHandler,
             expandManager,
-            groupList[0].groupType == GroupType.ALWAYS_ON_TOP)
+            groupList[0].groupType == GroupType.ALWAYS_ON_TOP,
+            groupPosition)
     }
 
 
