@@ -14,7 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import ru.netfantazii.handy.FakeLocalRepository
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.core.ServiceLocator
+import ru.netfantazii.handy.ServiceLocator
 import ru.netfantazii.handy.createFakeCatalog
 
 @MediumTest

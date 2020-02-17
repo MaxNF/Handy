@@ -15,8 +15,10 @@ import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
+import ru.netfantazii.handy.extensions.reassignPositions
 import ru.netfantazii.handy.model.Catalog
 import ru.netfantazii.handy.model.Group
+import ru.netfantazii.handy.model.GroupType
 import ru.netfantazii.handy.model.Product
 import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
 import ru.netfantazii.handy.model.database.RemoteDbSchema
@@ -77,7 +79,7 @@ class CloudToLocalDownloader(
                 Log.d(TAG,
                     "downloadCatalogToLocalDb: flatmap, thread ${Thread.currentThread().name}")
                 val catalogName = catalogData[RemoteDbSchema.MESSAGE_CATALOG_NAME] as String
-                val catalog = Catalog(name = catalogName)
+                val catalog = Catalog(name = catalogName, fromNetwork = true)
                 val receiveTime = Calendar.getInstance()
                 val fromName = catalogData[RemoteDbSchema.MESSAGE_FROM_NAME] as String
                 val fromEmail = catalogData[RemoteDbSchema.MESSAGE_FROM_EMAIL] as String
@@ -89,20 +91,27 @@ class CloudToLocalDownloader(
                     fromImage = Uri.parse(fromImage),
                     commentary = commentary)
                 // todo сделать различие между дефолтной группой и остальными
-                val groups =
-                    (catalogData[RemoteDbSchema.MESSAGE_CATALOG_CONTENT] as List<Map<String, Any>>).map { groupContent ->
-                        val group =
-                            Group(name = groupContent[RemoteDbSchema.MESSAGE_GROUP_NAME] as String,
-                                catalogId = 0L)
+                val groupsArray =
+                    (catalogData[RemoteDbSchema.MESSAGE_CATALOG_CONTENT] as List<Map<String, Any>>)
+                val parsedGroups = groupsArray.mapIndexed { index, groupContent ->
+                    val groupType = if (index == 0) GroupType.ALWAYS_ON_TOP else GroupType.STANDARD
 
-                        group.productList =
-                            (groupContent[RemoteDbSchema.MESSAGE_GROUP_PRODUCTS] as List<String>).map { productName ->
-                                Product(name = productName, catalogId = 0, groupId = 0)
-                            }.toMutableList()
-                        group
-                    }
+                    val group =
+                        Group(name = groupContent[RemoteDbSchema.MESSAGE_GROUP_NAME] as String,
+                            catalogId = 0L, groupType = groupType)
 
-                localRepository.addCatalogWithNetInfoAndProducts(catalog, groups, catalogNetInfo)
+                    group.productList =
+                        (groupContent[RemoteDbSchema.MESSAGE_GROUP_PRODUCTS] as List<String>).map { productName ->
+                            Product(name = productName, catalogId = 0, groupId = 0)
+                        }.toMutableList()
+
+                    group
+                }
+                parsedGroups.reassignPositions()
+
+                localRepository.addCatalogWithNetInfoAndProducts(catalog,
+                    parsedGroups,
+                    catalogNetInfo)
                     .subscribeOn(Schedulers.io())
                     .map {
                         Log.d(TAG,
@@ -110,19 +119,21 @@ class CloudToLocalDownloader(
                         Pair(catalog, catalogNetInfo)
                     }
             }
-            .subscribe({ (first, second) ->
-                Log.d(TAG,
-                    "downloadCatalogToLocalDb: success thread ${Thread.currentThread().name}")
-                sendCatalogReceivedNotification(first, second)
-                latch.countDown()
-            }, {
-                Log.d(TAG, "downloadCatalogToLocalDb: ")
-                it.printStackTrace()
-                if (it is TimeoutException) {
-                    timeoutAction()
-                }
-                latch.countDown()
-            }))
+            .subscribe(
+                { (first, second) ->
+                    Log.d(TAG,
+                        "downloadCatalogToLocalDb: success thread ${Thread.currentThread().name}")
+                    sendCatalogReceivedNotification(first, second)
+                    latch.countDown()
+                },
+                {
+                    Log.d(TAG, "downloadCatalogToLocalDb: ")
+                    it.printStackTrace()
+                    if (it is TimeoutException) {
+                        timeoutAction()
+                    }
+                    latch.countDown()
+                }))
         latch.await()
     }
 

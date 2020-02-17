@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.core
+package ru.netfantazii.handy
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
@@ -23,32 +23,35 @@ object ServiceLocator {
 
     fun provideLocalRepository(context: Context): LocalRepository {
         synchronized(this) {
-            return localRepository ?: createLocalRepository(context)
+            return localRepository
+                ?: createLocalRepository(
+                    context)
         }
     }
 
     private fun createLocalRepository(context: Context): LocalRepository {
         val localRepository = LocalRepositoryImpl(
             getDatabaseInstance(context))
-        this.localRepository = localRepository
+        ServiceLocator.localRepository = localRepository
         return localRepository
     }
 
     fun provideRemoteRepository(context: Context): RemoteRepository {
         synchronized(this) {
-            return remoteRepository ?: createRemoteRepository()
+            return remoteRepository
+                ?: createRemoteRepository()
         }
     }
 
     private fun createRemoteRepository(): RemoteRepository {
         val remoteRepository = RemoteRepositoryImpl()
-        this.remoteRepository = remoteRepository
+        ServiceLocator.remoteRepository = remoteRepository
         return remoteRepository
     }
 
     private fun getDatabaseInstance(context: Context): ProductDatabase {
-        return productDatabase ?: buildDatabase(context)
-//        return productDatabase ?: buildInMemoryDatabase(context)
+//        return productDatabase ?: buildDatabase(context)
+        return productDatabase ?: buildInMemoryDatabase(context)
     }
 
     private fun buildDatabase(context: Context): ProductDatabase {
