@@ -1,18 +1,12 @@
 package ru.netfantazii.handy
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.AttributeSet
-import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -25,7 +19,6 @@ import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
-import ru.netfantazii.handy.db.SortOrder
 import ru.netfantazii.handy.extensions.getSortOrder
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -54,7 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
 
         sp = PreferenceManager.getDefaultSharedPreferences(this)
-        loadPreferencesToMemory()
+//        loadSortOrderToMemory()
 
         showWelcomeScreenIfNeeded()
 
@@ -82,9 +75,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .apply()
     }
 
-    private fun loadPreferencesToMemory() {
-        currentSortOrder = getSortOrder(this)
-    }
+//    private fun loadSortOrderToMemory() {
+//        currentSortOrder = getSortOrder(this)
+//    }
 
     private fun setFirstLaunchToFalse() {
         sp.edit().putBoolean(FIRST_LAUNCH_KEY, false).apply()

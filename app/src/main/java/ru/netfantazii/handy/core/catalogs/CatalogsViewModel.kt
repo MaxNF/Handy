@@ -6,7 +6,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.*
 import ru.netfantazii.handy.core.*
+import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.db.Catalog
+import ru.netfantazii.handy.db.SortOrder
 import ru.netfantazii.handy.extensions.*
 
 
@@ -68,7 +70,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     private fun onNewDataReceive(newList: MutableList<Catalog>) {
         Log.d(TAG, "onNewDataReceive: ")
-        filteredCatalogList = getFilteredCatalogList(catalogList)
+        filteredCatalogList = getFilteredCatalogList(newList)
         _newDataReceived.value = Event(Unit)
     }
 
@@ -102,27 +104,20 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override fun onCatalogSwipePerform(catalog: Catalog) {
         Log.d(TAG, "onCatalogSwipePerform: ")
-        tempRemove(catalog)
+//        tempRemove(catalog)
         if (lastRemovedObject == null) {
+            lastRemovedObject = catalog
             onNewDataReceive(catalogList)
         } else {
-            realRemove(lastRemovedObject!!)
+            val previousObject = lastRemovedObject
+            lastRemovedObject = catalog
+            realRemove(previousObject!!)
         }
-        lastRemovedObject = catalog
-    }
-
-    private fun tempRemove(catalog: Catalog) {
-        if (catalogList.size > 1 && catalog.position != catalogList.lastIndex) {
-            val listForUpdating =
-                catalogList.slice(catalog.position + 1..catalogList.lastIndex)
-            listForUpdating.shiftPositionsToLeft()
-        }
-        catalogList.remove(catalog)
     }
 
     private fun realRemove(catalog: Catalog) {
-        // удаляем объект из буфера и обновляем остальные каталоги в бд,
-        // т.к. их позиция могли измениться с последнего обновления
+        catalogList.remove(catalog)
+        catalogList.reassignPositions()
         localRepository.removeAndUpdateCatalogs(catalog, catalogList)
     }
 
@@ -142,8 +137,9 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
         _catalogEditClicked.value = Event(catalog)
     }
 
+    //todo прилетают позиции из фильтрованного списка, а двигать нужно реальные включая невидимый объект?
     override fun onCatalogDragSucceed(fromPosition: Int, toPosition: Int) {
-        Log.d(TAG, "onCatalogDragSucceed: ")
+        Log.d(TAG, "onCatalogDragSucceed: from $fromPosition, to $toPosition ")
         catalogList.moveAndReassignPositions(fromPosition, toPosition)
         localRepository.updateAllCatalogs(catalogList.sliceModified(fromPosition, toPosition))
         _catalogDragSucceeded.value = Event(Unit)
@@ -151,17 +147,21 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     fun onCreateCatalogClick() {
         Log.d(TAG, "createCatalog: ")
-        val newCatalog = Catalog()
+        val newCatalog = Catalog(position = getNewCatalogPosition(catalogList))
         overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_CREATE, newCatalog)
         _createCatalogClicked.value = Event(Unit)
+    }
+
+    private fun getNewCatalogPosition(catalogList: List<Catalog>): Int {
+        return when (currentSortOrder) {
+            SortOrder.NEWEST_FIRST -> 0
+            SortOrder.OLDEST_FIRST -> catalogList.size
+        }
     }
 
     fun undoRemoval() {
         Log.d(TAG, "undoRemoval: ")
         lastRemovedObject?.let {
-            val removedCatalogPosition = it.position
-            catalogList.shiftPositionsToRight(it.position)
-            catalogList.add(removedCatalogPosition, it)
             lastRemovedObject = null
             onNewDataReceive(catalogList)
         }
@@ -174,8 +174,10 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override fun onOverlayEnterClick() {
         if (overlayBuffer.action == OVERLAY_ACTION_CATALOG_CREATE) {
-            catalogList.shiftPositionsToRight()
-            localRepository.addAndUpdateCatalogs(overlayBuffer.bufferObject as Catalog, catalogList)
+            val catalogToAdd = overlayBuffer.bufferObject as Catalog
+            catalogList.add(catalogToAdd.position, catalogToAdd)
+            catalogList.reassignPositions()
+            localRepository.addAndUpdateCatalogs(catalogToAdd, catalogList)
         } else {
             localRepository.updateCatalog(overlayBuffer.bufferObject as Catalog)
         }
