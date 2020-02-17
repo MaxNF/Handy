@@ -9,12 +9,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
@@ -37,12 +35,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import io.reactivex.plugins.RxJavaPlugins
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
-import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
 import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
-import ru.netfantazii.handy.extensions.getSortOrder
 import ru.netfantazii.handy.extensions.reloadActivity
 import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
@@ -93,7 +89,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
 
         sp = PreferenceManager.getDefaultSharedPreferences(this)
-        loadPreferencesToMemory()
         disableFirestorePersistence()
 
         val header = navigationView.getHeaderView(0)
@@ -209,9 +204,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .apply()
     }
 
-    private fun loadPreferencesToMemory() {
-        currentSortOrder = getSortOrder(this)
-    }
+//    private fun loadSortOrderToMemory() {
+//        currentSortOrder = getSortOrder(this)
+//    }
 
     private fun setFirstLaunchToFalse() {
         sp.edit().putBoolean(FIRST_LAUNCH_KEY, false).apply()

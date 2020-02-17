@@ -130,7 +130,8 @@ class CatalogsAdapter(
     }
 
     override fun onMoveItem(fromPosition: Int, toPosition: Int) {
-        catalogClickHandler.onCatalogDragSucceed(fromPosition, toPosition)
+        catalogClickHandler.onCatalogDragSucceed(catalogList[fromPosition].position,
+            catalogList[toPosition].position)
     }
 
     override fun onCheckCanDrop(draggingPosition: Int, dropPosition: Int): Boolean {
