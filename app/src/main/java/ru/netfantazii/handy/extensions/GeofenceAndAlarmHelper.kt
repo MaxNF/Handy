@@ -22,28 +22,32 @@ const val GEOFENCE_CHECK_CYCLE_MILLIS = 30000
 private val TAG = "GeofenceHandler"
 
 
-fun registerGeofence(
+fun registerGeofences(
     context: Context,
-    geofenceEntity: GeofenceEntity,
+    geofenceEntities: List<GeofenceEntity>,
     catalogId: Long,
     catalogName: String,
     groupExpandState: RecyclerViewExpandableItemManager.SavedState,
     onSuccessAction: (() -> Unit)?
 ) {
-    Log.d(TAG, "registerGeofence: ${geofenceEntity.id}")
-    val geofence =
+    if (geofenceEntities.isEmpty()) {
+        return
+    }
+    val geofences = geofenceEntities.map {
+        Log.d(TAG, "registerGeofence: ${it.id}")
         Geofence.Builder()
-            .setRequestId(geofenceEntity.id.toString())
-            .setCircularRegion(geofenceEntity.latitude,
-                geofenceEntity.longitude,
-                geofenceEntity.radius)
+            .setRequestId(it.id.toString())
+            .setCircularRegion(it.latitude,
+                it.longitude,
+                it.radius)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setNotificationResponsiveness(GEOFENCE_CHECK_CYCLE_MILLIS)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
+    }
 
     val geofencingRequest = GeofencingRequest.Builder().apply {
-        addGeofence(geofence)
+        addGeofences(geofences)
     }.build()
 
     LocationServices.getGeofencingClient(context).addGeofences(geofencingRequest,
@@ -57,7 +61,8 @@ fun registerGeofence(
                 onSuccessAction?.invoke()
             }
             addOnFailureListener {
-                throw it
+                showLongToast(context, context.getString(R.string.adding_geofence_failed))
+                it.printStackTrace()
             }
         }
 }
@@ -74,7 +79,8 @@ fun unregisterGeofence(context: Context, geofenceId: Long, onSuccessAction: (() 
 
 fun unregisterAllGeofences(
     context: Context,
-    catalogId: Long
+    catalogId: Long,
+    onSuccessAction: ((context: Context) -> Unit)?
 ) {
     LocationServices.getGeofencingClient(context)
         .removeGeofences(getPendingIntentForCancel(
@@ -83,9 +89,7 @@ fun unregisterAllGeofences(
             GEOFENCE_INTENT_ACTION))
         .apply {
             addOnSuccessListener {
-                Toast.makeText(context,
-                    context.getString(R.string.all_geofences_unreg_success),
-                    Toast.LENGTH_SHORT).show()
+                onSuccessAction?.invoke(context)
             }
             addOnFailureListener {
                 throw it

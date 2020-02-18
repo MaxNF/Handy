@@ -47,21 +47,24 @@
                 app:defaultNavHost="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintVertical_bias="0.0"
                 app:navGraph="@navigation/nav_graph" />
 
             <LinearLayout
                 android:id="@+id/progress_bar_container"
+                android:elevation="4dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="120dp"
                 android:background="@drawable/rounded_corners_progress_bar_bg"
                 android:orientation="horizontal"
                 android:paddingStart="8dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="8dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
                 app:layout_constraintBottom_toBottomOf="@+id/nav_host_fragment"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -69,7 +72,7 @@
                     android:id="@+id/progress_bar_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/listTextColor"
+                    android:textColor="?attr/toolbarElementColor"
                     android:textSize="16sp"
                     android:layout_marginEnd="8dp"
                     android:layout_gravity="center_vertical"
@@ -80,7 +83,11 @@
                     android:id="@+id/progress_bar"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_gravity="center_vertical"
+                    android:indeterminate="true"
+                    android:indeterminateTintMode="src_atop"
+                    android:indeterminateTint="?attr/toolbarElementColor"
+                    />
 
             </LinearLayout>
 

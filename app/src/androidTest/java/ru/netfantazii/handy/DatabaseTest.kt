@@ -55,9 +55,9 @@ class DatabaseTest {
         val catalogs = catalogDao.getCatalogs().test().values()[0]
 
         assertThat(catalogs.size, `is`(1)) // В базу добавлен только один каталог
-        assertThat(catalogs[0].totalElementCount, `is`(0)) // Общее кол-во продуктов в каталоге: 0
+        assertThat(catalogs[0].totalProductCount, `is`(0)) // Общее кол-во продуктов в каталоге: 0
         assertThat(
-            catalogs[0].boughtElementCount,
+            catalogs[0].boughtProductCount,
             `is`(0)
         ) // Кол-во купленных продуктов в каталоге: 0
         assertThat(catalogs[0].buyStatus, `is`(BuyStatus.NOT_BOUGHT)) // Статус каталога: не куплен
@@ -99,9 +99,9 @@ class DatabaseTest {
         val catalogs = catalogDao.getCatalogs().test().values()[0]
 
         assertThat(catalogs.size, `is`(1))
-        assertThat(catalogs[0].totalElementCount, `is`(2)) // Общее кол-во продуктов в каталоге: 2
+        assertThat(catalogs[0].totalProductCount, `is`(2)) // Общее кол-во продуктов в каталоге: 2
         assertThat(
-            catalogs[0].boughtElementCount,
+            catalogs[0].boughtProductCount,
             `is`(2)
         ) // Кол-во купленных продуктов в каталоге: 2
         assertThat(catalogs[0].buyStatus, `is`(BuyStatus.BOUGHT)) // Статус каталога: куплен
@@ -129,9 +129,9 @@ class DatabaseTest {
         val catalogs = catalogDao.getCatalogs().test().values()[0]
 
         assertThat(catalogs.size, `is`(1)) // В базу добавлен только один каталог
-        assertThat(catalogs[0].totalElementCount, `is`(2)) // Общее кол-во продуктов в каталоге: 2
+        assertThat(catalogs[0].totalProductCount, `is`(2)) // Общее кол-во продуктов в каталоге: 2
         assertThat(
-            catalogs[0].boughtElementCount,
+            catalogs[0].boughtProductCount,
             `is`(1)
         ) // Кол-во купленных продуктов в каталоге: 1
         assertThat(catalogs[0].buyStatus, `is`(BuyStatus.NOT_BOUGHT)) // Статус каталога: не куплен

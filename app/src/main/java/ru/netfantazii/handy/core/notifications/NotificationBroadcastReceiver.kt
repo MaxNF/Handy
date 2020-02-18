@@ -26,7 +26,6 @@ const val BUNDLE_CATALOG_ID_KEY = "catalogId"
 const val BUNDLE_CATALOG_NAME_KEY = "catalogName"
 const val BUNDLE_EXPAND_STATE_KEY = "groupExpandStates"
 const val BUNDLE_GEOFENCE_IDS_KEY = "geofenceIds"
-//todo проверить и убрать поле BUNDLE_FROM_GEOFENCE_NOTIFICATION_KEY, если нигде больше не используется
 const val BUNDLE_KEY = "bundle_key"
 
 class NotificationBroadcastReceiver : BroadcastReceiver() {
@@ -57,7 +56,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                 action = CANCEL_NOTIFICATION_ACTION
                 putExtra(BUNDLE_NOTIFICATION_ID_KEY, notificationId)
             }
-            onCancelClickIntent = PendingIntent.getBroadcast(context, 0, cancelIntent, 0)
+            onCancelClickIntent =
+                PendingIntent.getBroadcast(context, catalogId.toInt(), cancelIntent, 0)
 
             when (intent.action) {
                 ALARM_INTENT_ACTION -> {

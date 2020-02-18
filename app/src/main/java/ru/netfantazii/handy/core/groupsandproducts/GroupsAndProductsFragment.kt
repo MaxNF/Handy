@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.databinding.Observable
+import androidx.databinding.ObservableField
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
@@ -22,6 +24,7 @@ import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.netfantazii.handy.HandyApplication
+import ru.netfantazii.handy.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
@@ -29,6 +32,8 @@ import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
 import ru.netfantazii.handy.model.GroupType
 import ru.netfantazii.handy.extensions.dpToPx
+import ru.netfantazii.handy.model.Catalog
+import ru.netfantazii.handy.model.User
 import java.lang.UnsupportedOperationException
 
 class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
@@ -42,6 +47,15 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     private lateinit var productUndoSnackbar: Snackbar
     private lateinit var groupUndoSnackbar: Snackbar
     private lateinit var hint: View
+    private lateinit var shareMenuButton: MenuItem
+    private val shareButtonCallback = object :
+        Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+            val user = (sender as ObservableField<User?>).get()
+            shareMenuButton.isVisible = user != null
+        }
+    }
+    private lateinit var networkViewModel: NetworkViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +108,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                 GroupsAndProductsVmFactory(repository,
                     currentCatalogId))
                 .get(GroupsAndProductsViewModel::class.java)
+        networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
     }
 
     override fun createRecyclerView(view: View) {
@@ -166,6 +181,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             })
             allLiveDataList.add(overlayEnterClicked)
         }
+        networkViewModel.user.addOnPropertyChangedCallback(shareButtonCallback)
+
     }
 
     private fun subscribeToProductEvents() {
@@ -394,12 +411,39 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                 viewModel.onDeleteAllClick()
                 true
             }
+            R.id.share_menu_button -> {
+                openShareFragment()
+                true
+            }
+            R.id.notification_menu_button -> {
+                openNotificationFragment()
+                true
+            }
             else -> false
         }
     }
 
+    private fun openShareFragment() {
+        val direction =
+            GroupsAndProductsFragmentDirections.actionProductsFragmentToShareFragment(fragmentArgs.catalogId,
+                fragmentArgs.catalogName, viewModel.getAllProducts().size.toString())
+        navController.navigate(direction)
+    }
+
+    private fun openNotificationFragment() {
+        val direction =
+            GroupsAndProductsFragmentDirections.actionProductsFragmentToNotificationsFragment(
+                fragmentArgs.catalogId,
+                fragmentArgs.catalogName,
+                fragmentArgs.groupExpandStates)
+        navController.navigate(direction)
+    }
+
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.groups_toolbar_menu, menu)
+        shareMenuButton = menu.findItem(R.id.share_menu_button)
+        shareMenuButton.isVisible = networkViewModel.user.get() != null
     }
 
     private fun saveExpandState() {
@@ -438,5 +482,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     override fun hideSnackbars() {
         productUndoSnackbar.dismiss()
         groupUndoSnackbar.dismiss()
+    }
+
+    override fun unsubscribeFromEvents() {
+        super.unsubscribeFromEvents()
+        networkViewModel.user.removeOnPropertyChangedCallback(shareButtonCallback)
     }
 }

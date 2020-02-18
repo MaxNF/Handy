@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.View
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
-import androidx.databinding.library.baseAdapters.BR
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.Preference
@@ -25,6 +24,7 @@ import ru.netfantazii.handy.extensions.reloadActivity
 import ru.netfantazii.handy.model.User
 
 const val FIRST_LAUNCH_KEY = "first_launch"
+const val SHOULD_SILENT_SIGN_IN_KEY = "silent_sign_in"
 lateinit var currentSortOrder: SortOrder
 
 class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -56,10 +56,9 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
         viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
         deleteAccPref = findPreference("delete_account_button")!!
         deleteAccPref!!.isVisible = viewModel.user.get() != null
-        deleteAccPref.setDeleteAccountAction { showConfirmationDialog() }
+        deleteAccPref.setDeleteAccountAction { showDeleteAccConfirmationDialog() }
         deleteAccPref.setCopySecretAction { viewModel.copySecretToClipboard(requireContext()) }
-        deleteAccPref.setGetNewSecretAction { viewModel.reloadSecretCode() }
-        // todo сделать диалоговое сообщение с предупреждением, что нужно будет заново отослать контактам код, также сделать лимит на обновление (раз в 1 минут)
+        deleteAccPref.setGetNewSecretAction { showChangeSecretConfirmationDialog() }
         deleteAccPref.setNewSecretToView(viewModel.user.get()?.secret ?: "n/a")
 
         val threadName = Thread.currentThread().name
@@ -99,9 +98,18 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
         viewModel.user.removeOnPropertyChangedCallback(userChangedCallback)
     }
 
-    private fun showConfirmationDialog() {
-        val dialog = DeleteAccConfirmDialog()
-        dialog.show(childFragmentManager, "delete_acc_dialog")
+    private fun showDeleteAccConfirmationDialog() {
+        if (viewModel.inputFilter.netActionAllowed) {
+            val dialog = DeleteAccConfirmDialog()
+            dialog.show(childFragmentManager, "delete_acc_dialog")
+        }
+    }
+
+    private fun showChangeSecretConfirmationDialog() {
+        if (viewModel.inputFilter.netActionAllowed) {
+            val dialog = ChangeSecretConfirmDialog()
+            dialog.show(childFragmentManager, "change_secret_dialog")
+        }
     }
 }
 
@@ -113,6 +121,20 @@ class DeleteAccConfirmDialog : DialogFragment() {
             .setTitle(getString(R.string.are_you_sure))
             .setPositiveButton(getString(R.string.dialog_yes)) { _, _ ->
                 viewModel.onDeleteAccountYesClick()
+            }
+            .setNegativeButton(getString(R.string.dialog_cancel), null)
+            .create()
+    }
+}
+
+class ChangeSecretConfirmDialog : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
+        return AlertDialog.Builder(context)
+            .setTitle(getString(R.string.are_you_sure))
+            .setMessage(R.string.change_secret_dialog_message)
+            .setPositiveButton(getString(R.string.dialog_yes)) { _, _ ->
+                viewModel.reloadSecretCode()
             }
             .setNegativeButton(getString(R.string.dialog_cancel), null)
             .create()

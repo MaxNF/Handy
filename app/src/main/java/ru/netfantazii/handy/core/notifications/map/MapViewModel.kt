@@ -17,7 +17,7 @@ import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.model.database.GeofenceEntity
-import ru.netfantazii.handy.extensions.registerGeofence
+import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.extensions.unregisterAllGeofences
 import ru.netfantazii.handy.extensions.unregisterGeofence
 import kotlin.collections.Map
@@ -116,8 +116,8 @@ class MapViewModel(
                 longitude = point.longitude, radius = nextGeofenceRaidus)
         disposables.add(localRepository.addGeofence(geofence).subscribe(Consumer {
             geofence.id = it
-            registerGeofence(getApplication(),
-                geofence,
+            registerGeofences(getApplication(),
+                listOf(geofence),
                 currentCatalogId,
                 catalogName,
                 groupExpandStates) {
@@ -142,7 +142,11 @@ class MapViewModel(
 
     fun onClearAllClick() {
         localRepository.removeAllGeofencesFromCatalog(currentCatalogId)
-        unregisterAllGeofences(getApplication(), currentCatalogId)
+        unregisterAllGeofences(getApplication(), currentCatalogId) { context ->
+            Toast.makeText(context,
+                context.getString(R.string.all_geofences_unreg_success),
+                Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun onFindMyLocationClick() {

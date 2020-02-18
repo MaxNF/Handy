@@ -93,7 +93,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
                     android:alpha="0.6"
-                    android:text='@{String.valueOf(catalog.boughtElementCount) + "/" + String.valueOf(catalog.totalElementCount)}'
+                    android:text='@{String.valueOf(catalog.boughtProductCount) + "/" + String.valueOf(catalog.totalProductCount)}'
                     android:textColor="@color/textColorBlack"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -141,7 +141,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="start"
                         android:background="@android:color/holo_green_light"
-                        app:stripeWidth="@{ (float) catalog.boughtElementCount / (float) catalog.totalElementCount }" />
+                        app:stripeWidth="@{ (float) catalog.boughtProductCount / (float) catalog.totalProductCount }" />
                 </FrameLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

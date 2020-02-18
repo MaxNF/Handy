@@ -16,6 +16,9 @@ import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.model.HintType
 import java.text.DateFormat
+import java.text.NumberFormat
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 
 
@@ -98,11 +101,18 @@ fun setStripeWidth(view: View, percent: Float) {
 
 @BindingAdapter("app:formatCalendar")
 fun formatCalendar(view: TextView, calendar: Calendar) {
-    val formatter = DateFormat.getDateInstance(
-        DateFormat.LONG)
+//    val dateFormatter = DateFormat.getDateInstance(
+//        DateFormat.LONG)
+//    dateFormatter.timeZone = calendar.timeZone
+//    val dateString = dateFormatter.format(calendar.time)
+val formatter = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT)
     formatter.timeZone = calendar.timeZone
-    val formatted = formatter.format(calendar.time)
-    view.text = formatted
+//    val timeFormatter = DateFormat.getTimeInstance()
+//    timeFormatter.timeZone = calendar.timeZone
+//    val timeString = timeFormatter.format(calendar.time)
+//    val fullTimeString =
+//        view.context.getString(R.string.catalog_creation_time, dateString, timeString)
+    view.text = formatter.format(calendar.time)
 }
 
 @BindingAdapter("app:downloadImageFromUri")

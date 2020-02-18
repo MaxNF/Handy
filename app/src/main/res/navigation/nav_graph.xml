@@ -39,6 +39,12 @@
             app:argType="long[]"
             android:defaultValue="@null"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_products_fragment_to_shareFragment"
+            app:destination="@id/shareFragment" />
+        <action
+            android:id="@+id/action_products_fragment_to_notifications_fragment"
+            app:destination="@id/notifications_fragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_app_settings"

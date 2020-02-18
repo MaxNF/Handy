@@ -1,7 +1,10 @@
 package ru.netfantazii.handy.core.catalogs
 
+import android.app.Application
 import android.util.Log
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.*
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -11,10 +14,13 @@ import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.extensions.*
 import ru.netfantazii.handy.model.SortOrder
 import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
+import ru.netfantazii.handy.model.database.GeofenceEntity
 import ru.netfantazii.handy.repositories.LocalRepository
+import java.util.*
 
 
-class CatalogsViewModel(private val localRepository: LocalRepository) : ViewModel(),
+class CatalogsViewModel(private val localRepository: LocalRepository, application: Application) :
+    AndroidViewModel(application),
     CatalogClickHandler, CatalogStorage, OverlayActions, DialogClickHandler {
     private val TAG = "CatalogsViewModel"
     private var catalogList = mutableListOf<Catalog>()
@@ -121,7 +127,6 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override fun onCatalogSwipePerform(catalog: Catalog) {
         Log.d(TAG, "onCatalogSwipePerform: ")
-//        tempRemove(catalog)
         if (lastRemovedObject == null) {
             lastRemovedObject = catalog
             onNewDataReceive(catalogList)
@@ -130,6 +135,9 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
             lastRemovedObject = catalog
             realRemove(previousObject!!)
         }
+        cancelAssociatedNotifications(catalog.id)
+        unregisterAllGeofences(getApplication(), catalog.id, null)
+        unregisterAlarm(getApplication(), catalog.id)
     }
 
     private fun realRemove(catalog: Catalog) {
@@ -154,7 +162,6 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
         _catalogEditClicked.value = Event(catalog)
     }
 
-    //todo прилетают позиции из фильтрованного списка, а двигать нужно реальные включая невидимый объект?
     override fun onCatalogDragSucceed(fromPosition: Int, toPosition: Int) {
         Log.d(TAG, "onCatalogDragSucceed: from $fromPosition, to $toPosition ")
         catalogList.moveAndReassignPositions(fromPosition, toPosition)
@@ -171,10 +178,44 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     fun undoRemoval() {
         Log.d(TAG, "undoRemoval: ")
-        lastRemovedObject?.let {
-            lastRemovedObject = null
-            onNewDataReceive(catalogList)
+
+        lastRemovedObject?.let { catalog ->
+            localRepository.getGeofences(catalog.id)
+                .firstOrError()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally {
+                    catalog.alarmTime?.let { alarmTime ->
+                        restoreCatalogAlarm(catalog, alarmTime)
+                    }
+                    lastRemovedObject = null
+                    onNewDataReceive(catalogList)
+                }
+                .subscribe { geofenceEntities ->
+                    restoreCatalogGeofences(catalog, geofenceEntities)
+                }
         }
+    }
+
+    private fun cancelAssociatedNotifications(catalogId: Long) {
+        val notificationId = catalogId.toInt()
+        NotificationManagerCompat.from(getApplication()).cancel(notificationId)
+    }
+
+    private fun restoreCatalogAlarm(catalog: Catalog, alarmTime: Calendar) {
+        registerAlarm(getApplication(), catalog.id,
+            catalog.name,
+            catalog.groupExpandStates,
+            alarmTime)
+    }
+
+    private fun restoreCatalogGeofences(catalog: Catalog, geofenceEntities: List<GeofenceEntity>) {
+        registerGeofences(getApplication(),
+            geofenceEntities,
+            catalog.id,
+            catalog.name,
+            catalog.groupExpandStates,
+            null)
     }
 
     override fun onOverlayBackgroundClick() {
@@ -213,23 +254,26 @@ class CatalogsViewModel(private val localRepository: LocalRepository) : ViewMode
 
     override fun onCatalogEnvelopeClick(catalog: Catalog) {
         fetchCatalogWithNetInfo(catalog)
-
     }
 
     private fun fetchCatalogWithNetInfo(catalog: Catalog) {
         disposables.add(localRepository.getCatalogNetInfo(catalog.id).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe { netInfo ->
                 _catalogAndNetInfoReceived.value = Event(Pair(catalog, netInfo))
+                _catalogEnvelopeClicked.value = Event(Unit)
             })
-        _catalogEnvelopeClicked.value = Event(Unit)
     }
 }
 
-class CatalogsVmFactory(private val localRepository: LocalRepository) : ViewModelProvider.Factory {
+class CatalogsVmFactory(
+    private val localRepository: LocalRepository,
+    private val application: Application
+) :
+    ViewModelProvider.AndroidViewModelFactory(application) {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CatalogsViewModel::class.java)) {
-            return CatalogsViewModel(localRepository) as T
+            return CatalogsViewModel(localRepository, application) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }

@@ -59,7 +59,7 @@ class ContactsFragment : Fragment() {
     }
 
     private fun createRecyclerView() {
-        adapter = ContactsAdapter(viewModel, viewModel)
+        adapter = ContactsAdapter(viewModel, viewModel, viewModel.inputFilter)
         recyclerView = binding.contactsRecyclerView
         val layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager

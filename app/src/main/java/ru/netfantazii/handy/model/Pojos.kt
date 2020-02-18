@@ -3,10 +3,8 @@ package ru.netfantazii.handy.model
 import android.net.Uri
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import androidx.databinding.ObservableField
 import androidx.room.Ignore
 import androidx.room.Relation
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.AuthCredential
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
@@ -24,8 +22,8 @@ class Catalog(
         longArrayOf()),
     alarmTime: Calendar? = null,
     fromNetwork: Boolean = false,
-    val totalElementCount: Int = 0,
-    val boughtElementCount: Int = 0
+    val totalProductCount: Int = 0,
+    val boughtProductCount: Int = 0
 ) : CatalogEntity(id, creationTime, position, name, groupExpandStates, alarmTime, fromNetwork) {
     @field:Ignore
     val buyStatus: BuyStatus
@@ -35,8 +33,8 @@ class Catalog(
     }
 
     private fun calculateStatus(): BuyStatus {
-        val isAllBought = totalElementCount == boughtElementCount
-        return if (totalElementCount != 0 && isAllBought) BuyStatus.BOUGHT
+        val isAllBought = totalProductCount == boughtProductCount
+        return if (totalProductCount != 0 && isAllBought) BuyStatus.BOUGHT
         else BuyStatus.NOT_BOUGHT
     }
 

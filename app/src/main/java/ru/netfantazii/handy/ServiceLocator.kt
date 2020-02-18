@@ -50,8 +50,8 @@ object ServiceLocator {
     }
 
     private fun getDatabaseInstance(context: Context): ProductDatabase {
-//        return productDatabase ?: buildDatabase(context)
-        return productDatabase ?: buildInMemoryDatabase(context)
+        return productDatabase ?: buildDatabase(context)
+//        return productDatabase ?: buildInMemoryDatabase(context)
     }
 
     private fun buildDatabase(context: Context): ProductDatabase {

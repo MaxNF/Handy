@@ -96,6 +96,8 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
 
     val user = ObservableField<User?>()
 
+    val inputFilter = InputFilter()
+
     private fun subscribeToContactUpdates() {
         contactsUpdateDisposable = remoteRepository.getContacts().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -112,7 +114,6 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
         _contactsUpdated.value = Event(Unit)
     }
 
-    // todo проверить поведение при множественных кликах до окончания логина. Возможно нужно будет обработать это поведение и поставить фильтр (флаг)
     fun onGoogleButtonClick() {
         if (user.get() == null) signIn() else signOut()
     }
@@ -180,7 +181,9 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
         )
         showPb(PbOperations.UPDATING_CLOUD_DATABASE)
         disposables.add(remoteRepository.removeContact(contactDataToDelete).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe { hidePb() })
+            .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                hidePb()
+            })
     }
 
     override fun onEditYesClick(action: ContactDialogAction, contact: Contact) {
@@ -195,11 +198,15 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
             when (action) {
                 ContactDialogAction.CREATE -> {
                     remoteRepository.addContact(newContactData).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe()
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                            hidePb()
+                        }
                 }
                 ContactDialogAction.RENAME -> {
                     remoteRepository.updateContact(newContactData).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe()
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                            hidePb()
+                        }
                 }
                 ContactDialogAction.RENAME_NOT_VALID -> {
                     throw UnsupportedOperationException("Can't create or update invalid contacts")

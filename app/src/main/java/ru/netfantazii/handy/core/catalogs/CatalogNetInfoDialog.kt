@@ -38,11 +38,11 @@ class CatalogNetInfoDialog : DialogFragment() {
     }
 
     private fun subscribeToEvents() {
-        dialogClickHandler.catalogAndNetInfoReceived.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { pair ->
-                binding.catalog = pair.first
-                binding.catalogNetInfo = pair.second
-            }
+        dialogClickHandler.catalogAndNetInfoReceived.observe(this, Observer { event ->
+            val catalog = event.peekContent().first
+            val catalogNetInfo = event.peekContent().second
+            binding.catalog = catalog
+            binding.catalogNetInfo = catalogNetInfo
         })
         allLiveDataList.add(dialogClickHandler.catalogAndNetInfoReceived)
     }

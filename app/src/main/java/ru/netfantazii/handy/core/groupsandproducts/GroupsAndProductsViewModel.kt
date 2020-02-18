@@ -30,8 +30,7 @@ class GroupsAndProductsViewModel(
     private var filteredGroupList = listOf<Group>()
     val shouldHintBeShown: Boolean
         get() {
-            val allProducts = filteredGroupList.flatMap { it.productList }
-            return allProducts.isEmpty() && filteredGroupList.isEmpty()
+            return getAllProducts().isEmpty() && filteredGroupList.isEmpty()
         }
 
     lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
@@ -130,6 +129,8 @@ class GroupsAndProductsViewModel(
     }
 
     override fun getGroupList(): List<Group> = filteredGroupList
+
+    fun getAllProducts(): List<Product> = filteredGroupList.flatMap { it.productList }
 
     private fun getFilteredGroupList(groupList: MutableList<Group>): List<Group> {
         return when {

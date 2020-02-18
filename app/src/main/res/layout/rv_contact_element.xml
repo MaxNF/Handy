@@ -8,6 +8,10 @@
         <import type="android.view.View" />
 
         <variable
+            name="inputFilter"
+            type="ru.netfantazii.handy.InputFilter" />
+
+        <variable
             name="contact"
             type="ru.netfantazii.handy.model.Contact" />
 
@@ -86,7 +90,7 @@
                 android:alpha="@{contact.valid ? 1f : 0.5f}"
                 android:background="@android:color/transparent"
                 android:clickable="@{contact.valid ? true : false}"
-                android:onClick="@{() -> handler.onContactEditClick(contact)}"
+                android:onClick="@{() -> inputFilter.netActionAllowed ? handler.onContactEditClick(contact) : null}"
                 android:src="@drawable/ic_edit"
                 app:layout_constraintBottom_toBottomOf="@+id/contact_name"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +101,7 @@
                 style="@style/RvElementIconStyle"
                 android:layout_height="50dp"
                 android:background="@android:color/transparent"
-                android:onClick="@{() -> handler.onContactDeleteClick(contact)}"
+                android:onClick="@{() -> inputFilter.netActionAllowed ? handler.onContactDeleteClick(contact) : null}"
                 android:src="@drawable/ic_delete_bucket"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

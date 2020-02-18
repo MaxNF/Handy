@@ -62,7 +62,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
             .commit()
     }
 
-    private fun unsubscribeFromEvents() {
+    protected open fun unsubscribeFromEvents() {
         allLiveDataList.forEach { it.removeObservers(this) }
     }
 

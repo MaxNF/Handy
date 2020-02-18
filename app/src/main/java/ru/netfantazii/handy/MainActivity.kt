@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -35,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import io.reactivex.plugins.RxJavaPlugins
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
+import ru.netfantazii.handy.core.preferences.SHOULD_SILENT_SIGN_IN_KEY
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
 import ru.netfantazii.handy.databinding.ActivityMainBinding
@@ -45,6 +45,36 @@ import ru.netfantazii.handy.extensions.showShortToast
 import ru.netfantazii.handy.model.PbOperations
 import ru.netfantazii.handy.model.User
 import ru.netfantazii.handy.model.database.ErrorCodes
+
+//todo Проверить и сделать, чтобы будильники и геометки перерегистрировался при перезагрузки телефона!
+//todo проверить все цветовые схемы со всеми элементами (особенно напоминания, т.к. там подсветку заголовков не видно)
+//todo попробовать другие фоны (градиент)
+
+//todo настроить цвета кнопок у диалогов, а также чтобы кнопки не склеивались
+//todo настроить правила безопасности в бэкенде
+//todo сделать новое обучение
+
+//todo устранить неприятную серую окантовку у продуктов/групп
+//todo проверить все лэйаты в лэндскейп режиме, если где-то будет некрасиво - подкорректировать
+//todo сделать ripple для всех мелких кнопок, в т.ч. и для каталогов и групп (если будет работать)
+
+//todo сделать красивые переходы между фрагментами
+//todo еще раз проверить уведомления на удаление при клике (в т.ч. и уведомления от присланных каталогов)
+//todo сделать подходящие заголовки для всех новых фрагментов
+
+//todo перевести все сообщения на русский язык
+//todo сделать меню О программа с предложением доната
+//todo сделать поп-ап спусти определенное кол-во запусков о донате
+
+//todo узнать как быть с апи ключом для карт и где его хранить (возможно перед релизом заменить на новый)
+//todo сделать новое приветственное сообщение с разделом: что нового в версии 1.3
+//todo сделать лимит на обновление секретного кода раз в 5 минут (мб через класс InputFilter)
+
+//--------------------- ОБНОВЛЕНИЕ
+//todo подготовить новые скриншоты
+//todo подготовить новое описание
+//todo сделать описание новых функций
+
 
 const val NOTIFICATION_CHANNEL_ID = "Handy notification channel"
 var user: User? = null
@@ -61,7 +91,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private lateinit var signInClient: GoogleSignInClient
     private val SIGN_IN_REQUEST_CODE = 0
-    private lateinit var progressBar: ProgressBar
     private lateinit var pbManager: ProgressBarManager
     private lateinit var pbText: TextView
 
@@ -112,6 +141,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setUpErrorHandler()
     }
+
+    override fun onResume() {
+        super.onResume()
+        tryToSilentSignIn()
+    }
+
+    private fun tryToSilentSignIn() {
+        if (viewModel.user.get() == null && shouldSilentSignIn()) {
+            val task = signInClient.silentSignIn()
+            task.addOnSuccessListener {
+                showGlobalProgressBar(PbOperations.SIGNING_IN)
+                viewModel.signInToFirebase(it)
+            }
+            task.addOnFailureListener {
+                // do nothing
+            }
+        }
+    }
+
+    private fun setShouldSilentSignInNextTime() {
+        sp.edit().putBoolean(SHOULD_SILENT_SIGN_IN_KEY, true).apply()
+    }
+
+    private fun setShouldNotSilentSignInNextTime() {
+        sp.edit().putBoolean(SHOULD_SILENT_SIGN_IN_KEY, false).apply()
+    }
+
+    private fun shouldSilentSignIn() = sp.getBoolean(SHOULD_SILENT_SIGN_IN_KEY, true)
 
     private fun setUpErrorHandler() {
         RxJavaPlugins.setErrorHandler { e ->
@@ -205,10 +262,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .apply()
     }
 
-//    private fun loadSortOrderToMemory() {
-//        currentSortOrder = getSortOrder(this)
-//    }
-
     private fun setFirstLaunchToFalse() {
         sp.edit().putBoolean(FIRST_LAUNCH_KEY, false).apply()
     }
@@ -259,7 +312,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onStart() {
         super.onStart()
         subscribeToEvents()
-        // todo возможно сделать silentSignIn() в гугл аккаунт
     }
 
     private fun subscribeToEvents() {
@@ -275,6 +327,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             signOutClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
+                    setShouldNotSilentSignInNextTime()
+
                     val insideShareFragment =
                         navController.currentDestination == navController.graph[R.id.shareFragment]
                     val insideContactsFragment =
@@ -290,6 +344,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             })
             allLiveDataList.add(signOutClicked)
+
+            signInComplete.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    setShouldSilentSignInNextTime()
+                }
+            })
+            allLiveDataList.add(signInComplete)
 
             catalogSentSuccessfully.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { catalogName ->
@@ -369,17 +430,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun showGlobalProgressBar(operation: PbOperations) {
         val text = when (operation) {
-            PbOperations.UPDATING_CLOUD_DATABASE -> "updating cloud database"
-            PbOperations.DELETING_ACCOUNT -> "deleting account"
-            PbOperations.SENDING_CATALOG -> "sending catalog"
-            PbOperations.SIGNING_OUT -> "signing out"
-            PbOperations.SIGNING_IN -> "signing in"
+            PbOperations.UPDATING_CLOUD_DATABASE -> getString(R.string.updating_cloud_db)
+            PbOperations.DELETING_ACCOUNT -> getString(R.string.deleting_account)
+            PbOperations.SENDING_CATALOG -> getString(R.string.sending_catalog)
+            PbOperations.SIGNING_OUT -> getString(R.string.signing_out)
+            PbOperations.SIGNING_IN -> getString(R.string.signing_in)
         }
+        viewModel.inputFilter.netActionAllowed = false
         pbText.text = text
         pbManager.show()
     }
 
     private fun hideGlobalProgressBar() {
+        viewModel.inputFilter.netActionAllowed = true
         pbManager.hide()
     }
 

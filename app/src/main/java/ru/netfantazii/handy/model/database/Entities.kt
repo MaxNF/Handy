@@ -69,7 +69,6 @@ open class ProductEntity(
     var buyStatus: BuyStatus
 ) : BaseEntity(id, creationTime, position, name)
 
-// todo сделать удаление напоминаний при удалении каталогов
 @Entity(
     foreignKeys = [ForeignKey(
         entity = CatalogEntity::class,

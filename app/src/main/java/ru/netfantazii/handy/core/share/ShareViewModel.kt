@@ -11,7 +11,6 @@ import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.Group
 import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
-import ru.netfantazii.handy.repositories.RemoteRepository
 
 class ShareViewModel(
     private val catalogId: Long,
@@ -22,6 +21,10 @@ class ShareViewModel(
 
     private val _sendClicked = MutableLiveData<Event<Map<String, Any>>>()
     val sendClicked: LiveData<Event<Map<String, Any>>> = _sendClicked
+
+    private val _sendClickedNoRecipient = MutableLiveData<Event<Unit>>()
+    val sendClickedNoRecipient: LiveData<Event<Unit>> = _sendClickedNoRecipient
+
 
     private val disposables = CompositeDisposable()
     private lateinit var parsedGroups: List<Map<String, Any>>
@@ -48,14 +51,18 @@ class ShareViewModel(
         }
     }
 
-    fun onSendClick(contact: Contact) {
-        val content = mapOf(
-            RemoteDbSchema.MESSAGE_TO_SECRET to contact.secret,
-            RemoteDbSchema.MESSAGE_CATALOG_NAME to catalogName,
-            RemoteDbSchema.MESSAGE_CATALOG_COMMENT to comment,
-            RemoteDbSchema.MESSAGE_CATALOG_CONTENT to parsedGroups
-        )
-        _sendClicked.value = Event(content)
+    fun onSendClick(contact: Contact?) {
+        if (contact != null) {
+            val content = mapOf(
+                RemoteDbSchema.MESSAGE_TO_SECRET to contact.secret,
+                RemoteDbSchema.MESSAGE_CATALOG_NAME to catalogName,
+                RemoteDbSchema.MESSAGE_CATALOG_COMMENT to comment,
+                RemoteDbSchema.MESSAGE_CATALOG_CONTENT to parsedGroups
+            )
+            _sendClicked.value = Event(content)
+        } else {
+            _sendClickedNoRecipient.value = Event(Unit)
+        }
     }
 }
 

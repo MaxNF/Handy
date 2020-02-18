@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
@@ -14,8 +13,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.NetworkViewModel
+import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.contacts.EditContactDialog
 import ru.netfantazii.handy.databinding.ShareFragmentBinding
+import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.model.Contact
 
 class ShareFragment : Fragment() {
@@ -77,6 +78,12 @@ class ShareFragment : Fragment() {
                 }
             })
             allLiveDataList.add(sendClicked)
+
+            sendClickedNoRecipient.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let {
+                    showLongToast(requireContext(), getString(R.string.no_recepient_error))
+                }
+            })
         }
 
         with(networkViewModel) {

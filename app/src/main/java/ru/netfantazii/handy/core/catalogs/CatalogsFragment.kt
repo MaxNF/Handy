@@ -47,7 +47,7 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         viewModel =
             ViewModelProviders.of(
                 this,
-                CatalogsVmFactory(repository)
+                CatalogsVmFactory(repository, activity!!.application)
             ).get(CatalogsViewModel::class.java)
     }
 
@@ -228,7 +228,7 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
     private fun openShareFragment(catalog: Catalog) {
         val direction = CatalogsFragmentDirections.actionCatalogsFragmentToShareFragment(catalog.id,
-            catalog.name, catalog.totalElementCount.toString())
+            catalog.name, catalog.totalProductCount.toString())
         navController.navigate(direction)
     }
 

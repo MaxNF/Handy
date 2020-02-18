@@ -156,4 +156,13 @@
     <string name="contact_dialog_secret_pattern_error">The code must contain only numbers and latin characters</string>
     <string name="share">Share</string>
     <string name="set_notification">Set notification</string>
+    <string name="updating_cloud_db">updating cloud database</string>
+    <string name="deleting_account">deleting account</string>
+    <string name="sending_catalog">sending catalog</string>
+    <string name="signing_out">signing out</string>
+    <string name="signing_in">signing in</string>
+    <string name="change_secret_dialog_message">You will have to send a new code to your contacts to be able to receive shopping lists from them</string>
+    <string name="adding_geofence_failed">Error while adding the geofence</string>
+    <string name="catalog_creation_time">%1$s %2$s</string>
+    <string name="no_recepient_error">No recipient has been chosen</string>
 </resources>

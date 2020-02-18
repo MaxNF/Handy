@@ -10,6 +10,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstant
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder
+import ru.netfantazii.handy.InputFilter
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.RvContactElementBinding
 import ru.netfantazii.handy.model.Contact
@@ -27,16 +28,18 @@ interface ContactsStorage {
 class ContactsViewHolder(private val binding: RvContactElementBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(contact: Contact, handler: ContactsClickHandler) {
+    fun bind(contact: Contact, handler: ContactsClickHandler, inputFilter: InputFilter) {
         binding.handler = handler
         binding.contact = contact
+        binding.inputFilter = inputFilter
         binding.executePendingBindings()
     }
 }
 
 class ContactsAdapter(
     private val clickHandler: ContactsClickHandler,
-    private val contactsStorage: ContactsStorage
+    private val contactsStorage: ContactsStorage,
+    private val inputFilter: InputFilter
 ) : RecyclerView.Adapter<ContactsViewHolder>() {
 
     private val TAG = "ContactsAdapter"
@@ -52,6 +55,6 @@ class ContactsAdapter(
     override fun getItemCount(): Int = contacts.size
 
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
-        holder.bind(contacts[position], clickHandler)
+        holder.bind(contacts[position], clickHandler, inputFilter)
     }
 }
