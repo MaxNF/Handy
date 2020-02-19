@@ -3,6 +3,7 @@ package ru.netfantazii.handy.extensions
 import android.Manifest
 import android.R.attr.label
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -14,6 +15,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.core.notifications.BUNDLE_NOTIFICATION_ID_KEY
+import ru.netfantazii.handy.core.notifications.CANCEL_NOTIFICATION_ACTION
+import ru.netfantazii.handy.core.notifications.NotificationBroadcastReceiver
 import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.model.Catalog
 import ru.netfantazii.handy.model.SortOrder
@@ -97,4 +101,12 @@ fun getNewCatalogPosition(catalogList: List<Catalog>): Int {
         SortOrder.NEWEST_FIRST -> 0
         SortOrder.OLDEST_FIRST -> catalogList.size
     }
+}
+
+fun getCancelPendingIntentForNotifications(context: Context, notificationId: Int): PendingIntent {
+    val cancelIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
+        action = CANCEL_NOTIFICATION_ACTION
+        putExtra(BUNDLE_NOTIFICATION_ID_KEY, notificationId)
+    }
+    return PendingIntent.getBroadcast(context, notificationId, cancelIntent, 0)
 }

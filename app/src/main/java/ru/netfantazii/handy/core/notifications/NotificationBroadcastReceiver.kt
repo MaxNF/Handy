@@ -18,6 +18,7 @@ import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
 import ru.netfantazii.handy.extensions.registerAlarm
 import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.model.catalogNotificationContent
@@ -37,7 +38,6 @@ const val BUNDLE_KEY = "bundle_key"
 class NotificationBroadcastReceiver : BroadcastReceiver() {
     private val TAG = "NotificationBroadcastRe"
     private lateinit var context: Context
-    private lateinit var onCancelClickIntent: PendingIntent
     private var notificationId = 0
     private var catalogId: Long = 0L
     private var catalogName: String? = null
@@ -65,13 +65,6 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
         catalogName = bundle.getString(BUNDLE_CATALOG_NAME_KEY)
         groupExpandState = bundle.getParcelable(BUNDLE_EXPAND_STATE_KEY)
         notificationId = catalogId.toInt()
-
-        val cancelIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
-            action = CANCEL_NOTIFICATION_ACTION
-            putExtra(BUNDLE_NOTIFICATION_ID_KEY, notificationId)
-        }
-        onCancelClickIntent =
-            PendingIntent.getBroadcast(context, catalogId.toInt(), cancelIntent, 0)
 
         when (intent.action) {
             ALARM_INTENT_ACTION -> {
@@ -142,7 +135,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .setContentIntent(toProductPendingIntent)
             .addAction(0,
                 context.getString(R.string.notification_cancel_label),
-                onCancelClickIntent)
+                getCancelPendingIntentForNotifications(context, notificationId))
             .addAction(0,
                 context.getString(R.string.alarm_notification_action_label),
                 toAlarmPendingIntent)
@@ -182,7 +175,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .setContentIntent(toProductPendingIntent)
             .addAction(0,
                 context.getString(R.string.notification_cancel_label),
-                onCancelClickIntent)
+                getCancelPendingIntentForNotifications(context, notificationId))
             .build()
     }
 

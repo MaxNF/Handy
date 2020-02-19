@@ -15,6 +15,7 @@ import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
+import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
 import ru.netfantazii.handy.extensions.getNewCatalogPosition
 import ru.netfantazii.handy.extensions.reassignPositions
 import ru.netfantazii.handy.model.*
@@ -157,11 +158,6 @@ class CloudToLocalDownloader(
         catalog: Catalog,
         notificationId: Int
     ): Notification {
-        val cancelIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
-            action = CANCEL_NOTIFICATION_ACTION
-            putExtra(BUNDLE_NOTIFICATION_ID_KEY, notificationId)
-        }
-        val onCancelClickIntent = PendingIntent.getBroadcast(context, 0, cancelIntent, 0)
 
         return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.notification_icon)
@@ -174,7 +170,7 @@ class CloudToLocalDownloader(
             .setContentIntent(toProductsPendingIntent(catalog))
             .addAction(0,
                 context.getString(R.string.notification_cancel_label),
-                onCancelClickIntent)
+                getCancelPendingIntentForNotifications(context, notificationId))
             .build()
     }
 
