@@ -25,9 +25,9 @@ open class BaseDialog : DialogFragment() {
 
 class BuyAllDialog : BaseDialog() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
             .setTitle(R.string.dialog_buy_all_msg)
-            .setPositiveButton(R.string.dialog_yes) { _, _ -> dialogClickHandler.onBuyAllYesClick() }
+            .setPositiveButton(R.string.dialog_mark_as_bought_action) { _, _ -> dialogClickHandler.onBuyAllYesClick() }
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()
     }
@@ -35,9 +35,9 @@ class BuyAllDialog : BaseDialog() {
 
 class CancelAllDialog : BaseDialog() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
             .setTitle(R.string.dialog_cancel_all_msg)
-            .setPositiveButton(R.string.dialog_yes) { _, _ -> dialogClickHandler.onCancelAllYesClick() }
+            .setPositiveButton(R.string.dialog_mark_as_non_bought_action) { _, _ -> dialogClickHandler.onCancelAllYesClick() }
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()
     }
@@ -45,9 +45,9 @@ class CancelAllDialog : BaseDialog() {
 
 class DeleteAllDialog : BaseDialog() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
             .setTitle(R.string.dialog_delete_all_msg)
-            .setPositiveButton(R.string.dialog_yes) { _, _ -> dialogClickHandler.onDeleteAllYesClick() }
+            .setPositiveButton(R.string.dialog_clear_action) { _, _ -> dialogClickHandler.onDeleteAllYesClick() }
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()
     }

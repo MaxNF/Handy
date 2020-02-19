@@ -122,11 +122,13 @@ class EditContactDialog :
         }
     }
 
-    private fun createDialog(dialogView: View): AlertDialog = AlertDialog.Builder(activity)
-        .setView(dialogView)
-        .setPositiveButton(R.string.apply_button, null)
-        .setNegativeButton(R.string.dialog_cancel, null)
-        .create()
+    private fun createDialog(dialogView: View) =
+        AlertDialog.Builder(activity, R.style.BaseDialogTheme)
+            .setView(dialogView)
+            .setPositiveButton(R.string.apply_button, null)
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .create()
+
 }
 
 class DeleteContactDialog : BaseDialog() {
@@ -137,9 +139,10 @@ class DeleteContactDialog : BaseDialog() {
             ?: throw IllegalArgumentException("Contact can't be null here!")
         if (action != ContactDialogAction.DELETE) throw UnsupportedOperationException("Action should be \"DELETE\"")
 
-        return AlertDialog.Builder(activity)
-            .setTitle("${contact.name} is going to be deleted. Are you sure? (this cannot be undone)")
-            .setPositiveButton(R.string.dialog_yes) { _, _ ->
+        return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
+            .setTitle(getString(R.string.delete_contact_dialog_title))
+            .setMessage(getString(R.string.delete_contact_dialog_message, contact.name))
+            .setPositiveButton(R.string.dialog_delete_action) { _, _ ->
                 dialogClickHandler.onDeleteYesClick(contact)
             }
             .setNegativeButton(R.string.dialog_cancel, null)

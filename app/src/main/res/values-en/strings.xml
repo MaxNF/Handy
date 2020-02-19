@@ -169,4 +169,13 @@
     <string name="share_fragment_label">Send list</string>
     <string name="donate_button">Donate</string>
     <string name="change_secret_timeout_message">You can\'t change the secret code more than once per minute</string>
+    <string name="delete_contact_dialog_message">\"%1$s\" contact is going to be deleted. Are you sure? (this cannot be undone)</string>
+    <string name="dialog_delete_action">Delete</string>
+    <string name="dialog_mark_as_bought_action">Mark as bought</string>
+    <string name="dialog_mark_as_non_bought_action">Mark as non bought</string>
+    <string name="dialog_clear_action">Clear</string>
+    <string name="dialog_delete_account_action">Delete</string>
+    <string name="dialog_change_secret_action">Change</string>
+    <string name="delete_account_dialog_title">Delete account?</string>
+    <string name="change_secret_dialog_title">Change secret code?</string>
 </resources>

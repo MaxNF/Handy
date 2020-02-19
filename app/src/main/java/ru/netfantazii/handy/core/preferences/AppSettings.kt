@@ -122,9 +122,9 @@ class DeleteAccConfirmDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
-        return AlertDialog.Builder(context)
-            .setTitle(getString(R.string.are_you_sure))
-            .setPositiveButton(getString(R.string.dialog_yes)) { _, _ ->
+        return AlertDialog.Builder(context, R.style.BaseDialogTheme)
+            .setTitle(getString(R.string.delete_account_dialog_title))
+            .setPositiveButton(getString(R.string.dialog_delete_account_action)) { _, _ ->
                 viewModel.onDeleteAccountYesClick()
             }
             .setNegativeButton(getString(R.string.dialog_cancel), null)
@@ -135,10 +135,10 @@ class DeleteAccConfirmDialog : DialogFragment() {
 class ChangeSecretConfirmDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
-        return AlertDialog.Builder(context)
-            .setTitle(getString(R.string.are_you_sure))
+        return AlertDialog.Builder(context, R.style.BaseDialogTheme)
+            .setTitle(getString(R.string.change_secret_dialog_title))
             .setMessage(R.string.change_secret_dialog_message)
-            .setPositiveButton(getString(R.string.dialog_yes)) { _, _ ->
+            .setPositiveButton(getString(R.string.dialog_change_secret_action)) { _, _ ->
                 viewModel.reloadSecretCode()
             }
             .setNegativeButton(getString(R.string.dialog_cancel), null)

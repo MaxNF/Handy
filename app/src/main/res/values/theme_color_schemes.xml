@@ -44,6 +44,21 @@
         <item name="fabIconTintColor">@color/fabIconTintColorWhite</item>
     </style>
 
+    <style name="BaseDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:buttonBarNegativeButtonStyle">@style/NegativeButtonBarStyle</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/PositiveButtonBarStyle</item>
+    </style>
+
+    <style name="BaseButtonBarStyle">
+        <item name="android:textColor">?attr/toolbarElementColor</item>
+    </style>
+
+    <style name="NegativeButtonBarStyle" parent="BaseButtonBarStyle">
+        <item name="android:layout_marginEnd">16dp</item>
+    </style>
+
+    <style name="PositiveButtonBarStyle" parent="BaseButtonBarStyle" />
+
     <!--Main theme (Purple)-->
     <style name="Purple" parent="BaseWhiteTitles">
         <item name="colorPrimary">#9c27b0</item>
