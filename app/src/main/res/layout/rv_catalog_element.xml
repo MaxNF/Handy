@@ -55,7 +55,7 @@
                 <ImageButton
                     android:id="@+id/ib_element_edit"
                     style="@style/RvElementIconStyle"
-                    android:background="@android:color/transparent"
+                    android:background="?actionBarItemBackground"
                     android:onClick="@{() -> handler.onCatalogEditClick(catalog)}"
                     android:src="@drawable/ic_edit"
                     app:layout_constraintBottom_toBottomOf="@+id/ib_notification"
@@ -65,7 +65,7 @@
                 <ImageButton
                     android:id="@+id/ib_notification"
                     style="@style/RvElementIconStyle"
-                    android:background="@android:color/transparent"
+                    android:background="?actionBarItemBackground"
                     android:onClick="@{() -> handler.onCatalogNotificationClick(catalog)}"
                     android:src="@drawable/ic_notification"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"
@@ -76,7 +76,7 @@
                 <ImageButton
                     android:id="@+id/ib_share"
                     style="@style/RvElementIconStyle"
-                    android:background="@android:color/transparent"
+                    android:background="?actionBarItemBackground"
                     android:onClick="@{() -> handler.onCatalogShareClick(catalog)}"
                     android:src="@drawable/ic_share"
                     android:visibility="@{user == null ? View.GONE : View.VISIBLE}"

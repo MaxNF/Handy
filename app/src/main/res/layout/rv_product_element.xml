@@ -40,7 +40,7 @@
                 <ImageButton
                     android:id="@+id/ib_element_edit"
                     style="@style/RvElementIconStyle"
-                    android:background="@android:color/transparent"
+                    android:background="?actionBarItemBackground"
                     android:src="@drawable/ic_edit"
                     android:onClick="@{() -> productHandler.onProductEditClick(product)}"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"

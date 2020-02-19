@@ -52,21 +52,21 @@
                 <ImageButton
                     android:id="@+id/ib_element_edit"
                     style="@style/RvElementIconStyle"
-                    android:background="@android:color/transparent"
+                    android:background="?actionBarItemBackground"
                     android:src="@drawable/ic_edit"
                     android:onClick="@{() -> groupHandler.onGroupEditClick(group)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/area_for_expand_click"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/iv_add_ingredient"
                     android:layout_width="60dp"
                     android:layout_height="0dp"
                     android:onClick="@{() -> groupHandler.onGroupCreateProductClick(group)}"
-                    android:paddingTop="2dp"
                     android:scaleType="center"
-                    android:src="@drawable/ic_add_ingredient"
+                    android:background="?actionBarItemBackground"
+                    android:src="@drawable/ic_add_product_vector"
                     android:textColor="?attr/listTextColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -119,8 +119,10 @@
                     app:hasRipple="@{true}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
                     tools:ignore="UselessParent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
