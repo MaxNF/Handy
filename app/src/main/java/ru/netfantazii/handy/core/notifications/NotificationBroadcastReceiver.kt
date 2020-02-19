@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.core.notifications
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -11,10 +12,15 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.GeofencingEvent
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.extensions.registerAlarm
+import ru.netfantazii.handy.extensions.registerGeofences
+import ru.netfantazii.handy.model.catalogNotificationContent
 import java.util.NoSuchElementException
 
 const val ALARM_INTENT_ACTION = "ru.netfantazii.handy.ALARM_GOES_OFF"
@@ -39,40 +45,47 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     lateinit var localRepository: LocalRepository
 
     override fun onReceive(context: Context, intent: Intent) {
-
         this.context = context
+        Log.d(TAG, "onReceive: ${intent.action}")
         if (intent.action == CANCEL_NOTIFICATION_ACTION) {
             val notificationId = intent.getIntExtra(BUNDLE_NOTIFICATION_ID_KEY, -1)
             cancelNotification(notificationId)
-        } else {
-            localRepository = (context.applicationContext as HandyApplication).localRepository
-            val bundle = intent.extras!!.getBundle(BUNDLE_KEY)!!
-            catalogId = bundle.getLong(BUNDLE_CATALOG_ID_KEY)
-            catalogName = bundle.getString(BUNDLE_CATALOG_NAME_KEY)
-            groupExpandState = bundle.getParcelable(BUNDLE_EXPAND_STATE_KEY)
-            notificationId = catalogId.toInt()
+            return
+        }
 
-            val cancelIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
-                action = CANCEL_NOTIFICATION_ACTION
-                putExtra(BUNDLE_NOTIFICATION_ID_KEY, notificationId)
-            }
-            onCancelClickIntent =
-                PendingIntent.getBroadcast(context, catalogId.toInt(), cancelIntent, 0)
+        localRepository = (context.applicationContext as HandyApplication).localRepository
 
-            when (intent.action) {
-                ALARM_INTENT_ACTION -> {
-                    removeAlarmFromDb()
-                    sendAlarmNotification()
-                }
-                GEOFENCE_INTENT_ACTION -> {
-                    val geofencingEvent = GeofencingEvent.fromIntent(intent)
-                    val geofenceIds =
-                        geofencingEvent.triggeringGeofences.map { it.requestId.toLong() }
-                            .toLongArray()
-                    sendGeofenceNotification(geofenceIds)
-                }
-                else -> throw NoSuchElementException("Unknown intent action.")
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+            reregisterAllGeofences()
+            return
+        }
+
+        val bundle = intent.extras!!.getBundle(BUNDLE_KEY)!!
+        catalogId = bundle.getLong(BUNDLE_CATALOG_ID_KEY)
+        catalogName = bundle.getString(BUNDLE_CATALOG_NAME_KEY)
+        groupExpandState = bundle.getParcelable(BUNDLE_EXPAND_STATE_KEY)
+        notificationId = catalogId.toInt()
+
+        val cancelIntent = Intent(context, NotificationBroadcastReceiver::class.java).apply {
+            action = CANCEL_NOTIFICATION_ACTION
+            putExtra(BUNDLE_NOTIFICATION_ID_KEY, notificationId)
+        }
+        onCancelClickIntent =
+            PendingIntent.getBroadcast(context, catalogId.toInt(), cancelIntent, 0)
+
+        when (intent.action) {
+            ALARM_INTENT_ACTION -> {
+                removeAlarmFromDb()
+                sendAlarmNotification()
             }
+            GEOFENCE_INTENT_ACTION -> {
+                val geofencingEvent = GeofencingEvent.fromIntent(intent)
+                val geofenceIds =
+                    geofencingEvent.triggeringGeofences.map { it.requestId.toLong() }
+                        .toLongArray()
+                sendGeofenceNotification(geofenceIds)
+            }
+            else -> throw NoSuchElementException("Unknown intent action.")
         }
     }
 
@@ -182,5 +195,49 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
 
     private fun cancelNotification(notificationId: Int) {
         NotificationManagerCompat.from(context).cancel(notificationId)
+    }
+
+    @SuppressLint("CheckResult")
+    private fun reregisterAllGeofences() {
+        val pendingResult = goAsync()
+        localRepository.getAllGeofences()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { geofences ->
+                val geofencesByCatalogId = geofences.groupBy { it.catalogId }
+                localRepository.getCatalogsSignleTime()
+                    .subscribeOn(Schedulers.io())
+                    .map { catalogs ->
+                        val catalogNotificationContents = catalogs.map {
+                            catalogNotificationContent(it.id,
+                                it.name,
+                                it.groupExpandStates,
+                                it.alarmTime,
+                                geofencesByCatalogId[it.id] ?: listOf())
+                        }
+                        catalogNotificationContents
+                    }
+            }
+            .doAfterTerminate { pendingResult.finish() }
+            .subscribe({ catalogNotificationContents ->
+                catalogNotificationContents.forEach {
+                    registerGeofences(context,
+                        it.geofenceEntities,
+                        it.catalogId,
+                        it.catalogName,
+                        it.groupExpandStates,
+                        null)
+
+                    if (it.alarmTime != null) {
+                        registerAlarm(context,
+                            it.catalogId,
+                            it.catalogName,
+                            it.groupExpandStates,
+                            it.alarmTime)
+                    }
+                }
+            }, {
+                // do nothing
+            })
     }
 }

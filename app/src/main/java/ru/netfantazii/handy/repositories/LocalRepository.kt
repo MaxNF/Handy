@@ -58,6 +58,7 @@ interface LocalRepository {
 
     fun getCatalogNetInfo(catalogId: Long): Single<CatalogNetInfoEntity>
     fun getCatalogsSignleTime(): Single<MutableList<Catalog>>
+    fun getAllGeofences(): Single<List<GeofenceEntity>>
 }
 
 class LocalRepositoryImpl(db: ProductDatabase) :
@@ -207,6 +208,8 @@ class LocalRepositoryImpl(db: ProductDatabase) :
     override fun getCatalogNetInfo(catalogId: Long): Single<CatalogNetInfoEntity> =
         netInfoDao.getCatalogNetInfo(catalogId)
 
-    override fun getCatalogsSignleTime(): Single<MutableList<Catalog>> = catalogDao.getCatalogsSignleTime()
+    override fun getCatalogsSignleTime(): Single<MutableList<Catalog>> =
+        catalogDao.getCatalogsSignleTime()
 
+    override fun getAllGeofences(): Single<List<GeofenceEntity>> = geofenceDao.getAllGeofences()
 }

@@ -9,6 +9,7 @@ import com.google.firebase.auth.AuthCredential
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.model.database.CatalogEntity
+import ru.netfantazii.handy.model.database.GeofenceEntity
 import ru.netfantazii.handy.model.database.GroupEntity
 import ru.netfantazii.handy.model.database.ProductEntity
 import java.util.*
@@ -119,3 +120,12 @@ data class User(
     var secret: String,
     val credential: AuthCredential
 ) : BaseObservable()
+
+data class catalogNotificationContent(
+    val catalogId: Long,
+    val catalogName: String,
+    val groupExpandStates: RecyclerViewExpandableItemManager.SavedState = RecyclerViewExpandableItemManager.SavedState(
+        longArrayOf()),
+    val alarmTime: Calendar? = null,
+    var geofenceEntities: List<GeofenceEntity>
+)

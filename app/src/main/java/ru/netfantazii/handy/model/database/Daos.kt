@@ -188,6 +188,9 @@ abstract class GeofenceDao : BaseDao<GeofenceEntity>() {
 
     @Insert
     abstract fun addGeofenceAndGetId(geofenceEntity: GeofenceEntity): Single<Long>
+
+    @Query("SELECT * FROM GeofenceEntity")
+    abstract fun getAllGeofences(): Single<List<GeofenceEntity>>
 }
 
 @Dao
