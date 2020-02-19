@@ -21,6 +21,7 @@ import ru.netfantazii.handy.customviews.MyPreferenceButton
 import ru.netfantazii.handy.model.SortOrder
 import ru.netfantazii.handy.extensions.getSortOrder
 import ru.netfantazii.handy.extensions.reloadActivity
+import ru.netfantazii.handy.extensions.showShortToast
 import ru.netfantazii.handy.model.User
 
 const val FIRST_LAUNCH_KEY = "first_launch"
@@ -107,8 +108,12 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
 
     private fun showChangeSecretConfirmationDialog() {
         if (viewModel.inputFilter.netActionAllowed) {
-            val dialog = ChangeSecretConfirmDialog()
-            dialog.show(childFragmentManager, "change_secret_dialog")
+            if (viewModel.inputFilter.changeSecretIsNotInTimeout) {
+                val dialog = ChangeSecretConfirmDialog()
+                dialog.show(childFragmentManager, "change_secret_dialog")
+            } else {
+                showShortToast(requireContext(), getString(R.string.change_secret_timeout_message))
+            }
         }
     }
 }

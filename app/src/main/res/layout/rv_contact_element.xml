@@ -27,7 +27,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             style="@style/ListElementElevation"
-            android:layout_width="250dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@color/catalogColor"
@@ -48,7 +48,7 @@
                 android:paddingBottom="8dp"
                 android:text="@{contact.name}"
                 android:textColor="?attr/listTextColor"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="@+id/secret_code"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -68,7 +68,7 @@
 
             <TextView
                 android:id="@+id/secret_code"
-                style="@style/TextCatalog"
+                android:textSize="16sp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_gravity="center_horizontal"
@@ -86,7 +86,7 @@
             <ImageButton
                 android:id="@+id/contact_edit_button"
                 style="@style/RvElementIconStyle"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:alpha="@{contact.valid ? 1f : 0.5f}"
                 android:background="?actionBarItemBackground"
                 android:clickable="@{contact.valid ? true : false}"
@@ -99,7 +99,7 @@
             <ImageButton
                 android:id="@+id/contact_delete_button"
                 style="@style/RvElementIconStyle"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:background="?actionBarItemBackground"
                 android:onClick="@{() -> inputFilter.netActionAllowed ? handler.onContactDeleteClick(contact) : null}"
                 android:src="@drawable/ic_delete_bucket"

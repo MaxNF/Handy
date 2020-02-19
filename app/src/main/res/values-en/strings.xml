@@ -165,4 +165,8 @@
     <string name="adding_geofence_failed">Error while adding the geofence</string>
     <string name="catalog_creation_time">%1$s %2$s</string>
     <string name="no_recepient_error">No recipient has been chosen</string>
+    <string name="notifications_fragment_label">Notifications</string>
+    <string name="share_fragment_label">Send list</string>
+    <string name="donate_button">Donate</string>
+    <string name="change_secret_timeout_message">You can\'t change the secret code more than once per minute</string>
 </resources>

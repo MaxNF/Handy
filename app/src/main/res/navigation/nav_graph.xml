@@ -12,13 +12,25 @@
         tools:layout="@layout/catalogs_fragment">
         <action
             android:id="@+id/action_catalogs_fragment_to_products_fragment"
-            app:destination="@id/products_fragment" />
+            app:destination="@id/products_fragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_catalogs_fragment_to_map"
-            app:destination="@id/notifications_fragment" />
+            app:destination="@id/notifications_fragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_catalogs_fragment_to_shareFragment"
-            app:destination="@id/shareFragment" />
+            app:destination="@id/shareFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/products_fragment"
@@ -41,10 +53,18 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_products_fragment_to_shareFragment"
-            app:destination="@id/shareFragment" />
+            app:destination="@id/shareFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_products_fragment_to_notifications_fragment"
-            app:destination="@id/notifications_fragment" />
+            app:destination="@id/notifications_fragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/navigation_app_settings"
@@ -52,14 +72,22 @@
         android:label="@string/settings_fragment_label" />
     <action
         android:id="@+id/action_global_appSettings"
-        app:destination="@id/navigation_app_settings" />
+        app:destination="@id/navigation_app_settings"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     <fragment
         android:id="@+id/navigation_help_fragment"
         android:name="ru.netfantazii.handy.core.help.HelpFragment"
         android:label="@string/help_fragment_label" />
     <action
         android:id="@+id/action_global_helpFragment"
-        app:destination="@id/navigation_help_fragment"/>
+        app:destination="@id/navigation_help_fragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     <fragment
         android:id="@+id/welcomeFragment"
         android:name="ru.netfantazii.handy.core.welcome.WelcomeFragment"
@@ -68,11 +96,14 @@
     <action
         android:id="@+id/action_global_welcomeFragment"
         app:destination="@+id/welcomeFragment"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"
         app:popUpTo="@+id/catalogs_fragment" />
     <fragment
         android:id="@+id/notifications_fragment"
         android:name="ru.netfantazii.handy.core.notifications.NotificationTabFragment"
-        android:label="Notifications">
+        android:label="@string/notifications_fragment_label">
         <argument
             android:name="catalogId"
             app:argType="long" />
@@ -86,7 +117,7 @@
     <fragment
         android:id="@+id/shareFragment"
         android:name="ru.netfantazii.handy.core.share.ShareFragment"
-        android:label="ShareFragment">
+        android:label="@string/share_fragment_label">
         <argument
             android:name="catalogId"
             app:argType="long" />
@@ -100,8 +131,12 @@
     <fragment
         android:id="@+id/contactsFragment"
         android:name="ru.netfantazii.handy.core.contacts.ContactsFragment"
-        android:label="ContactsFragment" />
+        android:label="@string/contacts_fragment_label" />
     <action
         android:id="@+id/action_global_contactsFragment"
-        app:destination="@+id/contactsFragment" />
+        app:destination="@+id/contactsFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 </navigation>

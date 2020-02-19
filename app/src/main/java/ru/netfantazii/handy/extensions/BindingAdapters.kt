@@ -101,17 +101,8 @@ fun setStripeWidth(view: View, percent: Float) {
 
 @BindingAdapter("app:formatCalendar")
 fun formatCalendar(view: TextView, calendar: Calendar) {
-//    val dateFormatter = DateFormat.getDateInstance(
-//        DateFormat.LONG)
-//    dateFormatter.timeZone = calendar.timeZone
-//    val dateString = dateFormatter.format(calendar.time)
 val formatter = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT)
     formatter.timeZone = calendar.timeZone
-//    val timeFormatter = DateFormat.getTimeInstance()
-//    timeFormatter.timeZone = calendar.timeZone
-//    val timeString = timeFormatter.format(calendar.time)
-//    val fullTimeString =
-//        view.context.getString(R.string.catalog_creation_time, dateString, timeString)
     view.text = formatter.format(calendar.time)
 }
 

@@ -7,11 +7,10 @@
 
         <Button
             android:id="@+id/begin_button"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:background="?attr/colorPrimary"
-            android:foreground="?attr/selectableItemBackground"
             android:text="@string/welcome_button_text"
             android:textColor="?attr/toolbarElementColor"
             android:textSize="16sp"

@@ -31,6 +31,7 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
     private lateinit var notificationTabAdapter: NotificationTabAdapter
     private val fragmentArgs: NotificationTabFragmentArgs by navArgs()
     private var mapPermissionGranted = false
+    private lateinit var tabLayout: TabLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +50,7 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
         viewPager.adapter = notificationTabAdapter
         viewPager.isUserInputEnabled = false
 
-        val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
+        tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
@@ -103,10 +104,11 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (grantResults.any { it != PackageManager.PERMISSION_GRANTED }) {
+        if (grantResults.isEmpty() || grantResults.any { it != PackageManager.PERMISSION_GRANTED }) {
             GrantPermissionsManuallyDialog().show(childFragmentManager, "permission_dialog")
         } else {
             mapPermissionGranted = true
+            tabLayout.selectTab(tabLayout.getTabAt(1))
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -138,7 +140,7 @@ class GrantPermissionsManuallyDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity)
             .setMessage(R.string.grant_perm_manually_message)
-            .setNegativeButton(R.string.dialog_cancel, null)
+            .setNegativeButton(R.string.dialog_ok_button, null)
             .create()
     }
 }

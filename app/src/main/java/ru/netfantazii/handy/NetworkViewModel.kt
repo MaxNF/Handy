@@ -285,9 +285,12 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
             .subscribe { newSecret ->
                 user.get()!!.secret = newSecret
                 user.notifyPropertyChanged(BR.secret)
+                inputFilter.lastSecretChangeTime = System.currentTimeMillis()
                 hidePb()
             })
     }
+
+    fun donateButtonClicked() {}
 }
 
 class NetworkVmFactory(

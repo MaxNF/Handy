@@ -1,10 +1,15 @@
 package ru.netfantazii.handy
 
-import java.util.*
-
 class InputFilter {
+    private val millisInMinute = 60 * 1000
+
     var netActionAllowed = true
 
-    var changeSecretAllowed = true
-    var previousSecretChangeTime: Calendar? = null
+    val changeSecretIsNotInTimeout: Boolean
+        get() {
+            val elapsedTime = System.currentTimeMillis() - lastSecretChangeTime
+            return elapsedTime > millisInMinute
+        }
+
+    var lastSecretChangeTime: Long = 0L
 }

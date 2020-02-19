@@ -19,4 +19,14 @@
         <item name="android:paddingLeft">100dp</item>
         <item name="android:paddingRight">100dp</item>
     </style>
+
+    <style name="shareFragmentContainersSideMargins">
+        <item name="android:layout_marginStart">80dp</item>
+        <item name="android:layout_marginEnd">80dp</item>
+    </style>
+
+    <style name="shareFragmentTitleSideMargins">
+        <item name="android:layout_marginStart">100dp</item>
+        <item name="android:layout_marginEnd">100dp</item>
+    </style>
 </resources>
