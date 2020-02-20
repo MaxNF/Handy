@@ -76,7 +76,6 @@ object CloudFunctions {
     const val ADD_CONTACT = "addNewContact"
     const val DELETE_CONTACT = "deleteContact"
     const val UPDATE_CONTACT = "updateContact"
-
 }
 
 object ErrorCodes {
