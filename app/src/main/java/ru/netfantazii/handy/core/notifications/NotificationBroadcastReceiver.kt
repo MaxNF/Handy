@@ -23,6 +23,7 @@ import ru.netfantazii.handy.extensions.registerAlarm
 import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.model.catalogNotificationContent
 import java.util.NoSuchElementException
+import java.util.concurrent.TimeUnit
 
 const val ALARM_INTENT_ACTION = "ru.netfantazii.handy.ALARM_GOES_OFF"
 const val GEOFENCE_INTENT_ACTION = "ru.netfantazii.handy.GEOFENCE_IS_CROSSED"
@@ -56,8 +57,16 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
         localRepository = (context.applicationContext as HandyApplication).localRepository
 
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            reregisterAllGeofences()
+            reregisterAllGeofencesAndAlarms(false)
             return
+        }
+
+        if (intent.action == Intent.ACTION_PACKAGE_DATA_CLEARED) {
+            val uri = intent.data
+            if (uri.toString() == "package:com.google.android.gms") {
+                reregisterAllGeofencesAndAlarms(true)
+                return
+            }
         }
 
         val bundle = intent.extras!!.getBundle(BUNDLE_KEY)!!
@@ -191,10 +200,19 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     }
 
     @SuppressLint("CheckResult")
-    private fun reregisterAllGeofences() {
+    private fun reregisterAllGeofencesAndAlarms(isFromGoogleServicesClearing: Boolean) {
         val pendingResult = goAsync()
-        localRepository.getAllGeofences()
-            .subscribeOn(Schedulers.io())
+
+        val observable = if (isFromGoogleServicesClearing) {
+            // Если вызывать без задержки, сразу после удаления данных из служб Гугл Плей, то
+            // вылетает исключение. Хз почему. Видимо какие-то процессы служб Гугл Плей
+            // необходимые для работы геозон не успеают завершиться после удаления данных.
+            localRepository.getAllGeofences().delay(5, TimeUnit.SECONDS)
+        } else {
+            localRepository.getAllGeofences()
+        }
+
+        observable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .flatMap { geofences ->
                 val geofencesByCatalogId = geofences.groupBy { it.catalogId }

@@ -9,17 +9,22 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.Event
+import ru.netfantazii.handy.extensions.GEOFENCE_APP_LIMIT
 import ru.netfantazii.handy.model.database.GeofenceEntity
 import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.extensions.unregisterAllGeofences
 import ru.netfantazii.handy.extensions.unregisterGeofence
+import ru.netfantazii.handy.model.GeofenceLimitException
+import java.lang.UnsupportedOperationException
 import kotlin.collections.Map
 
 class MapViewModel(
@@ -114,19 +119,34 @@ class MapViewModel(
             GeofenceEntity(catalogId = currentCatalogId,
                 latitude = point.latitude,
                 longitude = point.longitude, radius = nextGeofenceRaidus)
-        disposables.add(localRepository.addGeofence(geofence).subscribe(Consumer {
-            geofence.id = it
-            registerGeofences(getApplication(),
-                listOf(geofence),
-                currentCatalogId,
-                catalogName,
-                groupExpandStates) {
-                val context = getApplication<HandyApplication>()
-                Toast.makeText(context,
-                    context.getString(R.string.geofence_success),
-                    Toast.LENGTH_SHORT).show()
+        disposables.add(localRepository.getTotalGeofenceCount()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { geofenceCount ->
+                if (geofenceCount >= GEOFENCE_APP_LIMIT) {
+                    throw GeofenceLimitException()
+                } else {
+                    localRepository.addGeofence(geofence).subscribeOn(Schedulers.io())
+                        .map { geofenceId ->
+                            Pair(geofenceId, geofenceCount)
+                        }
+                }
             }
-        }))
+            .subscribe { (geofenceId, geofenceCount) ->
+                geofence.id = geofenceId
+                registerGeofences(getApplication(),
+                    listOf(geofence),
+                    currentCatalogId,
+                    catalogName,
+                    groupExpandStates) {
+                    val context = getApplication<HandyApplication>()
+                    Toast.makeText(context,
+                        context.getString(R.string.geofence_success,
+                            GEOFENCE_APP_LIMIT - (geofenceCount + 1),
+                            GEOFENCE_APP_LIMIT),
+                        Toast.LENGTH_SHORT).show()
+                }
+            })
 
     }
 

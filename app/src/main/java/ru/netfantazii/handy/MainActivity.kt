@@ -42,6 +42,7 @@ import ru.netfantazii.handy.databinding.NavigationHeaderBinding
 import ru.netfantazii.handy.extensions.reloadActivity
 import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
+import ru.netfantazii.handy.model.GeofenceLimitException
 import ru.netfantazii.handy.model.PbOperations
 import ru.netfantazii.handy.model.User
 import ru.netfantazii.handy.model.database.ErrorCodes
@@ -73,7 +74,11 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //сделать кнопку Начать больше, чтобы влазил весь текст (в приветствии)
 //если приложению не выдано разрешение на отслеживания местоположения, то после того как человек разрешает, сразу открывать фрагмент с геозонами
 //todo проверить catalogJobService (на отложенное выполнение загрузки каталога при фейле)
+
 //todo проверить перегенерацию секретного кода при случайном совпадении в клауд функциях (сделать вторую фейк функцию и вызвать вручную)
+//добавить перерегистрацию геозон при очищении данных гугл плей
+//сделать лимит геозон 100 шт.
+//todo пофиксить слайдер радиуса геозон в лендскейп режиме
 
 //--------------------- ОБНОВЛЕНИЕ
 //todo подготовить новые скриншоты
@@ -177,6 +182,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setUpErrorHandler() {
         RxJavaPlugins.setErrorHandler { e ->
+            if (e.cause is GeofenceLimitException) {
+                showLongToast(this, getString(R.string.geofence_limit_error_message))
+                return@setErrorHandler
+            }
+
             when (e.cause?.message) {
                 ErrorCodes.DATA_PAYLOAD_IS_NULL -> {
                     showLongToast(this, "Data payload error")

@@ -90,7 +90,7 @@
     <string name="delete_all_geofences_title">Delete all geofences</string>
     <string name="apply_geofences">Apply geofences</string>
     <string name="seekbar_m_label">m</string>
-    <string name="geofence_success" >Geofence has been successfully added.</string>
+    <string name="geofence_success" >Geofence has been successfully added. %1$d\\%2$d geofences available</string>
     <string name="geofence_failure">Failed to add geofence. Contact support, please.</string>
     <string name="all_geofences_unreg_success">All geofences have been successfully removed.</string>
     <string name="all_geofences_unreg_failure">Failed to remove all geofences. Contact support.</string>
@@ -178,4 +178,5 @@
     <string name="dialog_change_secret_action">Change</string>
     <string name="delete_account_dialog_title">Delete account?</string>
     <string name="change_secret_dialog_title">Change secret code?</string>
+    <string name="geofence_limit_error_message">Unable to register more than 100 geofences</string>
 </resources>

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
@@ -18,22 +17,24 @@ import ru.netfantazii.handy.model.database.GeofenceEntity
 import java.util.*
 
 const val GEOFENCE_CHECK_CYCLE_MILLIS = 30000
+const val GEOFENCE_APP_LIMIT = 100
 
 private val TAG = "GeofenceHandler"
 
 
 fun registerGeofences(
     context: Context,
-    geofenceEntities: List<GeofenceEntity>,
+    geofenceEntitiesToAdd: List<GeofenceEntity>,
     catalogId: Long,
     catalogName: String,
     groupExpandState: RecyclerViewExpandableItemManager.SavedState,
     onSuccessAction: (() -> Unit)?
 ) {
-    if (geofenceEntities.isEmpty()) {
+    if (geofenceEntitiesToAdd.isEmpty()) {
         return
     }
-    val geofences = geofenceEntities.map {
+
+    val geofences = geofenceEntitiesToAdd.map {
         Log.d(TAG, "registerGeofence: ${it.id}")
         Geofence.Builder()
             .setRequestId(it.id.toString())

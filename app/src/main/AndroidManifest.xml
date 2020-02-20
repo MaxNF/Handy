@@ -3,10 +3,11 @@
     package="ru.netfantazii.handy">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".HandyApplication"
         android:allowBackup="true"
@@ -24,7 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".core.notifications.NotificationBroadcastReceiver"
+        <receiver
+            android:name=".core.notifications.NotificationBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="ru.netfantazii.handy.ALARM_GOES_OFF" />
@@ -32,7 +34,15 @@
                 <action android:name="ru.netfantazii.handy.CANCEL_NOTIFICATION" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
+            <intent-filter>
+<!--                Отслеживает очищение данных у Google services (после этого геометки в приложениях слетают)-->
+                <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
+                <data
+                    android:scheme="package"
+                    android:sspPrefix="com.google.android.gms" />
+            </intent-filter>
         </receiver>
+
         <service android:name=".core.notifications.NotificationService" />
         <service
             android:name=".core.share.CatalogMessagingService"
@@ -41,7 +51,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".core.share.CatalogDownloadJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".core.share.CatalogDownloadJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

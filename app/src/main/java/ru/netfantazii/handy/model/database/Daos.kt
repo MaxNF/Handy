@@ -191,6 +191,9 @@ abstract class GeofenceDao : BaseDao<GeofenceEntity>() {
 
     @Query("SELECT * FROM GeofenceEntity")
     abstract fun getAllGeofences(): Single<List<GeofenceEntity>>
+
+    @Query("SELECT COUNT(id) FROM GeofenceEntity")
+    abstract fun getTotalGeofenceCount(): Single<Int>
 }
 
 @Dao
