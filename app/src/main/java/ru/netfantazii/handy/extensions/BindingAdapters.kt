@@ -117,8 +117,11 @@ fun downloadWithGlide(view: ImageView, uri: Uri?) {
 
 @BindingAdapter("app:isTextCrossed")
 fun crossText(view: TextView, isCrossed: Boolean) {
-    //todo переделать метод
-    if (isCrossed) {
-        view.apply { paintFlags = paintFlags or Paint.STRIKE_THRU_TEXT_FLAG }
+    view.apply {
+        paintFlags = if (isCrossed) {
+            paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            paintFlags and (Paint.STRIKE_THRU_TEXT_FLAG).inv()
+        }
     }
 }

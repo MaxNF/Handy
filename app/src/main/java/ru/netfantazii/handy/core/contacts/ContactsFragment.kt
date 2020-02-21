@@ -20,6 +20,8 @@ import ru.netfantazii.handy.*
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.databinding.ContactsFragmentBinding
+import ru.netfantazii.handy.extensions.fadeIn
+import ru.netfantazii.handy.extensions.fadeOut
 import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.model.Contact
 import ru.netfantazii.handy.model.ContactDialogAction
@@ -89,6 +91,7 @@ class ContactsFragment : Fragment() {
                 it.getContentIfNotHandled()?.let {
                     adapter.notifyDataSetChanged()
                 }
+                if (viewModel.getContacts().isEmpty()) hint.fadeIn() else hint.fadeOut()
             })
             allLiveDataList.add(contactsUpdated)
 

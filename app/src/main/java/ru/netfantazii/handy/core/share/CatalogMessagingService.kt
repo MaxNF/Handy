@@ -52,10 +52,6 @@ class CatalogMessagingService : FirebaseMessagingService() {
             ComponentName(this, CatalogDownloadJobService::class.java))
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
             .setExtras(PersistableBundle().apply { putString(MESSAGE_ID_BUNDLE_KEY, messageId) })
-
-            //todo ВРЕМЕННО
-            .setBackoffCriteria(30000, JobInfo.BACKOFF_POLICY_LINEAR)
-
             .build()
         val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         jobScheduler.schedule(jobInfo)
