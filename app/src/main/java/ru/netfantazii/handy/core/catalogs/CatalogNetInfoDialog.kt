@@ -56,8 +56,9 @@ class CatalogNetInfoDialog : DialogFragment() {
         allLiveDataList.forEach { it.removeObservers(this) }
     }
 
-    private fun createDialog(dialogView: View): AlertDialog = AlertDialog.Builder(activity)
-        .setView(dialogView)
-        .setPositiveButton(R.string.dialog_ok_button, null)
-        .create()
+    private fun createDialog(dialogView: View): AlertDialog =
+        AlertDialog.Builder(activity, R.style.BaseDialogTheme)
+            .setView(dialogView)
+            .setPositiveButton(R.string.dialog_ok_button, null)
+            .create()
 }

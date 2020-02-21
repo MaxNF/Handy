@@ -214,8 +214,9 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
             geofenceEntities,
             catalog.id,
             catalog.name,
-            catalog.groupExpandStates,
-            null)
+            catalog.groupExpandStates)
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
     override fun onOverlayBackgroundClick() {

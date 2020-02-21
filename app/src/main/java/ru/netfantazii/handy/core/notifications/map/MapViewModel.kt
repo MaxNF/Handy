@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
+import com.google.android.gms.common.api.ApiException
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
@@ -12,17 +13,15 @@ import com.yandex.mapkit.map.CameraPosition
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.exceptions.Exceptions
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.Event
-import ru.netfantazii.handy.extensions.GEOFENCE_APP_LIMIT
+import ru.netfantazii.handy.extensions.*
 import ru.netfantazii.handy.model.database.GeofenceEntity
-import ru.netfantazii.handy.extensions.registerGeofences
-import ru.netfantazii.handy.extensions.unregisterAllGeofences
-import ru.netfantazii.handy.extensions.unregisterGeofence
 import ru.netfantazii.handy.model.GeofenceLimitException
 import java.lang.UnsupportedOperationException
 import kotlin.collections.Map
@@ -119,35 +118,56 @@ class MapViewModel(
             GeofenceEntity(catalogId = currentCatalogId,
                 latitude = point.latitude,
                 longitude = point.longitude, radius = nextGeofenceRaidus)
-        disposables.add(localRepository.getTotalGeofenceCount()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMap { geofenceCount ->
-                if (geofenceCount >= GEOFENCE_APP_LIMIT) {
-                    throw GeofenceLimitException()
-                } else {
-                    localRepository.addGeofence(geofence).subscribeOn(Schedulers.io())
-                        .map { geofenceId ->
-                            Pair(geofenceId, geofenceCount)
-                        }
+        disposables.add(
+            // получаем общее кол-во геозон и кидает искл. если больше допустимого лимита
+            localRepository.getTotalGeofenceCount()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap { geofenceCount ->
+                    if (geofenceCount >= GEOFENCE_APP_LIMIT) {
+                        throw GeofenceLimitException()
+                    } else {
+                        // если все ок, добавляем геозону в бд и получаем ИД, передаем ИД и кол-во дальше
+                        localRepository.addGeofence(geofence)
+                            .subscribeOn(Schedulers.io())
+                            .map { geofenceId ->
+                                Pair(geofenceId, geofenceCount)
+                            }
+                    }
                 }
-            }
-            .subscribe { (geofenceId, geofenceCount) ->
-                geofence.id = geofenceId
-                registerGeofences(getApplication(),
-                    listOf(geofence),
-                    currentCatalogId,
-                    catalogName,
-                    groupExpandStates) {
+                // пытаемся зарегистрировать геозону, если ошибка, то удаляем геозону из бд
+                .flatMap { (geofenceId, geofenceCount) ->
+                    geofence.id = geofenceId
+                    registerGeofences(getApplication(),
+                        listOf(geofence),
+                        currentCatalogId,
+                        catalogName,
+                        groupExpandStates)
+                        .subscribeOn(Schedulers.io())
+                        .doOnError {
+                            localRepository.removeGeofenceById(geofenceId)
+                        }.toSingle {
+                            geofenceCount
+                        }
+                }.subscribe({ geofenceCount ->
+                    // если все прошло успешно, то показываем тост с оставшимся лимитом геозон
                     val context = getApplication<HandyApplication>()
                     Toast.makeText(context,
                         context.getString(R.string.geofence_success,
                             GEOFENCE_APP_LIMIT - (geofenceCount + 1),
                             GEOFENCE_APP_LIMIT),
                         Toast.LENGTH_SHORT).show()
-                }
-            })
-
+                }, {
+                    // если была ошибка то либо выводим тост ошибкой и с советом проверить включен
+                    // ли gps, либо (если ошибка неизвестна) просто уведомляем пользователя об ошибке
+                    if (it is ApiException && it.message == GEOFENCE_UNAVAILABLE_ERROR_MESSAGE) {
+                        showLongToast(getApplication(),
+                            getApplication<Application>().getString(R.string.geofence_api_error))
+                    } else {
+                        showLongToast(getApplication(),
+                            getApplication<Application>().getString(R.string.adding_geofence_failed))
+                    }
+                }))
     }
 
     fun onCircleClick(geofenceId: Long) {

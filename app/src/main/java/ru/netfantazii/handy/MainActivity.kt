@@ -29,6 +29,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
@@ -39,6 +40,7 @@ import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
 import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
+import ru.netfantazii.handy.extensions.GEOFENCE_UNAVAILABLE_ERROR_MESSAGE
 import ru.netfantazii.handy.extensions.reloadActivity
 import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
@@ -82,6 +84,22 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //пофиксить слайдер радиуса геозон в лендскейп режиме
 //позиция таб лэйаута сбрасывается после поворота экрана
 //добавить подсказку во фрагмент с контактами (добавьте новый контакт)
+
+//исправить сообщение про долгий тап
+//исправить диалоговое окно с описанием каталога (стиль)
+//не добавлять в базу геозоны, если регистрация не удалась
+
+//todo сделать возможность делиться секретным кодом с помощью выбора средства отправления
+//todo убрать полосы при выборе будильника
+//todo сделать time picker зависимым от локали
+
+//todo дергается полоска количества покупок после выхода из контактов/настроек
+//todo сделать, чтобы на телефоне был звук оповещения и вибрация (на эмуляторе почему-то есть)
+//todo при клике по уведомлению (напр. геометки) логинится еще раз, хотя приложение открыто
+
+//todo прикрутить рекламный банер вниз (как у листоник)
+//todo сделать возможность доната (покупка чашки кофе, проверить допустимо ли)
+//todo исчезла тень у продуктов
 
 //--------------------- ОБНОВЛЕНИЕ
 //todo подготовить новые скриншоты
@@ -185,6 +203,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setUpErrorHandler() {
         RxJavaPlugins.setErrorHandler { e ->
+
             if (e.cause is GeofenceLimitException) {
                 showLongToast(this, getString(R.string.geofence_limit_error_message))
                 return@setErrorHandler

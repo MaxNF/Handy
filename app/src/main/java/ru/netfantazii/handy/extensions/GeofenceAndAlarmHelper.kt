@@ -7,17 +7,22 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
+import io.reactivex.Completable
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
+import ru.netfantazii.handy.model.GeofenceListEmptyException
 import ru.netfantazii.handy.model.database.GeofenceEntity
 import java.util.*
 
 const val GEOFENCE_CHECK_CYCLE_MILLIS = 30000
 const val GEOFENCE_APP_LIMIT = 100
+const val GEOFENCE_UNAVAILABLE_ERROR_MESSAGE =
+    "1000: " // код ошибки прилетает с двоеточием и пробелом
 
 private val TAG = "GeofenceHandler"
 
@@ -27,11 +32,11 @@ fun registerGeofences(
     geofenceEntitiesToAdd: List<GeofenceEntity>,
     catalogId: Long,
     catalogName: String,
-    groupExpandState: RecyclerViewExpandableItemManager.SavedState,
-    onSuccessAction: (() -> Unit)?
-) {
+    groupExpandState: RecyclerViewExpandableItemManager.SavedState
+) = Completable.create { emitter ->
+
     if (geofenceEntitiesToAdd.isEmpty()) {
-        return
+        emitter.onError(GeofenceListEmptyException())
     }
 
     val geofences = geofenceEntitiesToAdd.map {
@@ -59,11 +64,10 @@ fun registerGeofences(
             GEOFENCE_INTENT_ACTION))
         .apply {
             addOnSuccessListener {
-                onSuccessAction?.invoke()
+                emitter.onComplete()
             }
             addOnFailureListener {
-                showLongToast(context, context.getString(R.string.adding_geofence_failed))
-                it.printStackTrace()
+                emitter.onError(it)
             }
         }
 }

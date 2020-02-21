@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.GeofencingEvent
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
@@ -22,7 +23,7 @@ import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
 import ru.netfantazii.handy.extensions.registerAlarm
 import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.model.catalogNotificationContent
-import java.util.NoSuchElementException
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val ALARM_INTENT_ACTION = "ru.netfantazii.handy.ALARM_GOES_OFF"
@@ -229,16 +230,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                         catalogNotificationContents
                     }
             }
-            .doAfterTerminate { pendingResult.finish() }
-            .subscribe({ catalogNotificationContents ->
+            .flatMapCompletable { catalogNotificationContents ->
                 catalogNotificationContents.forEach {
-                    registerGeofences(context,
-                        it.geofenceEntities,
-                        it.catalogId,
-                        it.catalogName,
-                        it.groupExpandStates,
-                        null)
-
                     if (it.alarmTime != null) {
                         registerAlarm(context,
                             it.catalogId,
@@ -247,8 +240,17 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                             it.alarmTime)
                     }
                 }
-            }, {
-                // do nothing
+                val completables = catalogNotificationContents.map {
+                    registerGeofences(context,
+                        it.geofenceEntities,
+                        it.catalogId,
+                        it.catalogName,
+                        it.groupExpandStates)
+                }
+                Completable.mergeDelayError(completables)
+            }.doAfterTerminate { pendingResult.finish() }
+            .subscribe({}, {
+                // ignore errors
             })
     }
 }

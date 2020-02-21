@@ -180,4 +180,5 @@
     <string name="geofence_limit_error_message">Unable to register more than 100 geofences</string>
     <string name="delete_contact_dialog_title">Delete contact?</string>
     <string name="geofences_label">Geofences</string>
+    <string name="geofence_api_error">Error while adding the geofence. Check if gps is enabled on your device.</string>
 </resources>

@@ -5,6 +5,7 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.model.*
 import java.util.*
 
