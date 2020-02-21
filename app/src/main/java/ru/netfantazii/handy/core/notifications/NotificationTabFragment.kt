@@ -20,6 +20,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
+import kotlinx.android.synthetic.main.notification_tab_fragment.*
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.alarm.AlarmFragment
 import ru.netfantazii.handy.core.notifications.map.MapFragment
@@ -33,6 +34,8 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
     private var mapPermissionGranted = false
     private lateinit var tabLayout: TabLayout
 
+    private val savedTabIndexBundleKey = "tab_index"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,6 +45,8 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        tabLayout = view.findViewById(R.id.tab_layout)
         val viewPager = view.findViewById<ViewPager2>(R.id.viewpager)
         notificationTabAdapter = NotificationTabAdapter(this,
             fragmentArgs.catalogId,
@@ -50,27 +55,36 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
         viewPager.adapter = notificationTabAdapter
         viewPager.isUserInputEnabled = false
 
-        tabLayout = view.findViewById(R.id.tab_layout)
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                when (tab.position) {
-                    0 -> viewPager.currentItem = 0
-                    1 -> {
-                        checkPermissions()
-                        if (mapPermissionGranted) {
-                            viewPager.currentItem = 1
-                        } else {
-                            tabLayout.selectTab(tabLayout.getTabAt(0))
+        savedInstanceState?.let {
+            val selectedTab = it.getInt(savedTabIndexBundleKey, 0)
+            tabLayout.selectTab(tabLayout.getTabAt(selectedTab))
+        }
+
+        tabLayout.addOnTabSelectedListener(
+            object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    when (tab.position) {
+                        0 -> viewPager.currentItem = 0
+                        1 -> {
+                            checkPermissions()
+                            if (mapPermissionGranted) {
+                                viewPager.currentItem = 1
+                            } else {
+                                tabLayout.selectTab(tabLayout.getTabAt(0))
+                            }
                         }
+                        else -> throw NoSuchElementException("Unknown tab position")
                     }
-                    else -> throw NoSuchElementException("Unknown tab position")
                 }
-            }
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-        })
+                override fun onTabReselected(tab: TabLayout.Tab?) {}
+                override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            })
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(savedTabIndexBundleKey, tabLayout.selectedTabPosition)
     }
 
     private fun checkPermissions() {
