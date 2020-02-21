@@ -61,6 +61,8 @@
 
     <!--Main theme (Purple)-->
     <style name="Purple" parent="BaseWhiteTitles">
+        <item name="mainBackground">#80D206FA</item>
+
         <item name="colorPrimary">#9c27b0</item>
         <item name="colorPrimaryDark">#6a0080</item>
         <item name="colorAccent">#00796b</item>
@@ -70,6 +72,8 @@
 
     <!--L-->
     <style name="Lilac" parent="BaseBlackTitles">
+        <item name="mainBackground">#80e1bee7</item>
+
         <item name="colorPrimary">#e1bee7</item>
         <item name="colorPrimaryDark">#af8eb5</item>
         <item name="colorAccent">#F8A213</item>
@@ -79,6 +83,8 @@
 
     <!--Ocean-->
     <style name="Ocean" parent="BaseWhiteTitles">
+        <item name="mainBackground">#801976d2</item>
+
         <item name="colorPrimary">#1976d2</item>
         <item name="colorPrimaryDark">#004ba0</item>
         <item name="colorAccent">#ef6c00</item>
@@ -88,6 +94,8 @@
 
     <!--Wood-->
     <style name="Wood" parent="BaseWhiteTitles">
+        <item name="mainBackground">#806d4c41</item>
+
         <item name="colorPrimary">#6d4c41</item>
         <item name="colorPrimaryDark">#40241a</item>
         <item name="colorAccent">#388e3c</item>
@@ -97,6 +105,8 @@
 
     <!--Green-->
     <style name="Green" parent="BaseBlackTitles">
+        <item name="mainBackground">#8081c784</item>
+
         <item name="colorPrimary">#81c784</item>
         <item name="colorPrimaryDark">#519657</item>
         <item name="colorAccent">#FC866C</item>
@@ -106,6 +116,8 @@
 
     <!--Sunny-->
     <style name="Sunny" parent="BaseBlackTitles">
+        <item name="mainBackground">#80ffee58</item>
+
         <item name="colorPrimary">#ffee58</item>
         <item name="colorPrimaryDark">#c9bc1f</item>
         <item name="colorAccent">#16A0DF</item>
@@ -115,6 +127,8 @@
 
     <!--Crimson-->
     <style name="Crimson" parent="BaseWhiteTitles">
+        <item name="mainBackground">#80c62828</item>
+
         <item name="colorPrimary">#c62828</item>
         <item name="colorPrimaryDark">#8e0000</item>
         <item name="colorAccent">#37474f</item>
@@ -124,6 +138,8 @@
 
     <!--Orange-->
     <style name="Orange" parent="BaseBlackTitles">
+        <item name="mainBackground">#80FF971A</item>
+
         <item name="colorPrimary">#FF971A</item>
         <item name="colorPrimaryDark">#D16A11</item>
         <item name="colorAccent">#28AD96</item>
@@ -133,6 +149,8 @@
 
     <!--Indigo-->
     <style name="Indigo" parent="BaseWhiteTitles">
+        <item name="mainBackground">#803f51b5</item>
+
         <item name="colorPrimary">#3f51b5</item>
         <item name="colorPrimaryDark">#002984</item>
         <item name="colorAccent">#ef5350</item>
@@ -142,6 +160,8 @@
 
     <!--Gray-->
     <style name="Gray" parent="BaseWhiteTitles">
+        <item name="mainBackground">#805E5E5E</item>
+
         <item name="colorPrimary">#5E5E5E</item>
         <item name="colorPrimaryDark">#3C3C3C</item>
         <item name="colorAccent">#5E5E5E</item>

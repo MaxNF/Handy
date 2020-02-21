@@ -78,9 +78,8 @@ fun setHintText(view: TextView, type: HintType) {
 fun setViewDimmed(view: View, dimmed: Boolean) {
     view.setBackgroundColor(
         if (dimmed) ContextCompat.getColor(view.context,
-            R.color.inactiveWindowColor) else getThemeColor(view.context,
-            ThemeColor.MAIN_BACKGROUND_COLOR)
-    )
+            R.color.inactiveWindowColor) else
+            ContextCompat.getColor(view.context, android.R.color.white))
 }
 
 @BindingAdapter("app:isTextDimmed")
@@ -101,7 +100,7 @@ fun setStripeWidth(view: View, percent: Float) {
 
 @BindingAdapter("app:formatCalendar")
 fun formatCalendar(view: TextView, calendar: Calendar) {
-val formatter = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT)
+    val formatter = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT)
     formatter.timeZone = calendar.timeZone
     view.text = formatter.format(calendar.time)
 }

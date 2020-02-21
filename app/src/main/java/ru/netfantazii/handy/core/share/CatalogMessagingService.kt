@@ -20,10 +20,11 @@ import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.repositories.RemoteRepository
+import java.util.concurrent.CountDownLatch
 
 class CatalogMessagingService : FirebaseMessagingService() {
     private val preferenceTokenKey = "prev_token"
-    private val TAG = "nettt"
+    private val TAG = "CatalogMessagingService"
     private lateinit var downloader: CloudToLocalDownloader
     private lateinit var remoteRepository: RemoteRepository
     private lateinit var localRepository: LocalRepository
@@ -37,10 +38,12 @@ class CatalogMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         val messageId = message.data["message_id"] as String
-        downloader.downloadCatalogToLocalDb(messageId, 5L) {
+        val countDownLatch = CountDownLatch(1)
+        downloader.downloadCatalogToLocalDb(messageId, 5L, {
+            Log.d(TAG, "PLANNING DOWNLOAD")
             planDownload(messageId)
-        }
-
+        }, null, countDownLatch)
+        countDownLatch.await()
         Log.d(TAG, "onMessageReceived: thread ${Thread.currentThread().name}")
     }
 
@@ -49,6 +52,10 @@ class CatalogMessagingService : FirebaseMessagingService() {
             ComponentName(this, CatalogDownloadJobService::class.java))
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
             .setExtras(PersistableBundle().apply { putString(MESSAGE_ID_BUNDLE_KEY, messageId) })
+
+            //todo ВРЕМЕННО
+            .setBackoffCriteria(30000, JobInfo.BACKOFF_POLICY_LINEAR)
+
             .build()
         val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         jobScheduler.schedule(jobInfo)

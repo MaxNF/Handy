@@ -29,23 +29,23 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 /**
- * Утилитный класс для вызова из FirebaseMessagingService и JobScheduler. Производит работу в
- * вызванном потоке! (не передает обращения к облачной и локальной бд в отдельный поток)*/
+ * Утилитный класс для вызова из FirebaseMessagingService и JobScheduler.*/
 class CloudToLocalDownloader(
     private val localRepository: LocalRepository,
     private val remoteRepository: RemoteRepository,
     private val context: Context
 ) {
-    private val TAG = "nettt"
+    private val TAG = "CatalogMessagingService"
     private val disposables = CompositeDisposable()
 
     fun downloadCatalogToLocalDb(
         messageId: String,
         failTimeoutSec: Long,
-        timeoutAction: () -> Unit
+        timeoutAction: () -> Unit,
+        successAction: (() -> Unit)?,
+        countDownLatch: CountDownLatch?
     ) {
-        Log.d(TAG, "downloadCatalogToLocalDb: start, thread ${Thread.currentThread().name}")
-        val latch = CountDownLatch(1)
+        Log.d(TAG, "downloadCatalogToLocalDb: start, thread ${Thread.currentThread().name}, messageId: $messageId")
         disposables.add(remoteRepository.downloadCatalogDataFromMessage(messageId)
             .subscribeOn(Schedulers.io())
             .timeout(failTimeoutSec, TimeUnit.SECONDS)
@@ -80,12 +80,15 @@ class CloudToLocalDownloader(
                         Pair(catalog, catalogNetInfo)
                     }
             }
+            .doAfterTerminate {
+                countDownLatch?.countDown()
+            }
             .subscribe(
                 { (first, second) ->
                     Log.d(TAG,
                         "downloadCatalogToLocalDb: success thread ${Thread.currentThread().name}")
                     sendCatalogReceivedNotification(first, second)
-                    latch.countDown()
+                    successAction?.invoke()
                 },
                 {
                     Log.d(TAG, "downloadCatalogToLocalDb: ")
@@ -93,9 +96,8 @@ class CloudToLocalDownloader(
                     if (it is TimeoutException) {
                         timeoutAction()
                     }
-                    latch.countDown()
                 }))
-        latch.await()
+        countDownLatch?.await()
     }
 
     private fun parseGroups(catalogData: Map<String, Any>): List<Group> {

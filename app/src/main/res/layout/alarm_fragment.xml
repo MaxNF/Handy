@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -16,12 +17,12 @@
             type="android.widget.TimePicker" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorPrimary"
-        android:orientation="vertical">
+        android:orientation="vertical"
+
+        >
 
         <ScrollView
             android:id="@+id/scroll_view"
@@ -60,13 +61,13 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <DatePicker
-                    android:enabled="@{!viewModel.switchStatus}"
                     android:id="@+id/date_picker_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:calendarViewShown="false"
                     android:datePickerMode="spinner"
+                    android:enabled="@{!viewModel.switchStatus}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -85,11 +86,11 @@
                     app:layout_constraintTop_toBottomOf="@+id/date_picker_view" />
 
                 <TimePicker
-                    android:enabled="@{!viewModel.switchStatus}"
                     android:id="@+id/time_picker_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:enabled="@{!viewModel.switchStatus}"
                     android:timePickerMode="spinner"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

@@ -50,7 +50,7 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
         viewPager.adapter = notificationTabAdapter
         viewPager.isUserInputEnabled = false
 
-        tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
+        tabLayout = view.findViewById(R.id.tab_layout)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {

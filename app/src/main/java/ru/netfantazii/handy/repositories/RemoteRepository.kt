@@ -42,6 +42,7 @@ class RemoteRepositoryImpl : RemoteRepository {
 
     override fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>> {
         return Single.create { emitter ->
+
             val task =
                 Firebase.firestore.collection(RemoteDbSchema.COLLECTION_MESSAGES)
                     .document(messageId)
