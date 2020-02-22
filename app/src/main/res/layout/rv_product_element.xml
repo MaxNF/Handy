@@ -4,14 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="ru.netfantazii.handy.R" />
+
         <import type="ru.netfantazii.handy.model.BuyStatus" />
+
         <variable
             name="parentGroup"
             type="ru.netfantazii.handy.model.Group" />
+
         <variable
             name="product"
             type="ru.netfantazii.handy.model.Product" />
+
         <variable
             name="productHandler"
             type="ru.netfantazii.handy.core.groupsandproducts.ProductClickHandler" />
@@ -26,12 +31,11 @@
 
         <FrameLayout
             android:id="@+id/container"
+            style="@style/ListElementElevation_shape"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:onClick="@{() -> productHandler.onProductClick(parentGroup, product)}"
-            style="@style/ListElementElevation_shape"
-            app:clipToOutline="@{true}"
-            app:productBackground="@{product.buyStatus == BuyStatus.BOUGHT ? true : false}">
+            android:background="@{product.buyStatus == BuyStatus.BOUGHT ? @drawable/bg_product_bought : @drawable/bg_product_not_bought}"
+            android:onClick="@{() -> productHandler.onProductClick(parentGroup, product)}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -41,8 +45,8 @@
                     android:id="@+id/ib_element_edit"
                     style="@style/RvElementIconStyle"
                     android:background="?actionBarItemBackground"
-                    android:src="@drawable/ic_edit"
                     android:onClick="@{() -> productHandler.onProductEditClick(product)}"
+                    android:src="@drawable/ic_edit"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_element_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_element_name" />
@@ -63,6 +67,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Продукты" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/bg_product_ripple"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:ignore="UselessParent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
     </FrameLayout>

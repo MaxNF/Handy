@@ -43,8 +43,7 @@
             style="@style/ListElementElevation_shape"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            app:clipToOutline="@{true}"
-            app:groupBackground="@{group.buyStatus == BuyStatus.BOUGHT ? true : false}">
+            android:background="@{group.buyStatus == BuyStatus.BOUGHT ? @drawable/bg_group_bought : @drawable/bg_group_not_bought}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/area_for_expand_click"
@@ -96,7 +95,7 @@
                     android:id="@+id/view"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    app:hasRipple="@{true}"
+                    android:background="@drawable/bg_group_ripple"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
