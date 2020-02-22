@@ -61,6 +61,7 @@ class AppSettings : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefer
         deleteAccPref.setCopySecretAction { viewModel.copySecretToClipboard(requireContext()) }
         deleteAccPref.setGetNewSecretAction { showChangeSecretConfirmationDialog() }
         deleteAccPref.setNewSecretToView(viewModel.user.get()?.secret ?: "n/a")
+        deleteAccPref.setShareSecretAction { viewModel.shareSecretCode() }
 
         val threadName = Thread.currentThread().name
         Log.d(TAG, "onCreatePreferences: $threadName")

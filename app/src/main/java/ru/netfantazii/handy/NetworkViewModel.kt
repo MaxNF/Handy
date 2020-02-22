@@ -94,6 +94,9 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     private val _hideProgressBar = MutableLiveData<Event<Unit>>()
     val hideProgressBar: LiveData<Event<Unit>> = _hideProgressBar
 
+    private val _shareSecretCodeClicked = MutableLiveData<Event<String>>()
+    val shareSecretCodeClicked: LiveData<Event<String>> = _shareSecretCodeClicked
+
     val user = ObservableField<User?>()
 
     val inputFilter = InputFilter()
@@ -291,6 +294,10 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     }
 
     fun donateButtonClicked() {}
+
+    fun shareSecretCode() {
+        _shareSecretCodeClicked.value = Event(user.get()?.secret ?: "n/a")
+    }
 }
 
 class NetworkVmFactory(

@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,11 +13,13 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import ru.netfantazii.handy.MainActivity
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
 import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
 import ru.netfantazii.handy.extensions.getNewCatalogPosition
+import ru.netfantazii.handy.extensions.getNotificationSoundUri
 import ru.netfantazii.handy.extensions.reassignPositions
 import ru.netfantazii.handy.model.*
 import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
@@ -45,7 +48,8 @@ class CloudToLocalDownloader(
         successAction: (() -> Unit)?,
         countDownLatch: CountDownLatch?
     ) {
-        Log.d(TAG, "downloadCatalogToLocalDb: start, thread ${Thread.currentThread().name}, messageId: $messageId")
+        Log.d(TAG,
+            "downloadCatalogToLocalDb: start, thread ${Thread.currentThread().name}, messageId: $messageId")
         disposables.add(remoteRepository.downloadCatalogDataFromMessage(messageId)
             .subscribeOn(Schedulers.io())
             .timeout(failTimeoutSec, TimeUnit.SECONDS)
@@ -166,10 +170,11 @@ class CloudToLocalDownloader(
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setCategory(NotificationCompat.CATEGORY_SOCIAL)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(true)
             .setContentIntent(toProductsPendingIntent(catalog))
+            .setSound(getNotificationSoundUri())
             .addAction(0,
                 context.getString(R.string.notification_cancel_label),
                 getCancelPendingIntentForNotifications(context, notificationId))
@@ -179,6 +184,7 @@ class CloudToLocalDownloader(
     private fun catalogArguments(
         catalog: Catalog
     ) = Bundle().apply {
+        putInt(BUNDLE_DESTINATION_ID_KEY, R.id.products_fragment)
         putLong(BUNDLE_CATALOG_ID_KEY, catalog.id)
         putString(BUNDLE_CATALOG_NAME_KEY, catalog.name)
         putParcelable(BUNDLE_EXPAND_STATE_KEY, catalog.groupExpandStates)
@@ -188,11 +194,22 @@ class CloudToLocalDownloader(
         disposables.clear()
     }
 
-    private fun toProductsPendingIntent(catalog: Catalog) = NavDeepLinkBuilder(context)
-        .setGraph(R.navigation.nav_graph)
-        .setDestination(R.id.products_fragment)
-        .setArguments(catalogArguments(catalog))
-        .createPendingIntent()
+    private fun toProductsPendingIntent(catalog: Catalog): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java)!!.apply {
+            putExtras(catalogArguments(catalog))
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        return PendingIntent.getActivity(context,
+            catalog.id.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT)
+//            return NavDeepLinkBuilder(context)
+//                .setGraph(R.navigation.nav_graph)
+//                .setDestination(R.id.products_fragment)
+//                .setArguments(catalogArguments(catalog))
+//                .createPendingIntent()
+
+    }
 
     private fun truncateCommentary(comment: String): String {
         return if (comment.length > 53) {

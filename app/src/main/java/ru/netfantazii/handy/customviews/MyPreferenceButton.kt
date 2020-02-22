@@ -22,10 +22,13 @@ class MyPreferenceButton(
     private lateinit var copySecretButton: ImageButton
     private lateinit var getNewSecretButton: ImageButton
     private lateinit var secretCodeTextView: TextView
+    private lateinit var shareSecretButton: ImageButton
 
     private var cachedDeleteAccAction: ((v: View) -> Unit)? = null
     private var cachedCopySecretAction: ((v: View) -> Unit)? = null
     private var cachedGetNewSecretAction: ((v: View) -> Unit)? = null
+    private var cachedShareSecretAction: ((v: View) -> Unit)? = null
+
     private var cachedSecretCode: String? = null
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
@@ -36,6 +39,7 @@ class MyPreferenceButton(
         copySecretButton = holder.itemView.findViewById(R.id.copy_secret_code_button)!!
         getNewSecretButton = holder.itemView.findViewById(R.id.new_secret_code_button)!!
         secretCodeTextView = holder.itemView.findViewById(R.id.secret_code)!!
+        shareSecretButton = holder.itemView.findViewById(R.id.share_secret_code_button)!!
 
         if (cachedDeleteAccAction != null) {
             delAccButton.setOnClickListener(cachedDeleteAccAction)
@@ -50,6 +54,11 @@ class MyPreferenceButton(
         if (cachedGetNewSecretAction != null) {
             getNewSecretButton.setOnClickListener(cachedGetNewSecretAction)
             cachedGetNewSecretAction = null
+        }
+
+        if (cachedShareSecretAction != null) {
+            shareSecretButton.setOnClickListener(cachedShareSecretAction)
+            cachedShareSecretAction = null
         }
 
         if (cachedSecretCode != null) {
@@ -77,6 +86,11 @@ class MyPreferenceButton(
         if (::secretCodeTextView.isInitialized) {
             secretCodeTextView.text = secret
         } else cachedSecretCode = secret
+    }
+
+    fun setShareSecretAction(action: (v: View) -> Unit) {
+        if (::shareSecretButton.isInitialized) shareSecretButton.setOnClickListener(action)
+        else cachedShareSecretAction = action
     }
 
     fun removeDeleteAccountAction() {

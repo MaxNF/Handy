@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
@@ -15,7 +14,6 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import io.reactivex.Completable
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
-import ru.netfantazii.handy.model.GeofenceListEmptyException
 import ru.netfantazii.handy.model.database.GeofenceEntity
 import java.util.*
 
@@ -36,40 +34,41 @@ fun registerGeofences(
 ) = Completable.create { emitter ->
 
     if (geofenceEntitiesToAdd.isEmpty()) {
-        emitter.onError(GeofenceListEmptyException())
-    }
+        emitter.onComplete()
+    } else {
 
-    val geofences = geofenceEntitiesToAdd.map {
-        Log.d(TAG, "registerGeofence: ${it.id}")
-        Geofence.Builder()
-            .setRequestId(it.id.toString())
-            .setCircularRegion(it.latitude,
-                it.longitude,
-                it.radius)
-            .setExpirationDuration(Geofence.NEVER_EXPIRE)
-            .setNotificationResponsiveness(GEOFENCE_CHECK_CYCLE_MILLIS)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-            .build()
-    }
-
-    val geofencingRequest = GeofencingRequest.Builder().apply {
-        addGeofences(geofences)
-    }.build()
-
-    LocationServices.getGeofencingClient(context).addGeofences(geofencingRequest,
-        getPendingIntentForNotification(context,
-            catalogId,
-            catalogName,
-            groupExpandState,
-            GEOFENCE_INTENT_ACTION))
-        .apply {
-            addOnSuccessListener {
-                emitter.onComplete()
-            }
-            addOnFailureListener {
-                emitter.onError(it)
-            }
+        val geofences = geofenceEntitiesToAdd.map {
+            Log.d(TAG, "registerGeofence: ${it.id}")
+            Geofence.Builder()
+                .setRequestId(it.id.toString())
+                .setCircularRegion(it.latitude,
+                    it.longitude,
+                    it.radius)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setNotificationResponsiveness(GEOFENCE_CHECK_CYCLE_MILLIS)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .build()
         }
+
+        val geofencingRequest = GeofencingRequest.Builder().apply {
+            addGeofences(geofences)
+        }.build()
+
+        LocationServices.getGeofencingClient(context).addGeofences(geofencingRequest,
+            getPendingIntentForNotification(context,
+                catalogId,
+                catalogName,
+                groupExpandState,
+                GEOFENCE_INTENT_ACTION))
+            .apply {
+                addOnSuccessListener {
+                    emitter.onComplete()
+                }
+                addOnFailureListener {
+                    emitter.onError(it)
+                }
+            }
+    }
 }
 
 fun unregisterGeofence(context: Context, geofenceId: Long, onSuccessAction: (() -> Unit)?) {
@@ -112,6 +111,7 @@ fun getPendingIntentForNotification(
     val intent = Intent(context, NotificationBroadcastReceiver::class.java)
     intent.action = action
     val bundle = Bundle()
+    bundle.putInt(BUNDLE_DESTINATION_ID_KEY, R.id.products_fragment)
     bundle.putLong(BUNDLE_CATALOG_ID_KEY, catalogId)
     bundle.putString(BUNDLE_CATALOG_NAME_KEY, catalogName)
     bundle.putParcelable(BUNDLE_EXPAND_STATE_KEY, groupExpandState)

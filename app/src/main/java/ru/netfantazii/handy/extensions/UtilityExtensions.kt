@@ -9,6 +9,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
@@ -110,3 +111,7 @@ fun getCancelPendingIntentForNotifications(context: Context, notificationId: Int
     }
     return PendingIntent.getBroadcast(context, notificationId, cancelIntent, 0)
 }
+
+fun getNotificationSoundUri() = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+fun getAlarmSoundUri() = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)

@@ -2,7 +2,7 @@ package ru.netfantazii.handy.core.notifications.alarm
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +58,7 @@ class AlarmFragment : Fragment() {
         val binding = AlarmFragmentBinding.inflate(inflater, container, false)
         datePicker = binding.datePickerView
         timePicker = binding.timePickerView
+        timePicker.setIs24HourView(DateFormat.is24HourFormat(requireContext()))
         binding.viewModel = viewModel
         binding.datePicker = binding.datePickerView
         binding.timePicker = binding.timePickerView

@@ -37,6 +37,15 @@
             android:orientation="horizontal">
 
             <ImageButton
+                android:id="@+id/share_secret_code_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:background="?actionBarItemBackground"
+                android:scaleType="center"
+                android:src="@drawable/ic_share"/>
+
+            <ImageButton
                 android:id="@+id/copy_secret_code_button"
                 android:layout_width="50dp"
                 android:layout_height="50dp"

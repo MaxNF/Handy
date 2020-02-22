@@ -184,6 +184,15 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
                 .firstOrError()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .flatMapCompletable { geofenceEntities ->
+                    registerGeofences(getApplication(),
+                        geofenceEntities,
+                        catalog.id,
+                        catalog.name,
+                        catalog.groupExpandStates)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                }
                 .doFinally {
                     catalog.alarmTime?.let { alarmTime ->
                         restoreCatalogAlarm(catalog, alarmTime)
@@ -191,9 +200,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
                     lastRemovedObject = null
                     onNewDataReceive(catalogList)
                 }
-                .subscribe { geofenceEntities ->
-                    restoreCatalogGeofences(catalog, geofenceEntities)
-                }
+                .subscribe()
         }
     }
 
@@ -216,6 +223,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
             catalog.name,
             catalog.groupExpandStates)
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
     }
 

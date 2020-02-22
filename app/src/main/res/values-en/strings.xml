@@ -181,4 +181,5 @@
     <string name="delete_contact_dialog_title">Delete contact?</string>
     <string name="geofences_label">Geofences</string>
     <string name="geofence_api_error">Error while adding the geofence. Check if gps is enabled on your device.</string>
+    <string name="shareCodeTemplate">My secret code is: %1$s \nIf you don\'t have Handy application yet, you can download it in Google Play: %2$s</string>
 </resources>

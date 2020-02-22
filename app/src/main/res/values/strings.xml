@@ -185,4 +185,5 @@
     <string name="change_secret_dialog_title">Change secret code?</string>
     <string name="geofence_limit_error_message">Unable to register more than 100 geofences</string>
     <string name="geofence_api_error">Error while adding the geofence. Check if gps is enabled on your device.</string>
+    <string name="shareCodeTemplate">My secret code is: %1$s \nIf you don\'t have Handy application yet, you can download it in Google Play: %2$s</string>
 </resources>

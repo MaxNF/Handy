@@ -4,9 +4,9 @@ import android.app.IntentService
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
-import androidx.navigation.NavDeepLinkBuilder
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.HandyApplication
+import ru.netfantazii.handy.MainActivity
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.*
@@ -15,6 +15,7 @@ import java.lang.UnsupportedOperationException
 const val ALARM_TO_ALARM_INTENT_ACTION = "alarm_to_alarm"
 const val ALARM_TO_PRODUCTS_INTENT_ACTION = "alarm_to_products"
 const val GEOFENCE_TO_PRODUCTS_INTENT_ACTION = "geofence_to_products"
+const val BUNDLE_DESTINATION_ID_KEY = "destination_id"
 
 class NotificationService : IntentService("notification_service") {
     private lateinit var localRepository: LocalRepository
@@ -74,43 +75,59 @@ class NotificationService : IntentService("notification_service") {
     }
 
     private fun startAlarmToAlarmFragment() {
-        alarmToAlarmPendingIntent().send()
+        startActivity(intentForStartingActivity(alarmArguments(R.id.notifications_fragment)))
     }
 
     private fun startAlarmToProductFragment() {
-        alarmToProductsPendingIntent().send()
+        startActivity(intentForStartingActivity(alarmArguments(R.id.products_fragment)))
     }
 
     private fun startGeofenceToProductFragment() {
-        geofenceToProductsPendingIntent().send()
+        startActivity(intentForStartingActivity(geofenceArguments(R.id.products_fragment)))
     }
 
-    private fun alarmToAlarmPendingIntent() = NavDeepLinkBuilder(applicationContext)
-        .setGraph(R.navigation.nav_graph)
-        .setDestination(R.id.notifications_fragment)
-        .setArguments(alarmArguments())
-        .createPendingIntent()
+//    private fun alarmToAlarmPendingIntent() = NavDeepLinkBuilder(applicationContext)
+//        .setGraph(R.navigation.nav_graph)
+//        .setDestination(R.id.notifications_fragment)
+//        .setArguments(alarmArguments())
+//        .createPendingIntent()
 
 
-    private fun alarmToProductsPendingIntent() = NavDeepLinkBuilder(applicationContext)
-        .setGraph(R.navigation.nav_graph)
-        .setDestination(R.id.products_fragment)
-        .setArguments(alarmArguments())
-        .createPendingIntent()
+//    private fun alarmToProductsPendingIntent() = NavDeepLinkBuilder(applicationContext)
+//        .setGraph(R.navigation.nav_graph)
+//        .setDestination(R.id.products_fragment)
+//        .setArguments(alarmArguments())
+//        .createPendingIntent()
 
-    private fun geofenceToProductsPendingIntent() = NavDeepLinkBuilder(applicationContext)
-        .setGraph(R.navigation.nav_graph)
-        .setDestination(R.id.products_fragment)
-        .setArguments(geofenceArguments())
-        .createPendingIntent()
+    private fun intentForStartingActivity(arguments: Bundle): Intent {
+        val context = applicationContext
+        return Intent(context, MainActivity::class.java)!!.apply {
+            putExtras(arguments)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+    }
 
-    private fun alarmArguments(): Bundle = Bundle().apply {
+//    private fun geofenceToProductsPendingIntent() = NavDeepLinkBuilder(applicationContext)
+//        .setGraph(R.navigation.nav_graph)
+//        .setDestination(R.id.products_fragment)
+//        .setArguments(geofenceArguments())
+//        .createPendingIntent()
+
+//    private fun alarmArguments(): Bundle = Bundle().apply {
+//        putLong(BUNDLE_CATALOG_ID_KEY, catalogId())
+//        putString(BUNDLE_CATALOG_NAME_KEY, catalogName())
+//        putParcelable(BUNDLE_EXPAND_STATE_KEY, expandState())
+//    }
+
+    private fun alarmArguments(destination: Int): Bundle = Bundle().apply {
+        putInt(BUNDLE_DESTINATION_ID_KEY, destination)
         putLong(BUNDLE_CATALOG_ID_KEY, catalogId())
         putString(BUNDLE_CATALOG_NAME_KEY, catalogName())
         putParcelable(BUNDLE_EXPAND_STATE_KEY, expandState())
     }
 
-    private fun geofenceArguments() = Bundle().apply {
+    private fun geofenceArguments(destination: Int) = Bundle().apply {
+        putInt(BUNDLE_DESTINATION_ID_KEY, destination)
         putLong(BUNDLE_CATALOG_ID_KEY, catalogId())
         putString(BUNDLE_CATALOG_NAME_KEY, catalogName())
         putParcelable(BUNDLE_EXPAND_STATE_KEY, expandState())

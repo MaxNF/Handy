@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,27 +21,24 @@ import androidx.leanback.app.ProgressBarManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.get
+import androidx.navigation.*
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import io.reactivex.plugins.RxJavaPlugins
+import ru.netfantazii.handy.core.notifications.BUNDLE_DESTINATION_ID_KEY
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.SHOULD_SILENT_SIGN_IN_KEY
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
 import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
-import ru.netfantazii.handy.extensions.GEOFENCE_UNAVAILABLE_ERROR_MESSAGE
 import ru.netfantazii.handy.extensions.reloadActivity
 import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
@@ -89,17 +87,19 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //исправить диалоговое окно с описанием каталога (стиль)
 //не добавлять в базу геозоны, если регистрация не удалась
 
-//todo сделать возможность делиться секретным кодом с помощью выбора средства отправления
-//todo убрать полосы при выборе будильника
-//todo сделать time picker зависимым от локали
+//сделать возможность делиться секретным кодом с помощью выбора средства отправления
+//todo убрать полосы при выборе будильника ??? сами кудато исчезли, хз что за баг
+//сделать time picker зависимым от локали
 
-//todo дергается полоска количества покупок после выхода из контактов/настроек
-//todo сделать, чтобы на телефоне был звук оповещения и вибрация (на эмуляторе почему-то есть)
-//todo при клике по уведомлению (напр. геометки) логинится еще раз, хотя приложение открыто
+//дергается полоска количества покупок после выхода из контактов/настроек
+//сделать, чтобы на телефоне был звук оповещения и вибрация (на эмуляторе почему-то есть)
+//при клике по уведомлению (напр. геометки) логинится еще раз, хотя приложение открыто
 
 //todo прикрутить рекламный банер вниз (как у листоник)
 //todo сделать возможность доната (покупка чашки кофе, проверить допустимо ли)
 //todo исчезла тень у продуктов
+
+//todo сделать удаление каталога из бд при успешном получении и при ошибках в доставке
 
 //--------------------- ОБНОВЛЕНИЕ
 //todo подготовить новые скриншоты
@@ -108,7 +108,8 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 
 
 const val NOTIFICATION_CHANNEL_ID = "Handy notification channel"
-var user: User? = null
+const val APPLICATION_GOOGLE_PLAY_URL =
+    "https://play.google.com/store/apps/details?id=ru.netfantazii.handy"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -171,11 +172,39 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         showWelcomeScreenIfNeeded()
 
         setUpErrorHandler()
+
+        handleNotificationIntent(intent)
+    }
+
+    private fun handleNotificationIntent(intent: Intent?) {
+        intent?.extras?.let {
+            val destinationId = it.getInt(BUNDLE_DESTINATION_ID_KEY, 0)
+            Log.d(TAG, "onCreate: $destinationId")
+            if (destinationId != 0) {
+                intent.removeExtra(BUNDLE_DESTINATION_ID_KEY)
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.catalogs_fragment, false)
+                    .setLaunchSingleTop(true)
+                    .build()
+                navController.navigate(destinationId, it, navOptions)
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "onResume: ")
         tryToSilentSignIn()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        Log.d(TAG, "onNewIntent: ")
+        super.onNewIntent(intent)
+//        intent?.extras?.let {
+//            val destinationId = it.getInt(DESTINATION_ID_KEY)
+//            navController.navigate(destinationId, it)
+//        }
+        handleNotificationIntent(intent)
     }
 
     private fun tryToSilentSignIn() {
@@ -203,6 +232,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setUpErrorHandler() {
         RxJavaPlugins.setErrorHandler { e ->
+            Log.d(TAG, "setUpErrorHandler: $e")
 
             if (e.cause is GeofenceLimitException) {
                 showLongToast(this, getString(R.string.geofence_limit_error_message))
@@ -454,6 +484,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     hideGlobalProgressBar()
                 }
             })
+            allLiveDataList.add(hideProgressBar)
+
+            shareSecretCodeClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { code ->
+                    sendCodeToShareSheet(code)
+                }
+            })
+
 
             user.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
@@ -463,6 +501,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             })
         }
+    }
+
+    private fun sendCodeToShareSheet(code: String) {
+        val finalTextToShare =
+            getString(R.string.shareCodeTemplate, code, APPLICATION_GOOGLE_PLAY_URL)
+
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, finalTextToShare)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(intent, null)
+        startActivity(shareIntent)
     }
 
     private fun showGlobalProgressBar(operation: PbOperations) {

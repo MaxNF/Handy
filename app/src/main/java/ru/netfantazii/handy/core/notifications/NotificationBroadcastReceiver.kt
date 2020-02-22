@@ -20,6 +20,7 @@ import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
+import ru.netfantazii.handy.extensions.getNotificationSoundUri
 import ru.netfantazii.handy.extensions.registerAlarm
 import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.model.catalogNotificationContent
@@ -143,6 +144,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(true)
             .setContentIntent(toProductPendingIntent)
+            .setSound(getNotificationSoundUri())
             .addAction(0,
                 context.getString(R.string.notification_cancel_label),
                 getCancelPendingIntentForNotifications(context, notificationId))
@@ -181,6 +183,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setSound(getNotificationSoundUri())
             .setAutoCancel(true)
             .setContentIntent(toProductPendingIntent)
             .addAction(0,
