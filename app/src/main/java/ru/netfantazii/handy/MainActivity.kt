@@ -33,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import io.reactivex.plugins.RxJavaPlugins
 import ru.netfantazii.handy.core.notifications.BUNDLE_DESTINATION_ID_KEY
+import ru.netfantazii.handy.core.notifications.map.MapFragment
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.SHOULD_SILENT_SIGN_IN_KEY
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
@@ -52,7 +53,7 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //попробовать другие фоны (градиент)
 
 //настроить цвета кнопок у диалогов, а также чтобы кнопки не склеивались
-//todo настроить правила безопасности в бэкенде
+//настроить правила безопасности в бэкенде
 //todo сделать новое обучение
 
 //устранить неприятную серую окантовку у продуктов/групп
@@ -125,11 +126,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val SIGN_IN_REQUEST_CODE = 0
     private lateinit var pbManager: ProgressBarManager
     private lateinit var pbText: TextView
+    private lateinit var mainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadTheme()
-        val mainBinding: ActivityMainBinding =
+        mainBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
         createNetworkViewModel()
         mainBinding.viewModel = viewModel
@@ -395,19 +397,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             signOutClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     setShouldNotSilentSignInNextTime()
-
-                    val insideShareFragment =
-                        navController.currentDestination == navController.graph[R.id.shareFragment]
-                    val insideContactsFragment =
-                        navController.currentDestination == navController.graph[R.id.contactsFragment]
-
-                    if (insideShareFragment || insideContactsFragment) {
-                        val pokedSuccessfully =
-                            navController.popBackStack(navController.graph.startDestination, false)
-                        if (!pokedSuccessfully) {
-                            reloadActivity(this@MainActivity)
-                        }
-                    }
+                    closeInternetRequiredFragments()
                 }
             })
             allLiveDataList.add(signOutClicked)
@@ -500,6 +490,43 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         user != null
                 }
             })
+        }
+    }
+
+    private fun closeInternetRequiredFragments() {
+        val insideShareFragment =
+            navController.currentDestination == navController.graph[R.id.shareFragment]
+        val insideContactsFragment =
+            navController.currentDestination == navController.graph[R.id.contactsFragment]
+
+        val insideNotificationFragment =
+            navController.currentDestination == navController.graph[R.id.notifications_fragment]
+        val insideMapFragment = if (insideNotificationFragment) {
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+            val notificationFragment =
+                navHostFragment?.childFragmentManager?.primaryNavigationFragment
+            val mapFragment =
+                notificationFragment?.childFragmentManager?.fragments?.find { it is MapFragment }
+
+            when {
+                mapFragment == null -> false
+                mapFragment.isVisible -> true
+                else -> {
+                    notificationFragment.childFragmentManager.beginTransaction().remove(mapFragment)
+                        .commit()
+                    false
+                }
+            }
+        } else {
+            false
+        }
+
+        if (insideShareFragment || insideContactsFragment || insideMapFragment) {
+            val pokedSuccessfully =
+                navController.popBackStack(navController.graph.startDestination, false)
+            if (!pokedSuccessfully) {
+                reloadActivity(this@MainActivity)
+            }
         }
     }
 

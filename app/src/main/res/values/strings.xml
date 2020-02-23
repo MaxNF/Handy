@@ -186,4 +186,5 @@
     <string name="geofence_limit_error_message">Unable to register more than 100 geofences</string>
     <string name="geofence_api_error">Error while adding the geofence. Check if gps is enabled on your device.</string>
     <string name="shareCodeTemplate">My secret code is: %1$s \nIf you don\'t have Handy application yet, you can download it in Google Play: %2$s</string>
+    <string name="login_required_dialog_message">Authentication required. You can sign in the menu (coming from the left side of the screen)</string>
 </resources>

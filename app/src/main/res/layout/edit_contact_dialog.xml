@@ -33,16 +33,17 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:enabled="@{action != ContactDialogAction.RENAME_NOT_VALID ? true : false}"
                 android:id="@+id/name_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
+                android:enabled="@{action != ContactDialogAction.RENAME_NOT_VALID ? true : false}"
                 android:hint="@string/name_hint"
-                android:text="@{contact.name}"
-                android:inputType="textMultiLine"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:maxLength="30"
                 android:paddingTop="10dp"
+                android:text="@{contact.name}"
                 android:textColor="@color/textColorBlack"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -71,6 +72,8 @@
                 android:background="@android:color/white"
                 android:hint="@string/secret_code_hint"
                 android:text="@{contact.secret}"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:maxLength="7"
                 android:paddingTop="10dp"
                 android:textColor="@{action == ContactDialogAction.CREATE ? @color/textColorBlack : @color/textColorInactive}"

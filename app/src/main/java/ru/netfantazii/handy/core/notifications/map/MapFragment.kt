@@ -1,17 +1,12 @@
 package ru.netfantazii.handy.core.notifications.map
 
-import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -36,6 +31,7 @@ import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
 import ru.netfantazii.handy.HandyApplication
+import ru.netfantazii.handy.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_ID_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_NAME_KEY
@@ -43,8 +39,6 @@ import ru.netfantazii.handy.core.notifications.BUNDLE_EXPAND_STATE_KEY
 import ru.netfantazii.handy.databinding.MapFragmentBinding
 import ru.netfantazii.handy.extensions.*
 import java.lang.IllegalArgumentException
-
-const val MAP_API_KEY = "3426ee1b-da34-4926-b4f4-df96fdb9a8eb"
 
 class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     SuggestSession.SuggestListener {
@@ -95,9 +89,13 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate: ")
         setHasOptionsMenu(true)
-        MapKitFactory.setApiKey(MAP_API_KEY)
+
+        val networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
+        MapKitFactory.setApiKey(networkViewModel.user.get()!!.yandexMapApiKey)
+
         MapKitFactory.initialize(context)
         SearchFactory.initialize(context)
         locationManager = MapKitFactory.getInstance().createLocationManager()
@@ -110,7 +108,6 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         userIconProvider = ImageProvider.fromResource(context, R.drawable.ic_person_pin_circle)
         searchObjectIconProvider = ImageProvider.fromResource(context, R.drawable.ic_search_results)
         createViewModel()
-        super.onCreate(savedInstanceState)
     }
 
     private fun createViewModel() {
@@ -428,7 +425,7 @@ class CircleDiffSearcher(
     val visiblePlacemarks = mutableMapOf<Long, PlacemarkMapObject>()
 
 
-    public fun searchForDifferences() {
+    private fun searchForDifferences() {
         if (!resultsReady) {
             if (!traversed) visibleMapObjects.traverse(this)
             visibleCircles.forEach { Log.d(TAG, "searchForDifferences: ${it.key}") }

@@ -15,12 +15,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import kotlinx.android.synthetic.main.notification_tab_fragment.*
+import ru.netfantazii.handy.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.alarm.AlarmFragment
 import ru.netfantazii.handy.core.notifications.map.MapFragment
@@ -33,8 +36,14 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
     private val fragmentArgs: NotificationTabFragmentArgs by navArgs()
     private var mapPermissionGranted = false
     private lateinit var tabLayout: TabLayout
+    private lateinit var networkViewModel: NetworkViewModel
 
     private val savedTabIndexBundleKey = "tab_index"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,6 +75,11 @@ class NotificationTabFragment : Fragment(), ActivityCompat.OnRequestPermissionsR
                     when (tab.position) {
                         0 -> viewPager.currentItem = 0
                         1 -> {
+                            if (networkViewModel.user.get() == null) {
+                                LoginFirstDialog().show(childFragmentManager, "login_first_dialog")
+                                tabLayout.selectTab(tabLayout.getTabAt(0))
+                                return
+                            }
                             checkPermissions()
                             if (mapPermissionGranted) {
                                 viewPager.currentItem = 1
@@ -154,6 +168,14 @@ class GrantPermissionsManuallyDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity)
             .setMessage(R.string.grant_perm_manually_message)
+            .setNegativeButton(R.string.dialog_ok_button, null)
+            .create()
+    }
+}
+class LoginFirstDialog : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(activity)
+            .setMessage(R.string.login_required_dialog_message)
             .setNegativeButton(R.string.dialog_ok_button, null)
             .create()
     }

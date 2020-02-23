@@ -4,6 +4,7 @@ object RemoteDbSchema {
     const val COLLECTION_USERS = "users" // id документа = uid пользователя
     const val USER_SHORT_ID =
         "short_id" // секретный код, генерируется автоматически с помощью cloud function
+    const val ANOTHER_SECRET = "another_secret"
     const val USER_DEVICE_TOKENS = "device_tokens" // ["token 1", "token 2", "token 3"]
 
     const val COLLECTION_FRIENDS = "friends" // id документа = uid пользователя

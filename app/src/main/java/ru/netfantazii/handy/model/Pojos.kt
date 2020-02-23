@@ -118,7 +118,8 @@ data class User(
     val imageUri: Uri?,
     @get:Bindable
     var secret: String,
-    val credential: AuthCredential
+    val credential: AuthCredential,
+    val yandexMapApiKey: String
 ) : BaseObservable()
 
 data class catalogNotificationContent(

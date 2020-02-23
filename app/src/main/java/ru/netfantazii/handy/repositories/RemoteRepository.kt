@@ -22,7 +22,7 @@ interface RemoteRepository {
 
     fun signInToFirebase(credential: AuthCredential): Completable
     fun changeSecret(): Single<String>
-    fun addUserUpdateTokenGetSecret(): Single<String>
+    fun addUserUpdateTokenGetSecret(): Single<Pair<String, String>>
     fun getContacts(): Observable<List<Contact>>
     fun addContact(contactData: Map<String, String>): Completable
     fun removeContact(contactData: Map<String, String>): Completable
@@ -75,14 +75,16 @@ class RemoteRepositoryImpl : RemoteRepository {
         }
     }
 
-    override fun addUserUpdateTokenGetSecret(): Single<String> {
-        return Single.create<String> { emitter ->
+    override fun addUserUpdateTokenGetSecret(): Single<Pair<String, String>> {
+        return Single.create<Pair<String, String>> { emitter ->
             val task = firestoreHttpsEuWest1
                 .getHttpsCallable(CloudFunctions.UPDATE_USER_AND_TOKEN)
                 .call()
 
             task.addOnSuccessListener {
-                emitter.onSuccess(it.data as String)
+                val map = it.data as Map<String, String>
+                emitter.onSuccess(Pair(map[RemoteDbSchema.USER_SHORT_ID] as String,
+                    map[RemoteDbSchema.ANOTHER_SECRET] as String))
             }
             task.addOnFailureListener {
                 emitter.onError(it)
