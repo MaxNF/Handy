@@ -166,7 +166,7 @@ class NotificationTabAdapter(
 
 class GrantPermissionsManuallyDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
             .setMessage(R.string.grant_perm_manually_message)
             .setNegativeButton(R.string.dialog_ok_button, null)
             .create()
@@ -174,7 +174,7 @@ class GrantPermissionsManuallyDialog : DialogFragment() {
 }
 class LoginFirstDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
             .setMessage(R.string.login_required_dialog_message)
             .setNegativeButton(R.string.dialog_ok_button, null)
             .create()
