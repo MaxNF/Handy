@@ -429,14 +429,13 @@ class GroupsAndProductsViewModel(
 
     fun undoGroupRemoval() {
         Log.d(TAG, "undoGroupRemoval: ")
-        lastRemovedGroup?.let {
-            val restoredGroupPosition = it.position
-            if (groupList.isNotEmpty() && restoredGroupPosition < groupList.size) {
-                val listForUpdating = groupList.slice(restoredGroupPosition..groupList.lastIndex)
+        lastRemovedGroup?.let { group ->
+            if (groupList.isNotEmpty() && group.position < groupList.size) {
+                val listForUpdating = groupList.slice(group.position..groupList.lastIndex)
                 listForUpdating.shiftPositionsToRight()
-                localRepository.addGroupWithProductsAndUpdateAll(it, listForUpdating)
+                localRepository.addGroupWithProductsAndUpdateAll(group, listForUpdating)
             } else {
-                localRepository.addGroupWithProducts(it)
+                localRepository.addGroupWithProducts(group)
             }
         }
     }

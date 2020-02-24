@@ -143,7 +143,7 @@ abstract class GroupDao : BaseDao<GroupEntity>() {
     abstract fun getGroups(catalogId: Long): Observable<MutableList<Group>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun addAllProducts(products: List<ProductEntity>): Completable
+    abstract fun addAllProducts(products: List<ProductEntity>)
 
     @Transaction
     open fun addGroupWithProductsAndUpdateAll(group: Group, groupList: List<Group>) {
