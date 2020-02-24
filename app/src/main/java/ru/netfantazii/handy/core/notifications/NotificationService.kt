@@ -75,6 +75,7 @@ class NotificationService : IntentService("notification_service") {
     }
 
     private fun startAlarmToAlarmFragment() {
+        closeTopSystemWindow()
         startActivity(intentForStartingActivity(alarmArguments(R.id.notifications_fragment)))
     }
 
@@ -84,6 +85,11 @@ class NotificationService : IntentService("notification_service") {
 
     private fun startGeofenceToProductFragment() {
         startActivity(intentForStartingActivity(geofenceArguments(R.id.products_fragment)))
+    }
+
+    private fun closeTopSystemWindow() {
+        val closeIntent = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
+        applicationContext.sendBroadcast(closeIntent)
     }
 
 //    private fun alarmToAlarmPendingIntent() = NavDeepLinkBuilder(applicationContext)

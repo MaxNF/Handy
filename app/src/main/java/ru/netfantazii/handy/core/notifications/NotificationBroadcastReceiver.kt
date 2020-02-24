@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.GeofencingEvent
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
@@ -17,7 +18,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
-import ru.netfantazii.handy.NOTIFICATION_CHANNEL_ID
+import ru.netfantazii.handy.REMINDER_NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
 import ru.netfantazii.handy.extensions.getNotificationSoundUri
@@ -135,10 +136,11 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                 toProductsIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
-        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.notification_icon)
+        return NotificationCompat.Builder(context, REMINDER_NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_shopping_cart)
             .setContentTitle(title)
             .setContentText(message)
+            .setColor(ContextCompat.getColor(context, R.color.notificationColor))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -176,8 +178,9 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             toProductIntent,
             PendingIntent.FLAG_UPDATE_CURRENT)
 
-        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.notification_icon)
+        return NotificationCompat.Builder(context, REMINDER_NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_shopping_cart)
+            .setColor(ContextCompat.getColor(context, R.color.notificationColor))
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_MAX)

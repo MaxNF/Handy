@@ -28,4 +28,5 @@
     <color name="blackSemiTransparent60">#99000000</color>
     <color name="badgeColor">#DD4C4C</color>
     <color name="textColorInactive">#66000000</color>
+    <color name="notificationColor">#CE1C1C</color>
 </resources>

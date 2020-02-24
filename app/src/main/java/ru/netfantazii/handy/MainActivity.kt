@@ -47,6 +47,7 @@ import ru.netfantazii.handy.model.GeofenceLimitException
 import ru.netfantazii.handy.model.PbOperations
 import ru.netfantazii.handy.model.User
 import ru.netfantazii.handy.model.database.ErrorCodes
+
 //Проверить и сделать, чтобы будильники и геометки перерегистрировался при перезагрузки телефона!
 //проверить все цветовые схемы со всеми элементами (особенно напоминания, т.к. там подсветку заголовков не видно)
 //попробовать другие фоны (градиент)
@@ -100,7 +101,8 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //исчезла тень у продуктов
 
 //todo сделать удаление каталога из бд при успешном получении и при ошибках в доставке
-//todo оформить оповещения
+//оформить оповещения
+//todo сделать сообщение при неудачном логине, а не тост с неизвестной ошибкой
 
 //--------------------- ОБНОВЛЕНИЕ
 //todo подготовить новые скриншоты
@@ -110,7 +112,8 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //TODO ЗАМЕНИТЬ ПЕРЕД РЕЛИЗОМ АПИ КЛЮЧ
 
 
-const val NOTIFICATION_CHANNEL_ID = "Handy notification channel"
+const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"
+const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_channel"
 const val APPLICATION_GOOGLE_PLAY_URL =
     "https://play.google.com/store/apps/details?id=ru.netfantazii.handy"
 
@@ -172,7 +175,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         buildSignInClient()
-        registerNotitificationChannel(this)
+        registerNotitificationChannels()
         showWelcomeScreenIfNeeded()
 
         setUpErrorHandler()
@@ -366,17 +369,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    private fun registerNotitificationChannel(context: Context) {
+    private fun registerNotitificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.notification_channel_name)
-            val descriptionText = context.getString(R.string.notification_channel_description)
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
+            val remindersDescription =
+                getString(R.string.notification_channel_reminders_description)
+            val catalogReceivedDescription =
+                getString(R.string.notification_channel_downloads_description)
+
+            val notificationChannels = mutableListOf<NotificationChannel>()
+            notificationChannels.add(NotificationChannel(REMINDER_NOTIFICATION_CHANNEL_ID,
+                getString(R.string.reminders_notification_channel_name),
+                NotificationManager.IMPORTANCE_HIGH).apply {
+                description = remindersDescription
+            })
+            notificationChannels.add(NotificationChannel(CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID,
+                getString(R.string.catalog_received_notification_ch_name),
+                NotificationManager.IMPORTANCE_HIGH).apply {
+                description = catalogReceivedDescription
+            })
+
             val notificationManager: NotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannels(notificationChannels)
         }
     }
 

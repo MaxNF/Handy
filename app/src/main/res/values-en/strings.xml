@@ -95,22 +95,22 @@
     <string name="all_geofences_unreg_success">All geofences have been successfully removed.</string>
     <string name="all_geofences_unreg_failure">Failed to remove all geofences</string>
     <string name="geofence_unreg_success">Geofence has been successfully removed.</string>
-    <string name="notification_channel_name">Handy notification channel</string>
-    <string name="notification_channel_description">Channel for Handy geofence and alarm notifications.</string>
+    <string name="reminders_notification_channel_name">Alarm and geofence reminders</string>
+    <string name="notification_channel_reminders_description">Channel for Handy geofence and alarm notifications.</string>
     <string name="geofence_notification_title">Geofence crossed</string>
-    <string name="geofence_notification_message">It\'s time to shop!</string>
+    <string name="geofence_notification_message">Tap on the notifications to open the list</string>
     <string name="map_remote_error">Remote Error</string>
     <string name="map_network_error">Network Error. Please check your Internet connection and try again.</string>
     <string name="map_unknown_error">Unknown error</string>
     <string name="radius_label">radius</string>
     <string name="alarm_label">Alarm</string>
-    <string name="notification_cancel_label">Close notification</string>
+    <string name="notification_cancel_label">Next time</string>
     <string name="switcher_on_label">ON</string>
     <string name="switcher_off_label">OFF</string>
     <string name="alarm_time_label">Time</string>
     <string name="alarm_date_label">Date</string>
-    <string name="alarm_notification_action_label">Change the alarm time</string>
-    <string name="alarm_went_off_title">The alarm went off!</string>
+    <string name="alarm_notification_action_label">Set another time</string>
+    <string name="alarm_went_off_title">It\'s time to shop.</string>
     <string name="no_permissions_title">The map module needs permissions to access to the Internet and your location to work properly.</string>
     <string name="need_permission_message">The app needs permissions to work with the map</string>
     <string name="grant_permission_label">Grant permissions</string>
@@ -140,7 +140,7 @@
     <string name="progress_bar_text">List \"%1$s\" is being sent...</string>
     <string name="secret_is_copied">The secret code is copied to clipboard!</string>
     <string name="catalog_received_notification_title">You have received a shopping list!</string>
-    <string name="catalog_received_notification_message">List: %1$s From: %2$s Commentary: %3$s</string>
+    <string name="catalog_received_notification_message">Sender: %1$s. Tap to open the list.</string>
     <string name="dialog_ok_button">OK</string>
     <string name="changing_secret_failed_message">Generating a new secret code has failed</string>
     <string name="are_you_sure">Are you sure?</string>
@@ -183,4 +183,6 @@
     <string name="geofence_api_error">Error while adding the geofence. Check if gps is enabled on your device.</string>
     <string name="shareCodeTemplate">My secret code is: %1$s \nIf you don\'t have Handy application yet, you can download it in Google Play: %2$s</string>
     <string name="login_required_dialog_message">Authentication required. You can sign in the menu (coming from the left side of the screen)</string>
+    <string name="notification_channel_downloads_description">Channel for received shopping lists notifications</string>
+    <string name="catalog_received_notification_ch_name">Receiving lists</string>
 </resources>
