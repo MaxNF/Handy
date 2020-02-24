@@ -88,7 +88,7 @@ class OverlayFragment : Fragment() {
     }
 
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
-        val textField = rootView.findViewById<TextInputEditText>(R.id.overlay_text_field)
+        val textField = rootView.findViewById<TextInputEditText>(R.id.commentary_text_field)
         textField.requestFocus()
         textField.moveCursorToLastChar()
         textField.addKeyboardButtonClickListener(EditorInfo.IME_ACTION_DONE) {

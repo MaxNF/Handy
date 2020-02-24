@@ -166,16 +166,19 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
             .andThen(remoteRepository.addUserUpdateTokenGetSecret())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { data ->
-                // data - ответ от бэкенда, first - short_id (секретный код), second - yandex api key
+            .subscribe ({ (first, second) ->
+                //first - short_id (секретный код), second - yandex api key
                 _signInComplete.value = Event(Unit)
                 val firebaseUser = FirebaseAuth.getInstance().currentUser!!
                 user.set(User(firebaseUser.displayName ?: "",
                     firebaseUser.email ?: "",
-                    firebaseUser.photoUrl, data.first, credential, data.second))
+                    firebaseUser.photoUrl, first, credential, second))
                 subscribeToContactUpdates()
                 hidePb()
-            })
+            }, {
+                _firebaseSignInError.value = Event(Unit)
+                hidePb()
+            }))
     }
 
     override fun onDeleteYesClick(contact: Contact) {

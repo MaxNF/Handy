@@ -81,7 +81,7 @@ class ShareFragment : Fragment() {
 
             sendClickedNoRecipient.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
-                    showLongToast(requireContext(), getString(R.string.no_recepient_error))
+                    showLongToast(requireContext(), getString(R.string.no_recipient_error))
                 }
             })
         }

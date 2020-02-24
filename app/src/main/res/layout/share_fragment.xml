@@ -103,12 +103,13 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/overlay_text_field"
+                    android:id="@+id/commentary_text_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/white"
-                    android:hint="Commentary"
-                    android:inputType="textMultiLine"
+                    android:hint="@string/commentary_field_hint"
+                    android:imeOptions="actionDone"
+                    android:inputType="textCapSentences"
                     android:maxLength="500"
                     android:paddingTop="10dp"
                     android:text="@={viewModel.comment}"
@@ -148,7 +149,7 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="16dp"
-                android:prompt="@string/app_name"
+                android:prompt="@string/contacts_fragment_label"
                 android:spinnerMode="dialog"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/add_contact_button"

@@ -25,7 +25,7 @@
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/overlay_text_field"
+                android:id="@+id/commentary_text_field"
                 style="@style/OverlayEditText"
                 android:layout_height="50dp"
                 android:paddingTop="10dp"

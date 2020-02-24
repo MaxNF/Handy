@@ -139,10 +139,10 @@
     <string name="contacts_update_error">Error while updating contact</string>
     <string name="catalog_was_sent_successfully">List \"%1$s\" was sent successfully</string>
     <string name="catalog_was_not_sent_error">Error while sending \"%1$s\" list</string>
-    <string name="signin_error">Error while signing in</string>
+    <string name="signin_error">Error while signing in. Check your Internet connection</string>
     <string name="revoke_is_successful">Your account has been disconnected from the app</string>
     <string name="revoke_access_hint">Tap long to revoke access</string>
-    <string name="progress_bar_text">List \"%1$s\" is being sent...</string>
+    <string name="progress_bar_text">List \"%1$s\" is being sent…</string>
     <string name="secret_is_copied">The secret code is copied to clipboard!</string>
     <string name="catalog_received_notification_title">You have received a shopping list!</string>
     <string name="catalog_received_notification_message">Sender: %1$s. Tap to open the list.</string>
@@ -151,7 +151,7 @@
     <string name="are_you_sure">Are you sure?</string>
     <string name="account_deleted_successfully">Your account has been successfully deleted</string>
     <string name="account_deletion_failed">Failed to delete the account</string>
-    <string name="uknown_error_occured">Uknown error occured. Try again.</string>
+    <string name="unknown_error_occurred">Unknown error occurred. Try again.</string>
     <string name="user_not_found_error">The secret code is not correct. Check the spelling and try again.</string>
     <string name="no_messages_sent_error">No lists were delivered. The user is not logged in the app.</string>
     <string name="message_failed_incorrect_secret_error">Sending has failed. The user has changed the secret code. Ask him for a new one.</string>
@@ -169,7 +169,7 @@
     <string name="change_secret_dialog_message">You will have to send a new code to your contacts to be able to receive shopping lists from them</string>
     <string name="adding_geofence_failed">Error while adding the geofence</string>
     <string name="catalog_creation_time">%1$s %2$s</string>
-    <string name="no_recepient_error">No recipient has been chosen</string>
+    <string name="no_recipient_error">No recipient has been chosen</string>
     <string name="notifications_fragment_label">Notifications</string>
     <string name="share_fragment_label">Send list</string>
     <string name="change_secret_timeout_message">You can\'t change the secret code more than once per minute</string>
@@ -189,4 +189,5 @@
     <string name="login_required_dialog_message">Authentication required. You can sign in the menu (coming from the left side of the screen)</string>
     <string name="notification_channel_downloads_description">Channel for received shopping lists notifications</string>
     <string name="catalog_received_notification_ch_name">Receiving lists</string>
+    <string name="commentary_field_hint">Commentary</string>
 </resources>

@@ -207,10 +207,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNewIntent(intent: Intent?) {
         Log.d(TAG, "onNewIntent: ")
         super.onNewIntent(intent)
-//        intent?.extras?.let {
-//            val destinationId = it.getInt(DESTINATION_ID_KEY)
-//            navController.navigate(destinationId, it)
-//        }
         handleNotificationIntent(intent)
     }
 
@@ -222,7 +218,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 viewModel.signInToFirebase(it)
             }
             task.addOnFailureListener {
-                // do nothing
+                //do nothing
             }
         }
     }
@@ -280,7 +276,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     showLongToast(this, "Authentication error. Not logged in")
                 }
                 else -> {
-                    showLongToast(this, getString(R.string.uknown_error_occured))
+                    showLongToast(this, getString(R.string.unknown_error_occurred))
                     e.printStackTrace()
                 }
             }
@@ -435,7 +431,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             firebaseSignInError.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
-                    showShortToast(this@MainActivity, getString(R.string.signin_error))
+                    showSignInFailedToast()
                     this@MainActivity.signInClient.signOut()
                 }
             })
@@ -579,6 +575,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d(TAG, "onActivityResult: ")
         if (requestCode == SIGN_IN_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             task.addOnSuccessListener {
@@ -586,9 +583,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             task.addOnFailureListener {
                 it.printStackTrace()
-                showShortToast(this, "Error while logging in")
+                viewModel.hidePb()
+                showSignInFailedToast()
             }
         }
+    }
+
+    private fun showSignInFailedToast() {
+        showLongToast(this, getString(R.string.signin_error))
     }
 
     private fun disableFirestorePersistence() {
