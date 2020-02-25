@@ -147,6 +147,11 @@ dependencies {
     // Glide Transformations
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
 
+    // Billing
+    implementation 'com.android.billingclient:billing:2.1.0'
+    implementation 'com.android.billingclient:billing-ktx:2.1.0'
+
+
     // Testing
     testImplementation "androidx.room:room-testing:$room_version"
     testImplementation 'junit:junit:4.12'
