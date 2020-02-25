@@ -5,43 +5,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/coordinator_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/hint_group"
+        <LinearLayout
+            android:id="@+id/hint_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:alpha="0"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:alpha="0.5"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_list" />
+
+            <TextView
+                android:id="@+id/nothing_to_show2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:alpha="0"
-                android:orientation="vertical">
+                android:textSize="22sp"
+                android:alpha="0.5"
+                android:text="@string/hint_nothing_to_show_catalogs"
+                android:textColor="@color/blackSemiTransparent80" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/nothing_to_show2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/hint_nothing_to_show_catalogs"
-                    android:textColor="@color/textColorGray" />
-            </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_list"
+            style="@style/RecyclerViewMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="15dp"
+            android:paddingBottom="80dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_list"
-                android:paddingTop="15dp"
-                android:paddingBottom="80dp"
-                style="@style/RecyclerViewMain"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <com.leinardi.android.speeddial.SpeedDialView
-                android:id="@+id/fab_create_catalog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                app:sdMainFabClosedSrc="@drawable/ic_cross_large"
-                app:sdMainFabClosedIconColor="?attr/fabIconTintColor"
-                app:sdMainFabOpenedIconColor="?attr/fabIconTintColor"/>
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <com.leinardi.android.speeddial.SpeedDialView
+            android:id="@+id/fab_create_catalog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            app:sdMainFabClosedIconColor="?attr/fabIconTintColor"
+            app:sdMainFabClosedSrc="@drawable/ic_cross_large"
+            app:sdMainFabOpenedIconColor="?attr/fabIconTintColor" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </FrameLayout>

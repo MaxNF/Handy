@@ -1,6 +1,6 @@
 <resources>
     <!--Main-->
-    <string name="app_name">Handy</string>
+    <string name="app_name">HandyPro</string>
     <string name="settings_fragment_label">Settings</string>
     <string name="help_fragment_label">Help</string>
 
@@ -120,7 +120,7 @@
     <string name="recipient_label">Recipient:</string>
     <string name="total_products_label">Total products:</string>
     <string name="contact_undo_label">The contact was deleted</string>
-    <string name="hint_nothing_to_show_contacts">Please add a new contact</string>
+    <string name="hint_nothing_to_show_contacts">Add a new contact</string>
     <string name="secret_code_hint">Secret code</string>
     <string name="name_hint">Name</string>
     <string name="apply_button">Apply</string>
@@ -186,4 +186,5 @@
     <string name="notification_channel_downloads_description">Channel for received shopping lists notifications</string>
     <string name="catalog_received_notification_ch_name">Receiving lists</string>
     <string name="commentary_field_hint">Commentary</string>
+    <string name="premium_fragment_label">Премиум-подписка</string>
 </resources>

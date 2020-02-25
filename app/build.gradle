@@ -14,7 +14,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "ru.netfantazii.handy"
+        applicationId "ru.netfantazii.handypro"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1

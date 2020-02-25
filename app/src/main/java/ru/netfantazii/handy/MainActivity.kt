@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
@@ -106,7 +108,9 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //оформить оповещения
 //сделать сообщение при неудачном логине, а не тост с неизвестной ошибкой
 
-//todo поискать бесплатные картинки, чтобы добавить в hint (каталоги, продукты, контакты)
+//поискать бесплатные картинки, чтобы добавить в hint (каталоги, продукты, контакты)
+//todo добавить пункт О программе
+//todo добавить ссылку на www.vectorportal.com в пункт О программе
 
 //--------------------- ОБНОВЛЕНИЕ
 //todo подготовить новые скриншоты
@@ -292,6 +296,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val menu = navigationView.menu
         val contactsMenuItem = menu.findItem(R.id.contactsFragment)
         contactsMenuItem.isVisible = viewModel.user.get() != null
+        val premiumMenuItem = menu.findItem(R.id.navigation_premium)
+        premiumMenuItem.icon.setTint(ContextCompat.getColor(this, R.color.fabIconTintColorWhite))
     }
 
     private fun buildSignInClient() {

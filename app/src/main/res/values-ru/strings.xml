@@ -1,6 +1,6 @@
 <resources>
     <!--Main-->
-    <string name="app_name">Хэнди</string>
+    <string name="app_name">ХэндиПро</string>
     <string name="settings_fragment_label">Настройки</string>
 
     <!--Preferences-->
@@ -136,7 +136,7 @@
     <string name="geofences_label">Геозоны</string>
     <string name="grant_perm_manually_message">Похоже, что вы не выдали нужное разрешение. Чтобы пользоваться геозонами, выдайте требуемые разрешения вручную в настройках телефона.</string>
     <string name="grant_permission_label">Выдать разрешения</string>
-    <string name="hint_nothing_to_show_contacts">Пожалуйста, добавьте новый контакт</string>
+    <string name="hint_nothing_to_show_contacts">Добавьте новый контакт</string>
     <string name="message_failed_incorrect_secret_error">Отправка не удалась. Пользователь сменить секретный код. Попросите его о новом.</string>
     <string name="name_duplicate_error">Такое имя уже существует</string>
     <string name="name_hint">Имя</string>

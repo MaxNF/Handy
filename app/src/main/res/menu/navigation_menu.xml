@@ -24,7 +24,12 @@
         android:checkableBehavior="none">
         <item
             android:id="@+id/navigation_rate_app"
-            android:icon="@drawable/ic_star_icon"
+            android:icon="@drawable/ic_review"
             android:title="@string/rate_app_label" />
+        <item
+            android:id="@+id/navigation_premium"
+            android:icon="@drawable/ic_solid_star"
+            android:title="@string/premium_fragment_label" />
+
     </group>
 </menu>
