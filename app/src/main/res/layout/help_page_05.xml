@@ -13,22 +13,17 @@
         style="@style/helpTextViews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/help5_1" />
+        android:text="@string/help1_9" />
 
     <ImageView
         style="@style/helpImageViews"
-        android:src="@drawable/help5_1" />
+        android:src="@drawable/help1_9" />
 
     <TextView
         style="@style/helpTextViews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/help5_2"/>
-
-    <ImageView
-        style="@style/helpImageViews"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/help5_2" />
+        android:text="@string/help1_10"/>
 
 </LinearLayout>
 </ScrollView>

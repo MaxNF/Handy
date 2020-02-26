@@ -69,17 +69,17 @@
     <string name="help1_1">The first step is to create a new shopping list.</string>
     <string name="help1_2">Then add either a unit or a group.</string>
 
-    <string name="help2_1">To finish adding the item simply tap done button on your keyboard. Adding units does not automatically cancel the creation process. You can create many items in a sequence.</string>
-    <string name="help2_2">To exit from the creation screen just tap on empty space.</string>
+    <string name="help1_3">To finish adding the item simply tap done button on your keyboard. Adding units does not automatically cancel the creation process. You can create many items in a sequence.</string>
+    <string name="help1_4">To exit from the creation screen just tap on empty space.</string>
 
-    <string name="help3_1">Tapping on an item will mark it as bought.</string>
-    <string name="help3_2">It will automatically move to the bottom of the list and change it\'s color to green. If you tap again, it will become unbought.</string>
+    <string name="help1_5">Tapping on an item will mark it as bought.</string>
+    <string name="help1_6">It will automatically move to the bottom of the list and change it\'s color to green. If you tap again, it will become unbought.</string>
 
-    <string name="help4_1">To add items into a group, click the plus button.</string>
-    <string name="help4_2">You can delete items from the list by swiping it either left or right. This can be undone for several seconds after deletion.</string>
+    <string name="help1_7">To add items into a group, click the plus button.</string>
+    <string name="help1_8">You can delete items from the list by swiping it either left or right. This can be undone for several seconds after deletion.</string>
 
-    <string name="help5_1">Additional buttons are here to delete, cancel or buy all items in a single tap.</string>
-    <string name="help5_2">You can change a theme or sorting order in the settings.</string>
+    <string name="help1_9">Additional buttons are here to delete, cancel or buy all items in a single tap.</string>
+    <string name="help1_10">Drag and sort items manually by taping long on them. You can change a theme and other preferences in the settings.</string>
     <string name="rate_app_label">Rate this app</string>
     <string name="unsorted_group_label">My list (default group)</string>
     <string name="hint_recipe_empty_unsorted">No products found</string>
@@ -95,15 +95,15 @@
     <string name="all_geofences_unreg_success">All geofences have been successfully removed.</string>
     <string name="all_geofences_unreg_failure">Failed to remove all geofences</string>
     <string name="geofence_unreg_success">Geofence has been successfully removed.</string>
-    <string name="reminders_notification_channel_name">Alarm and geofence reminders</string>
-    <string name="notification_channel_reminders_description">Channel for Handy geofence and alarm notifications.</string>
+    <string name="reminders_notification_channel_name">Time-based and geofence reminders</string>
+    <string name="notification_channel_reminders_description">Channel for Handy geofence and time-based notifications.</string>
     <string name="geofence_notification_title">Geofence crossed</string>
     <string name="geofence_notification_message">Tap on the notifications to open the list</string>
     <string name="map_remote_error">Remote Error</string>
     <string name="map_network_error">Network Error. Please check your Internet connection and try again.</string>
     <string name="map_unknown_error">Unknown error</string>
     <string name="radius_label">radius</string>
-    <string name="alarm_label">Alarm</string>
+    <string name="alarm_label">Time-based</string>
     <string name="notification_cancel_label">Next time</string>
     <string name="switcher_on_label">ON</string>
     <string name="switcher_off_label">OFF</string>
@@ -181,10 +181,10 @@
     <string name="delete_contact_dialog_title">Delete contact?</string>
     <string name="geofences_label">Geofences</string>
     <string name="geofence_api_error">Error while adding the geofence. Check if gps is enabled on your device.</string>
-    <string name="shareCodeTemplate">My secret code is: %1$s \nIf you don\'t have Handy application yet, you can download it in Google Play: %2$s</string>
+    <string name="shareCodeTemplate">My secret code is: %1$s  If you don\'t have HandyPro application yet, you can download it in Google Play: %2$s</string>
     <string name="login_required_dialog_message">Authentication required. You can sign in the menu (coming from the left side of the screen)</string>
     <string name="notification_channel_downloads_description">Channel for received shopping lists notifications</string>
-    <string name="catalog_received_notification_ch_name">Receiving lists</string>
+    <string name="catalog_received_notification_ch_name">Getting lists</string>
     <string name="commentary_field_hint">Commentary</string>
-    <string name="premium_fragment_label">Премиум-подписка</string>
+    <string name="premium_fragment_label">Premium subscription</string>
 </resources>

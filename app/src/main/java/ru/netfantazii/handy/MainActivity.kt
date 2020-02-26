@@ -296,8 +296,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val menu = navigationView.menu
         val contactsMenuItem = menu.findItem(R.id.contactsFragment)
         contactsMenuItem.isVisible = viewModel.user.get() != null
-        val premiumMenuItem = menu.findItem(R.id.navigation_premium)
-        premiumMenuItem.icon.setTint(ContextCompat.getColor(this, R.color.fabIconTintColorWhite))
     }
 
     private fun buildSignInClient() {

@@ -22,6 +22,7 @@
     <color name="speedDialActionColor">@android:color/white</color>
     <color name="swipeBackgroundTransparent">@android:color/transparent</color>
     <color name="mainBackgroundWhite">#FFFFFF</color>
+    <color name="mainBackgroundLightGrey">#EBEBEB</color>
     <color name="appLogoBackgroundColor">#0c2a2a</color>
     <color name="inactiveWindowColor">#DADADA</color>
     <color name="blackSemiTransparent80">#CD000000</color>
@@ -29,4 +30,15 @@
     <color name="badgeColor">#DD4C4C</color>
     <color name="textColorInactive">#66000000</color>
     <color name="notificationColor">#CE1C1C</color>
+
+<!--  Premium fragment colors  -->
+    <color name="premiumBackground">#4E2B41</color>
+    <color name="premiumButtonMonth">#6AACAD</color>
+    <color name="premiumButtonYear">#3d9ba2</color>
+    <color name="premiumButtonForever">#EBA00D</color>
+    <color name="premiumButtonTextMonth">#FFFFFF</color>
+    <color name="premiumButtonTextYear">#FFFFFF</color>
+    <color name="premiumButtonTextForever">#FFFFFF</color>
+    <color name="premiumRegularText">#FFFFFF</color>
+
 </resources>
