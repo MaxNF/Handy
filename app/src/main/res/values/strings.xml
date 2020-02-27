@@ -61,28 +61,44 @@
 
     <!--Welcome screen-->
     <string name="welcome_first_msg">Thank you for downloading!</string>
-    <string name="welcome_second_msg">Using the app should be intuitive, but there is a help section to make it 100\% clear.</string>
+    <string name="welcome_second_msg">HandyPro uses standard user interface elements, such as swipes, regular and long taps, and a sliding menu. But additional functions have some special features. Open the help menu to learn more.</string>
     <string name="welcome_button_text">Begin</string>
 
     <!--Help screens-->
     <string name="help_hint">swipe to move next or previous page</string>
-
     <string name="help1_1">The first step is to create a new shopping list.</string>
-    <string name="help1_2">Then add either a unit or a group.</string>
-
+    <string name="help1_2">Then add either a product or a group.</string>
     <string name="help1_3">To finish adding the item simply tap done button on your keyboard. Adding units does not automatically cancel the creation process. You can create many items in a sequence.</string>
     <string name="help1_4">To exit from the creation screen just tap on empty space.</string>
-
     <string name="help1_5">Tapping on an item will mark it as bought.</string>
     <string name="help1_6">It will automatically move to the bottom of the list and change it\'s color to green. If you tap again, it will become unbought.</string>
-
     <string name="help1_7">To add items into a group, click the plus button.</string>
     <string name="help1_8">You can delete items from the list by swiping it either left or right. This can be undone for several seconds after deletion.</string>
-
     <string name="help1_9">Additional buttons are here to delete, cancel or buy all items in a single tap.</string>
     <string name="help1_10">Drag and sort items manually by taping long on them. You can change a theme and other preferences in the settings.</string>
 
-    <!--Databinding Templates-->
+    <string name="help2_1">Press the bell icon to set notifications for this list up.</string>
+    <string name="help2_2">There are two types of notifications available: time-based notifications and geofence notifications.</string>
+    <string name="help2_3">Time-based ones are similar to alarms. You set the time and turn the switch on.</string>
+
+    <string name="help3_1">Geofences are special zones on a map. When the geofence is crossed, notification fires telling you to go shopping. To create the geofence, tap long on the map. To remove, tap on the geofence once. Slider on the side is for setting the geofence radius.</string>
+    <string name="help3_2">The maximum of geofences is 100. Accuracy and consistency of geofencing events depend on the device\'s opportunity to calculate your coordinates correctly. It is possible to increase accuracy by turning wi-fi, mobile network, and GPS on.</string>
+    <string name="help3_3">If geofencing events do not trigger or trigger not accurate enough, try to increase the geofence radius. Geofencing events depend on how often and how accurate coordinates are calculated in different phone working modes. Only the android system defines coordinate update frequency and accuracy when the device is in the idle state. Thus upgrading the Android OS version also may help.</string>
+    <string name="help3_4">If the geofence function is not reliable for you, please use time-based notifications. Geofencing is available only for registered users (that will be discussed on the next page).</string>
+
+    <string name="help4_1">Registration and signing in is required for adding geofences and sending shopping lists to other users. To sign in, pull the menu out from the left side of the screen and push the corresponding button. To revoke application access from your account, tap long on the logout button. If you make a fast tap on the logout button, you will sign out from the app and will stop receiving shopping lists from other users on this device.</string>
+    <string name="help4_2">After signing in is complete, you will have access to contacts and sending lists function. Also, a new field in the settings will appear. There you can find the secret code, buttons to control the secret code, and the button to delete your account.</string>
+    <string name="help4_3">Secret code is your identifier for other users. Share it with another user, and he will be able to send you his shopping lists. If you ever change the secret code, you will have to send it to your contacts again. This system is designed to prevent spam and jokes from other users.</string>
+    <string name="help4_4">To add a new contact, tap on the Contacts menu item. Then tap on the corresponding button, enter the name and the secret code which you got from another user. If the secret code is correct, the contact will be added.   In another case, you will receive an error.</string>
+    <string name="help4_5">To send the list to another person, tap on the Share button.</string>
+    <string name="help4_6">In the share menu, you can select a person who will receive your shopping list. Also, there is a convenient button to add new contacts (just like in the contacts menu). You can enter additional information in the commentary field (500 characters maximum).</string>
+    <string name="help4_7">After pushing the send button, your list will be sent. If the recipient has changed his secret code, you will receive an error, and the list will not be delivered. If the recipient has signed out from the app on all of his devices, the list will not be delivered too.</string>
+    <string name="help4_8">If you see a pale contact with a strikethrough secret code in it, it means that a person has changed his secret code. The only available option is to remove this contact.</string>
+
+    <string name="help5_1">Premium subscription is available in the app.</string>
+    <string name="help5_2">Ads are not showed when you have a premium subscription. Also, the maximum of available geofences goes from 1 to 100. If you plan using premium-subscription mainly for geofencing, consider testing the geofencing feature on your device first. Because there are a lot of factors (like wi-fi availability, phone model, weather conditions, and others) that influence geofence accuracy, geofencing can or can not be a reliable source of notifications and requires preliminary testing.</string>
+    <string name="help5_3">Going premium is your best opportunity to thank the creator for making the app. It was developed and is maintained by a single independent developer, who will be grateful for your support :)</string>
+
     <string name="element_count_template" translatable="false">%1$s\%2$s</string>
     <string name="unsorted_group_label">My list (default group)</string>
     <string name="hint_recipe_empty_unsorted">No products found</string>
@@ -191,4 +207,7 @@
     <string name="catalog_received_notification_ch_name">Getting lists</string>
     <string name="commentary_field_hint">Commentary</string>
     <string name="premium_fragment_label">Premium subscription</string>
+    <string name="recommend_app_label">Recommend HandyPro</string>
+    <string name="googlePlayLink" translatable="false">https://play.google.com/store/apps/details?id=ru.netfantazii.handypro</string>
+    <string name="recommend_app_text">Join me in HandyPro – simple and functional shopping list! Download from Google Play: %1$s</string>
 </resources>

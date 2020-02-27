@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,7 +12,6 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
@@ -56,7 +54,7 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 
 //настроить цвета кнопок у диалогов, а также чтобы кнопки не склеивались
 //настроить правила безопасности в бэкенде
-//todo сделать новое обучение
+//сделать новое обучение
 
 //устранить неприятную серую окантовку у продуктов/групп
 //проверить все лэйауты в лэндскейп режиме, если где-то будет некрасиво - подкорректировать
@@ -71,7 +69,7 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //сделать поп-ап спустя определенное кол-во запусков о донате (донат запрещен)
 
 //узнать как быть с апи ключом для карт и где его хранить (возможно перед релизом заменить на новый)
-//todo сделать новое приветственное сообщение с разделом: что нового в версии 1.3
+//сделать новое приветственное сообщение с разделом: что нового в про-версии
 //сделать лимит на обновление секретного кода раз в 1 минуту (мб через класс InputFilter)
 
 //сделать кнопку Начать больше, чтобы влазил весь текст (в приветствии)
@@ -103,14 +101,14 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //todo сделать возможность покупки подписки (месяц, год, вечная)
 
 //исчезла тень у продуктов
+//сделать меню Рассказать о приложении (обычный share sheet с предустановленным текстом)
 
 //todo сделать удаление сообщений из бд старше 1 дня со статусом доставлено и старше 30 дней со статусом не доставлено
 //оформить оповещения
 //сделать сообщение при неудачном логине, а не тост с неизвестной ошибкой
 
 //поискать бесплатные картинки, чтобы добавить в hint (каталоги, продукты, контакты)
-//todo добавить пункт О программе
-//todo добавить ссылку на www.vectorportal.com в пункт О программе
+//todo перепроверить бэкенд функции, подумать над возможной оптимизацией будущих расходов
 
 //--------------------- ОБНОВЛЕНИЕ
 //todo подготовить новые скриншоты
@@ -122,8 +120,6 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 
 const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"
 const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_channel"
-const val APPLICATION_GOOGLE_PLAY_URL =
-    "https://play.google.com/store/apps/details?id=ru.netfantazii.handy"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -351,6 +347,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.navigation_rate_app -> {
                 navigateToPlayMarket()
             }
+            R.id.navigation_recommend_app -> {
+                val googlePlayLink = getString(R.string.googlePlayLink)
+                openShareSheet(getString(R.string.recommend_app_text, googlePlayLink))
+            }
             else -> {
                 navController.navigate(item.itemId)
             }
@@ -498,7 +498,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             shareSecretCodeClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { code ->
-                    sendCodeToShareSheet(code)
+                    val appUrl = getString(R.string.googlePlayLink)
+                    val finalTextToShare =
+                        getString(R.string.shareCodeTemplate, code, appUrl)
+                    openShareSheet(finalTextToShare)
                 }
             })
 
@@ -550,13 +553,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun sendCodeToShareSheet(code: String) {
-        val finalTextToShare =
-            getString(R.string.shareCodeTemplate, code, APPLICATION_GOOGLE_PLAY_URL)
-
+    private fun openShareSheet(textToShare: String) {
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, finalTextToShare)
+            putExtra(Intent.EXTRA_TEXT, textToShare)
             type = "text/plain"
         }
         val shareIntent = Intent.createChooser(intent, null)

@@ -57,7 +57,7 @@ class ContactsFragment : Fragment() {
         createSnackbars()
         createHints()
         subscribeToEvents()
-        (activity as MainActivity).uncheckActiveMenuItem()
+        (activity as MainActivity).checkMenuItem(R.id.contactsFragment)
     }
 
     private fun createRecyclerView() {

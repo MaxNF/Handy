@@ -1,34 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:layout_height="match_parent">
 
-    <TextView
-        style="@style/helpTextViews"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/help1_7" />
+        android:orientation="vertical">
 
-    <ImageView
-        style="@style/helpImageViews"
-        android:src="@drawable/help1_7" />
+        <TextView
+            style="@style/helpTextViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help4_1" />
 
-    <TextView
-        style="@style/helpTextViews"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/help1_8"/>
+        <ImageView
+            style="@style/helpImageViews"
+            android:src="@drawable/help4_1" />
 
-    <ImageView
-        style="@style/helpImageViews"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/help1_8" />
+        <TextView
+            style="@style/helpTextViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help4_2" />
 
-</LinearLayout>
+        <ImageView
+            style="@style/helpImageViews"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/help4_2" />
+
+        <TextView
+            style="@style/helpTextViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help4_3" />
+
+
+        <TextView
+            style="@style/helpTextViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help4_4" />
+
+        <ImageView
+            style="@style/helpImageViews"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/help4_4" />
+
+        <TextView
+            style="@style/helpTextViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help4_5" />
+
+        <ImageView
+            style="@style/helpImageViews"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/help4_5" />
+
+        <TextView
+            style="@style/helpTextViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help4_6" />
+
+        <ImageView
+            style="@style/helpImageViews"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/help4_6" />
+
+        <TextView
+            style="@style/helpTextViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help4_7" />
+
+        <TextView
+            style="@style/helpTextViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/help4_8" />
+
+        <ImageView
+            style="@style/helpImageViews"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/help4_8" />
+
+    </LinearLayout>
 </ScrollView>
