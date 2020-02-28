@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -13,18 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
 import ru.netfantazii.handy.*
+import ru.netfantazii.handy.core.main.MainActivity
+import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.databinding.ContactsFragmentBinding
 import ru.netfantazii.handy.extensions.fadeIn
 import ru.netfantazii.handy.extensions.fadeOut
-import ru.netfantazii.handy.extensions.showLongToast
-import ru.netfantazii.handy.model.Contact
-import ru.netfantazii.handy.model.ContactDialogAction
 
 class ContactsFragment : Fragment() {
     private lateinit var hint: View

@@ -8,7 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
-import ru.netfantazii.handy.MainActivity
+import ru.netfantazii.handy.core.main.MainActivity
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.doWithDelay
 import ru.netfantazii.handy.extensions.fadeIn

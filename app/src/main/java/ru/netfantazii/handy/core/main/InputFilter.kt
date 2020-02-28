@@ -1,4 +1,4 @@
-package ru.netfantazii.handy
+package ru.netfantazii.handy.core.main
 
 class InputFilter {
     private val millisInMinute = 60 * 1000

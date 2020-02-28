@@ -9,7 +9,7 @@
 
         <variable
             name="inputFilter"
-            type="ru.netfantazii.handy.InputFilter" />
+            type="ru.netfantazii.handy.core.main.InputFilter" />
 
         <variable
             name="contact"

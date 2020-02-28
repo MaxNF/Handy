@@ -12,7 +12,6 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstant
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder
-import ru.netfantazii.handy.InputFilter
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.RvCatalogElementBinding
 import ru.netfantazii.handy.model.Catalog

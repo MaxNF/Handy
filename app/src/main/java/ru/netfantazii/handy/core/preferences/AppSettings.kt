@@ -14,8 +14,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import ru.netfantazii.handy.MainActivity
-import ru.netfantazii.handy.NetworkViewModel
+import ru.netfantazii.handy.core.main.MainActivity
+import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.customviews.MyPreferenceButton
 import ru.netfantazii.handy.model.SortOrder

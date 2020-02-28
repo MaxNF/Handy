@@ -3,11 +3,8 @@ package ru.netfantazii.handy
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import androidx.room.Room
-import ru.netfantazii.handy.repositories.LocalRepository
-import ru.netfantazii.handy.repositories.LocalRepositoryImpl
 import ru.netfantazii.handy.model.database.ProductDatabase
-import ru.netfantazii.handy.repositories.RemoteRepository
-import ru.netfantazii.handy.repositories.RemoteRepositoryImpl
+import ru.netfantazii.handy.repositories.*
 
 object ServiceLocator {
     private var productDatabase: ProductDatabase? = null
@@ -17,6 +14,10 @@ object ServiceLocator {
 
     @Volatile
     var remoteRepository: RemoteRepository? = null
+        @VisibleForTesting set
+
+    @Volatile
+    var billingRepository: BillingRepository? = null
         @VisibleForTesting set
 
     private val lock = Any()
@@ -36,7 +37,19 @@ object ServiceLocator {
         return localRepository
     }
 
-    fun provideRemoteRepository(context: Context): RemoteRepository {
+    fun provideBillingRepository(context: Context): BillingRepository {
+        synchronized(this) {
+            return billingRepository
+                ?: createBillingRepository()
+        }
+    }
+
+    private fun createBillingRepository(): BillingRepository {
+        val billintRepository =
+            return
+    }
+
+    fun provideRemoteRepository(): RemoteRepository {
         synchronized(this) {
             return remoteRepository
                 ?: createRemoteRepository()

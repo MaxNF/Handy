@@ -150,8 +150,6 @@ dependencies {
     // Billing
     implementation 'com.android.billingclient:billing:2.1.0'
     implementation 'com.android.billingclient:billing-ktx:2.1.0'
-    // RxBilling
-    implementation 'com.betterme:rxbilling:2.0.1'
 
 
     // Testing

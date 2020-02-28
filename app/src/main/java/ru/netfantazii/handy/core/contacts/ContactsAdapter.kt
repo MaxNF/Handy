@@ -1,17 +1,9 @@
 package ru.netfantazii.handy.core.contacts
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemConstants
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAction
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem
-import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder
-import ru.netfantazii.handy.InputFilter
-import ru.netfantazii.handy.R
+import ru.netfantazii.handy.core.main.InputFilter
 import ru.netfantazii.handy.databinding.RvContactElementBinding
 import ru.netfantazii.handy.model.Contact
 

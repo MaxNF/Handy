@@ -1,4 +1,4 @@
-package ru.netfantazii.handy
+package ru.netfantazii.handy.core.main
 
 import android.content.Context
 import android.util.Log
@@ -311,7 +311,8 @@ class NetworkVmFactory(
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NetworkViewModel::class.java)) {
-            return NetworkViewModel(remoteRepository) as T
+            return NetworkViewModel(
+                remoteRepository) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }

@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/Base">
         <activity
-            android:name="ru.netfantazii.handy.MainActivity"
+            android:name="ru.netfantazii.handy.core.main.MainActivity"
             android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleTop"
             >

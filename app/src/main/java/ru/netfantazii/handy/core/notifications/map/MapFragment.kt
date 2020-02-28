@@ -31,7 +31,7 @@ import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.NetworkViewModel
+import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_ID_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_NAME_KEY

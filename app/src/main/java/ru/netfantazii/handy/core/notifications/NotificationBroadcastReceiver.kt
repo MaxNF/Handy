@@ -18,7 +18,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
-import ru.netfantazii.handy.REMINDER_NOTIFICATION_CHANNEL_ID
+import ru.netfantazii.handy.core.main.REMINDER_NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
 import ru.netfantazii.handy.extensions.getNotificationSoundUri
@@ -136,7 +136,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                 toProductsIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
-        return NotificationCompat.Builder(context, REMINDER_NOTIFICATION_CHANNEL_ID)
+        return NotificationCompat.Builder(context,
+            REMINDER_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_shopping_cart)
             .setContentTitle(title)
             .setContentText(message)
@@ -178,7 +179,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             toProductIntent,
             PendingIntent.FLAG_UPDATE_CURRENT)
 
-        return NotificationCompat.Builder(context, REMINDER_NOTIFICATION_CHANNEL_ID)
+        return NotificationCompat.Builder(context,
+            REMINDER_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_shopping_cart)
             .setColor(ContextCompat.getColor(context, R.color.notificationColor))
             .setContentTitle(title)

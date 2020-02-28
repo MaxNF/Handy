@@ -13,7 +13,7 @@
 
         <variable
             name="networkViewModel"
-            type="ru.netfantazii.handy.NetworkViewModel" />
+            type="ru.netfantazii.handy.core.main.NetworkViewModel" />
 
         <variable
             name="spinner"

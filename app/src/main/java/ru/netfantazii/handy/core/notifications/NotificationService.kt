@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.core.app.NotificationManagerCompat
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.MainActivity
+import ru.netfantazii.handy.core.main.MainActivity
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.*

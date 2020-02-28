@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.NetworkViewModel
+import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.contacts.EditContactDialog
 import ru.netfantazii.handy.databinding.ShareFragmentBinding

@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,8 +13,8 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import ru.netfantazii.handy.MainActivity
-import ru.netfantazii.handy.REMINDER_NOTIFICATION_CHANNEL_ID
+import ru.netfantazii.handy.core.main.MainActivity
+import ru.netfantazii.handy.core.main.REMINDER_NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
 import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
@@ -167,7 +166,8 @@ class CloudToLocalDownloader(
         notificationId: Int
     ): Notification {
 
-        return NotificationCompat.Builder(context, REMINDER_NOTIFICATION_CHANNEL_ID)
+        return NotificationCompat.Builder(context,
+            REMINDER_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_shopping_cart)
             .setContentTitle(title)
             .setContentText(message)

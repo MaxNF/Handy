@@ -24,7 +24,7 @@ import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.NetworkViewModel
+import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
@@ -32,7 +32,6 @@ import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.customviews.RecyclerViewDecorator
 import ru.netfantazii.handy.model.GroupType
 import ru.netfantazii.handy.extensions.dpToPx
-import ru.netfantazii.handy.model.Catalog
 import ru.netfantazii.handy.model.User
 import java.lang.UnsupportedOperationException
 

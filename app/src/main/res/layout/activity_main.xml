@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="ru.netfantazii.handy.NetworkViewModel" />
+            type="ru.netfantazii.handy.core.main.NetworkViewModel" />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="true"
-            tools:context=".MainActivity">
+            tools:context=".core.main.MainActivity">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"

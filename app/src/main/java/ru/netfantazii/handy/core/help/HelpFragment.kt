@@ -8,9 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import ru.netfantazii.handy.MainActivity
+import ru.netfantazii.handy.core.main.MainActivity
 import ru.netfantazii.handy.R
 import java.lang.UnsupportedOperationException
 

@@ -1,4 +1,4 @@
-package ru.netfantazii.handy
+package ru.netfantazii.handy.core.main
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -36,6 +36,8 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import io.reactivex.plugins.RxJavaPlugins
+import ru.netfantazii.handy.HandyApplication
+import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.BUNDLE_DESTINATION_ID_KEY
 import ru.netfantazii.handy.core.notifications.map.MapFragment
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
@@ -146,13 +148,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var pbManager: ProgressBarManager
     private lateinit var pbText: TextView
     private lateinit var mainBinding: ActivityMainBinding
-    private lateinit var rxBilling: RxBilling
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadTheme()
         mainBinding =
-            DataBindingUtil.setContentView(this, R.layout.activity_main)
+            DataBindingUtil.setContentView(this,
+                R.layout.activity_main)
         createNetworkViewModel()
         mainBinding.viewModel = viewModel
         pbManager = ProgressBarManager()
@@ -167,7 +169,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView.setNavigationItemSelectedListener(this)
         setInitialMenuItemsVisibility(navigationView)
 
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        navController = Navigation.findNavController(this,
+            R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
 
@@ -197,12 +200,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setUpBillingHelper()
 
         handleNotificationIntent(intent)
-    }
-
-    private fun setUpBillingHelper() {
-        rxBilling = RxBillingImpl(BillingClientFactory(applicationContext))
-        lifecycle.addObserver(BillingConnectionManager(rxBilling))
-
     }
 
     private fun handleNotificationIntent(intent: Intent?) {
