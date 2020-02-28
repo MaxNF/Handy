@@ -25,6 +25,10 @@ import androidx.navigation.*
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
+import com.gen.rxbilling.client.RxBilling
+import com.gen.rxbilling.client.RxBillingImpl
+import com.gen.rxbilling.connection.BillingClientFactory
+import com.gen.rxbilling.lifecycle.BillingConnectionManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -96,9 +100,15 @@ import ru.netfantazii.handy.model.database.ErrorCodes
 //сделать, чтобы на телефоне был звук оповещения и вибрация (на эмуляторе почему-то есть)
 //при клике по уведомлению (напр. геометки) логинится еще раз, хотя приложение открыто
 
-//todo прикрутить рекламный банер вниз (как у листоник). Банер можно будет закрыть крестиком, после чего на его место будет не очень яркое сообщение о том,
-//todo что можно купить подписку либо бесплатно активировать пробный период на некоторое кол-во дней.
-//todo сделать возможность покупки подписки (месяц, год, вечная)
+//todo сделать возможность покупки подписки (месяц, год, вечная), а также триал доступ на 7 дней
+//todo прикрутить валидацию покупок через cloud functions
+//todo добавить в приветствие первую страницу, где разъясняется что происходит с данными пользователей (локация, аккаунт и прочее)
+
+//todo при купленной подписке, заменить фрагмент, который предлагает подписку на выбор, на фрагмент, который показывает статус подписки и возможность продлить? (или мб. купить навечно)
+
+//todo Сделать лимит геозон для бесплатной версии (1) и без лимита для подписчиков.
+//todo Сделать поп-ап рекламу с возможностью закрытия при каждом третьем заходи в Share меню.
+//todo прикрутить рекламный банер вниз (как у листоник). Банер можно будет закрыть крестиком, после чего на его место будет не очень яркое сообщение о том, что можно купить подписку либо бесплатно активировать пробный период на некоторое кол-во дней.
 
 //исчезла тень у продуктов
 //сделать меню Рассказать о приложении (обычный share sheet с предустановленным текстом)
@@ -136,6 +146,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var pbManager: ProgressBarManager
     private lateinit var pbText: TextView
     private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var rxBilling: RxBilling
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -183,8 +194,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         showWelcomeScreenIfNeeded()
 
         setUpErrorHandler()
+        setUpBillingHelper()
 
         handleNotificationIntent(intent)
+    }
+
+    private fun setUpBillingHelper() {
+        rxBilling = RxBillingImpl(BillingClientFactory(applicationContext))
+        lifecycle.addObserver(BillingConnectionManager(rxBilling))
+
     }
 
     private fun handleNotificationIntent(intent: Intent?) {
