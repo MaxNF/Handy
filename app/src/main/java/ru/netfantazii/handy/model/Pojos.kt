@@ -130,3 +130,23 @@ data class catalogNotificationContent(
     val alarmTime: Calendar? = null,
     var geofenceEntities: List<GeofenceEntity>
 )
+
+open class ShopItem(val price: String, val isBought: Boolean) : BaseObservable()
+
+class OneMonthSub(
+    price: String,
+    isBought: Boolean,
+    val startedDate: Calendar?,
+    val endDate: Calendar?
+) : ShopItem(price, isBought)
+
+class OneYearSub(
+    price: String,
+    isBought: Boolean,
+    val startedDate: Calendar?,
+    val endDate: Calendar?
+) : ShopItem(price, isBought)
+
+class ForeverPurchase(price: String, isBought: Boolean, val purchaseDate: Calendar?)
+
+

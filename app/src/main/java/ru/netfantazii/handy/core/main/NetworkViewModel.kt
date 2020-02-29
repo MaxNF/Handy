@@ -166,7 +166,7 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
             .andThen(remoteRepository.addUserUpdateTokenGetSecret())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe ({ (first, second) ->
+            .subscribe({ (first, second) ->
                 //first - short_id (секретный код), second - yandex api key
                 _signInComplete.value = Event(Unit)
                 val firebaseUser = FirebaseAuth.getInstance().currentUser!!
@@ -296,8 +296,6 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
                 hidePb()
             })
     }
-
-    fun donateButtonClicked() {}
 
     fun shareSecretCode() {
         _shareSecretCodeClicked.value = Event(user.get()?.secret ?: "n/a")

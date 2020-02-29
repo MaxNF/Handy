@@ -91,7 +91,16 @@ object ErrorCodes {
     const val MESSAGE_FAILED_DUE_INCORRECT_SECRET = "008 (message failed due incorrect secret)"
 }
 
-object TokenValidationResponse {
-    const val VALID = "valid"
-    const val INVALID = "invalid"
+object TokenValidation {
+    const val RESPONSE_VALID = "valid"
+    const val RESPONSE_INVALID = "invalid"
+}
+
+object SkuList {
+    const val ONE_MONTH_SUB = "one_month_sub"
+    const val ONE_YEAR_SUB = "one_year_sub"
+    const val FOREVER_PURCHASE = "forever_purchase"
+
+    val SUB_SKU_LIST = listOf(ONE_MONTH_SUB, ONE_YEAR_SUB)
+    val PURCHASE_SKU_LIST = listOf(FOREVER_PURCHASE)
 }
