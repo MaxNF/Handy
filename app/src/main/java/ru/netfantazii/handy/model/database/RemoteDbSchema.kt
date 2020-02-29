@@ -77,6 +77,7 @@ object CloudFunctions {
     const val ADD_CONTACT = "addNewContact"
     const val DELETE_CONTACT = "deleteContact"
     const val UPDATE_CONTACT = "updateContact"
+    const val VALIDATE_PURCHASE_TOKEN = "validatePurchase"
 }
 
 object ErrorCodes {
@@ -88,4 +89,9 @@ object ErrorCodes {
     const val INSTANCE_ID_TOKEN_NOT_FOUND = "006 (instance id token not found)"
     const val DATA_PAYLOAD_IS_NULL = "007 (data payload is null)"
     const val MESSAGE_FAILED_DUE_INCORRECT_SECRET = "008 (message failed due incorrect secret)"
+}
+
+object TokenValidationResponse {
+    const val VALID = "valid"
+    const val INVALID = "invalid"
 }

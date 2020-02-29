@@ -1,12 +1,14 @@
 package ru.netfantazii.handy.repositories
 
-import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.*
+import com.google.firebase.functions.FirebaseFunctions
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import ru.netfantazii.handy.model.BillingException
+import ru.netfantazii.handy.model.database.CloudFunctions
+import ru.netfantazii.handy.model.database.TokenValidationResponse
 
 //
 //class BillingRepository(private val context: Context) : PurchasesUpdatedListener,
@@ -23,7 +25,7 @@ import ru.netfantazii.handy.model.BillingException
 //    }
 //
 //    private lateinit var billingClient: BillingClient
-//
+////
 //    fun initBillingClient() {
 //        billingClient = BillingClient.newBuilder(context).setListener(this).build()
 //        connectToBilling()
@@ -99,9 +101,26 @@ import ru.netfantazii.handy.model.BillingException
 //    }
 //}
 
-class BillingRepository(context: Context) {
-    private val billingClient by lazy { BillingClient.newBuilder(context).build() }
-
+class BillingRepository(val context: Context) {
+    private val firestoreHttpsEuWest1 =
+        FirebaseFunctions.getInstance(CloudFunctions.REGION_EU_WEST1)
+    private val billingClient: BillingClient by lazy {
+        BillingClient.newBuilder(context).setListener(purchaseUpdatedListener).build()
+    }
+    private val purchaseUpdatedListener = PurchasesUpdatedListener { billingResult, purchaseList ->
+        when (billingResult.responseCode) {
+            BillingClient.BillingResponseCode.OK -> {
+                if (purchaseList != null) {
+                    purchasedAction?.invoke(purchaseList)
+                }
+            }
+            else -> {
+                errorAction?.invoke(billingResult.responseCode)
+            }
+        }
+    }
+    private var purchasedAction: ((List<Purchase>) -> Unit)? = null
+    private var errorAction: ((Int) -> Unit)? = null
 
     fun maintainConnection() = Observable.create<Unit> { emitter ->
         billingClient.startConnection(object : BillingClientStateListener {
@@ -137,16 +156,44 @@ class BillingRepository(context: Context) {
         }
     }
 
-    fun getPurchaseUpdates() = Observable.create<List<Purchase>> { emitter ->
-        PurchasesUpdatedListener { billingResult, purchaseList ->
-            when (billingResult.responseCode) {
-                BillingClient.BillingResponseCode.OK -> {
-                    if (purchaseList != null) {
-                        emitter.onNext(purchaseList)
+    fun observePurchases(): Observable<List<Purchase>> =
+        Observable.create<List<Purchase>> { emitter ->
+            purchasedAction = { list -> emitter.onNext(list) }
+            errorAction = { errorCode -> emitter.onError(BillingException(errorCode)) }
+            emitter.setCancellable {
+                purchasedAction = null
+                errorAction = null
+            }
+        }
+
+    fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams) =
+        Completable.create { emitter ->
+            billingClient.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
+                when (billingResult.responseCode) {
+                    BillingClient.BillingResponseCode.OK -> {
+                        emitter.onComplete()
+                    }
+                    else -> {
+                        emitter.onError(BillingException(billingResult.responseCode))
                     }
                 }
+            }
+        }
+
+    fun validatePurchase(purchaseToken: String) = Completable.create { emitter ->
+        val task =
+            firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.VALIDATE_PURCHASE_TOKEN)
+                .call(purchaseToken)
+        task.addOnSuccessListener { result ->
+            when (result.data as String) {
+                TokenValidationResponse.VALID -> {
+                    emitter.onComplete()
+                }
+                TokenValidationResponse.INVALID -> {
+                    emitter.onError(BillingException(BillingException.ITEM_NOT_OWNED))
+                }
                 else -> {
-                    emitter.onError(BillingException(billingResult.responseCode))
+                    emitter.onError(BillingException(BillingException.UNKNOWN_ERROR_CODE))
                 }
             }
         }
