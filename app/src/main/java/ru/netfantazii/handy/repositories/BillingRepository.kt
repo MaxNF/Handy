@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.repositories
 
 import android.content.Context
+import androidx.room.RoomOpenHelper
 import com.android.billingclient.api.*
 import com.google.firebase.functions.FirebaseFunctions
 import io.reactivex.Completable
@@ -76,7 +77,6 @@ class BillingRepository(val context: Context) {
     }
 
 
-
     fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams) =
         Completable.create { emitter ->
             billingClient.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
@@ -91,23 +91,34 @@ class BillingRepository(val context: Context) {
             }
         }
 
-    fun validatePurchase(purchaseToken: String) = Completable.create { emitter ->
-        val task =
-            firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.VALIDATE_PURCHASE_TOKEN)
-                .call(purchaseToken)
-        task.addOnSuccessListener { result ->
-            when (result.data as String) {
-                TokenValidation.RESPONSE_VALID -> {
-                    emitter.onComplete()
-                }
-                TokenValidation.RESPONSE_INVALID -> {
-                    emitter.onError(BillingException(BillingException.ITEM_NOT_OWNED))
-                }
-                else -> {
-                    emitter.onError(BillingException(BillingException.UNKNOWN_ERROR_CODE))
+    fun validatePurchase(sku: String, purchaseToken: String, packageName: String) =
+        Completable.create { emitter ->
+            val validationData = hashMapOf(
+                TokenValidation.SKU_ID_KEY to sku,
+                TokenValidation.PURCHASE_TOKEN_KEY to purchaseToken,
+                TokenValidation.PACKAGE_NAME_KEY to packageName)
+            val task =
+                firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.VALIDATE_PURCHASE_TOKEN)
+                    .call(validationData)
+            task.addOnSuccessListener { result ->
+                when (result.data as String) {
+                    TokenValidation.RESPONSE_VALID -> {
+                        emitter.onComplete()
+                    }
+                    TokenValidation.RESPONSE_INVALID -> {
+                        emitter.onError(BillingException(BillingException.ITEM_NOT_OWNED))
+                    }
+                    else -> {
+                        emitter.onError(BillingException(BillingException.UNKNOWN_ERROR_CODE))
+                    }
                 }
             }
         }
-    }
+
+    fun queryCachedSubs() =
+        billingClient.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.toList()
+
+    fun queryCachedPurchases() =
+        billingClient.queryPurchases(BillingClient.SkuType.INAPP).purchasesList.toList()
 }
 

@@ -8,10 +8,7 @@ import androidx.room.Relation
 import com.google.firebase.auth.AuthCredential
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.model.database.CatalogEntity
-import ru.netfantazii.handy.model.database.GeofenceEntity
-import ru.netfantazii.handy.model.database.GroupEntity
-import ru.netfantazii.handy.model.database.ProductEntity
+import ru.netfantazii.handy.model.database.*
 import java.util.*
 
 class Catalog(
@@ -122,7 +119,7 @@ data class User(
     val yandexMapApiKey: String
 ) : BaseObservable()
 
-data class catalogNotificationContent(
+data class CatalogNotificationContent(
     val catalogId: Long,
     val catalogName: String,
     val groupExpandStates: RecyclerViewExpandableItemManager.SavedState = RecyclerViewExpandableItemManager.SavedState(
@@ -131,22 +128,36 @@ data class catalogNotificationContent(
     var geofenceEntities: List<GeofenceEntity>
 )
 
-open class ShopItem(val price: String, val isBought: Boolean) : BaseObservable()
+open class ShopItem(
+    val sku: String,
+    val price: String?,
+    val purchaseToken: String,
+    val weight: Int,
+    val isAcknowlodged: Boolean
+) : BaseObservable()
 
 class OneMonthSub(
-    price: String,
-    isBought: Boolean,
+    price: String? = null,
+    purchaseToken: String,
     val startedDate: Calendar?,
-    val endDate: Calendar?
-) : ShopItem(price, isBought)
+    val endDate: Calendar?,
+    isAcknowledged: Boolean
+) : ShopItem(SkuList.ONE_MONTH_SUB, price, purchaseToken,1, isAcknowledged)
 
 class OneYearSub(
-    price: String,
-    isBought: Boolean,
-    val startedDate: Calendar?,
-    val endDate: Calendar?
-) : ShopItem(price, isBought)
+    price: String? = null,
+    purchaseToken: String,
+    val startedDate: Calendar? = null,
+    val endDate: Calendar? = null,
+    isAcknowledged: Boolean
+) : ShopItem(SkuList.ONE_YEAR_SUB, price, purchaseToken,2, isAcknowledged)
 
-class ForeverPurchase(price: String, isBought: Boolean, val purchaseDate: Calendar?)
+class ForeverPurchase(
+    price: String? = null,
+    purchaseToken: String,
+    val purchaseDate: Calendar? = null,
+    isAcknowledged: Boolean
+) :
+    ShopItem(SkuList.FOREVER_PURCHASE, price, purchaseToken,3, isAcknowledged)
 
 

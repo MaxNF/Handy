@@ -94,6 +94,10 @@ object ErrorCodes {
 object TokenValidation {
     const val RESPONSE_VALID = "valid"
     const val RESPONSE_INVALID = "invalid"
+
+    const val SKU_ID_KEY = "sku_id"
+    const val PURCHASE_TOKEN_KEY = "purchase_token"
+    const val PACKAGE_NAME_KEY = "package_name"
 }
 
 object SkuList {

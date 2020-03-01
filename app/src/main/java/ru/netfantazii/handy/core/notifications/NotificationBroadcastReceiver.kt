@@ -24,7 +24,7 @@ import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
 import ru.netfantazii.handy.extensions.getNotificationSoundUri
 import ru.netfantazii.handy.extensions.registerAlarm
 import ru.netfantazii.handy.extensions.registerGeofences
-import ru.netfantazii.handy.model.catalogNotificationContent
+import ru.netfantazii.handy.model.CatalogNotificationContent
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -229,7 +229,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                     .subscribeOn(Schedulers.io())
                     .map { catalogs ->
                         val catalogNotificationContents = catalogs.map {
-                            catalogNotificationContent(it.id,
+                            CatalogNotificationContent(it.id,
                                 it.name,
                                 it.groupExpandStates,
                                 it.alarmTime,
