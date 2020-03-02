@@ -156,4 +156,4 @@ class ForeverPurchase(
 ) :
     ShopItem(SkuList.FOREVER_PURCHASE, purchaseToken,3, isAcknowledged)
 
-class BillingPrice(val price: String, val type: BillingPriceTypes)
+class BillingPrice(val price: String, val type: BillingPurchaseTypes)

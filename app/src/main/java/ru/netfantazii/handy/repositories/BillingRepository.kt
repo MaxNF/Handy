@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.repositories
 
+import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.*
 import com.google.firebase.functions.FirebaseFunctions
@@ -119,5 +120,12 @@ class BillingRepository(val context: Context) {
 
     fun queryCachedPurchases() =
         billingClient.queryPurchases(BillingClient.SkuType.INAPP).purchasesList.toList()
+
+    /**
+     * Должен запускаться из UI потока.
+     * */
+    fun launchBillingFlow(activity: Activity, billingFlowParams: BillingFlowParams) {
+        billingClient.launchBillingFlow(activity, billingFlowParams)
+    }
 }
 

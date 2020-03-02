@@ -145,7 +145,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var sp: SharedPreferences
-    private lateinit var viewModel: NetworkViewModel
+    private lateinit var networkViewModel: NetworkViewModel
+    private lateinit var billingViewModel: BillingViewModel
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private lateinit var signInClient: GoogleSignInClient
     private val SIGN_IN_REQUEST_CODE = 0
@@ -160,7 +161,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             DataBindingUtil.setContentView(this,
                 R.layout.activity_main)
         createNetworkViewModel()
-        mainBinding.viewModel = viewModel
+        mainBinding.viewModel = networkViewModel
         pbManager = ProgressBarManager()
         pbManager.setProgressBarView(mainBinding.progressBarContainer)
         pbText = mainBinding.progressBarDescription
@@ -183,13 +184,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val header = navigationView.getHeaderView(0)
         val drawerHeaderBinding = NavigationHeaderBinding.bind(header)
-        drawerHeaderBinding.viewModel = viewModel
+        drawerHeaderBinding.viewModel = networkViewModel
         drawerHeaderBinding.signInButton.setOnLongClickListener {
-            if (viewModel.user.get() != null) {
+            if (networkViewModel.user.get() != null) {
                 signInClient.revokeAccess().addOnCompleteListener {
                     if (it.isSuccessful) {
                         showShortToast(this, getString(R.string.revoke_is_successful))
-                        viewModel.signOut()
+                        networkViewModel.signOut()
                     }
                 }
             }
@@ -201,8 +202,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         showWelcomeScreenIfNeeded()
 
         setUpErrorHandler()
-
         handleNotificationIntent(intent)
+
+        createBillingViewModel()
+        billingViewModel.setCurrentPremiumStatus()
+    }
+
+    private fun createBillingViewModel(): BillingViewModel {
+        val billingRepository =
+            (applicationContext as HandyApplication).billingRepository
+        val billingDataModel = BillingDataModel(billingRepository, packageName)
+        billingViewModel =
+            ViewModelProviders.of(this, BillingVmFactory(billingDataModel, application)
+            ).get(BillingViewModel::class.java)
+        return billingViewModel
     }
 
     private fun handleNotificationIntent(intent: Intent?) {
@@ -233,11 +246,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun tryToSilentSignIn() {
-        if (viewModel.user.get() == null && shouldSilentSignIn()) {
+        if (networkViewModel.user.get() == null && shouldSilentSignIn()) {
             val task = signInClient.silentSignIn()
             task.addOnSuccessListener {
                 showGlobalProgressBar(PbOperations.SIGNING_IN)
-                viewModel.signInToFirebase(it)
+                networkViewModel.signInToFirebase(it)
             }
             task.addOnFailureListener {
                 //do nothing
@@ -302,14 +315,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     e.printStackTrace()
                 }
             }
-            viewModel.hidePb()
+            networkViewModel.hidePb()
         }
     }
 
     private fun setInitialMenuItemsVisibility(navigationView: NavigationView) {
         val menu = navigationView.menu
         val contactsMenuItem = menu.findItem(R.id.contactsFragment)
-        contactsMenuItem.isVisible = viewModel.user.get() != null
+        contactsMenuItem.isVisible = networkViewModel.user.get() != null
     }
 
     private fun buildSignInClient() {
@@ -325,11 +338,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun createNetworkViewModel(): NetworkViewModel {
         val remoteRepository =
             (applicationContext as HandyApplication).remoteRepository
-        viewModel = ViewModelProviders.of(
+        networkViewModel = ViewModelProviders.of(
             this,
             NetworkVmFactory(remoteRepository)
         ).get(NetworkViewModel::class.java)
-        return viewModel
+        return networkViewModel
     }
 
     private fun loadTheme() {
@@ -423,7 +436,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun subscribeToEvents() {
         val owner = this
-        with(viewModel) {
+        with(networkViewModel) {
             signInClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     val signInIntent = signInClient.signInIntent
@@ -589,13 +602,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             PbOperations.SIGNING_OUT -> getString(R.string.signing_out)
             PbOperations.SIGNING_IN -> getString(R.string.signing_in)
         }
-        viewModel.inputFilter.netActionAllowed = false
+        networkViewModel.inputFilter.netActionAllowed = false
         pbText.text = text
         pbManager.show()
     }
 
     private fun hideGlobalProgressBar() {
-        viewModel.inputFilter.netActionAllowed = true
+        networkViewModel.inputFilter.netActionAllowed = true
         pbManager.hide()
     }
 
@@ -605,11 +618,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (requestCode == SIGN_IN_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             task.addOnSuccessListener {
-                viewModel.signInToFirebase(it)
+                networkViewModel.signInToFirebase(it)
             }
             task.addOnFailureListener {
                 it.printStackTrace()
-                viewModel.hidePb()
+                networkViewModel.hidePb()
                 showSignInFailedToast()
             }
         }

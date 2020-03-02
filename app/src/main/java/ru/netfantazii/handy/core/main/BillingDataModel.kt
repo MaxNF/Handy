@@ -1,9 +1,7 @@
 package ru.netfantazii.handy.core.main
 
-import com.android.billingclient.api.AcknowledgePurchaseParams
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.SkuDetailsParams
+import android.app.Activity
+import com.android.billingclient.api.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -71,7 +69,7 @@ class BillingDataModel(
                 .setSkusList(SkuList.SUB_SKU_LIST)
                 .setType(BillingClient.SkuType.SUBS)
                 .build()
-        return queryPurchaseForDetails(subscriptions)
+        return queryPurchaseForPrice(subscriptions)
     }
 
     private fun requestForeverPrice(): Single<List<BillingPrice>> {
@@ -80,21 +78,21 @@ class BillingDataModel(
             .setSkusList(SkuList.PURCHASE_SKU_LIST)
             .setType(BillingClient.SkuType.INAPP)
             .build()
-        return queryPurchaseForDetails(purchases)
+        return queryPurchaseForPrice(purchases)
     }
 
-    private fun queryPurchaseForDetails(params: SkuDetailsParams) =
+    private fun queryPurchaseForPrice(params: SkuDetailsParams) =
         billingRepository.getSkuDetails(params)
             .map { skuDetailsList ->
                 skuDetailsList.map {
-                    BillingPrice(it.price, getPriceTypeFromSku(it.sku))
+                    BillingPrice(it.price, getBillingItemTypeFromSku(it.sku))
                 }
             }
 
-    private fun getPriceTypeFromSku(sku: String): BillingPriceTypes = when (sku) {
-        SkuList.ONE_MONTH_SUB -> BillingPriceTypes.ONE_MONTH_PRICE
-        SkuList.ONE_YEAR_SUB -> BillingPriceTypes.ONE_YEAR_PRICE
-        SkuList.FOREVER_PURCHASE -> BillingPriceTypes.FOREVER_PRICE
+    private fun getBillingItemTypeFromSku(sku: String): BillingPurchaseTypes = when (sku) {
+        SkuList.ONE_MONTH_SUB -> BillingPurchaseTypes.ONE_MONTH
+        SkuList.ONE_YEAR_SUB -> BillingPurchaseTypes.ONE_YEAR
+        SkuList.FOREVER_PURCHASE -> BillingPurchaseTypes.FOREVER
         else -> {
             throw IllegalArgumentException("Unknown sku")
         }
@@ -165,4 +163,21 @@ class BillingDataModel(
             }
         }
     }
+
+    fun launchBillingFlow(activity: Activity, type: BillingPurchaseTypes) {
+        //todo сделать
+        val skuDetails: SkuDetails
+        val paramsBuilder = BillingFlowParams.newBuilder()
+        val params = when (type) {
+            BillingPurchaseTypes.FOREVER -> {
+                val skuDetails = SkuDetail
+                paramsBuilder.setSkuDetails()
+
+            }
+        }
+    }
+
+    private fun getSkuDetailsForBillingFlow(params: SkuDetailsParams) =
+        billingRepository.getSkuDetails(params)
+            .subscribeOn(subscribeScheduler)
 }

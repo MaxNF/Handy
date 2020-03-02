@@ -28,6 +28,6 @@ enum class PbOperations {
     SENDING_CATALOG, SIGNING_OUT, SIGNING_IN, UPDATING_CLOUD_DATABASE, DELETING_ACCOUNT
 }
 
-enum class BillingPriceTypes {
-    ONE_MONTH_PRICE, ONE_YEAR_PRICE, FOREVER_PRICE
+enum class BillingPurchaseTypes {
+    ONE_MONTH, ONE_YEAR, FOREVER
 }
