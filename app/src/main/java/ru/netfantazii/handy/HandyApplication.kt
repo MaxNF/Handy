@@ -11,7 +11,7 @@ class HandyApplication : Application() {
     val localRepository: LocalRepository
         get() = ServiceLocator.provideLocalRepository(this)
     val remoteRepository: RemoteRepository
-        get() = ServiceLocator.provideRemoteRepository(this)
+        get() = ServiceLocator.provideRemoteRepository()
     val billingRepository: BillingRepository
     get() = ServiceLocator.provideBillingRepository(this)
 

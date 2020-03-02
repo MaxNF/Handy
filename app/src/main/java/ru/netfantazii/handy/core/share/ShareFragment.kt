@@ -17,7 +17,7 @@ import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.contacts.EditContactDialog
 import ru.netfantazii.handy.databinding.ShareFragmentBinding
 import ru.netfantazii.handy.extensions.showLongToast
-import ru.netfantazii.handy.model.Contact
+import ru.netfantazii.handy.data.Contact
 
 class ShareFragment : Fragment() {
     private val fragmentArgs: ShareFragmentArgs by navArgs()

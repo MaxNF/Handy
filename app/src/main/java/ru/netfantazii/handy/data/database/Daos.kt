@@ -1,12 +1,11 @@
-package ru.netfantazii.handy.model.database
+package ru.netfantazii.handy.data.database
 
 import androidx.room.*
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.netfantazii.handy.extensions.registerGeofences
-import ru.netfantazii.handy.model.*
+import ru.netfantazii.handy.data.*
 import java.util.*
 
 @Dao

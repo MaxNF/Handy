@@ -6,8 +6,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import ru.netfantazii.handy.model.*
-import ru.netfantazii.handy.model.database.*
+import ru.netfantazii.handy.data.*
+import ru.netfantazii.handy.data.database.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 

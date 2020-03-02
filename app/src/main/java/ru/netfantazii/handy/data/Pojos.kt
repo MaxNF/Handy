@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.model
+package ru.netfantazii.handy.data
 
 import android.net.Uri
 import androidx.databinding.BaseObservable
@@ -8,7 +8,7 @@ import androidx.room.Relation
 import com.google.firebase.auth.AuthCredential
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.model.database.*
+import ru.netfantazii.handy.data.database.*
 import java.util.*
 
 class Catalog(
@@ -130,34 +130,30 @@ data class CatalogNotificationContent(
 
 open class ShopItem(
     val sku: String,
-    val price: String?,
     val purchaseToken: String,
     val weight: Int,
     val isAcknowlodged: Boolean
 ) : BaseObservable()
 
 class OneMonthSub(
-    price: String? = null,
     purchaseToken: String,
     val startedDate: Calendar?,
     val endDate: Calendar?,
     isAcknowledged: Boolean
-) : ShopItem(SkuList.ONE_MONTH_SUB, price, purchaseToken,1, isAcknowledged)
+) : ShopItem(SkuList.ONE_MONTH_SUB, purchaseToken,1, isAcknowledged)
 
 class OneYearSub(
-    price: String? = null,
     purchaseToken: String,
     val startedDate: Calendar? = null,
     val endDate: Calendar? = null,
     isAcknowledged: Boolean
-) : ShopItem(SkuList.ONE_YEAR_SUB, price, purchaseToken,2, isAcknowledged)
+) : ShopItem(SkuList.ONE_YEAR_SUB, purchaseToken,2, isAcknowledged)
 
 class ForeverPurchase(
-    price: String? = null,
     purchaseToken: String,
     val purchaseDate: Calendar? = null,
     isAcknowledged: Boolean
 ) :
-    ShopItem(SkuList.FOREVER_PURCHASE, price, purchaseToken,3, isAcknowledged)
+    ShopItem(SkuList.FOREVER_PURCHASE, purchaseToken,3, isAcknowledged)
 
-
+class BillingPrice(val price: String, val type: BillingPriceTypes)

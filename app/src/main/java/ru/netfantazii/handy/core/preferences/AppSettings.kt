@@ -18,11 +18,11 @@ import ru.netfantazii.handy.core.main.MainActivity
 import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.customviews.MyPreferenceButton
-import ru.netfantazii.handy.model.SortOrder
+import ru.netfantazii.handy.data.SortOrder
 import ru.netfantazii.handy.extensions.getSortOrder
 import ru.netfantazii.handy.extensions.reloadActivity
 import ru.netfantazii.handy.extensions.showShortToast
-import ru.netfantazii.handy.model.User
+import ru.netfantazii.handy.data.User
 
 const val FIRST_LAUNCH_KEY = "first_launch"
 const val SHOULD_SILENT_SIGN_IN_KEY = "silent_sign_in"

@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModelProviders
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.databinding.CatalogNetInfoDialogBinding
-import ru.netfantazii.handy.model.Catalog
-import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
+import ru.netfantazii.handy.data.Catalog
+import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
 
 interface DialogClickHandler {
     val catalogAndNetInfoReceived: LiveData<Event<Pair<Catalog, CatalogNetInfoEntity>>>

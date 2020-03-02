@@ -12,8 +12,8 @@ import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.EditContactDialogBinding
 import ru.netfantazii.handy.extensions.showShortToast
-import ru.netfantazii.handy.model.Contact
-import ru.netfantazii.handy.model.ContactDialogAction
+import ru.netfantazii.handy.data.Contact
+import ru.netfantazii.handy.data.ContactDialogAction
 import java.lang.IllegalArgumentException
 import java.lang.UnsupportedOperationException
 

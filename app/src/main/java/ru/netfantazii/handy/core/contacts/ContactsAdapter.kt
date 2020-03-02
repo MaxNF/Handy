@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.netfantazii.handy.core.main.InputFilter
 import ru.netfantazii.handy.databinding.RvContactElementBinding
-import ru.netfantazii.handy.model.Contact
+import ru.netfantazii.handy.data.Contact
 
 interface ContactsClickHandler {
     fun onContactDeleteClick(contact: Contact)

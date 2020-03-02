@@ -14,10 +14,10 @@ import ru.netfantazii.handy.R
 import ru.netfantazii.handy.databinding.RvGroupElementBinding
 import ru.netfantazii.handy.databinding.RvProductElementBinding
 import ru.netfantazii.handy.databinding.RvUnsortedGroupElementBinding
-import ru.netfantazii.handy.model.BuyStatus
-import ru.netfantazii.handy.model.Group
-import ru.netfantazii.handy.model.GroupType
-import ru.netfantazii.handy.model.Product
+import ru.netfantazii.handy.data.BuyStatus
+import ru.netfantazii.handy.data.Group
+import ru.netfantazii.handy.data.GroupType
+import ru.netfantazii.handy.data.Product
 import java.lang.UnsupportedOperationException
 
 interface ProductClickHandler {

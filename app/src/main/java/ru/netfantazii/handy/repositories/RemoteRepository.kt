@@ -9,9 +9,9 @@ import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.ktx.Firebase
 import io.reactivex.*
 import io.reactivex.Observable
-import ru.netfantazii.handy.model.Contact
-import ru.netfantazii.handy.model.database.CloudFunctions
-import ru.netfantazii.handy.model.database.RemoteDbSchema
+import ru.netfantazii.handy.data.Contact
+import ru.netfantazii.handy.data.database.CloudFunctions
+import ru.netfantazii.handy.data.database.RemoteDbSchema
 import java.lang.UnsupportedOperationException
 import java.util.*
 

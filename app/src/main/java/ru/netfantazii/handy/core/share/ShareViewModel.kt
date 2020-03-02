@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.core.Event
-import ru.netfantazii.handy.model.Contact
-import ru.netfantazii.handy.model.Group
-import ru.netfantazii.handy.model.database.RemoteDbSchema
+import ru.netfantazii.handy.data.Contact
+import ru.netfantazii.handy.data.Group
+import ru.netfantazii.handy.data.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
 
 class ShareViewModel(

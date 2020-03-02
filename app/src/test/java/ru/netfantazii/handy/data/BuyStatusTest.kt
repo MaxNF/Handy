@@ -1,10 +1,10 @@
-package ru.netfantazii.handy.model
+package ru.netfantazii.handy.data
 
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.*
 import org.junit.Test
-import ru.netfantazii.handy.model.database.Converters.buyStatusToNumber
-import ru.netfantazii.handy.model.database.Converters.numberToBuyStatus
+import ru.netfantazii.handy.data.database.Converters.buyStatusToNumber
+import ru.netfantazii.handy.data.database.Converters.numberToBuyStatus
 
 /**
  * Проверяем конвертацию статусов в инт и обратно.*/

@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.model.database
+package ru.netfantazii.handy.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

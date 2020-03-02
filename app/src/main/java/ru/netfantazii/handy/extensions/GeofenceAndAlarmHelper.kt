@@ -14,7 +14,7 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import io.reactivex.Completable
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.*
-import ru.netfantazii.handy.model.database.GeofenceEntity
+import ru.netfantazii.handy.data.database.GeofenceEntity
 import java.util.*
 
 const val GEOFENCE_CHECK_CYCLE_MILLIS = 30000

@@ -3,7 +3,6 @@ package ru.netfantazii.handy.extensions
 import android.graphics.Paint
 import android.net.Uri
 import android.view.View
-import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -13,13 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import jp.wasabeef.glide.transformations.CropCircleWithBorderTransformation
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.core.preferences.ThemeColor
-import ru.netfantazii.handy.core.preferences.getThemeColor
-import ru.netfantazii.handy.model.HintType
+import ru.netfantazii.handy.data.HintType
 import java.text.DateFormat
-import java.text.NumberFormat
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 
 

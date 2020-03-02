@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.model
+package ru.netfantazii.handy.data
 
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.*

@@ -1,7 +1,6 @@
 package ru.netfantazii.handy.extensions
 
 import android.Manifest
-import android.R.attr.label
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.ClipData
@@ -20,8 +19,8 @@ import ru.netfantazii.handy.core.notifications.BUNDLE_NOTIFICATION_ID_KEY
 import ru.netfantazii.handy.core.notifications.CANCEL_NOTIFICATION_ACTION
 import ru.netfantazii.handy.core.notifications.NotificationBroadcastReceiver
 import ru.netfantazii.handy.core.preferences.currentSortOrder
-import ru.netfantazii.handy.model.Catalog
-import ru.netfantazii.handy.model.SortOrder
+import ru.netfantazii.handy.data.Catalog
+import ru.netfantazii.handy.data.SortOrder
 
 
 fun doWithDelay(delayMillis: Long, action: () -> Unit) {

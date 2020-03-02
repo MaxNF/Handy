@@ -11,7 +11,7 @@ import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.core.*
 import ru.netfantazii.handy.core.preferences.currentSortOrder
-import ru.netfantazii.handy.model.*
+import ru.netfantazii.handy.data.*
 import ru.netfantazii.handy.extensions.*
 import java.lang.UnsupportedOperationException
 import java.util.NoSuchElementException

@@ -10,20 +10,16 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.exceptions.Exceptions
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.extensions.*
-import ru.netfantazii.handy.model.database.GeofenceEntity
-import ru.netfantazii.handy.model.GeofenceLimitException
-import java.lang.UnsupportedOperationException
+import ru.netfantazii.handy.data.database.GeofenceEntity
+import ru.netfantazii.handy.data.GeofenceLimitException
 import kotlin.collections.Map
 
 class MapViewModel(

@@ -20,11 +20,11 @@ import ru.netfantazii.handy.core.contacts.ContactsClickHandler
 import ru.netfantazii.handy.core.contacts.ContactsStorage
 import ru.netfantazii.handy.core.contacts.DialogClickHandler
 import ru.netfantazii.handy.extensions.copyTextToClipboard
-import ru.netfantazii.handy.model.Contact
-import ru.netfantazii.handy.model.ContactDialogAction
-import ru.netfantazii.handy.model.PbOperations
-import ru.netfantazii.handy.model.User
-import ru.netfantazii.handy.model.database.RemoteDbSchema
+import ru.netfantazii.handy.data.Contact
+import ru.netfantazii.handy.data.ContactDialogAction
+import ru.netfantazii.handy.data.PbOperations
+import ru.netfantazii.handy.data.User
+import ru.netfantazii.handy.data.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.RemoteRepository
 import java.lang.UnsupportedOperationException
 

@@ -4,17 +4,14 @@ import android.app.Application
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.*
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.core.*
-import ru.netfantazii.handy.model.Catalog
-import ru.netfantazii.handy.core.preferences.currentSortOrder
+import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.extensions.*
-import ru.netfantazii.handy.model.SortOrder
-import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
-import ru.netfantazii.handy.model.database.GeofenceEntity
+import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
+import ru.netfantazii.handy.data.database.GeofenceEntity
 import ru.netfantazii.handy.repositories.LocalRepository
 import java.util.*
 

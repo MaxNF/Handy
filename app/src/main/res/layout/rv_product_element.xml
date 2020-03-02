@@ -7,15 +7,15 @@
 
         <import type="ru.netfantazii.handy.R" />
 
-        <import type="ru.netfantazii.handy.model.BuyStatus" />
+        <import type="ru.netfantazii.handy.data.BuyStatus" />
 
         <variable
             name="parentGroup"
-            type="ru.netfantazii.handy.model.Group" />
+            type="ru.netfantazii.handy.data.Group" />
 
         <variable
             name="product"
-            type="ru.netfantazii.handy.model.Product" />
+            type="ru.netfantazii.handy.data.Product" />
 
         <variable
             name="productHandler"

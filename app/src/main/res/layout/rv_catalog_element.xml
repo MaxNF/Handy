@@ -6,10 +6,10 @@
     <data>
         <import type="android.view.View" />
         <import type="androidx.databinding.ObservableField" />
-        <import type="ru.netfantazii.handy.model.User"/>
+        <import type="ru.netfantazii.handy.data.User"/>
         <variable
             name="catalog"
-            type="ru.netfantazii.handy.model.Catalog" />
+            type="ru.netfantazii.handy.data.Catalog" />
         <variable
             name="handler"
             type="ru.netfantazii.handy.core.catalogs.CatalogClickHandler" />

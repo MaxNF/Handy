@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.model
+package ru.netfantazii.handy.data
 
 import com.android.billingclient.api.BillingClient.*
 import java.lang.RuntimeException

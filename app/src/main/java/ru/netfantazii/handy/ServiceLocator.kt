@@ -3,7 +3,7 @@ package ru.netfantazii.handy
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import androidx.room.Room
-import ru.netfantazii.handy.model.database.ProductDatabase
+import ru.netfantazii.handy.data.database.ProductDatabase
 import ru.netfantazii.handy.repositories.*
 
 object ServiceLocator {
@@ -31,22 +31,22 @@ object ServiceLocator {
     }
 
     private fun createLocalRepository(context: Context): LocalRepository {
-        val localRepository = LocalRepositoryImpl(
-            getDatabaseInstance(context))
-        ServiceLocator.localRepository = localRepository
+        val localRepository = LocalRepositoryImpl(getDatabaseInstance(context))
+        this.localRepository = localRepository
         return localRepository
     }
 
     fun provideBillingRepository(context: Context): BillingRepository {
         synchronized(this) {
             return billingRepository
-                ?: createBillingRepository()
+                ?: createBillingRepository(context)
         }
     }
 
-    private fun createBillingRepository(): BillingRepository {
-        val billintRepository =
-            return
+    private fun createBillingRepository(context: Context): BillingRepository {
+        val billingRepository = BillingRepository(context)
+        this.billingRepository = this.billingRepository
+        return billingRepository
     }
 
     fun provideRemoteRepository(): RemoteRepository {

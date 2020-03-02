@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="ru.netfantazii.handy.model.Contact" />
+        <import type="ru.netfantazii.handy.data.Contact" />
 
         <variable
             name="viewModel"

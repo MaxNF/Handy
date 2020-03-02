@@ -25,10 +25,6 @@ import androidx.navigation.*
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
-import com.gen.rxbilling.client.RxBilling
-import com.gen.rxbilling.client.RxBillingImpl
-import com.gen.rxbilling.connection.BillingClientFactory
-import com.gen.rxbilling.lifecycle.BillingConnectionManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -49,10 +45,10 @@ import ru.netfantazii.handy.databinding.NavigationHeaderBinding
 import ru.netfantazii.handy.extensions.reloadActivity
 import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
-import ru.netfantazii.handy.model.GeofenceLimitException
-import ru.netfantazii.handy.model.PbOperations
-import ru.netfantazii.handy.model.User
-import ru.netfantazii.handy.model.database.ErrorCodes
+import ru.netfantazii.handy.data.GeofenceLimitException
+import ru.netfantazii.handy.data.PbOperations
+import ru.netfantazii.handy.data.User
+import ru.netfantazii.handy.data.database.ErrorCodes
 
 //Проверить и сделать, чтобы будильники и геометки перерегистрировался при перезагрузки телефона!
 //проверить все цветовые схемы со всеми элементами (особенно напоминания, т.к. там подсветку заголовков не видно)
@@ -205,7 +201,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         showWelcomeScreenIfNeeded()
 
         setUpErrorHandler()
-        setUpBillingHelper()
 
         handleNotificationIntent(intent)
     }

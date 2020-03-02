@@ -4,10 +4,10 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import io.reactivex.*
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import ru.netfantazii.handy.model.Catalog
-import ru.netfantazii.handy.model.database.GeofenceEntity
-import ru.netfantazii.handy.model.Group
-import ru.netfantazii.handy.model.Product
+import ru.netfantazii.handy.data.Catalog
+import ru.netfantazii.handy.data.database.GeofenceEntity
+import ru.netfantazii.handy.data.Group
+import ru.netfantazii.handy.data.Product
 import ru.netfantazii.handy.repositories.LocalRepository
 import java.util.*
 

@@ -7,11 +7,11 @@
 
         <variable
             name="catalog"
-            type="ru.netfantazii.handy.model.Catalog" />
+            type="ru.netfantazii.handy.data.Catalog" />
 
         <variable
             name="catalogNetInfo"
-            type="ru.netfantazii.handy.model.database.CatalogNetInfoEntity" />
+            type="ru.netfantazii.handy.data.database.CatalogNetInfoEntity" />
     </data>
 
     <ScrollView

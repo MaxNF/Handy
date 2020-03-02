@@ -13,7 +13,7 @@
 
         <variable
             name="contact"
-            type="ru.netfantazii.handy.model.Contact" />
+            type="ru.netfantazii.handy.data.Contact" />
 
         <variable
             name="handler"

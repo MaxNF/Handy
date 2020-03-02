@@ -10,14 +10,10 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.model.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.repositories.RemoteRepository
 import java.util.concurrent.CountDownLatch

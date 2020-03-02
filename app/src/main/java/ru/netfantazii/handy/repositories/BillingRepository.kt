@@ -1,15 +1,14 @@
 package ru.netfantazii.handy.repositories
 
 import android.content.Context
-import androidx.room.RoomOpenHelper
 import com.android.billingclient.api.*
 import com.google.firebase.functions.FirebaseFunctions
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.netfantazii.handy.model.BillingException
-import ru.netfantazii.handy.model.database.CloudFunctions
-import ru.netfantazii.handy.model.database.TokenValidation
+import ru.netfantazii.handy.data.BillingException
+import ru.netfantazii.handy.data.database.CloudFunctions
+import ru.netfantazii.handy.data.database.TokenValidation
 
 class BillingRepository(val context: Context) {
     private val firestoreHttpsEuWest1 =
@@ -32,7 +31,7 @@ class BillingRepository(val context: Context) {
     private var purchasedAction: ((List<Purchase>) -> Unit)? = null
     private var errorAction: ((Int) -> Unit)? = null
 
-    fun observePurchases(): Observable<List<Purchase>> =
+    fun observePurchases(): Observable<Purchase> =
         Observable.create<List<Purchase>> { emitter ->
             purchasedAction = { list -> emitter.onNext(list) }
             errorAction = { errorCode -> emitter.onError(BillingException(errorCode)) }
@@ -40,7 +39,7 @@ class BillingRepository(val context: Context) {
                 purchasedAction = null
                 errorAction = null
             }
-        }
+        }.flatMapIterable { it }
 
     fun maintainConnection() = Observable.create<Unit> { emitter ->
         billingClient.startConnection(object : BillingClientStateListener {

@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.model.database
+package ru.netfantazii.handy.data.database
 
 object RemoteDbSchema {
     const val COLLECTION_USERS = "users" // id документа = uid пользователя

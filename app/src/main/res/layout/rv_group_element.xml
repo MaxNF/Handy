@@ -6,9 +6,9 @@
     <data>
         <import type="ru.netfantazii.handy.R" />
 
-        <import type="ru.netfantazii.handy.model.BuyStatus" />
+        <import type="ru.netfantazii.handy.data.BuyStatus" />
 
-        <import type="ru.netfantazii.handy.model.HintType" />
+        <import type="ru.netfantazii.handy.data.HintType" />
 
         <variable
             name="positionInFilteredList"
@@ -20,7 +20,7 @@
 
         <variable
             name="group"
-            type="ru.netfantazii.handy.model.Group" />
+            type="ru.netfantazii.handy.data.Group" />
 
         <variable
             name="expandManager"

@@ -21,9 +21,9 @@ import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
 import ru.netfantazii.handy.extensions.getNewCatalogPosition
 import ru.netfantazii.handy.extensions.getNotificationSoundUri
 import ru.netfantazii.handy.extensions.reassignPositions
-import ru.netfantazii.handy.model.*
-import ru.netfantazii.handy.model.database.CatalogNetInfoEntity
-import ru.netfantazii.handy.model.database.RemoteDbSchema
+import ru.netfantazii.handy.data.*
+import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
+import ru.netfantazii.handy.data.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.repositories.RemoteRepository
 import java.util.*
