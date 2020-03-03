@@ -15,7 +15,8 @@ class BillingRepository(val context: Context) {
     private val firestoreHttpsEuWest1 =
         FirebaseFunctions.getInstance(CloudFunctions.REGION_EU_WEST1)
     private val billingClient: BillingClient by lazy {
-        BillingClient.newBuilder(context).setListener(purchaseUpdatedListener).build()
+        BillingClient.newBuilder(context).setListener(purchaseUpdatedListener)
+            .enablePendingPurchases().build()
     }
     private val purchaseUpdatedListener = PurchasesUpdatedListener { billingResult, purchaseList ->
         when (billingResult.responseCode) {
@@ -115,11 +116,15 @@ class BillingRepository(val context: Context) {
             }
         }
 
-    fun queryCachedSubs() =
-        billingClient.queryPurchases(BillingClient.SkuType.SUBS).purchasesList.toList()
+    fun queryCachedSubs(): List<Purchase> =
+        billingClient.queryPurchases(BillingClient.SkuType.SUBS).purchasesList?.toList()
+            ?: listOf()
+
 
     fun queryCachedPurchases() =
-        billingClient.queryPurchases(BillingClient.SkuType.INAPP).purchasesList.toList()
+        billingClient.queryPurchases(BillingClient.SkuType.INAPP).purchasesList?.toList()
+            ?: listOf()
+
 
     /**
      * Должен запускаться из UI потока.

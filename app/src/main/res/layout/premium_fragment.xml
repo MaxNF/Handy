@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="ru.netfantazii.handy.data.BillingObject"/>
+
         <variable
             name="billingViewModel"
             type="ru.netfantazii.handy.core.main.BillingViewModel" />
@@ -91,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end|center_vertical"
                         android:layout_marginEnd="16dp"
-                        android:text="@{billingViewModel.oneMonthSubPrice}"
+                        android:text="@{billingViewModel.oneMonthBillingObject.skuDetails.price}"
                         android:translationZ="20dp" />
 
                 </FrameLayout>
@@ -118,7 +120,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end|center_vertical"
                         android:layout_marginEnd="16dp"
-                        android:text="@{billingViewModel.oneYearSubPrice}"
+                        android:text="@{billingViewModel.oneYearBillingObject.skuDetails.price}"
                         android:translationZ="20dp" />
 
                 </FrameLayout>
@@ -146,7 +148,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end|center_vertical"
                         android:layout_marginEnd="16dp"
-                        android:text="@{billingViewModel.foreverProviderPrice}"
+                        android:text="@{billingViewModel.foreverBillingObject.skuDetails.price}"
                         android:translationZ="20dp" />
 
 

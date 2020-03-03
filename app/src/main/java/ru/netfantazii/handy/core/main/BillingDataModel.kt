@@ -48,14 +48,14 @@ class BillingDataModel(
             .subscribeOn(Schedulers.io())
     }
 
-    fun connectToBillingAndGetPrices(): Observable<List<BillingPrice>> =
+    fun connectToBillingAndGetPrices(): Observable<List<BillingObject>> =
         billingRepository.maintainConnection()
             .subscribeOn(Schedulers.io())
             .retry(maxRetryCount)
             .flatMap {
                 requestSubPrices().zipWith(requestForeverPrice(),
-                    BiFunction<List<BillingPrice>, List<BillingPrice>, List<BillingPrice>> { firstList, secondList ->
-                        mutableListOf<BillingPrice>().apply {
+                    BiFunction<List<BillingObject>, List<BillingObject>, List<BillingObject>> { firstList, secondList ->
+                        mutableListOf<BillingObject>().apply {
                             addAll(firstList)
                             addAll(secondList)
                         }
@@ -63,7 +63,7 @@ class BillingDataModel(
                     .toObservable()
             }
 
-    private fun requestSubPrices(): Single<List<BillingPrice>> {
+    private fun requestSubPrices(): Single<List<BillingObject>> {
         val subscriptions =
             SkuDetailsParams.newBuilder()
                 .setSkusList(SkuList.SUB_SKU_LIST)
@@ -72,7 +72,7 @@ class BillingDataModel(
         return queryPurchaseForPrice(subscriptions)
     }
 
-    private fun requestForeverPrice(): Single<List<BillingPrice>> {
+    private fun requestForeverPrice(): Single<List<BillingObject>> {
         val purchases = SkuDetailsParams
             .newBuilder()
             .setSkusList(SkuList.PURCHASE_SKU_LIST)
@@ -85,7 +85,7 @@ class BillingDataModel(
         billingRepository.getSkuDetails(params)
             .map { skuDetailsList ->
                 skuDetailsList.map {
-                    BillingPrice(it.price, getBillingItemTypeFromSku(it.sku))
+                    BillingObject(it, getBillingItemTypeFromSku(it.sku))
                 }
             }
 
@@ -164,20 +164,10 @@ class BillingDataModel(
         }
     }
 
-    fun launchBillingFlow(activity: Activity, type: BillingPurchaseTypes) {
-        //todo сделать
-        val skuDetails: SkuDetails
-        val paramsBuilder = BillingFlowParams.newBuilder()
-        val params = when (type) {
-            BillingPurchaseTypes.FOREVER -> {
-                val skuDetails = SkuDetail
-                paramsBuilder.setSkuDetails()
-
-            }
-        }
+    fun launchBillingFlow(activity: Activity, billingObject: BillingObject) {
+        val params = BillingFlowParams.newBuilder()
+            .setSkuDetails(billingObject.skuDetails)
+            .build()
+        billingRepository.launchBillingFlow(activity, params)
     }
-
-    private fun getSkuDetailsForBillingFlow(params: SkuDetailsParams) =
-        billingRepository.getSkuDetails(params)
-            .subscribeOn(subscribeScheduler)
 }

@@ -5,6 +5,7 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Ignore
 import androidx.room.Relation
+import com.android.billingclient.api.SkuDetails
 import com.google.firebase.auth.AuthCredential
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
@@ -156,4 +157,4 @@ class ForeverPurchase(
 ) :
     ShopItem(SkuList.FOREVER_PURCHASE, purchaseToken,3, isAcknowledged)
 
-class BillingPrice(val price: String, val type: BillingPurchaseTypes)
+class BillingObject(val skuDetails: SkuDetails, val type: BillingPurchaseTypes)

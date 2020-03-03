@@ -17,7 +17,7 @@ android {
         applicationId "ru.netfantazii.handypro"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,6 +25,14 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            debuggable true
+            zipAlignEnabled true
+            jniDebuggable true
         }
     }
     dataBinding {
@@ -48,14 +56,6 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
-
-    //        debug {
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//            minifyEnabled true
-//            debuggable true
-//            zipAlignEnabled true
-//            jniDebuggable true
-//        }
 }
 
 dependencies {
@@ -151,6 +151,8 @@ dependencies {
     implementation 'com.android.billingclient:billing:2.1.0'
     implementation 'com.android.billingclient:billing-ktx:2.1.0'
 
+    // AdMob
+    implementation 'com.google.firebase:firebase-ads:19.0.0'
 
     // Testing
     testImplementation "androidx.room:room-testing:$room_version"

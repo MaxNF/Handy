@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.google.firebase.provider.** { *; }
+-keep class com.h6ah4i.android.widget.advrecyclerview.expandable.** { *; }

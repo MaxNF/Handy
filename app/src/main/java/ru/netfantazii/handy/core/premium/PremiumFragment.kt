@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.core.premium
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,12 @@ import ru.netfantazii.handy.core.main.MainActivity
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.main.BillingViewModel
 import ru.netfantazii.handy.data.BillingPurchaseTypes
+import ru.netfantazii.handy.databinding.PremiumFragmentBinding
 
 class PremiumFragment : Fragment() {
     private lateinit var billingViewModel: BillingViewModel
     private val allLiveDataList = mutableListOf<LiveData<*>>()
+    private val TAG = "PremiumFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +30,9 @@ class PremiumFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        return inflater.inflate(R.layout.premium_fragment, container, false)
+        val binding = PremiumFragmentBinding.inflate(inflater, container, false)
+        binding.billingViewModel = billingViewModel
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,21 +44,24 @@ class PremiumFragment : Fragment() {
     private fun subscribeToEvents() {
         val owner = this
         with(billingViewModel) {
-            oneMonthButtonClicked.observe(this@PremiumFragment, Observer {
-                it.getContentIfNotHandled()?.let {
-                    billingViewModel.launchBillingFlow(activity!!, BillingPurchaseTypes.ONE_MONTH)
+            oneMonthButtonClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { billingObject ->
+                    Log.d(TAG, "subscribeToEvents: ")
+                    billingViewModel.launchBillingFlow(activity!!, billingObject)
                 }
             })
             allLiveDataList.add(oneMonthButtonClicked)
-            oneYearButtonClicked.observe(this@PremiumFragment, Observer {
-                it.getContentIfNotHandled()?.let {
-                    billingViewModel.launchBillingFlow(activity!!, BillingPurchaseTypes.ONE_YEAR)
+            oneYearButtonClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { billingObject ->
+                    Log.d(TAG, "subscribeToEvents: ")
+                    billingViewModel.launchBillingFlow(activity!!, billingObject)
                 }
             })
             allLiveDataList.add(oneYearButtonClicked)
-            foreverButtonClicked.observe(this@PremiumFragment, Observer {
-                it.getContentIfNotHandled()?.let {
-                    billingViewModel.launchBillingFlow(activity!!, BillingPurchaseTypes.FOREVER)
+            foreverButtonClicked.observe(owner, Observer {
+                it.getContentIfNotHandled()?.let { billingObject ->
+                    Log.d(TAG, "subscribeToEvents: ")
+                    billingViewModel.launchBillingFlow(activity!!, billingObject)
                 }
             })
             allLiveDataList.add(foreverButtonClicked)

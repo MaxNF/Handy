@@ -2,6 +2,7 @@ package ru.netfantazii.handy.core.main
 
 import android.app.Activity
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -10,11 +11,13 @@ import ru.netfantazii.handy.data.*
 
 class BillingViewModel(application: Application, private val billingDataModel: BillingDataModel) :
     AndroidViewModel(application) {
-    var oneMonthSubPrice: String? = null
+    private val TAG = "BillingViewModel"
+
+    var oneMonthBillingObject: BillingObject? = null
         private set
-    var oneYearSubPrice: String? = null
+    var oneYearBillingObject: BillingObject? = null
         private set
-    var foreverProviderPrice: String? = null
+    var foreverBillingObject: BillingObject? = null
         private set
 
     var currentPremium: ShopItem? = null
@@ -22,14 +25,14 @@ class BillingViewModel(application: Application, private val billingDataModel: B
 
     private val disposables = CompositeDisposable()
 
-    private val _oneMonthButtonClicked = MutableLiveData<Event<Unit>>()
-    val oneMonthButtonClicked: LiveData<Event<Unit>> = _oneMonthButtonClicked
+    private val _oneMonthButtonClicked = MutableLiveData<Event<BillingObject>>()
+    val oneMonthButtonClicked: LiveData<Event<BillingObject>> = _oneMonthButtonClicked
 
-    private val _oneYearButtonClicked = MutableLiveData<Event<Unit>>()
-    val oneYearButtonClicked: LiveData<Event<Unit>> = _oneYearButtonClicked
+    private val _oneYearButtonClicked = MutableLiveData<Event<BillingObject>>()
+    val oneYearButtonClicked: LiveData<Event<BillingObject>> = _oneYearButtonClicked
 
-    private val _foreverButtonClicked = MutableLiveData<Event<Unit>>()
-    val foreverButtonClicked: LiveData<Event<Unit>> = _foreverButtonClicked
+    private val _foreverButtonClicked = MutableLiveData<Event<BillingObject>>()
+    val foreverButtonClicked: LiveData<Event<BillingObject>> = _foreverButtonClicked
 
     init {
         observeConnectionAndGetPrices()
@@ -41,6 +44,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { shopItem ->
                 currentPremium = shopItem
+                Log.d(TAG, "observePurchases: $shopItem")
             })
     }
 
@@ -49,20 +53,23 @@ class BillingViewModel(application: Application, private val billingDataModel: B
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { priceList ->
                 updatePrices(priceList)
+                Log.d(TAG, "observeConnectionAndGetPrices: $priceList")
             })
     }
 
-    private fun updatePrices(priceList: List<BillingPrice>) {
-        priceList.forEach {
+    private fun updatePrices(objectList: List<BillingObject>) {
+        objectList.forEach {
+            Log.d(TAG, "updatePrices: ${it.type}")
             when (it.type) {
-                BillingPurchaseTypes.FOREVER -> foreverProviderPrice = it.price
-                BillingPurchaseTypes.ONE_YEAR -> oneYearSubPrice = it.price
-                BillingPurchaseTypes.ONE_MONTH -> oneMonthSubPrice = it.price
+                BillingPurchaseTypes.FOREVER -> foreverBillingObject = it
+                BillingPurchaseTypes.ONE_YEAR -> oneYearBillingObject = it
+                BillingPurchaseTypes.ONE_MONTH -> oneMonthBillingObject = it
             }
         }
     }
 
     fun setCurrentPremiumStatus() {
+        Log.d(TAG, "setCurrentPremiumStatus: ")
         billingDataModel.getCurrentPremiumStatus()?.let {
             it.observeOn(AndroidSchedulers.mainThread())
                 .subscribe { shopItem ->
@@ -72,23 +79,30 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     }
 
     private fun setPremiumNull() {
+        Log.d(TAG, "setPremiumNull: ")
         currentPremium = null
     }
 
-    fun launchBillingFlow(activity: Activity, type: BillingPurchaseTypes) {
-        billingDataModel.launchBillingFlow(activity, type)
+    fun launchBillingFlow(activity: Activity, billingObject: BillingObject) {
+        Log.d(TAG, "launchBillingFlow: ")
+        billingDataModel.launchBillingFlow(activity, billingObject)
     }
 
     fun onOneMonthButtonClick() {
-        _oneMonthButtonClicked.value = Event(Unit)
+        Log.d(TAG, "onOneMonthButtonClick: ")
+        oneMonthBillingObject?.let { _oneMonthButtonClicked.value = Event(it) }
+
     }
 
     fun onOneYearButtonClick() {
-        _oneYearButtonClicked.value = Event(Unit)
+        Log.d(TAG, "onOneYearButtonClick: ")
+        oneYearBillingObject?.let { _oneYearButtonClicked.value = Event(it) }
     }
 
     fun onForeverButtonClick() {
-        _foreverButtonClicked.value = Event(Unit)
+        Log.d(TAG, "onForeverButtonClick: ")
+        foreverBillingObject?.let { _foreverButtonClicked.value = Event(it) }
+
     }
 }
 

@@ -25,6 +25,7 @@ import androidx.navigation.*
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -205,7 +206,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         handleNotificationIntent(intent)
 
         createBillingViewModel()
-        billingViewModel.setCurrentPremiumStatus()
+        MobileAds.initialize(this, "ca-app-pub-4546128231433208~4467489086")
     }
 
     private fun createBillingViewModel(): BillingViewModel {
@@ -237,6 +238,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onResume()
         Log.d(TAG, "onResume: ")
         tryToSilentSignIn()
+        billingViewModel.setCurrentPremiumStatus()
     }
 
     override fun onNewIntent(intent: Intent?) {
