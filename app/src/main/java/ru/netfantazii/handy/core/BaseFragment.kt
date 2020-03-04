@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import ru.netfantazii.handy.core.main.MainActivity
 import ru.netfantazii.handy.R
@@ -21,6 +23,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
     protected lateinit var dragManager: RecyclerViewDragDropManager
     protected val allLiveDataList = mutableListOf<LiveData<*>>()
     protected lateinit var navController: NavController
+//    private lateinit var adBanner: AdView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +39,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
         subscribeToEvents()
         initNavController()
         (activity as MainActivity).uncheckActiveMenuItem()
+        loadAds(view)
     }
 
     override fun onDestroyView() {
@@ -46,6 +50,13 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
     override fun onStop() {
         super.onStop()
         hideSnackbars()
+    }
+
+    private fun loadAds(view: View) {
+        val adView = view.findViewById<AdView>(R.id.adView)
+        val adRequest = AdRequest.Builder()
+            .build()
+        adView.loadAd(adRequest)
     }
 
     protected fun showOverlay() {

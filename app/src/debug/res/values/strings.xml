@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--  Debug banners ids  -->
+    <string name="ad_banner_catalogs_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_banner_products_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_banner_contacts_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_banner_alarm_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+
+    <string name="ad_interstitial_share_unit_id" translatable="false">ca-app-pub-3940256099942544/1033173712</string>
+<!--  End of debug banners ids  -->
+</resources>

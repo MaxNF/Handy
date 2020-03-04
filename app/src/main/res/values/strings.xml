@@ -210,4 +210,12 @@
     <string name="recommend_app_label">Recommend HandyPro</string>
     <string name="googlePlayLink" translatable="false">https://play.google.com/store/apps/details?id=ru.netfantazii.handypro</string>
     <string name="recommend_app_text">Join me in HandyPro – simple and functional shopping list! Download from Google Play: %1$s</string>
+
+    <string name="ad_banner_catalogs_unit_id" translatable="false">ca-app-pub-4546128231433208/2452017064</string>
+    <string name="ad_banner_products_unit_id" translatable="false">ca-app-pub-4546128231433208/5088405804</string>
+    <string name="ad_banner_contacts_unit_id" translatable="false">ca-app-pub-4546128231433208/8681549342</string>
+    <string name="ad_banner_alarm_unit_id" translatable="false">ca-app-pub-4546128231433208/2079099084</string>
+
+    <string name="ad_interstitial_share_unit_id" translatable="false">ca-app-pub-4546128231433208/1504384012</string>
+
 </resources>

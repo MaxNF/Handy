@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -89,9 +89,9 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     }
 
     override fun createSnackbars(view: View) {
-        val coordinatorLayout = view.findViewById<CoordinatorLayout>(R.id.coordinator_layout)
+        val parent = view.findViewById<ConstraintLayout>(R.id.constraint_layout)
         undoSnackbar = Snackbar.make(
-            coordinatorLayout,
+            parent,
             getString(R.string.catalog_undo_label),
             Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.undo_action)) { viewModel.undoRemoval() }

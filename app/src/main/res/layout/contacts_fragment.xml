@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="viewModel"
             type="ru.netfantazii.handy.core.main.NetworkViewModel" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/hint_group"
@@ -19,7 +20,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:alpha="0"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/adView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -34,10 +39,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/hint_nothing_to_show_contacts"
                 android:alpha="0.5"
-                android:textSize="22sp"
-                android:textColor="@color/blackSemiTransparent80" />
+                android:text="@string/hint_nothing_to_show_contacts"
+                android:textColor="@color/blackSemiTransparent80"
+                android:textSize="22sp" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -46,7 +51,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="15dp"
-            android:paddingBottom="80dp"/>
+            android:paddingBottom="80dp"
+            app:layout_constraintBottom_toTopOf="@id/adView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:adSize="BANNER"
+            app:adUnitId="@string/ad_banner_contacts_unit_id"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_new_contact"
@@ -57,10 +76,9 @@
             android:layout_marginBottom="16dp"
             android:onClick="@{() -> viewModel.inputFilter.netActionAllowed ? viewModel.onAddContactClick() : null}"
             app:backgroundTint="?attr/colorAccent"
+            app:layout_constraintBottom_toTopOf="@+id/adView"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_add_contact"
             app:tint="?attr/fabIconTintColor" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -10,6 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import ru.netfantazii.handy.*
@@ -53,6 +55,14 @@ class ContactsFragment : Fragment() {
         createHints()
         subscribeToEvents()
         (activity as MainActivity).checkMenuItem(R.id.contactsFragment)
+        loadAds(view)
+    }
+
+    private fun loadAds(view: View) {
+        val adView = view.findViewById<AdView>(R.id.adView)
+        val adRequest = AdRequest.Builder()
+            .build()
+        adView.loadAd(adRequest)
     }
 
     private fun createRecyclerView() {

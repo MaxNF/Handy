@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -28,9 +29,9 @@
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:isViewDimmed="@{viewModel.switchStatus}"
             app:layout_constraintBottom_toTopOf="@+id/toggle_background"
-            app:layout_constraintTop_toTopOf="parent"
-            app:isViewDimmed="@{viewModel.switchStatus}">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -93,53 +94,72 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/date_picker_view" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/toggle_background"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:layout_height="0dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/alarm_off_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/switcher_off_label"
-                app:isTextDimmed="@{viewModel.switchStatus}"
-                android:textColor="?attr/toolbarElementColor"
-                app:layout_constraintBottom_toBottomOf="@+id/button_toggle_alarm"
-                app:layout_constraintEnd_toStartOf="@+id/button_toggle_alarm"
-                app:layout_constraintTop_toTopOf="@+id/button_toggle_alarm" />
-
-            <Switch
-                android:id="@+id/button_toggle_alarm"
-                android:layout_width="wrap_content"
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="320dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
-                android:checked="@={viewModel.switchStatus}"
-                android:onClick="@{() -> viewModel.onSwitchClick(datePicker, timePicker)}"
+                app:adSize="BANNER"
+                app:adUnitId="@string/ad_banner_alarm_unit_id"
+                android:layout_marginBottom="16dp"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/alarm_on_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/switcher_on_label"
-                app:isTextDimmed="@{!viewModel.switchStatus}"
-                android:textColor="?attr/toolbarElementColor"
-                app:layout_constraintBottom_toBottomOf="@+id/button_toggle_alarm"
-                app:layout_constraintStart_toEndOf="@+id/button_toggle_alarm"
-                app:layout_constraintTop_toTopOf="@+id/button_toggle_alarm" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/alarm_off_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/switcher_off_label"
+                    android:textColor="?attr/toolbarElementColor"
+                    app:isTextDimmed="@{viewModel.switchStatus}"
+                    app:layout_constraintBottom_toBottomOf="@+id/button_toggle_alarm"
+                    app:layout_constraintEnd_toStartOf="@+id/button_toggle_alarm"
+                    app:layout_constraintTop_toTopOf="@+id/button_toggle_alarm" />
+
+                <Switch
+                    android:id="@+id/button_toggle_alarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:checked="@={viewModel.switchStatus}"
+                    android:onClick="@{() -> viewModel.onSwitchClick(datePicker, timePicker)}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/alarm_on_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/switcher_on_label"
+                    android:textColor="?attr/toolbarElementColor"
+                    app:isTextDimmed="@{!viewModel.switchStatus}"
+                    app:layout_constraintBottom_toBottomOf="@+id/button_toggle_alarm"
+                    app:layout_constraintStart_toEndOf="@+id/button_toggle_alarm"
+                    app:layout_constraintTop_toTopOf="@+id/button_toggle_alarm" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -27,13 +27,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
-        debug {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            minifyEnabled true
-            debuggable true
-            zipAlignEnabled true
-            jniDebuggable true
-        }
+//        debug {
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            minifyEnabled true
+//            debuggable true
+//            zipAlignEnabled true
+//            jniDebuggable true
+//        }
     }
     dataBinding {
         enabled = true

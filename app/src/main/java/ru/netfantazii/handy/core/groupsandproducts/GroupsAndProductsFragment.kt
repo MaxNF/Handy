@@ -4,7 +4,7 @@ import android.graphics.drawable.NinePatchDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
@@ -376,8 +376,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     }
 
     override fun createSnackbars(view: View) {
-        val coordinatorLayout = view.findViewById<CoordinatorLayout>(R.id.coordinator_layout)
-        productUndoSnackbar = Snackbar.make(coordinatorLayout,
+        val constraintLayout = view.findViewById<ConstraintLayout>(R.id.constraint_layout)
+        productUndoSnackbar = Snackbar.make(constraintLayout,
             getString(R.string.buy_undo_label),
             Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.undo_action)) { viewModel.undoProductRemoval() }
@@ -386,7 +386,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                 override fun canSwipeDismissView(child: View): Boolean = false
             })
 
-        groupUndoSnackbar = Snackbar.make(coordinatorLayout,
+        groupUndoSnackbar = Snackbar.make(constraintLayout,
             getString(R.string.recipe_undo_label),
             Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.undo_action)) { viewModel.undoGroupRemoval() }

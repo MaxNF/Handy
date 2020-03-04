@@ -11,6 +11,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
@@ -27,6 +30,7 @@ class ShareFragment : Fragment() {
     private lateinit var networkViewModel: NetworkViewModel
     private lateinit var spinner: Spinner
     private lateinit var spinnerAdapter: ArrayAdapter<Contact>
+    private lateinit var adScreen: InterstitialAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +61,19 @@ class ShareFragment : Fragment() {
         binding.networkViewModel = networkViewModel
         spinner = binding.recipientSpinner
         binding.spinner = spinner
+        setUpAdScreen()
         return binding.root
+    }
+
+    private fun setUpAdScreen() {
+        adScreen = InterstitialAd(requireContext())
+        adScreen.adUnitId = getString(R.string.ad_interstitial_share_unit_id)
+        adScreen.loadAd(AdRequest.Builder().build())
+        adScreen.adListener = object : AdListener() {
+            override fun onAdClosed() {
+                adScreen.loadAd(AdRequest.Builder().build())
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,12 +85,19 @@ class ShareFragment : Fragment() {
         subscribeToEvents()
     }
 
+    private fun showAdScreen() {
+        if (adScreen.isLoaded) {
+            adScreen.show()
+        }
+    }
+
     private fun subscribeToEvents() {
         val owner = this
         with(shareViewModel) {
             sendClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { catalogData ->
                     networkViewModel.sendCatalog(catalogData)
+                    showAdScreen()
                 }
             })
             allLiveDataList.add(sendClicked)
