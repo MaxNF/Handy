@@ -102,8 +102,8 @@ import ru.netfantazii.handy.data.database.ErrorCodes
 //todo добавить в приветствие первую страницу, где разъясняется что происходит с данными пользователей (локация, аккаунт и прочее)
 //todo зарегистрировать домен для приложения, прикрутить небольшой лендинг на гугл плей и политику конфиденциальности
 
-//todo Сделать лимит геозон для бесплатной версии (1) и без лимита для премиум версии.
-//todo вырезать рекламу в премиум версии
+//Сделать лимит геозон для бесплатной версии (1) и без лимита для премиум версии.
+//вырезать рекламу в премиум версии
 
 //Сделать поп-ап рекламу с возможностью закрытия при каждом третьем заходи в Share меню.
 //прикрутить рекламный банер вниз (как у листоник). Банер можно будет закрыть крестиком, после чего на его место будет не очень яркое сообщение о том, что можно купить подписку либо бесплатно активировать пробный период на некоторое кол-во дней.
@@ -119,9 +119,9 @@ import ru.netfantazii.handy.data.database.ErrorCodes
 //todo перепроверить бэкенд функции, подумать над возможной оптимизацией будущих расходов
 
 //--------------------- ОБНОВЛЕНИЕ
-//todo подготовить скриншоты
-//todo подготовить описание
-//todo сделать описание функций
+//подготовить скриншоты
+//подготовить описание
+//сделать описание функций
 
 //TODO ЗАМЕНИТЬ ПЕРЕД РЕЛИЗОМ АПИ КЛЮЧ
 
@@ -264,12 +264,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun setUpErrorHandler() {
         RxJavaPlugins.setErrorHandler { e ->
             Log.d(TAG, "setUpErrorHandler: $e")
-
-            if (e.cause is GeofenceLimitException) {
-                showLongToast(this, getString(R.string.geofence_limit_error_message))
-                return@setErrorHandler
-            }
-
             when (e.cause?.message) {
                 ErrorCodes.DATA_PAYLOAD_IS_NULL -> {
                     showLongToast(this, "Data payload error")

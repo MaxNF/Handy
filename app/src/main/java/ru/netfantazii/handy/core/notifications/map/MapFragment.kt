@@ -1,12 +1,15 @@
 package ru.netfantazii.handy.core.notifications.map
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -266,6 +269,12 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         })
         allLiveDataList.add(viewModel.newSearchValueReceived)
 
+        viewModel.geofenceLimitForFreeVersionReached.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                showGeofenceLimitForFreeVersionDialog()
+            }
+        })
+
         suggestListView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 showSuggestions = false
@@ -403,6 +412,10 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     ) {
         if (finished) beginSearch(viewModel.searchValue)
     }
+
+    private fun showGeofenceLimitForFreeVersionDialog() {
+        GeofenceLimitDialog().show(childFragmentManager, "geofence_limit_dialog")
+    }
 }
 
 /**
@@ -493,5 +506,16 @@ class CircleDiffSearcher(
     override fun onCollectionVisitStart(p0: MapObjectCollection): Boolean {
         // do nothing
         return true
+    }
+}
+
+
+class GeofenceLimitDialog : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
+            .setMessage(R.string.dialog_geofence_limit_for_free_version)
+            .setPositiveButton(R.string.buy_premium_version_button) { _, _ -> } //todo добавить действие при выборе купить премиум
+            .setNegativeButton(R.string.dialog_cancel, null)
+            .create()
     }
 }

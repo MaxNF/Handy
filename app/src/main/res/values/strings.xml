@@ -217,5 +217,7 @@
     <string name="ad_banner_alarm_unit_id" translatable="false">ca-app-pub-4546128231433208/2079099084</string>
 
     <string name="ad_interstitial_share_unit_id" translatable="false">ca-app-pub-4546128231433208/1504384012</string>
+    <string name="buy_premium_version_button">Buy premium</string>
+    <string name="dialog_geofence_limit_for_free_version">The geofence count is limited to 1 for free version. Would you like to buy premium version?</string>
 
 </resources>

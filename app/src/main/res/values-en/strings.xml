@@ -207,4 +207,6 @@
     <string name="help5_3">Going premium is your best opportunity to thank the creator for making the app. It was developed and is maintained by a single independent developer, who will be grateful for your support :)</string>
     <string name="recommend_app_label">Recommend HandyPro</string>
     <string name="recommend_app_text">Join me in HandyPro – simple and functional shopping list! Download from Google Play: %1$s</string>
+    <string name="buy_premium_version_button">Buy premium</string>
+    <string name="dialog_geofence_limit_for_free_version">The geofence count is limited to 1 for free version. Would you like to buy premium version?</string>
 </resources>

@@ -76,6 +76,10 @@ class MapViewModel(
     private val _newSearchValueReceived = MutableLiveData<Event<String>>()
     val newSearchValueReceived: LiveData<Event<String>> = _newSearchValueReceived
 
+    private val _geofenceLimitForFreeVersionReached = MutableLiveData<Event<Unit>>()
+    val geofenceLimitForFreeVersionReached: LiveData<Event<Unit>> =
+        _geofenceLimitForFreeVersionReached
+
     init {
         subscribeToGeofencesChanges()
     }
@@ -156,12 +160,18 @@ class MapViewModel(
                 }, {
                     // если была ошибка то либо выводим тост ошибкой и с советом проверить включен
                     // ли gps, либо (если ошибка неизвестна) просто уведомляем пользователя об ошибке
-                    if (it is ApiException && it.message == GEOFENCE_UNAVAILABLE_ERROR_MESSAGE) {
-                        showLongToast(getApplication(),
-                            getApplication<Application>().getString(R.string.geofence_api_error))
-                    } else {
-                        showLongToast(getApplication(),
-                            getApplication<Application>().getString(R.string.adding_geofence_failed))
+                    when {
+                        it is GeofenceLimitException -> {
+                            _geofenceLimitForFreeVersionReached.value = Event(Unit)
+                        }
+                        it is ApiException && it.message == GEOFENCE_UNAVAILABLE_ERROR_MESSAGE -> {
+                            showLongToast(getApplication(),
+                                getApplication<Application>().getString(R.string.geofence_api_error))
+                        }
+                        else -> {
+                            showLongToast(getApplication(),
+                                getApplication<Application>().getString(R.string.adding_geofence_failed))
+                        }
                     }
                 }))
     }
