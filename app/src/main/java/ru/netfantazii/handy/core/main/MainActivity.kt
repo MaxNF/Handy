@@ -124,7 +124,8 @@ import ru.netfantazii.handy.data.database.ErrorCodes
 //подготовить описание
 //сделать описание функций
 
-//TODO ЗАМЕНИТЬ ПЕРЕД РЕЛИЗОМ АПИ КЛЮЧ
+//TODO СГЕНЕРИРОВАТЬ SHA-1 для RELEASE BUILD И ЗАМЕНИТЬ В FIREBASE, GOOGLE CLOUD PLATFORM API
+//TODO СДЕЛАТЬ ОТДЕЛЬНЫЙ АПИ КЛЮЧ ДЛЯ PLACES ДЛЯ Бесплатной и платной версий программы
 
 
 const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"

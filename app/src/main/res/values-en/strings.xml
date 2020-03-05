@@ -209,4 +209,5 @@
     <string name="recommend_app_text">Join me in HandyPro – simple and functional shopping list! Download from Google Play: %1$s</string>
     <string name="buy_premium_version_button">Buy premium</string>
     <string name="dialog_geofence_limit_for_free_version">The geofence count is limited to 1 for the free version. Would you like to buy the premium version?</string>
+    <string name="autocomplete_error_message">An error occurred while trying to autocomplete search request</string>
 </resources>

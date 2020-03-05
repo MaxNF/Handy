@@ -117,7 +117,7 @@ data class User(
     @get:Bindable
     var secret: String,
     val credential: AuthCredential,
-    val yandexMapApiKey: String
+    val placesApiKey: String
 ) : BaseObservable()
 
 data class CatalogNotificationContent(
