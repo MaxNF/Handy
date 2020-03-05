@@ -23,6 +23,7 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.alarm.AlarmFragment
+import ru.netfantazii.handy.core.notifications.map.GoogleMapFragment
 import ru.netfantazii.handy.core.notifications.map.MapFragment
 import ru.netfantazii.handy.extensions.getRequiredMapPermissions
 import java.lang.UnsupportedOperationException
@@ -155,7 +156,7 @@ class NotificationTabAdapter(
         }
         return when (position) {
             0 -> AlarmFragment().apply { this.arguments = arguments }
-            1 -> MapFragment().apply { this.arguments = arguments }
+            1 -> GoogleMapFragment().apply { this.arguments = arguments }
             else -> throw UnsupportedOperationException("No fragment for position #$position")
         }
     }

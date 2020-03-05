@@ -126,6 +126,9 @@ dependencies {
     // GooglePlay location API
     implementation 'com.google.android.gms:play-services-location:17.0.0'
 
+    // GoogleMaps
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
     // Firebase
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
     implementation 'com.google.firebase:firebase-firestore-ktx:21.4.0'

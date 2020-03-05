@@ -510,7 +510,7 @@ class CircleDiffSearcher(
 }
 
 
-class GeofenceLimitDialog : DialogFragment() {
+class Old_GeofenceLimitDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
             .setMessage(R.string.dialog_geofence_limit_for_free_version)
