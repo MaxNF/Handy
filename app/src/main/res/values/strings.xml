@@ -191,8 +191,8 @@
     <string name="change_secret_timeout_message">You can\'t change the secret code more than once per minute</string>
     <string name="delete_contact_dialog_message">\"%1$s\" contact is going to be deleted. Are you sure? (this cannot be undone)</string>
     <string name="dialog_delete_action">Delete</string>
-    <string name="dialog_mark_as_bought_action">Mark as bought</string>
-    <string name="dialog_mark_as_non_bought_action">Mark as non bought</string>
+    <string name="dialog_mark_as_bought_action">Mark</string>
+    <string name="dialog_mark_as_non_bought_action">Mark</string>
     <string name="dialog_clear_action">Clear</string>
     <string name="dialog_delete_account_action">Delete</string>
     <string name="dialog_change_secret_action">Change</string>
@@ -218,6 +218,6 @@
 
     <string name="ad_interstitial_share_unit_id" translatable="false">ca-app-pub-4546128231433208/1504384012</string>
     <string name="buy_premium_version_button">Buy premium</string>
-    <string name="dialog_geofence_limit_for_free_version">The geofence count is limited to 1 for free version. Would you like to buy premium version?</string>
+    <string name="dialog_geofence_limit_for_free_version">The geofence count is limited to 1 for the free version. Would you like to buy the premium version?</string>
 
 </resources>
