@@ -3,13 +3,13 @@ package ru.netfantazii.handy.core.notifications.map
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.maps.model.CircleOptions
+import com.google.android.gms.maps.model.LatLng
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
-import com.yandex.mapkit.geometry.Circle
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -30,10 +30,14 @@ class MapViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
+    private var circleFillColor: Int = ContextCompat.getColor(application, R.color.circleFillColor)
+    private var circleStrokeColor: Int =
+        ContextCompat.getColor(application, R.color.circleStrokeColor)
+    private var circleStrokeWidth: Float = 3.0f
 
     private val TAG = "MapViewModel"
 
-    var circleMap = mapOf<Long, Circle>()
+    var circleMap = mapOf<Long, CircleOptions>()
         private set(value) {
             field = value
             onNewDataReceive(value)
@@ -45,9 +49,9 @@ class MapViewModel(
             onNewSearchValueReceive(value)
         }
 
-    var lastSearchPoints: List<Point?>? = null
-    var lastCameraPosition: CameraPosition? = null
-    var lastPinPosition: Point? = null
+    //    var lastSearchPoints: List<Point?>? = null
+//    var lastCameraPosition: CameraPosition? = null
+//    var lastPinPosition: Point? = null
     private val minSeekBarValue: Int = 100
     private val seekBarOneSegment = 50
     var seekBarValue: Int = 0
@@ -64,8 +68,8 @@ class MapViewModel(
 
     private val disposables = CompositeDisposable()
 
-    private val _newDataReceived = MutableLiveData<Event<Unit>>()
-    val newDataReceived: LiveData<Event<Unit>> = _newDataReceived
+    private val _newDataReceived = MutableLiveData<Event<Map<Long, CircleOptions>>>()
+    val newDataReceived: LiveData<Event<Map<Long, CircleOptions>>> = _newDataReceived
 
     private val _findMyLocationClicked = MutableLiveData<Event<Unit>>()
     val findMyLocationClicked: LiveData<Event<Unit>> = _findMyLocationClicked
@@ -88,8 +92,8 @@ class MapViewModel(
         seekBarDisplayValue.set((value + minSeekBarValue).toString())
     }
 
-    private fun onNewDataReceive(circleMap: Map<Long, Circle>) {
-        _newDataReceived.value = Event(Unit)
+    private fun onNewDataReceive(circleMap: Map<Long, CircleOptions>) {
+        _newDataReceived.value = Event(circleMap)
     }
 
     private fun onNewSearchValueReceive(string: String) {
@@ -101,23 +105,28 @@ class MapViewModel(
         disposables.add(localRepository.getGeofences(currentCatalogId)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                circleMap = parseGeofencesToCircles(it)
+                circleMap = parseGeofencesToCirclesOptions(it)
             })
     }
 
-    private fun parseGeofencesToCircles(geofences: List<GeofenceEntity>) =
+    private fun parseGeofencesToCirclesOptions(geofences: List<GeofenceEntity>) =
         geofences.map {
-            val point = Point(it.latitude, it.longitude)
-            val circle = Circle(point, it.radius)
-            it.id to circle
+            val circleOptions = CircleOptions()
+                .center(LatLng(it.latitude, it.longitude))
+                .radius(it.radius.toDouble())
+                .fillColor(circleFillColor)
+                .strokeColor(circleStrokeColor)
+                .strokeWidth(circleStrokeWidth)
+                .clickable(true)
+            it.id to circleOptions
         }.toMap()
 
-    fun onMapLongClick(point: Point) {
+    fun onMapLongClick(latitude: Double, longitude: Double) {
         Log.d(TAG, "onMapLongClick: $nextGeofenceRaidus")
         val geofence =
             GeofenceEntity(catalogId = currentCatalogId,
-                latitude = point.latitude,
-                longitude = point.longitude, radius = nextGeofenceRaidus)
+                latitude = latitude,
+                longitude = longitude, radius = nextGeofenceRaidus)
         disposables.add(
             // получаем общее кол-во геозон и кидает искл. если больше допустимого лимита
             localRepository.getTotalGeofenceCount()
