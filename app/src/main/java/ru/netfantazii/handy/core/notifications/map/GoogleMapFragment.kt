@@ -1,28 +1,25 @@
 package ru.netfantazii.handy.core.notifications.map
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.RectangularBounds
-import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.google.maps.android.SphericalUtil
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
@@ -43,9 +40,6 @@ class GoogleMapFragment : Fragment() {
 
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
     private val DEFAULT_ZOOM = 15.0f
-    private val AUTOCOMPLETE_REQUEST_CODE = 1
-    private val SEARCH_MARKER_TAG_VALUE = -1L
-    private val SEARCH_BOUNDS_DISTANCE = 10000.0
 
     private val allLiveDataList = mutableListOf<LiveData<*>>()
 
@@ -107,41 +101,42 @@ class GoogleMapFragment : Fragment() {
             map = it
             map.uiSettings.isZoomControlsEnabled = true
             map.isMyLocationEnabled = true
-            moveCameraToLastKnownLocation()
+            moveCameraToLastKnownLocation(map)
             subscribeToEvents()
-            restoreSearchResults()
         }
+
+        setUpAutocompleteWidget()
     }
 
-    private fun restoreSearchResults() {
-        val tempMarkerList = mutableListOf<Marker>()
-        viewModel.searchMarkersList.forEach {
-            drawSearchMarker(it.position, it.title, tempMarkerList)
-        }
-        viewModel.searchMarkersList.clear()
-        viewModel.searchMarkersList.addAll(tempMarkerList)
+    private fun setUpAutocompleteWidget() {
+        val autocompleteFragment =
+            childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID,
+            Place.Field.NAME,
+            Place.Field.LAT_LNG))
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+                drawFoundPlaceOnMap(place)
+                Log.d(TAG,
+                    "onPlaceSelected: ${place.name}, ${place.latLng?.latitude}, ${place.latLng?.longitude}")
+            }
+
+            override fun onError(status: Status) {
+                handleAutocompleteError(status)
+            }
+        })
     }
 
     private fun drawFoundPlaceOnMap(place: Place) {
         val placeLatLng = place.latLng
         placeLatLng?.let { latLng ->
-            drawSearchMarker(latLng, place.name, viewModel.searchMarkersList)
+            map.addMarker(MarkerOptions()
+                .position(latLng)
+                .title(place.name))
         }
     }
 
-    private fun drawSearchMarker(
-        latLng: LatLng,
-        title: String?,
-        listForMarkers: MutableList<Marker>
-    ) {
-        val marker = map.addMarker(MarkerOptions()
-            .position(latLng)
-            .title(title))
-        marker.tag = SEARCH_MARKER_TAG_VALUE
-        listForMarkers.add(marker)
-    }
-
-    private fun moveCameraToLastKnownLocation() {
+    private fun moveCameraToLastKnownLocation(map: GoogleMap) {
         val fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(activity!!)
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
@@ -152,38 +147,32 @@ class GoogleMapFragment : Fragment() {
     }
 
     private fun subscribeToEvents() {
-        viewModel.newDataReceived.observe(this, Observer { event ->
-            viewModel.geofenceIconList.forEach { it.remove() }
-            viewModel.geofenceIconList.clear()
-            viewModel.circleList.forEach { it.remove() }
-            viewModel.circleList.clear()
+        viewModel.newDataReceived.observe(this, Observer {
+            map.clear()
             val handyIconOptions = MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_logo))
                 .anchor(0.5f, 0.5f)
-            for ((id, circleOptions) in event.peekContent()) {
+            for ((id, circleOptions) in it.peekContent()) {
                 val circle = map.addCircle(circleOptions)
                 circle.tag = id
-                viewModel.circleList.add(circle)
-
                 handyIconOptions.position(circle.center)
                 val marker = map.addMarker(handyIconOptions)
                 marker.tag = id
-                viewModel.geofenceIconList.add(marker)
             }
         })
         allLiveDataList.add(viewModel.newDataReceived)
 
-//        viewModel.findMyLocationClicked.observe(this, Observer {
-//            it.getContentIfNotHandled()?.let {
-//
-//            }
-//        })
-//        allLiveDataList.add(viewModel.findMyLocationClicked)
+        viewModel.findMyLocationClicked.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
 
-//        viewModel.newSearchValueReceived.observe(this, Observer {
-//
-//        })
-//        allLiveDataList.add(viewModel.newSearchValueReceived)
+            }
+        })
+        allLiveDataList.add(viewModel.findMyLocationClicked)
+
+        viewModel.newSearchValueReceived.observe(this, Observer {
+
+        })
+        allLiveDataList.add(viewModel.newSearchValueReceived)
 
         viewModel.geofenceLimitForFreeVersionReached.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
@@ -197,13 +186,10 @@ class GoogleMapFragment : Fragment() {
             viewModel.onCircleClick(geofenceId)
         }
         map.setOnMarkerClickListener { marker ->
-            val markerTag = marker.tag as Long
-            if (markerTag != -1L) {
-                viewModel.onCircleClick(markerTag)
-                true
-            } else {
-                false
-            }
+            // todo сделать проверку какой это маркер, мой или поисковый (если поисковый то краш, т.к. ид не установлен), возможно сделать дефолтное поведение при поисковом маркере
+            val geofenceId = marker.tag as Long
+            viewModel.onCircleClick(geofenceId)
+            true
         }
     }
 
@@ -230,76 +216,19 @@ class GoogleMapFragment : Fragment() {
         GeofenceLimitDialog().show(childFragmentManager, "geofence_limit_dialog")
     }
 
+    private fun handleAutocompleteError(status: Status) {
+        showLongToast(requireContext(), getString(R.string.autocomplete_error_message))
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map_toolbar_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.delete_all_geofences -> {
-                viewModel.onClearAllClick()
-                true
-            }
-            R.id.map_search -> {
-                launchAutocompleteIntent()
-                true
-            }
-            R.id.map_clear_search -> {
-                clearSearchResults()
-                true
-            }
-            else -> false
-        }
-    }
-
-    private fun clearSearchResults() {
-        viewModel.searchMarkersList.forEach { it.remove() }
-        viewModel.searchMarkersList.clear()
-    }
-
-    private fun launchAutocompleteIntent() {
-        val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-        val bounds = calculateBounds(map.cameraPosition)
-        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-            .setLocationBias(bounds)
-            .setTypeFilter(TypeFilter.ESTABLISHMENT)
-            .build(requireContext())
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
-        //todo сконфигурировать интент
-    }
-
-    private fun calculateBounds(cameraPosition: CameraPosition): RectangularBounds {
-        map.projection.visibleRegion.latLngBounds.northeast
-        val northEastBound =
-            SphericalUtil.computeOffset(cameraPosition.target, SEARCH_BOUNDS_DISTANCE, 45.0)
-        val southWestBound =
-            SphericalUtil.computeOffset(cameraPosition.target, SEARCH_BOUNDS_DISTANCE, 225.0)
-        return RectangularBounds.newInstance(southWestBound, northEastBound)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            when (resultCode) {
-                Activity.RESULT_OK -> {
-                    data?.let {
-                        val place = Autocomplete.getPlaceFromIntent(it)
-                        clearSearchResults()
-                        drawFoundPlaceOnMap(place)
-                    }
-                }
-                Activity.RESULT_CANCELED -> {
-                    // do nothing
-                }
-                AutocompleteActivity.RESULT_ERROR -> {
-                    data?.let {
-                        val status = Autocomplete.getStatusFromIntent(it)
-                        showLongToast(requireContext(),
-                            getString(R.string.autocomplete_error_message, status.statusCode))
-                    }
-                }
-            }
-        }
+        return if (item.itemId == R.id.delete_all_geofences) {
+            viewModel.onClearAllClick()
+            true
+        } else false
     }
 
     override fun onResume() {

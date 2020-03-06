@@ -7,10 +7,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -54,10 +52,6 @@ class MapViewModel(
     //    var lastSearchPoints: List<Point?>? = null
 //    var lastCameraPosition: CameraPosition? = null
 //    var lastPinPosition: Point? = null
-    val searchMarkersList = mutableListOf<Marker>()
-    val geofenceIconList = mutableListOf<Marker>()
-    val circleList = mutableListOf<Circle>()
-
     private val minSeekBarValue: Int = 100
     private val seekBarOneSegment = 50
     var seekBarValue: Int = 0

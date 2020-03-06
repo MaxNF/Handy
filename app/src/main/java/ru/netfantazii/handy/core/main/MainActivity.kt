@@ -118,7 +118,6 @@ import ru.netfantazii.handy.data.database.ErrorCodes
 //поискать бесплатные картинки, чтобы добавить в hint (каталоги, продукты, контакты)
 //todo перепроверить бэкенд функции, подумать над возможной оптимизацией будущих расходов
 //todo ограничить использование API firebase только для моего приложения
-//todo исправить баг с переименованием каталогов (если выйти из переименования и снова зайти, то переименование не сбрасывается)
 
 //--------------------- ОБНОВЛЕНИЕ
 //подготовить скриншоты
@@ -135,7 +134,6 @@ const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_chan
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val TAG = "MainActivity"
-    private val SIGN_IN_REQUEST_CODE = 0
 
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
@@ -145,6 +143,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var billingViewModel: BillingViewModel
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private lateinit var signInClient: GoogleSignInClient
+    private val SIGN_IN_REQUEST_CODE = 0
     private lateinit var pbManager: ProgressBarManager
     private lateinit var pbText: TextView
     private lateinit var mainBinding: ActivityMainBinding
