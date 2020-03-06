@@ -129,8 +129,8 @@
     <string name="dialog_clear_action">Очистить</string>
     <string name="dialog_delete_account_action">Удалить</string>
     <string name="dialog_delete_action">Удалить</string>
-    <string name="dialog_mark_as_bought_action">Пометить</string>
-    <string name="dialog_mark_as_non_bought_action">Пометить</string>
+    <string name="dialog_mark_as_bought_action">Пометить как купленные</string>
+    <string name="dialog_mark_as_non_bought_action">Пометить как не купленные</string>
     <string name="dialog_ok_button">ОК</string>
     <string name="geofence_limit_error_message">Нельзя регистрировать больше 100 геозон</string>
     <string name="geofences_label">Геозоны</string>
@@ -197,5 +197,4 @@
     <string name="recommend_app_text">Присоединяйтесь ко мне в ХэндиПро – простом и функциональном списке покупок! Загрузить из Google Play: %1$s</string>
     <string name="buy_premium_version_button">Купить премиум</string>
     <string name="dialog_geofence_limit_for_free_version">В бесплатной версии можно поставить только 1 геозону. Желаете приобрести премиум версию?</string>
-    <string name="autocomplete_error_message">Произошла ошибка во время автозаполнения поискового запроса. Код ошибки: %1$d</string>
 </resources>

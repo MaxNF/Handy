@@ -20,12 +20,6 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-4546128231433208~4467489086"/>
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDR2PLLJaPpK0NdHaI9CrO7wLEaavuqcZE"/>
         <activity
             android:name="ru.netfantazii.handy.core.main.MainActivity"
             android:windowSoftInputMode="adjustNothing"
