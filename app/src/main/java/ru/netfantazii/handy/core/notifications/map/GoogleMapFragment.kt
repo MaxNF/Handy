@@ -3,58 +3,39 @@ package ru.netfantazii.handy.core.notifications.map
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.gms.common.api.Status
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.*
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.GroundOverlayOptions
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_ID_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_NAME_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_EXPAND_STATE_KEY
 import ru.netfantazii.handy.databinding.GoogleMapFragmentBinding
-import ru.netfantazii.handy.extensions.showLongToast
+
+const val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
 
 class GoogleMapFragment : Fragment() {
-    private val TAG = "GoogleMapFragment"
-
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
     private lateinit var viewModel: MapViewModel
-    private lateinit var placesClient: PlacesClient
-
-    private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
-    private val DEFAULT_ZOOM = 15.0f
 
     private val allLiveDataList = mutableListOf<LiveData<*>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createViewModel()
-        initializePlacesSdk()
-        setHasOptionsMenu(true)
-    }
-
-    private fun initializePlacesSdk() {
-        val networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
-        Places.initialize(activity!!.applicationContext,
-            networkViewModel.user.get()!!.placesApiKey)
-        placesClient = Places.createClient(requireContext())
     }
 
     private fun createViewModel() {
@@ -101,49 +82,8 @@ class GoogleMapFragment : Fragment() {
             map = it
             map.uiSettings.isZoomControlsEnabled = true
             map.isMyLocationEnabled = true
-            moveCameraToLastKnownLocation(map)
             subscribeToEvents()
         }
-
-        setUpAutocompleteWidget()
-    }
-
-    private fun setUpAutocompleteWidget() {
-        val autocompleteFragment =
-            childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID,
-            Place.Field.NAME,
-            Place.Field.LAT_LNG))
-        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-            override fun onPlaceSelected(place: Place) {
-                drawFoundPlaceOnMap(place)
-                Log.d(TAG,
-                    "onPlaceSelected: ${place.name}, ${place.latLng?.latitude}, ${place.latLng?.longitude}")
-            }
-
-            override fun onError(status: Status) {
-                handleAutocompleteError(status)
-            }
-        })
-    }
-
-    private fun drawFoundPlaceOnMap(place: Place) {
-        val placeLatLng = place.latLng
-        placeLatLng?.let { latLng ->
-            map.addMarker(MarkerOptions()
-                .position(latLng)
-                .title(place.name))
-        }
-    }
-
-    private fun moveCameraToLastKnownLocation(map: GoogleMap) {
-        val fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(activity!!)
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude,
-                location.longitude), DEFAULT_ZOOM))
-        }
-
     }
 
     private fun subscribeToEvents() {
@@ -186,7 +126,6 @@ class GoogleMapFragment : Fragment() {
             viewModel.onCircleClick(geofenceId)
         }
         map.setOnMarkerClickListener { marker ->
-            // todo сделать проверку какой это маркер, мой или поисковый (если поисковый то краш, т.к. ид не установлен), возможно сделать дефолтное поведение при поисковом маркере
             val geofenceId = marker.tag as Long
             viewModel.onCircleClick(geofenceId)
             true
@@ -214,21 +153,6 @@ class GoogleMapFragment : Fragment() {
 
     private fun showGeofenceLimitForFreeVersionDialog() {
         GeofenceLimitDialog().show(childFragmentManager, "geofence_limit_dialog")
-    }
-
-    private fun handleAutocompleteError(status: Status) {
-        showLongToast(requireContext(), getString(R.string.autocomplete_error_message))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.map_toolbar_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.delete_all_geofences) {
-            viewModel.onClearAllClick()
-            true
-        } else false
     }
 
     override fun onResume() {

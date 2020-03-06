@@ -23,7 +23,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="parent"/>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -93,59 +93,52 @@
             </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <fragment
-            android:id="@+id/autocomplete_fragment"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/mapview" />
-        <!--        <LinearLayout-->
-        <!--            android:id="@+id/search_group"-->
-        <!--            android:layout_width="0dp"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginStart="16dp"-->
-        <!--            android:layout_marginTop="16dp"-->
-        <!--            android:layout_marginEnd="16dp"-->
-        <!--            android:elevation="8dp"-->
-        <!--            android:background="@android:color/white"-->
-        <!--            android:orientation="vertical"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="@+id/mapview">-->
 
-        <!--            <com.google.android.material.textfield.TextInputLayout-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:background="@android:color/white"-->
-        <!--                app:boxBackgroundColor="@android:color/white"-->
-        <!--                app:boxBackgroundMode="none"-->
-        <!--                app:endIconDrawable="@drawable/ic_edit_text_cross"-->
-        <!--                app:endIconMode="clear_text"-->
-        <!--                app:errorIconDrawable="@null"-->
-        <!--                app:hintEnabled="false">-->
+<!--        <LinearLayout-->
+<!--            android:id="@+id/search_group"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:elevation="8dp"-->
+<!--            android:background="@android:color/white"-->
+<!--            android:orientation="vertical"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/mapview">-->
 
-        <!--                <com.google.android.material.textfield.TextInputEditText-->
-        <!--                    android:id="@+id/search_text_field"-->
-        <!--                    style="@style/MapSearchEditText"-->
-        <!--                    android:layout_width="match_parent"-->
-        <!--                    android:layout_height="50dp"-->
-        <!--                    android:background="@null"-->
-        <!--                    android:imeOptions="flagNoExtractUi|actionSearch"-->
-        <!--                    android:inputType="textCapSentences"-->
-        <!--                    android:paddingTop="10dp"-->
-        <!--                    android:text="@={viewModel.searchValue}" />-->
-        <!--            </com.google.android.material.textfield.TextInputLayout>-->
+<!--            <com.google.android.material.textfield.TextInputLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@android:color/white"-->
+<!--                app:boxBackgroundColor="@android:color/white"-->
+<!--                app:boxBackgroundMode="none"-->
+<!--                app:endIconDrawable="@drawable/ic_edit_text_cross"-->
+<!--                app:endIconMode="clear_text"-->
+<!--                app:errorIconDrawable="@null"-->
+<!--                app:hintEnabled="false">-->
 
-        <!--            <ListView-->
-        <!--                android:id="@+id/suggest_list_view"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:background="@android:color/white"-->
-        <!--                android:visibility="invisible"-->
-        <!--                android:divider="@android:color/transparent"-->
-        <!--                />-->
-        <!--        </LinearLayout>-->
+<!--                <com.google.android.material.textfield.TextInputEditText-->
+<!--                    android:id="@+id/search_text_field"-->
+<!--                    style="@style/MapSearchEditText"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:background="@null"-->
+<!--                    android:imeOptions="flagNoExtractUi|actionSearch"-->
+<!--                    android:inputType="textCapSentences"-->
+<!--                    android:paddingTop="10dp"-->
+<!--                    android:text="@={viewModel.searchValue}" />-->
+<!--            </com.google.android.material.textfield.TextInputLayout>-->
+
+<!--            <ListView-->
+<!--                android:id="@+id/suggest_list_view"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@android:color/white"-->
+<!--                android:visibility="invisible"-->
+<!--                android:divider="@android:color/transparent"-->
+<!--                />-->
+<!--        </LinearLayout>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
