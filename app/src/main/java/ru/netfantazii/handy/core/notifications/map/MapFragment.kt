@@ -1,4 +1,4 @@
-//package ru.netfantazii.handy.core.notifications.map
+package ru.netfantazii.handy.core.notifications.map
 //
 //import android.app.Activity
 //import android.app.AlertDialog

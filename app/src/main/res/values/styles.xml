@@ -139,4 +139,13 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/premiumButtonTextForever</item>
     </style>
+
+    <style name="SearchAutoCompleteTextViewBlack" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:textColor">@color/toolbarElementColorBlack</item>
+        <item name="android:textColorHint">@color/toolbarElementColorBlackOpacity50</item>
+    </style>
+    <style name="SearchAutoCompleteTextViewWhite" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:textColor">@color/toolbarElementColorWhite</item>
+        <item name="android:textColorHint">@color/toolbarElementColorWhiteOpacity50</item>
+    </style>
 </resources>

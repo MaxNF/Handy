@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--    Corelation with material color tool colors:
+    <!--    Correlation with material color tool colors:
             <item name="colorPrimary"> = colorPrimary
             <item name="colorPrimaryDark"> = colorPrimaryDark
             <item name="colorAccent"> = colorSecondary
@@ -36,12 +36,14 @@
         <item name="toolbarElementColor">@color/toolbarElementColorBlack</item>
         <item name="toolbarBackArrowColor">@style/toolbarDark</item>
         <item name="fabIconTintColor">@color/fabIconTintColorBlack</item>
+        <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextViewBlack</item>
     </style>
 
     <style name="BaseWhiteTitles" parent="Base">
         <item name="toolbarElementColor">@color/toolbarElementColorWhite</item>
         <item name="toolbarBackArrowColor">@style/toolbarLight</item>
         <item name="fabIconTintColor">@color/fabIconTintColorWhite</item>
+        <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextViewWhite</item>
     </style>
 
     <style name="BaseDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
