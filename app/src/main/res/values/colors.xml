@@ -31,12 +31,6 @@
     <color name="textColorInactive">#66000000</color>
     <color name="notificationColor">#CE1C1C</color>
 
-<!--  Map  -->
-    <color name="circleFillColor">#5945EB69</color>
-    <color name="circleStrokeColor">#2BB44F</color>
-
-<!--  /Map  -->
-
 <!--  Premium fragment colors  -->
     <color name="premiumBackground">#4E2B41</color>
     <color name="premiumButtonMonth">#6AACAD</color>
@@ -46,5 +40,5 @@
     <color name="premiumButtonTextYear">#FFFFFF</color>
     <color name="premiumButtonTextForever">#FFFFFF</color>
     <color name="premiumRegularText">#FFFFFF</color>
-<!-- Premium fragment colors end -->
+
 </resources>

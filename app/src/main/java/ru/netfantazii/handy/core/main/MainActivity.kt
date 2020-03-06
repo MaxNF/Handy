@@ -36,7 +36,7 @@ import io.reactivex.plugins.RxJavaPlugins
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.BUNDLE_DESTINATION_ID_KEY
-import ru.netfantazii.handy.core.notifications.map.GoogleMapFragment
+import ru.netfantazii.handy.core.notifications.map.MapFragment
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.SHOULD_SILENT_SIGN_IN_KEY
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
@@ -548,7 +548,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val notificationFragment =
                 navHostFragment?.childFragmentManager?.primaryNavigationFragment
             val mapFragment =
-                notificationFragment?.childFragmentManager?.fragments?.find { it is GoogleMapFragment }
+                notificationFragment?.childFragmentManager?.fragments?.find { it is MapFragment }
 
             when {
                 mapFragment == null -> false
