@@ -14,12 +14,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.common.util.MapUtils
 import com.google.android.gms.location.LocationServices
+import com.google.maps.android.SphericalUtil
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Circle
+import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.location.Location
 import com.yandex.mapkit.location.LocationListener
@@ -46,6 +49,8 @@ import java.lang.IllegalArgumentException
 class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     SuggestSession.SuggestListener {
     private val TAG = "MapFragment"
+
+    private val SEARCH_BOUNDS_DISTANCE_METERS = 10000.0
 
     private lateinit var mapView: MapView
     private lateinit var viewModel: MapViewModel
@@ -410,7 +415,7 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         previousCameraPosition: CameraUpdateSource,
         finished: Boolean
     ) {
-        if (finished) beginSearch(viewModel.searchValue)
+//        if (finished) beginSearch(viewModel.searchValue)
     }
 
     private fun showGeofenceLimitForFreeVersionDialog() {

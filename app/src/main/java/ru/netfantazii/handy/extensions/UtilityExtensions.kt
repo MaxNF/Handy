@@ -14,6 +14,7 @@ import android.os.Handler
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.preference.PreferenceManager
+import com.yandex.mapkit.geometry.Point
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.BUNDLE_NOTIFICATION_ID_KEY
 import ru.netfantazii.handy.core.notifications.CANCEL_NOTIFICATION_ACTION
@@ -114,3 +115,23 @@ fun getCancelPendingIntentForNotifications(context: Context, notificationId: Int
 fun getNotificationSoundUri() = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
 fun getAlarmSoundUri() = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+
+fun computeOffset(point: Point, distance: Double, heading: Double): Point {
+    var distance = distance
+    var heading = heading
+    distance /= 6371009.0
+    heading = Math.toRadians(heading)
+    val fromLat = Math.toRadians(point.latitude)
+    val fromLng = Math.toRadians(point.longitude)
+    val cosDistance = Math.cos(distance)
+    val sinDistance = Math.sin(distance)
+    val sinFromLat = Math.sin(fromLat)
+    val cosFromLat = Math.cos(fromLat)
+    val sinLat =
+        cosDistance * sinFromLat + sinDistance * cosFromLat * Math.cos(heading)
+    val dLng =
+        Math.atan2(sinDistance * cosFromLat * Math.sin(heading),
+            cosDistance - sinFromLat * sinLat)
+    return Point(Math.toDegrees(Math.asin(sinLat)),
+        Math.toDegrees(fromLng + dLng))
+}
