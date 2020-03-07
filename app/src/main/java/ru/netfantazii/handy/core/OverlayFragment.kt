@@ -22,8 +22,6 @@ import ru.netfantazii.handy.databinding.OverlayFragmentBinding
 import ru.netfantazii.handy.data.database.BaseEntity
 import ru.netfantazii.handy.extensions.*
 
-const val BUNDLE_ACTION_KEY = "action_key"
-
 const val OVERLAY_ACTION_CATALOG_CREATE = "overlay_catalog_create"
 const val OVERLAY_ACTION_CATALOG_RENAME = "overlay_catalog_rename"
 const val OVERLAY_ACTION_GROUP_CREATE = "overlay_group_create"

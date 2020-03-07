@@ -182,7 +182,8 @@ class GroupsAndProductsViewModel(
 
     override fun onProductEditClick(product: Product) {
         Log.d(TAG, "onProductEditClick: ")
-        overlayBuffer = BufferObject(OVERLAY_ACTION_PRODUCT_RENAME, product)
+        val productToEdit = product.getCopy()
+        overlayBuffer = BufferObject(OVERLAY_ACTION_PRODUCT_RENAME, productToEdit)
         _productEditClicked.value = Event(product)
     }
 
@@ -320,7 +321,8 @@ class GroupsAndProductsViewModel(
 
     override fun onGroupEditClick(group: Group) {
         Log.d(TAG, "onGroupEditClick: ")
-        overlayBuffer = BufferObject(OVERLAY_ACTION_GROUP_RENAME, group)
+        val groupToEdit = group.getCopy()
+        overlayBuffer = BufferObject(OVERLAY_ACTION_GROUP_RENAME, groupToEdit)
         val groupPosition = getGroupList().indexOf(group)
         _groupEditClicked.value = Event(groupPosition)
     }

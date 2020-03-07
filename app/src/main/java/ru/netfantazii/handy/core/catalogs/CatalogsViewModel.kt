@@ -155,7 +155,8 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
 
     override fun onCatalogEditClick(catalog: Catalog) {
         Log.d(TAG, "onCatalogEditClick: ")
-        overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_RENAME, catalog)
+        val catalogToEdit = catalog.getCopy()
+        overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_RENAME, catalogToEdit)
         _catalogEditClicked.value = Event(catalog)
     }
 

@@ -31,6 +31,17 @@ class Catalog(
         buyStatus = calculateStatus()
     }
 
+    fun getCopy() = Catalog(this.id,
+        this.creationTime,
+        this.name,
+        this.position,
+        this.groupExpandStates,
+        this.alarmTime,
+        this.fromNetwork,
+        this.totalProductCount,
+        this.boughtProductCount)
+
+
     private fun calculateStatus(): BuyStatus {
         val isAllBought = totalProductCount == boughtProductCount
         return if (totalProductCount != 0 && isAllBought) BuyStatus.BOUGHT
@@ -63,7 +74,6 @@ open class Group(
     @field:Ignore
     val statusColor: Int
 
-
     init {
         buyStatus = calculateStatus(productList)
         statusColor =
@@ -71,6 +81,17 @@ open class Group(
         productList.sortBy { it.position }
 
     }
+
+    fun getCopy() = Group(
+        this.id,
+        this.catalogId,
+        this.creationTime,
+        this.name,
+        this.groupType,
+        this.position,
+        this.expandStatus,
+        this.productList
+    )
 
     private fun calculateStatus(productEntityList: List<Product>): BuyStatus =
         if (productEntityList.isNotEmpty() && productEntityList.all { it.buyStatus == BuyStatus.BOUGHT }) BuyStatus.BOUGHT else BuyStatus.NOT_BOUGHT
@@ -92,6 +113,15 @@ class Product(
     position: Int = 0,
     buyStatus: BuyStatus = BuyStatus.NOT_BOUGHT
 ) : ProductEntity(id, catalogId, groupId, creationTime, position, name, buyStatus) {
+
+    fun getCopy() = Product(this.id,
+        this.catalogId,
+        this.groupId,
+        this.creationTime,
+        this.name,
+        this.position,
+        this.buyStatus
+    )
 
     override fun equals(other: Any?): Boolean {
         return if (other == null) false
@@ -141,20 +171,20 @@ class OneMonthSub(
     val startedDate: Calendar?,
     val endDate: Calendar?,
     isAcknowledged: Boolean
-) : ShopItem(SkuList.ONE_MONTH_SUB, purchaseToken,1, isAcknowledged)
+) : ShopItem(SkuList.ONE_MONTH_SUB, purchaseToken, 1, isAcknowledged)
 
 class OneYearSub(
     purchaseToken: String,
     val startedDate: Calendar? = null,
     val endDate: Calendar? = null,
     isAcknowledged: Boolean
-) : ShopItem(SkuList.ONE_YEAR_SUB, purchaseToken,2, isAcknowledged)
+) : ShopItem(SkuList.ONE_YEAR_SUB, purchaseToken, 2, isAcknowledged)
 
 class ForeverPurchase(
     purchaseToken: String,
     val purchaseDate: Calendar? = null,
     isAcknowledged: Boolean
 ) :
-    ShopItem(SkuList.FOREVER_PURCHASE, purchaseToken,3, isAcknowledged)
+    ShopItem(SkuList.FOREVER_PURCHASE, purchaseToken, 3, isAcknowledged)
 
 class BillingObject(val skuDetails: SkuDetails, val type: BillingPurchaseTypes)
