@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -37,64 +36,5 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:viewModel="@{viewModel}" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_my_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="48dp"
-            android:onClick="@{() -> viewModel.onFindMyLocationClick()}"
-            app:backgroundTint="?attr/colorAccent"
-            app:layout_constraintBottom_toBottomOf="@+id/mapview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_my_location"
-            app:tint="?attr/fabIconTintColor" />
-
-        <LinearLayout
-            android:id="@+id/search_group"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:background="@android:color/white"
-            android:elevation="8dp"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/fab_my_location"
-            app:layout_constraintStart_toEndOf="@+id/radius_label"
-            app:layout_constraintTop_toTopOf="@+id/mapview">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                app:boxBackgroundColor="@android:color/white"
-                app:boxBackgroundMode="none"
-                app:endIconDrawable="@drawable/ic_edit_text_cross"
-                app:endIconMode="clear_text"
-                app:errorIconDrawable="@null"
-                app:hintEnabled="false">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/search_text_field"
-                    style="@style/MapSearchEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@null"
-                    android:imeOptions="flagNoExtractUi|actionSearch"
-                    android:inputType="textCapSentences"
-                    android:paddingTop="10dp"
-                    android:text="@={viewModel.searchValue}" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <ListView
-                android:id="@+id/suggest_list_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:divider="@android:color/transparent"
-                android:visibility="invisible" />
-        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

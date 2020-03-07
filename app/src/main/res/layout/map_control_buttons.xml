@@ -14,34 +14,29 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/zoom_out_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:onClick="@{() -> viewModel.onZoomOutClick()}"
-            app:backgroundTint="?attr/colorAccent"
-            app:fabSize="mini"
-            android:layout_gravity="center_horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/fab_my_location"
-            app:layout_constraintEnd_toEndOf="@+id/fab_my_location"
-            app:layout_constraintStart_toStartOf="@+id/fab_my_location"
-            app:srcCompat="@drawable/ic_zoom_out"
-            app:tint="?attr/fabIconTintColor" />
-
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/zoom_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="8dp"
             android:onClick="@{() -> viewModel.onZoomInClick()}"
-            android:layout_gravity="center_horizontal"
             app:backgroundTint="?attr/colorAccent"
             app:fabSize="mini"
-            app:layout_constraintBottom_toTopOf="@+id/zoom_out_button"
-            app:layout_constraintStart_toStartOf="@+id/zoom_out_button"
             app:srcCompat="@drawable/ic_zoom_in"
+            app:tint="?attr/fabIconTintColor" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/zoom_out_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:onClick="@{() -> viewModel.onZoomOutClick()}"
+            app:backgroundTint="?attr/colorAccent"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_zoom_out"
             app:tint="?attr/fabIconTintColor" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -51,8 +46,6 @@
             android:layout_gravity="center_horizontal"
             android:onClick="@{() -> viewModel.onFindMyLocationClick()}"
             app:backgroundTint="?attr/colorAccent"
-            app:layout_constraintBottom_toBottomOf="@+id/mapview"
-            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_my_location"
             app:tint="?attr/fabIconTintColor" />
     </LinearLayout>
