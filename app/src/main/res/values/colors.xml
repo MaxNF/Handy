@@ -13,9 +13,11 @@
     <color name="textColorBlack">#000000</color>
     <color name="textColorGray">#808080</color>
     <color name="toolbarElementColorWhite">#FFFFFF</color>
+    <color name="toolbarElementColorWhiteOpacity50">#80FFFFFF</color>
     <color name="listIconsColorBlack">#000000</color>
     <color name="fabIconTintColorWhite">#FFFFFF</color>
     <color name="toolbarElementColorBlack">#000000</color>
+    <color name="toolbarElementColorBlackOpacity50">#80000000</color>
     <color name="fabIconTintColorBlack">#000000</color>
     <color name="overlayColor">#66474747</color>
     <color name="speedDialActionBackground">#4B4B4B</color>

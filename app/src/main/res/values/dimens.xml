@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="ingredientSideMargin">36dp</dimen>
+    <dimen name="seekbarHeight">220dp</dimen>
 </resources>

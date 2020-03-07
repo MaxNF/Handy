@@ -36,12 +36,14 @@
         <item name="toolbarElementColor">@color/toolbarElementColorBlack</item>
         <item name="toolbarBackArrowColor">@style/toolbarDark</item>
         <item name="fabIconTintColor">@color/fabIconTintColorBlack</item>
+        <item name="android:autoCompleteTextViewStyle">@style/SearchAutoCompleteTextViewBlack</item>
     </style>
 
     <style name="BaseWhiteTitles" parent="Base">
         <item name="toolbarElementColor">@color/toolbarElementColorWhite</item>
         <item name="toolbarBackArrowColor">@style/toolbarLight</item>
         <item name="fabIconTintColor">@color/fabIconTintColorWhite</item>
+        <item name="android:autoCompleteTextViewStyle">@style/SearchAutoCompleteTextViewWhite</item>
     </style>
 
     <style name="BaseDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">

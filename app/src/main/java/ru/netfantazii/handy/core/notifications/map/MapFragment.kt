@@ -3,12 +3,13 @@ package ru.netfantazii.handy.core.notifications.map
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.database.Cursor
+import android.database.MatrixCursor
 import androidx.core.graphics.drawable.*
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.MenuItem
-import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -72,6 +73,7 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     private val suggestOptions =
         SuggestOptions().setSuggestTypes(SuggestType.BIZ.value or SuggestType.GEO.value or SuggestType.TRANSIT.value)
     private lateinit var searchField: EditText
+    private lateinit var searchView: SearchView
     private var showSuggestions = false
 
     private val circleTapListener = MapObjectTapListener { mapObject, point ->
@@ -277,7 +279,9 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         allLiveDataList.add(viewModel.findMyLocationClicked)
 
         viewModel.newSearchValueReceived.observe(this, Observer {
-            if (showSuggestions) requestSuggest(it.peekContent())
+            if (showSuggestions) {
+                requestSuggest(it.peekContent())
+            }
             showSuggestions = true
         })
         allLiveDataList.add(viewModel.newSearchValueReceived)
@@ -291,14 +295,14 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         suggestListView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 showSuggestions = false
-                searchField.setText(suggestResults[position])
+//                searchField.text(suggestResults[position])
                 closeSuggestionsAndSearch(suggestResults[position])
             }
         mapView.map.addInputListener(mapInputListener)
 
-        searchField.addKeyboardButtonClickListener(EditorInfo.IME_ACTION_SEARCH) {
-            closeSuggestionsAndSearch(viewModel.searchValue)
-        }
+//        searchField.addKeyboardButtonClickListener(EditorInfo.IME_ACTION_SEARCH) {
+//            closeSuggestionsAndSearch(viewModel.searchValue)
+//        }
 
         viewModel.zoomInClicked.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
@@ -367,6 +371,20 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map_toolbar_menu, menu)
+        val searchMenuItem = menu.findItem(R.id.map_toolbar_search)
+        searchView = searchMenuItem.actionView as SearchView
+        searchView.suggestionsAdapter = createEmptyAdapter()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                closeSuggestionsAndSearch(searchView.query.toString())
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                requestSuggest(newText)
+                return true
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -431,15 +449,42 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         searchResultPoints.forEach { point -> point?.let { addSearchPlacemark(it) } }
     }
 
+    //    override fun onResponse(allSuggestions: MutableList<SuggestItem>) {
+//        suggestResults.clear()
+//        val resutltsToAdd = allSuggestions.slice(0 until
+//                suggestResultLimit.coerceAtMost(allSuggestions.size))
+//            .map { it.displayText ?: "" }
+//            .toSet()
+//        suggestResults.addAll(resutltsToAdd)
+//        resultAdapter.notifyDataSetChanged()
+//        suggestListView.visibility = View.VISIBLE
+//    }
     override fun onResponse(allSuggestions: MutableList<SuggestItem>) {
-        suggestResults.clear()
-        val resutltsToAdd = allSuggestions.slice(0 until
+        val resultsToAdd = allSuggestions.slice(0 until
                 suggestResultLimit.coerceAtMost(allSuggestions.size))
             .map { it.displayText ?: "" }
             .toSet()
-        suggestResults.addAll(resutltsToAdd)
-        resultAdapter.notifyDataSetChanged()
-        suggestListView.visibility = View.VISIBLE
+        searchView.suggestionsAdapter.swapCursor(createNewCursor(resultsToAdd))
+    }
+
+    private fun createEmptyAdapter(): SimpleCursorAdapter {
+        val columnNames = arrayOf("_id", "text")
+        val cursor = MatrixCursor(columnNames)
+        return SimpleCursorAdapter(requireContext(),
+            R.layout.lv_suggest_element,
+            cursor,
+            arrayOf("text"),
+            intArrayOf(R.id.suggestion_text))
+    }
+
+    private fun createNewCursor(resultsToAdd: Set<String>): Cursor {
+        Log.d(TAG, "makeCursorAdapterFromSuggestions: size: ${resultsToAdd.size}")
+        val columnNames = arrayOf("_id", "text")
+        val cursor = MatrixCursor(columnNames)
+        resultsToAdd.forEachIndexed { index, string ->
+            cursor.addRow(listOf(index.toString(), string))
+        }
+        return cursor
     }
 
     override fun onError(error: Error) {
