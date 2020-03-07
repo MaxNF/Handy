@@ -1,76 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/overlay_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraint_layout"
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isPremium"
+            type="androidx.databinding.ObservableBoolean" />
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/overlay_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/hint_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/adView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="16dp"
-                android:alpha="0.5"
-                android:src="@drawable/ic_list" />
-
-            <TextView
-                android:id="@+id/nothing_to_show2"
+            <LinearLayout
+                android:id="@+id/hint_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:alpha="0.5"
-                android:text="@string/hint_nothing_to_show_catalogs"
-                android:textColor="@color/blackSemiTransparent80"
-                android:textSize="22sp" />
-        </LinearLayout>
+                android:alpha="0"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/adView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_list"
-            style="@style/RecyclerViewMain"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="80dp"
-            app:layout_constraintBottom_toTopOf="@id/adView"
-            app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    android:alpha="0.5"
+                    android:src="@drawable/ic_list" />
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="320dp"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            app:adSize="BANNER"
-            app:adUnitId="@string/ad_banner_catalogs_unit_id"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+                <TextView
+                    android:id="@+id/nothing_to_show2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:alpha="0.5"
+                    android:text="@string/hint_nothing_to_show_catalogs"
+                    android:textColor="@color/blackSemiTransparent80"
+                    android:textSize="22sp" />
+            </LinearLayout>
 
-        <com.leinardi.android.speeddial.SpeedDialView
-            android:id="@+id/fab_create_catalog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            app:layout_constraintBottom_toTopOf="@+id/adView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:sdMainFabClosedIconColor="?attr/fabIconTintColor"
-            app:sdMainFabClosedSrc="@drawable/ic_cross_large"
-            app:sdMainFabOpenedIconColor="?attr/fabIconTintColor" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_list"
+                style="@style/RecyclerViewMain"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="80dp"
+                app:layout_constraintBottom_toTopOf="@id/adView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="320dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="@{isPremium ? View.GONE : View.VISIBLE}"
+                app:adSize="BANNER"
+                app:adUnitId="@string/ad_banner_catalogs_unit_id"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.leinardi.android.speeddial.SpeedDialView
+                android:id="@+id/fab_create_catalog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                app:layout_constraintBottom_toTopOf="@+id/adView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:sdMainFabClosedIconColor="?attr/fabIconTintColor"
+                app:sdMainFabClosedSrc="@drawable/ic_cross_large"
+                app:sdMainFabOpenedIconColor="?attr/fabIconTintColor" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

@@ -208,7 +208,8 @@
     <string name="recommend_app_label">Recommend HandyPro</string>
     <string name="recommend_app_text">Join me in HandyPro – simple and functional shopping list! Download from Google Play: %1$s</string>
     <string name="buy_premium_version_button">Buy premium</string>
-    <string name="dialog_geofence_limit_for_free_version">The geofence count is limited to 1 for the free version. Would you like to buy the premium version?</string>
+    <string name="dialog_geofence_limit_for_free_version">The geofence count is limited to 1 for the free version. Would you like to buy the premium subscription? (the limit will go up to 100 geofences)</string>
     <string name="help3_5">Search works only within the visible map area. If you want to expand the area, zoom out. For searching again, tap the magnifier button on the virtual keyboard.</string>
-
+    <string name="premium_is_required_message">Premium subscription required</string>
+    <string name="premium_short_description">Take advantage of a premium subscription! Get rid of annoying ads and raise the geofence limit to 100.</string>
 </resources>

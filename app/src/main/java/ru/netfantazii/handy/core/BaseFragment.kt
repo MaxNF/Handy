@@ -27,7 +27,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createViewModel()
+        createViewModels()
         setHasOptionsMenu(true)
     }
 
@@ -108,7 +108,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
         adapter.notifyDataSetChanged()
     }
 
-    protected abstract fun createViewModel()
+    protected abstract fun createViewModels()
     protected abstract fun createRecyclerView(view: View)
     protected abstract fun subscribeToEvents()
     protected abstract fun setUpFab(view: View)

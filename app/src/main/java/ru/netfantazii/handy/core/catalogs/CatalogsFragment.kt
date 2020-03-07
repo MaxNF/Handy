@@ -23,9 +23,11 @@ import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.BaseFragment
+import ru.netfantazii.handy.core.main.BillingViewModel
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.data.Catalog
+import ru.netfantazii.handy.databinding.CatalogsFragmentBinding
 
 class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     private val TAG = "CatalogsFragment"
@@ -39,10 +41,12 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.catalogs_fragment, container, false)
+        val binding = CatalogsFragmentBinding.inflate(inflater, container, false)
+        binding.isPremium = (activity!!.application as HandyApplication).isPremium
+        return binding.root
     }
 
-    override fun createViewModel() {
+    override fun createViewModels() {
         val repository = (requireContext().applicationContext as HandyApplication).localRepository
         viewModel =
             ViewModelProviders.of(

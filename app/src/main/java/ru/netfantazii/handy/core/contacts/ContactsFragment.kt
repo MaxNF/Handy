@@ -36,6 +36,7 @@ class ContactsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
+
     }
 
     override fun onCreateView(
@@ -45,6 +46,7 @@ class ContactsFragment : Fragment() {
     ): View? {
         binding = ContactsFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        binding.isPremium = (activity!!.application as HandyApplication).isPremium
         return binding.root
     }
 

@@ -61,7 +61,11 @@ class ShareFragment : Fragment() {
         binding.networkViewModel = networkViewModel
         spinner = binding.recipientSpinner
         binding.spinner = spinner
-        setUpAdScreen()
+
+        if (!(activity!!.application as HandyApplication).isPremium.get()) {
+            setUpAdScreen()
+        }
+
         return binding.root
     }
 
@@ -86,8 +90,12 @@ class ShareFragment : Fragment() {
     }
 
     private fun showAdScreen() {
-        if (adScreen.isLoaded) {
-            adScreen.show()
+        if (!(activity!!.application as HandyApplication).isPremium.get()) {
+            if (::adScreen.isInitialized) {
+                if (adScreen.isLoaded) {
+                    adScreen.show()
+                }
+            }
         }
     }
 

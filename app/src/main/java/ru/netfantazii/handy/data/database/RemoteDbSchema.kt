@@ -92,8 +92,8 @@ object ErrorCodes {
 }
 
 object TokenValidation {
-    const val RESPONSE_VALID = "valid"
-    const val RESPONSE_INVALID = "invalid"
+    const val RESPONSE_VALID = 200
+    const val RESPONSE_INVALID = 500
 
     const val SKU_ID_KEY = "sku_id"
     const val PURCHASE_TOKEN_KEY = "purchase_token"

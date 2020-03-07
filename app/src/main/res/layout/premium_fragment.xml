@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,9 +12,7 @@
             type="ru.netfantazii.handy.core.main.BillingViewModel" />
     </data>
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/premiumBackground">
@@ -39,7 +39,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="32dp"
-                android:text="Получите возможность пользоваться приложением без раздражающей рекламы, а также устанавливать неограниченное количество геозон."
+                android:text="@string/premium_short_description"
                 android:textColor="@color/premiumRegularText"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -79,7 +79,7 @@
                         android:id="@+id/one_month_button"
                         style="@style/textStyleButtonMonth"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="60dp"
                         android:elevation="4dp"
                         android:onClick="@{()-> billingViewModel.onOneMonthButtonClick()}"
                         android:text="Подписка на 1 месяц"
@@ -107,7 +107,7 @@
                         android:id="@+id/one_year_button"
                         style="@style/textStyleButtonYear"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="60dp"
                         android:onClick="@{()-> billingViewModel.onOneYearButtonClick()}"
                         android:text="Подписка на 1 год"
                         android:textAlignment="textStart"
@@ -134,7 +134,7 @@
                         android:id="@+id/forever_button"
                         style="@style/textStyleButtonForever"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="60dp"
                         android:elevation="4dp"
                         android:onClick="@{()-> billingViewModel.onForeverButtonClick()}"
                         android:text="Навсегда"

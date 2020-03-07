@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavHostController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.location.LocationServices
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import com.yandex.mapkit.Animation
@@ -573,8 +575,14 @@ class CircleDiffSearcher(
 class GeofenceLimitDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
+            .setTitle(R.string.premium_is_required_message)
             .setMessage(R.string.dialog_geofence_limit_for_free_version)
-            .setPositiveButton(R.string.buy_premium_version_button) { _, _ -> } //todo добавить действие при выборе купить премиум
+            .setIcon(R.drawable.ic_crown)
+            .setPositiveButton(R.string.buy_premium_version_button) { _, _ ->
+                val navController = NavHostFragment.findNavController(this)
+                navController.navigate(R.id.premiumFragment)
+                this@GeofenceLimitDialog.dismiss()
+            } //todo добавить действие при выборе купить премиум
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()
     }

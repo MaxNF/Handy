@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.data.*
 
@@ -20,8 +21,11 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     var foreverBillingObject: BillingObject? = null
         private set
 
-    var currentPremium: ShopItem? = null
-        private set
+    var premiumStatus: ShopItem? = null
+        set(value) {
+            field = value
+            getApplication<HandyApplication>().isPremium.set(value != null)
+        }
 
     private val disposables = CompositeDisposable()
 
@@ -43,7 +47,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
         disposables.add(billingDataModel.observePurchases()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { shopItem ->
-                currentPremium = shopItem
+                premiumStatus = shopItem
                 Log.d(TAG, "observePurchases: $shopItem")
             })
     }
@@ -69,18 +73,18 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     }
 
     fun setCurrentPremiumStatus() {
-        Log.d(TAG, "setCurrentPremiumStatus: ")
         billingDataModel.getCurrentPremiumStatus()?.let {
             it.observeOn(AndroidSchedulers.mainThread())
                 .subscribe { shopItem ->
-                    currentPremium = shopItem
+                    premiumStatus = shopItem
+                    Log.d(TAG, "setCurrentPremiumStatus: $shopItem")
                 }
         } ?: setPremiumNull()
     }
 
     private fun setPremiumNull() {
         Log.d(TAG, "setPremiumNull: ")
-        currentPremium = null
+        premiumStatus = null
     }
 
     fun launchBillingFlow(activity: Activity, billingObject: BillingObject) {

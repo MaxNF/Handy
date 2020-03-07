@@ -18,7 +18,6 @@ import ru.netfantazii.handy.data.database.GeofenceEntity
 import java.util.*
 
 const val GEOFENCE_CHECK_CYCLE_MILLIS = 30000
-const val GEOFENCE_APP_LIMIT = 1 // В бесплатной версии 1
 const val GEOFENCE_UNAVAILABLE_ERROR_MESSAGE =
     "1000: " // код ошибки прилетает с двоеточием и пробелом
 

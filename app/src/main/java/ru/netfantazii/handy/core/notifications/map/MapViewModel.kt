@@ -30,19 +30,14 @@ class MapViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-
+    private val geofenceAppLimit
+        get() = if (getApplication<HandyApplication>().isPremium.get()) 100 else 1
     private val TAG = "MapViewModel"
 
     var circleMap = mapOf<Long, Circle>()
         private set(value) {
             field = value
             onNewDataReceive(value)
-        }
-
-    var searchValue = ""
-        set(value) {
-            field = value
-            onNewSearchValueReceive(value)
         }
 
     var lastSearchPoints: List<Point?>? = null
@@ -130,7 +125,7 @@ class MapViewModel(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap { geofenceCount ->
-                    if (geofenceCount >= GEOFENCE_APP_LIMIT) {
+                    if (geofenceCount >= geofenceAppLimit) {
                         throw GeofenceLimitException()
                     } else {
                         // если все ок, добавляем геозону в бд и получаем ИД, передаем ИД и кол-во дальше
@@ -160,8 +155,8 @@ class MapViewModel(
                     val context = getApplication<HandyApplication>()
                     Toast.makeText(context,
                         context.getString(R.string.geofence_success,
-                            GEOFENCE_APP_LIMIT - (geofenceCount + 1),
-                            GEOFENCE_APP_LIMIT),
+                            geofenceAppLimit - (geofenceCount + 1),
+                            geofenceAppLimit),
                         Toast.LENGTH_SHORT).show()
                 }, {
                     // если была ошибка то либо выводим тост ошибкой и с советом проверить включен

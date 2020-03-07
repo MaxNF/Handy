@@ -102,7 +102,8 @@ class BillingRepository(val context: Context) {
                 firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.VALIDATE_PURCHASE_TOKEN)
                     .call(validationData)
             task.addOnSuccessListener { result ->
-                when (result.data as String) {
+                val status = (result.data as HashMap<String, Int>).get("status")
+                when (status) {
                     TokenValidation.RESPONSE_VALID -> {
                         emitter.onComplete()
                     }

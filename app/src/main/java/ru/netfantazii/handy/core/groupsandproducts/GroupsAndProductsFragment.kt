@@ -33,6 +33,7 @@ import ru.netfantazii.handy.customviews.RecyclerViewDecorator
 import ru.netfantazii.handy.data.GroupType
 import ru.netfantazii.handy.extensions.dpToPx
 import ru.netfantazii.handy.data.User
+import ru.netfantazii.handy.databinding.ProductsFragmentBinding
 import java.lang.UnsupportedOperationException
 
 class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
@@ -70,7 +71,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         savedInstanceState: Bundle?
     ): View? {
         Log.d(TAG, "onCreateView: $savedInstanceState")
-        return inflater.inflate(R.layout.products_fragment, container, false)
+        val binding = ProductsFragmentBinding.inflate(inflater, container, false)
+        binding.isPremium = (activity!!.application as HandyApplication).isPremium
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,7 +102,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         activity!!.toolbar.title = fragmentArgs.catalogName
     }
 
-    override fun createViewModel() {
+    override fun createViewModels() {
         val repository = (requireContext().applicationContext as HandyApplication).localRepository
         val currentCatalogId = fragmentArgs.catalogId
         viewModel =

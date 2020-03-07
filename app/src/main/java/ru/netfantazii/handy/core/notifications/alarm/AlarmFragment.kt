@@ -62,6 +62,7 @@ class AlarmFragment : Fragment() {
         datePicker = binding.datePickerView
         timePicker = binding.timePickerView
         timePicker.setIs24HourView(DateFormat.is24HourFormat(requireContext()))
+        binding.isPremium = (activity!!.application as HandyApplication).isPremium
         binding.viewModel = viewModel
         binding.datePicker = binding.datePickerView
         binding.timePicker = binding.timePickerView
