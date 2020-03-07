@@ -31,7 +31,15 @@
     <color name="textColorInactive">#66000000</color>
     <color name="notificationColor">#CE1C1C</color>
 
-<!--  Premium fragment colors  -->
+    <!--  Yandex Maps  -->
+    <color name="circleFillColor">#4A3dfc68</color>
+    <color name="circleStrokeColor">#FF21b843</color>
+    <color name="personPinColor">#1C63CE</color>
+    <color name="searchLocationColor">#D32929</color>
+
+    <!--    -->
+
+    <!--  Premium fragment colors  -->
     <color name="premiumBackground">#4E2B41</color>
     <color name="premiumButtonMonth">#6AACAD</color>
     <color name="premiumButtonYear">#3d9ba2</color>

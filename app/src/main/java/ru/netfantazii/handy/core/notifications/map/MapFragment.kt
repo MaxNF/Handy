@@ -3,26 +3,25 @@ package ru.netfantazii.handy.core.notifications.map
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import androidx.core.graphics.drawable.*
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.common.util.MapUtils
 import com.google.android.gms.location.LocationServices
-import com.google.maps.android.SphericalUtil
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Circle
-import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.location.Location
 import com.yandex.mapkit.location.LocationListener
@@ -50,8 +49,6 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     SuggestSession.SuggestListener {
     private val TAG = "MapFragment"
 
-    private val SEARCH_BOUNDS_DISTANCE_METERS = 10000.0
-
     private lateinit var mapView: MapView
     private lateinit var viewModel: MapViewModel
     private lateinit var mapObjects: MapObjectCollection
@@ -63,9 +60,9 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
     private lateinit var searchManager: SearchManager
 
     private val allLiveDataList = mutableListOf<LiveData<*>>()
-    private var circleFillColor: Int = 0xFF21b843.toInt()
-    private var circleStrokeColor: Int = 0x4A3dfc68
-    private var circleStrokeWidth: Float = 1.3f
+    private var circleFillColor: Int = 0
+    private var circleStrokeColor: Int = 0
+    private val circleStrokeWidth: Float = 1.3f
     private lateinit var pinObjectCollection: MapObjectCollection
     private val suggestResults = mutableListOf<String>()
     private lateinit var resultAdapter: ArrayAdapter<String>
@@ -113,9 +110,20 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
             R.id.suggestion_text,
             suggestResults)
         geofenceIconProvider = ImageProvider.fromResource(context, R.drawable.ic_map_logo)
-        userIconProvider = ImageProvider.fromResource(context, R.drawable.ic_person_pin_circle)
-        searchObjectIconProvider = ImageProvider.fromResource(context, R.drawable.ic_search_results)
+//        userIconProvider = ImageProvider.fromResource(context, R.drawable.ic_person_pin)
+        userIconProvider = ImageProvider.fromBitmap(resources.getDrawable(R.drawable.ic_person_pin,
+            null).toBitmap())
+//        searchObjectIconProvider = ImageProvider.fromResource(context, R.drawable.ic_search_results)
+        searchObjectIconProvider =
+            ImageProvider.fromBitmap(resources.getDrawable(R.drawable.ic_search_location,
+                null).toBitmap())
         createViewModel()
+        getColorsFromRes()
+    }
+
+    private fun getColorsFromRes() {
+        circleFillColor = ContextCompat.getColor(requireContext(), R.color.circleFillColor)
+        circleStrokeColor = ContextCompat.getColor(requireContext(), R.color.circleStrokeColor)
     }
 
     private fun createViewModel() {
@@ -295,9 +303,9 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
 
     private fun addCircleWithId(id: Long, circle: Circle) {
         val circleMapObject = mapObjects.addCircle(circle,
-            circleFillColor,
+            circleStrokeColor,
             circleStrokeWidth,
-            circleStrokeColor)
+            circleFillColor)
 
         circleMapObject.userData = id
         circleMapObject.addTapListener(circleTapListener)
