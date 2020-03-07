@@ -25,74 +25,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/radius_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radius_label"
-            android:textColor="@color/textColorBlack"
-            app:layout_constraintBottom_toTopOf="@+id/seekbar_frame"
-            app:layout_constraintEnd_toEndOf="@+id/seekbar_frame"
-            app:layout_constraintStart_toStartOf="@+id/seekbar_frame" />
+        <include layout="@layout/map_seekbar_layout"
+            app:viewModel="@{viewModel}"/>
 
-        <LinearLayout
-            android:id="@+id/seekbar_value_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/fab_my_location"
-            app:layout_constraintEnd_toEndOf="@+id/fab_my_location"
-            app:layout_constraintStart_toStartOf="@+id/fab_my_location">
-
-            <TextView
-                android:id="@+id/seekbar_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.seekBarDisplayValue}"
-                android:textColor="@color/textColorBlack"
-                tools:text="100" />
-
-            <TextView
-                android:id="@+id/seekbar_m_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/seekbar_m_label"
-                android:textColor="@color/textColorBlack" />
-        </LinearLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_my_location"
+        <include
+            layout="@layout/map_control_buttons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="48dp"
-            android:onClick="@{() -> viewModel.onFindMyLocationClick()}"
-            app:backgroundTint="?attr/colorAccent"
-            app:layout_constraintBottom_toBottomOf="@+id/mapview"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_my_location"
-            app:tint="?attr/fabIconTintColor" />
-
-        <FrameLayout
-            android:id="@+id/seekbar_frame"
-            android:layout_width="40dp"
-            android:layout_height="220dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/seekbar_value_group"
-            app:layout_constraintEnd_toEndOf="@+id/fab_my_location"
-            app:layout_constraintStart_toStartOf="@+id/fab_my_location">
-
-            <SeekBar
-                android:theme="@style/Widget.AppCompat.SeekBar.Discrete"
-                android:id="@+id/geofence_seekbar"
-                android:layout_width="220dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:max="8"
-                android:progress="@={viewModel.seekBarValue}"
-                android:rotation="270" />
-        </FrameLayout>
+            app:viewModel="@{viewModel}" />
 
         <LinearLayout
             android:id="@+id/search_group"
@@ -101,8 +45,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:elevation="8dp"
             android:background="@android:color/white"
+            android:elevation="8dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -136,9 +80,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
-                android:visibility="invisible"
                 android:divider="@android:color/transparent"
-                />
+                android:visibility="invisible" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

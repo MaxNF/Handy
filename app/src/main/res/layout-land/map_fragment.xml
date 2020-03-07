@@ -25,41 +25,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/radius_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radius_label"
-            android:textColor="@color/textColorBlack"
-            app:layout_constraintBottom_toTopOf="@+id/seekbar_frame"
-            app:layout_constraintEnd_toEndOf="@+id/seekbar_frame"
-            app:layout_constraintStart_toStartOf="@+id/seekbar_frame" />
+        <include layout="@layout/map_seekbar_layout"
+            app:viewModel="@{viewModel}"/>
 
-        <LinearLayout
-            android:id="@+id/seekbar_value_group"
+        <include
+            layout="@layout/map_control_buttons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:orientation="horizontal"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="48dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/seekbar_frame"
-            app:layout_constraintStart_toStartOf="@+id/seekbar_frame">
-
-            <TextView
-                android:id="@+id/seekbar_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.seekBarDisplayValue}"
-                android:textColor="@color/textColorBlack"
-                tools:text="100" />
-
-            <TextView
-                android:id="@+id/seekbar_m_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/seekbar_m_label"
-                android:textColor="@color/textColorBlack" />
-        </LinearLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:viewModel="@{viewModel}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_my_location"
@@ -73,26 +50,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_my_location"
             app:tint="?attr/fabIconTintColor" />
-
-        <FrameLayout
-            android:id="@+id/seekbar_frame"
-            android:layout_width="40dp"
-            android:layout_height="180dp"
-            android:layout_marginStart="16dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/seekbar_value_group"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <SeekBar
-                android:id="@+id/geofence_seekbar"
-                android:layout_width="180dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:max="8"
-                android:progress="@={viewModel.seekBarValue}"
-                android:rotation="270"
-                android:theme="@style/Widget.AppCompat.SeekBar.Discrete" />
-        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/search_group"

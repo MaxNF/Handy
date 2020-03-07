@@ -76,6 +76,12 @@ class MapViewModel(
     private val _newSearchValueReceived = MutableLiveData<Event<String>>()
     val newSearchValueReceived: LiveData<Event<String>> = _newSearchValueReceived
 
+    private val _zoomInClicked = MutableLiveData<Event<Unit>>()
+    val zoomInClicked: LiveData<Event<Unit>> = _zoomInClicked
+
+    private val _zoomOutClicked = MutableLiveData<Event<Unit>>()
+    val zoomOutClicked: LiveData<Event<Unit>> = _zoomOutClicked
+
     private val _geofenceLimitForFreeVersionReached = MutableLiveData<Event<Unit>>()
     val geofenceLimitForFreeVersionReached: LiveData<Event<Unit>> =
         _geofenceLimitForFreeVersionReached
@@ -199,14 +205,13 @@ class MapViewModel(
         _findMyLocationClicked.value = Event(Unit)
     }
 
-    fun onApplyClick() {
-        _applyClicked.value = Event(Unit)
-        Log.d(TAG, "onApplyClick: $nextGeofenceRaidus")
+    fun onZoomInClick() {
+        _zoomInClicked.value = Event(Unit)
     }
 
-//    fun onSearchButtonClick() {
-//        _newSearchValueReceived.value = Event(searchValue)
-//    }
+    fun onZoomOutClick() {
+        _zoomOutClicked.value = Event(Unit)
+    }
 }
 
 class MapVmFactory(

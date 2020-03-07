@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="ru.netfantazii.handy.core.notifications.map.MapViewModel" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+    android:layout_marginStart="16dp"
+    android:layout_marginBottom="16dp"
+    android:padding="4dp"
+    android:background="#D9FFFFFF"
+    android:elevation="4dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <TextView
+        android:id="@+id/radius_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/radius_label"
+        android:textColor="@color/textColorBlack"
+        app:layout_constraintBottom_toTopOf="@+id/seekbar_frame"
+        app:layout_constraintEnd_toEndOf="@+id/seekbar_frame"
+        app:layout_constraintStart_toStartOf="@+id/seekbar_frame" />
+
+    <LinearLayout
+        android:id="@+id/seekbar_value_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/seekbar_frame"
+        app:layout_constraintStart_toStartOf="@+id/seekbar_frame"
+        app:layout_constraintTop_toBottomOf="@+id/seekbar_frame">
+
+        <TextView
+            android:id="@+id/seekbar_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.seekBarDisplayValue}"
+            android:textColor="@color/textColorBlack"
+            tools:text="100" />
+
+        <TextView
+            android:id="@+id/seekbar_m_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/seekbar_m_label"
+            android:textColor="@color/textColorBlack" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/seekbar_frame"
+        android:layout_width="40dp"
+        android:layout_height="180dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <SeekBar
+            android:id="@+id/geofence_seekbar"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:max="8"
+            android:progress="@={viewModel.seekBarValue}"
+            android:rotation="270"
+            android:theme="@style/Widget.AppCompat.SeekBar.Discrete" />
+
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

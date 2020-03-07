@@ -299,6 +299,20 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
         searchField.addKeyboardButtonClickListener(EditorInfo.IME_ACTION_SEARCH) {
             closeSuggestionsAndSearch(viewModel.searchValue)
         }
+
+        viewModel.zoomInClicked.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                zoomIn()
+            }
+        })
+        allLiveDataList.add(viewModel.zoomInClicked)
+
+        viewModel.zoomOutClicked.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                zoomOut()
+            }
+        })
+        allLiveDataList.add(viewModel.zoomOutClicked)
     }
 
     private fun addCircleWithId(id: Long, circle: Circle) {
@@ -375,6 +389,34 @@ class MapFragment : Fragment(), Session.SearchListener, CameraListener,
                 SearchOptions(),
                 this)
         }
+    }
+
+    private fun zoomIn() {
+        val cameraPosition = mapView.map.cameraPosition
+        val target = cameraPosition.target
+        val azimuth = cameraPosition.azimuth
+        val tilt = cameraPosition.tilt
+
+        var zoom = cameraPosition.zoom
+        if (++zoom > mapView.map.maxZoom) {
+            zoom = mapView.map.maxZoom
+        }
+        val newCameraPosition = CameraPosition(target, zoom, azimuth, tilt)
+        mapView.map.move(newCameraPosition, Animation(Animation.Type.SMOOTH, 0.5f), null)
+    }
+
+    private fun zoomOut() {
+        val cameraPosition = mapView.map.cameraPosition
+        val target = cameraPosition.target
+        val azimuth = cameraPosition.azimuth
+        val tilt = cameraPosition.tilt
+
+        var zoom = cameraPosition.zoom
+        if (--zoom < mapView.map.minZoom) {
+            zoom = mapView.map.minZoom
+        }
+        val newCameraPosition = CameraPosition(target, zoom, azimuth, tilt)
+        mapView.map.move(newCameraPosition, Animation(Animation.Type.SMOOTH, 0.5f), null)
     }
 
     override fun onSearchError(error: Error) {
