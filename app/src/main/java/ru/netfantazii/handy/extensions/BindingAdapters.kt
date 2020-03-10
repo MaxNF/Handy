@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import jp.wasabeef.glide.transformations.CropCircleWithBorderTransformation
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.data.BillingPurchaseTypes
 import ru.netfantazii.handy.data.HintType
+import ru.netfantazii.handy.data.ShopItem
 import java.text.DateFormat
 import java.util.*
 
@@ -62,10 +64,14 @@ fun setStripeWidth(view: View, percent: Float) {
 }
 
 @BindingAdapter("app:formatCalendar")
-fun formatCalendar(view: TextView, calendar: Calendar) {
-    val formatter = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT)
-    formatter.timeZone = calendar.timeZone
-    view.text = formatter.format(calendar.time)
+fun formatCalendar(view: TextView, calendar: Calendar?) {
+    if (calendar != null) {
+        val formatter = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT)
+        formatter.timeZone = calendar.timeZone
+        view.text = formatter.format(calendar.time)
+    } else {
+        view.text = view.context.getString(R.string.value_not_available)
+    }
 }
 
 @BindingAdapter("app:downloadImageFromUri")
@@ -85,6 +91,21 @@ fun crossText(view: TextView, isCrossed: Boolean) {
             paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         } else {
             paintFlags and (Paint.STRIKE_THRU_TEXT_FLAG).inv()
+        }
+    }
+}
+
+@BindingAdapter("app:premiumPlan")
+fun setPremiumPlanValue(view: TextView, premium: ShopItem?) {
+    when (premium?.type) {
+        BillingPurchaseTypes.ONE_MONTH -> {
+            view.text = view.context.getString(R.string.one_month_sub_plan)
+        }
+        BillingPurchaseTypes.ONE_YEAR -> {
+            view.text = view.context.getString(R.string.one_year_sub_plan)
+        }
+        BillingPurchaseTypes.FOREVER -> {
+            view.text = view.context.getString(R.string.forever_sub_plan)
         }
     }
 }

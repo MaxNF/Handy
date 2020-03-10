@@ -154,6 +154,10 @@ class BillingViewModel(application: Application, private val billingDataModel: B
         Log.d(TAG, "launchBillingFlow: ${result.responseCode}")
     }
 
+    fun openGooglePlaySubscriptionSetting() {
+
+    }
+
     fun onOneMonthButtonClick() {
         Log.d(TAG, "onOneMonthButtonClick: ")
         oneMonthBillingObject?.let { _oneMonthButtonClicked.value = Event(it) }
@@ -168,7 +172,6 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     fun onForeverButtonClick() {
         Log.d(TAG, "onForeverButtonClick: ")
         foreverBillingObject?.let { _foreverButtonClicked.value = Event(it) }
-
     }
 }
 

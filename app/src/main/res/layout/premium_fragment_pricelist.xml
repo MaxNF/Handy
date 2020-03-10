@@ -6,7 +6,6 @@
     <data>
 
         <import type="ru.netfantazii.handy.data.BillingObject" />
-
         <variable
             name="billingViewModel"
             type="ru.netfantazii.handy.core.main.BillingViewModel" />
@@ -51,7 +50,7 @@
                     android:layout_height="60dp"
                     android:elevation="4dp"
                     android:onClick="@{()-> billingViewModel.onOneMonthButtonClick()}"
-                    android:text="Подписка на 1 месяц"
+                    android:text="@string/one_month_sub_button"
                     android:textAlignment="textStart"
                     app:backgroundTint="@color/premiumButtonMonth" />
 
@@ -78,7 +77,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:onClick="@{()-> billingViewModel.onOneYearButtonClick()}"
-                    android:text="Подписка на 1 год"
+                    android:text="@string/one_year_sub_button"
                     android:textAlignment="textStart"
                     app:backgroundTint="@color/premiumButtonYear" />
 
@@ -106,7 +105,7 @@
                     android:layout_height="60dp"
                     android:elevation="4dp"
                     android:onClick="@{()-> billingViewModel.onForeverButtonClick()}"
-                    android:text="Навсегда"
+                    android:text="@string/forever_sub_button"
                     android:textAlignment="textStart"
                     app:backgroundTint="@color/premiumButtonForever" />
 

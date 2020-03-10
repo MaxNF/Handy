@@ -132,31 +132,45 @@ class BillingDataModel(
             Calendar.getInstance().apply { timeInMillis = purchase.purchaseTime }
         val isAcknowledged = purchase.isAcknowledged
         val purchaseToken = purchase.purchaseToken
-        return when (purchase.sku) {
+        val isAutoRenewing = purchase.isAutoRenewing
+        return when (val sku = purchase.sku) {
             SkuList.ONE_MONTH_SUB -> {
                 val endDate = Calendar.getInstance().apply {
                     time = purchaseDate.time
                     add(Calendar.MONTH, 1)
                 }
-                OneMonthSub(startedDate = purchaseDate,
-                    endDate = endDate,
-                    isAcknowledged = isAcknowledged,
-                    purchaseToken = purchaseToken)
+                ShopItem(sku,
+                    purchaseToken,
+                    1,
+                    isAcknowledged,
+                    purchaseDate,
+                    endDate,
+                    BillingPurchaseTypes.ONE_MONTH,
+                    isAutoRenewing)
             }
             SkuList.ONE_YEAR_SUB -> {
                 val endDate = Calendar.getInstance().apply {
                     time = purchaseDate.time
                     add(Calendar.YEAR, 1)
                 }
-                OneYearSub(startedDate = purchaseDate,
-                    endDate = endDate,
-                    isAcknowledged = isAcknowledged,
-                    purchaseToken = purchaseToken)
+                ShopItem(sku,
+                    purchaseToken,
+                    2,
+                    isAcknowledged,
+                    purchaseDate,
+                    endDate,
+                    BillingPurchaseTypes.ONE_YEAR,
+                    isAutoRenewing)
             }
             SkuList.FOREVER_PURCHASE -> {
-                ForeverPurchase(purchaseDate = purchaseDate,
-                    isAcknowledged = isAcknowledged,
-                    purchaseToken = purchaseToken)
+                ShopItem(sku,
+                    purchaseToken,
+                    3,
+                    isAcknowledged,
+                    purchaseDate,
+                    null,
+                    BillingPurchaseTypes.FOREVER,
+                    true)
             }
             else -> {
                 throw java.lang.IllegalArgumentException("Shop item not found")

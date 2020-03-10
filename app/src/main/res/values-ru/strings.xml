@@ -212,4 +212,13 @@
     \n\nИсправьте возможные причины и попробуйте снова.</string>
     <string name="cancel_subscription_hint">Отменить подписку можно в настройках подписок в Google Play.</string>
     <string name="billing_flow_error_message">Произошла ошибка. Попробуйте еще раз или свяжитесь с разработчиком. Код ошибки: %1$d</string>
+    <string name="forever_sub_plan">вечный</string>
+    <string name="one_month_sub_plan">ежемесячный</string>
+    <string name="one_year_sub_plan">ежегодный</string>
+    <string name="purchase_date_title">Дата покупки:</string>
+    <string name="sub_type_title">Текущий план подписки:</string>
+    <string name="value_not_available">нет данных</string>
+    <string name="subscription_auto_renewed">Эта подписка будет автоматчески продлена в конце периода подписки. Вы можете отменить подписку в настройках Google play.</string>
+    <string name="subscription_not_auto_renewed">Эта подписка НЕ будет автоматически продлена в конце периода (вы отменили подписку). Вы можете включить автопродление в настройках Google play.</string>
+
 </resources>

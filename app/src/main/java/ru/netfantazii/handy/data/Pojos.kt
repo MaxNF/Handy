@@ -163,28 +163,11 @@ open class ShopItem(
     val sku: String,
     val purchaseToken: String,
     val weight: Int,
-    val isAcknowlodged: Boolean
-) : BaseObservable()
-
-class OneMonthSub(
-    purchaseToken: String,
+    val isAcknowlodged: Boolean,
     val startedDate: Calendar?,
     val endDate: Calendar?,
-    isAcknowledged: Boolean
-) : ShopItem(SkuList.ONE_MONTH_SUB, purchaseToken, 1, isAcknowledged)
-
-class OneYearSub(
-    purchaseToken: String,
-    val startedDate: Calendar? = null,
-    val endDate: Calendar? = null,
-    isAcknowledged: Boolean
-) : ShopItem(SkuList.ONE_YEAR_SUB, purchaseToken, 2, isAcknowledged)
-
-class ForeverPurchase(
-    purchaseToken: String,
-    val purchaseDate: Calendar? = null,
-    isAcknowledged: Boolean
-) :
-    ShopItem(SkuList.FOREVER_PURCHASE, purchaseToken, 3, isAcknowledged)
+    val type: BillingPurchaseTypes,
+    val isAutoRenewing: Boolean
+) : BaseObservable()
 
 class BillingObject(val skuDetails: SkuDetails, val type: BillingPurchaseTypes)
