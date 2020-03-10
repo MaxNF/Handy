@@ -242,7 +242,7 @@ class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewMod
     fun onDeleteAccountYesClick() {
         Log.d(TAG, "onDeleteAccountYesClick: ")
         showPb(PbOperations.DELETING_ACCOUNT)
-        disposables.add(remoteRepository.reauthentificateInFirebase(user.get()!!.credential)
+        disposables.add(remoteRepository.reauthenticateInFirebase(user.get()!!.credential)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .andThen(remoteRepository.deleteAccount())

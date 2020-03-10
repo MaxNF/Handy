@@ -222,4 +222,16 @@
     <string name="help3_5">Search works only within the visible map area. If you want to expand the area, zoom out. For searching again, tap the magnifier button on the virtual keyboard.</string>
     <string name="premium_is_required_message">Premium subscription required</string>
     <string name="premium_short_description">Take advantage of a premium subscription! Get rid of annoying ads and raise the geofence limit to 100.</string>
+    <string name="unknown_billing_exception">An unknown billing exception occurred. Billing service is unavailable.</string>
+    <string name="no_internet_error_message">ERROR. Please check your Internet connection.</string>
+    <string name="network_timeout_message">ERROR. Operation timed out.</string>
+    <string name="choose_plan">Choose a subscription plan</string>
+    <string name="premium_service_not_available">Premium-subscription is not available. Possible causes:
+    \n\n1) no Internet connection;
+    \n\n2) Google play app is not installed;
+    \n\n3) Google play app version is obsolete;
+    \n\n4) you have not signed in Google play account.
+    \n\nFix possible causes and try again.</string>
+    <string name="cancel_subscription_hint">You can cancel the subscription in Google play subscription settings.</string>
+    <string name="billing_flow_error_message">An error occurred. Try again or contact the developer. Error code: %1$d</string>
 </resources>

@@ -164,10 +164,12 @@ class BillingDataModel(
         }
     }
 
-    fun launchBillingFlow(activity: Activity, billingObject: BillingObject) {
+    fun isBillingClientReady() = billingRepository.isBillingClientReady()
+
+    fun launchBillingFlow(activity: Activity, billingObject: BillingObject): BillingResult {
         val params = BillingFlowParams.newBuilder()
             .setSkuDetails(billingObject.skuDetails)
             .build()
-        billingRepository.launchBillingFlow(activity, params)
+        return billingRepository.launchBillingFlow(activity, params)
     }
 }

@@ -4,11 +4,16 @@ import android.app.Activity
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.android.billingclient.api.BillingClient
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.data.*
+import java.util.concurrent.TimeUnit
+import kotlin.math.log
 
 class BillingViewModel(application: Application, private val billingDataModel: BillingDataModel) :
     AndroidViewModel(application) {
@@ -27,6 +32,15 @@ class BillingViewModel(application: Application, private val billingDataModel: B
             getApplication<HandyApplication>().isPremium.set(value != null)
         }
 
+    // Если хоть одно из значений прайс-листа - null, то возвращаем false
+    val isPriceListReady: Boolean
+        get() {
+            val value =
+                !(oneMonthBillingObject == null || oneYearBillingObject == null || foreverBillingObject == null)
+            Log.d(TAG, "$value")
+            return value
+        }
+
     private val disposables = CompositeDisposable()
 
     private val _oneMonthButtonClicked = MutableLiveData<Event<BillingObject>>()
@@ -38,27 +52,70 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     private val _foreverButtonClicked = MutableLiveData<Event<BillingObject>>()
     val foreverButtonClicked: LiveData<Event<BillingObject>> = _foreverButtonClicked
 
+    private val _unknownBillingException = MutableLiveData<Event<Throwable>>()
+    val unknownBillingException: LiveData<Event<Throwable>> = _unknownBillingException
+
+    private val _billingFlowError = MutableLiveData<Event<Int>>()
+    val billingFlowError: LiveData<Event<Int>> = _billingFlowError
+
     init {
-        observeConnectionAndGetPrices()
+        establishConnectionAndGetPricesAndCurrentPremiumStatus()
         observePurchases()
     }
 
     private fun observePurchases() {
         disposables.add(billingDataModel.observePurchases()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { shopItem ->
+            .retryWhen { errorStream ->
+                errorStream.flatMap { t: Throwable ->
+                    if (t is BillingException) {
+                        Log.d(TAG, "observePurchases: ${t.message}")
+                        Observable.timer(5, TimeUnit.SECONDS)
+                    } else {
+                        Observable.error(t)
+                    }
+                }
+            }
+            .subscribe({ shopItem ->
                 premiumStatus = shopItem
                 Log.d(TAG, "observePurchases: $shopItem")
+            }, {
+                _unknownBillingException.value = Event(it)
+            }))
+    }
+
+    private fun establishConnectionAndGetPricesAndCurrentPremiumStatus() {
+        disposables.add(billingDataModel.connectToBillingAndGetPrices()
+            .observeOn(AndroidSchedulers.mainThread())
+            .retryWhen { errorStream ->
+                errorStream.flatMap { t ->
+                    clearPrices()
+                    if (t is BillingException) {
+                        t.printStackTrace()
+                        if (t.message == BillingException.SERVICE_DISCONNECTED) {
+                            Log.d(TAG, "BILLING DISCONNECTED, CONNECTING AGAIN...")
+                            Observable.timer(10, TimeUnit.SECONDS)
+                        } else {
+                            Log.d(TAG,
+                                "ERROR WHILE MAINTAINING BILLING CONNECTION, RETRYING IN 30 SEC")
+                            Observable.timer(20, TimeUnit.SECONDS)
+                        }
+                    } else {
+                        Observable.error(t)
+                    }
+                }
+            }
+            .subscribe { priceList ->
+                updatePrices(priceList)
+                setCurrentPremiumStatus()
+                Log.d(TAG, "observeConnectionAndGetPrices: $priceList")
             })
     }
 
-    private fun observeConnectionAndGetPrices() {
-        disposables.add(billingDataModel.connectToBillingAndGetPrices()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { priceList ->
-                updatePrices(priceList)
-                Log.d(TAG, "observeConnectionAndGetPrices: $priceList")
-            })
+    private fun clearPrices() {
+        oneMonthBillingObject = null
+        oneYearBillingObject = null
+        foreverBillingObject = null
     }
 
     private fun updatePrices(objectList: List<BillingObject>) {
@@ -73,13 +130,15 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     }
 
     fun setCurrentPremiumStatus() {
-        billingDataModel.getCurrentPremiumStatus()?.let {
-            it.observeOn(AndroidSchedulers.mainThread())
-                .subscribe { shopItem ->
-                    premiumStatus = shopItem
-                    Log.d(TAG, "setCurrentPremiumStatus: $shopItem")
-                }
-        } ?: setPremiumNull()
+        if (billingDataModel.isBillingClientReady()) {
+            billingDataModel.getCurrentPremiumStatus()?.let {
+                it.observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { shopItem ->
+                        premiumStatus = shopItem
+                        Log.d(TAG, "setCurrentPremiumStatus: $shopItem")
+                    }
+            } ?: setPremiumNull()
+        }
     }
 
     private fun setPremiumNull() {
@@ -88,8 +147,11 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     }
 
     fun launchBillingFlow(activity: Activity, billingObject: BillingObject) {
-        Log.d(TAG, "launchBillingFlow: ")
-        billingDataModel.launchBillingFlow(activity, billingObject)
+        val result = billingDataModel.launchBillingFlow(activity, billingObject)
+        if (result.responseCode != BillingClient.BillingResponseCode.OK) {
+            _billingFlowError.value = Event(result.responseCode)
+        }
+        Log.d(TAG, "launchBillingFlow: ${result.responseCode}")
     }
 
     fun onOneMonthButtonClick() {

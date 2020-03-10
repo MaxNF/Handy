@@ -60,7 +60,6 @@ class BillingRepository(val context: Context) {
                 emitter.onError(BillingException(BillingException.SERVICE_DISCONNECTED))
             }
         })
-        emitter.setCancellable { billingClient.endConnection() } //todo может заменить на disposable? посмотреть разницу
     }
 
     fun getSkuDetails(params: SkuDetailsParams) = Single.create<List<SkuDetails>> { emitter ->
@@ -126,12 +125,13 @@ class BillingRepository(val context: Context) {
         billingClient.queryPurchases(BillingClient.SkuType.INAPP).purchasesList?.toList()
             ?: listOf()
 
+    fun isBillingClientReady() = billingClient.isReady
 
     /**
      * Должен запускаться из UI потока.
      * */
-    fun launchBillingFlow(activity: Activity, billingFlowParams: BillingFlowParams) {
-        billingClient.launchBillingFlow(activity, billingFlowParams)
+    fun launchBillingFlow(activity: Activity, billingFlowParams: BillingFlowParams): BillingResult {
+        return billingClient.launchBillingFlow(activity, billingFlowParams)
     }
 }
 

@@ -200,4 +200,16 @@
     <string name="help3_5">Поиск по карте работает в пределах видимой области на данный момент. Если вам нужно расширить область поиска — отдалите камеру. Для повторного поиска с тем же запросом, нажмите на значок лупы на экранной клавиатуре еще раз.</string>
     <string name="premium_is_required_message">Требуется премиум-подписка</string>
     <string name="premium_short_description">Получите возможность пользоваться приложением без раздражающей рекламы, а также устанавливать до 100 геозон.</string>
+    <string name="unknown_billing_exception">Произошла неизвестная ошибка сервиса оплаты. Оплата в приложении недоступна.</string>
+    <string name="no_internet_error_message">ОШИБКА. Проверьте ваше Интернет-соединение.</string>
+    <string name="network_timeout_message">ОШИБКА. Превышено время ожидания.</string>
+    <string name="choose_plan">Выберите план</string>
+    <string name="premium_service_not_available">Покупка премиума недоступна. Возможные причины:
+    \n\n1) отсутствует Интернет-соединение;
+    \n\n2) отсутствует приложение Google play;
+    \n\n3) устаревшая версия Google play;
+    \n\n4) вы не вошли в свой аккаунт Google play.
+    \n\nИсправьте возможные причины и попробуйте снова.</string>
+    <string name="cancel_subscription_hint">Отменить подписку можно в настройках подписок в Google Play.</string>
+    <string name="billing_flow_error_message">Произошла ошибка. Попробуйте еще раз или свяжитесь с разработчиком. Код ошибки: %1$d</string>
 </resources>

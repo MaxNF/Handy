@@ -30,6 +30,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import io.reactivex.plugins.RxJavaPlugins
@@ -41,12 +42,12 @@ import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.SHOULD_SILENT_SIGN_IN_KEY
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
+import ru.netfantazii.handy.data.BillingException
 import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
 import ru.netfantazii.handy.extensions.reloadActivity
 import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
-import ru.netfantazii.handy.data.GeofenceLimitException
 import ru.netfantazii.handy.data.PbOperations
 import ru.netfantazii.handy.data.User
 import ru.netfantazii.handy.data.database.ErrorCodes
@@ -215,11 +216,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         registerNotitificationChannels()
         showWelcomeScreenIfNeeded()
 
-        setUpErrorHandler()
+        initGlobalRxErrorHandler(this, networkViewModel)
         handleNotificationIntent(intent)
 
         createBillingViewModel()
-
         MobileAds.initialize(this, "ca-app-pub-4546128231433208~4467489086")
     }
 
@@ -283,51 +283,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun shouldSilentSignIn() = sp.getBoolean(SHOULD_SILENT_SIGN_IN_KEY, true)
-
-    private fun setUpErrorHandler() {
-        RxJavaPlugins.setErrorHandler { e ->
-            Log.d(TAG, "setUpErrorHandler: $e")
-            when (e.cause?.message) {
-                ErrorCodes.DATA_PAYLOAD_IS_NULL -> {
-                    showLongToast(this, "Data payload error")
-                    e.printStackTrace()
-                }
-                ErrorCodes.FOUND_USER_DUPLICATE -> {
-                    showLongToast(this, "Found user duplicate")
-                    e.printStackTrace()
-                }
-                ErrorCodes.INSTANCE_ID_TOKEN_NOT_FOUND -> {
-                    showLongToast(this, "Instance Id token not found")
-                    e.printStackTrace()
-                }
-                ErrorCodes.MESSAGE_IS_EMPTY -> {
-                    showLongToast(this, "Message is empty")
-                    e.printStackTrace()
-                }
-                ErrorCodes.USER_IS_NOT_FOUND -> {
-                    showLongToast(this, getString(R.string.user_not_found_error))
-                    e.printStackTrace()
-                }
-                ErrorCodes.NO_MESSAGES_SENT -> {
-                    showLongToast(this, getString(R.string.no_messages_sent_error))
-                    e.printStackTrace()
-                }
-                ErrorCodes.MESSAGE_FAILED_DUE_INCORRECT_SECRET -> {
-                    showLongToast(this,
-                        getString(R.string.message_failed_incorrect_secret_error))
-                }
-
-                ErrorCodes.USER_IS_NOT_LOGGED_IN -> {
-                    showLongToast(this, "Authentication error. Not logged in")
-                }
-                else -> {
-                    showLongToast(this, getString(R.string.unknown_error_occurred))
-                    e.printStackTrace()
-                }
-            }
-            networkViewModel.hidePb()
-        }
-    }
 
     private fun setInitialMenuItemsVisibility(navigationView: NavigationView) {
         val menu = navigationView.menu
@@ -545,7 +500,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     openShareSheet(finalTextToShare)
                 }
             })
-
+            allLiveDataList.add(shareSecretCodeClicked)
 
             user.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
@@ -554,6 +509,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         user != null
                 }
             })
+        }
+
+        with(billingViewModel) {
+            unknownBillingException.observe(owner, Observer { event ->
+                event.getContentIfNotHandled()?.let { e ->
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                    showLongToast(this@MainActivity, getString(R.string.unknown_billing_exception))
+                }
+            })
+            allLiveDataList.add(unknownBillingException)
+
+            billingFlowError.observe(owner, Observer { event ->
+                event.getContentIfNotHandled()?.let { code ->
+                    FirebaseCrashlytics.getInstance().log("Billing flow error. Code: $code")
+                    showLongToast(this@MainActivity,
+                        getString(R.string.billing_flow_error_message, code))
+                }
+            })
+            allLiveDataList.add(billingFlowError)
         }
     }
 

@@ -14,6 +14,7 @@ import ru.netfantazii.handy.data.database.CloudFunctions
 import ru.netfantazii.handy.data.database.RemoteDbSchema
 import java.lang.UnsupportedOperationException
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 interface RemoteRepository {
     fun sendCatalog(
@@ -32,17 +33,18 @@ interface RemoteRepository {
     fun addToken(token: String, uid: String): Completable
     fun removeToken(token: String, uid: String): Completable
     fun removeTokenOnLogout(): Completable
-    fun reauthentificateInFirebase(credential: AuthCredential): Completable
+    fun reauthenticateInFirebase(credential: AuthCredential): Completable
 }
 
 class RemoteRepositoryImpl : RemoteRepository {
     private val TAG = "RemoteRepositoryImpl"
+    val TIMEOUT_TIME_SEC = 10L
+
     private val firestoreHttpsEuWest1 =
         FirebaseFunctions.getInstance(CloudFunctions.REGION_EU_WEST1)
 
     override fun downloadCatalogDataFromMessage(messageId: String): Single<Map<String, Any>> {
-        return Single.create { emitter ->
-
+        return Single.create<Map<String, Any>> { emitter ->
             val task =
                 Firebase.firestore.collection(RemoteDbSchema.COLLECTION_MESSAGES)
                     .document(messageId)
@@ -60,7 +62,8 @@ class RemoteRepositoryImpl : RemoteRepository {
 
     override fun sendCatalog(catalogContent: Map<String, Any>) = Completable.create { emitter ->
         val task =
-            firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.SEND_CATALOG).call(catalogContent)
+            firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.SEND_CATALOG)
+                .withTimeout(TIMEOUT_TIME_SEC, TimeUnit.SECONDS).call(catalogContent)
         task.addOnSuccessListener { emitter.onComplete() }
         task.addOnFailureListener { emitter.onError(it) }
     }
@@ -69,6 +72,7 @@ class RemoteRepositoryImpl : RemoteRepository {
         return Single.create<String> { emitter ->
             val task =
                 firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.CHANGE_SECRET)
+                    .withTimeout(TIMEOUT_TIME_SEC, TimeUnit.SECONDS)
                     .call()
             task.addOnSuccessListener { emitter.onSuccess(it.data as String) }
             task.addOnFailureListener { emitter.onError(it) }
@@ -79,6 +83,7 @@ class RemoteRepositoryImpl : RemoteRepository {
         return Single.create<Pair<String, String>> { emitter ->
             val task = firestoreHttpsEuWest1
                 .getHttpsCallable(CloudFunctions.UPDATE_USER_AND_TOKEN)
+                .withTimeout(TIMEOUT_TIME_SEC, TimeUnit.SECONDS)
                 .call()
 
             task.addOnSuccessListener {
@@ -125,6 +130,7 @@ class RemoteRepositoryImpl : RemoteRepository {
         return Completable.create { emitter ->
             val task =
                 firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.ADD_CONTACT)
+                    .withTimeout(TIMEOUT_TIME_SEC, TimeUnit.SECONDS)
                     .call(contactData)
             task.addOnCompleteListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
@@ -135,6 +141,7 @@ class RemoteRepositoryImpl : RemoteRepository {
         return Completable.create { emitter ->
             val task =
                 firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.DELETE_CONTACT)
+                    .withTimeout(TIMEOUT_TIME_SEC, TimeUnit.SECONDS)
                     .call(contactData)
             task.addOnSuccessListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
@@ -145,6 +152,7 @@ class RemoteRepositoryImpl : RemoteRepository {
         return Completable.create { emitter ->
             val task =
                 firestoreHttpsEuWest1.getHttpsCallable(CloudFunctions.UPDATE_CONTACT)
+                    .withTimeout(TIMEOUT_TIME_SEC, TimeUnit.SECONDS)
                     .call(contactData)
             task.addOnSuccessListener { emitter.onComplete() }
             task.addOnFailureListener { emitter.onError(it) }
@@ -191,7 +199,7 @@ class RemoteRepositoryImpl : RemoteRepository {
         task.addOnFailureListener { emitter.onError(it) }
     }
 
-    override fun reauthentificateInFirebase(credential: AuthCredential) =
+    override fun reauthenticateInFirebase(credential: AuthCredential) =
         Completable.create { emitter ->
             val currentUser = FirebaseAuth.getInstance().currentUser
             if (currentUser == null) {
