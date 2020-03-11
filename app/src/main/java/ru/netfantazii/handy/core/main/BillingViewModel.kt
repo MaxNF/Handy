@@ -3,6 +3,7 @@ package ru.netfantazii.handy.core.main
 import android.app.Activity
 import android.app.Application
 import android.util.Log
+import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.android.billingclient.api.BillingClient
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -26,11 +27,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     var foreverBillingObject: BillingObject? = null
         private set
 
-    var premiumStatus: ShopItem? = null
-        set(value) {
-            field = value
-            getApplication<HandyApplication>().isPremium.set(value != null)
-        }
+    val premiumStatus: ObservableField<ShopItem?> = ObservableField()
 
     // Если хоть одно из значений прайс-листа - null, то возвращаем false
     val isPriceListReady: Boolean
@@ -58,9 +55,17 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     private val _billingFlowError = MutableLiveData<Event<Int>>()
     val billingFlowError: LiveData<Event<Int>> = _billingFlowError
 
+    private val _openSubscriptionSettingsClicked = MutableLiveData<Event<Unit>>()
+    val openSubscriptionSettingsClicked: LiveData<Event<Unit>> = _openSubscriptionSettingsClicked
+
     init {
         establishConnectionAndGetPricesAndCurrentPremiumStatus()
         observePurchases()
+    }
+
+    private fun setPremiumStatus(shopItem: ShopItem?) {
+        premiumStatus.set(shopItem)
+        getApplication<HandyApplication>().isPremium.set(shopItem != null)
     }
 
     private fun observePurchases() {
@@ -77,7 +82,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
                 }
             }
             .subscribe({ shopItem ->
-                premiumStatus = shopItem
+                setPremiumStatus(shopItem)
                 Log.d(TAG, "observePurchases: $shopItem")
             }, {
                 _unknownBillingException.value = Event(it)
@@ -134,7 +139,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
             billingDataModel.getCurrentPremiumStatus()?.let {
                 it.observeOn(AndroidSchedulers.mainThread())
                     .subscribe { shopItem ->
-                        premiumStatus = shopItem
+                        setPremiumStatus(shopItem)
                         Log.d(TAG, "setCurrentPremiumStatus: $shopItem")
                     }
             } ?: setPremiumNull()
@@ -143,7 +148,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
 
     private fun setPremiumNull() {
         Log.d(TAG, "setPremiumNull: ")
-        premiumStatus = null
+        setPremiumStatus(null)
     }
 
     fun launchBillingFlow(activity: Activity, billingObject: BillingObject) {
@@ -155,7 +160,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
     }
 
     fun openGooglePlaySubscriptionSetting() {
-
+        _openSubscriptionSettingsClicked.value = Event(Unit)
     }
 
     fun onOneMonthButtonClick() {

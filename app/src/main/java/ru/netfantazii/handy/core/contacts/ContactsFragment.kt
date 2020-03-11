@@ -36,7 +36,6 @@ class ContactsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         viewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
-
     }
 
     override fun onCreateView(

@@ -11,32 +11,39 @@
 
         <item
             android:id="@+id/navigation_app_settings"
-            android:icon="@drawable/ic_settings_icon"
+            android:icon="@drawable/ic_settings"
             android:title="@string/settings_fragment_label" />
 
         <item
             android:id="@+id/navigation_help_fragment"
-            android:icon="@drawable/ic_help_icon"
+            android:icon="@drawable/ic_help"
             android:title="@string/help_fragment_label" />
 
         <item
             android:id="@+id/premiumFragment"
             android:icon="@drawable/ic_solid_star"
             android:title="@string/premium_fragment_label" />
+
+        <item
+            android:id="@+id/aboutFragment"
+            android:icon="@drawable/ic_info"
+            android:title="@string/about_fragment_label"/>
     </group>
 
     <group android:id="@+id/other_options"
         android:checkableBehavior="none">
 
         <item
+            android:id="@+id/navigation_rate_app"
+            android:icon="@drawable/ic_thumb_up"
+            android:title="@string/rate_app_label" />
+
+        <item
             android:id="@+id/navigation_recommend_app"
             android:icon="@drawable/ic_recommend"
             android:title="@string/recommend_app_label" />
 
-        <item
-            android:id="@+id/navigation_rate_app"
-            android:icon="@drawable/ic_thumb_up"
-            android:title="@string/rate_app_label" />
+
 
 
     </group>

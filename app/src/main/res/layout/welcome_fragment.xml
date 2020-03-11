@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -12,7 +12,6 @@
             android:id="@+id/begin_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:background="?attr/colorPrimary"
             android:text="@string/welcome_button_text"
@@ -21,24 +20,24 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/welcome_img" />
-
-    <TextView
-        android:id="@+id/welcome_msg_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/welcome_first_msg"
-        android:textAlignment="center"
-        android:textSize="26sp"
-        android:textColor="@color/textColorBlack"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/welcome_privacy_policy_msg2" />
 
         <TextView
-            style="@style/helpTextViews"
+            android:id="@+id/welcome_msg_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/welcome_first_msg"
+            android:textAlignment="center"
+            android:textColor="@color/textColorBlack"
+            android:textSize="26sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/welcome_msg_2"
+            style="@style/helpTextViews"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/welcome_second_msg"
@@ -46,15 +45,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/welcome_msg_1" />
 
-    <ImageView
-        style="@style/helpImageViews"
-        android:id="@+id/welcome_img"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/welcome"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome_msg_2" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/welcome_img"
+            style="@style/helpImageViews"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/welcome"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/welcome_msg_2" />
+
+        <TextView
+            android:id="@+id/welcome_privacy_policy_msg"
+            style="@style/helpTextViews"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_privacy_policy_msg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/welcome_img" />
+
+        <TextView
+            android:id="@+id/welcome_privacy_policy_msg2"
+            style="@style/helpTextViews"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_privacy_policy_msg2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/welcome_privacy_policy_msg" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

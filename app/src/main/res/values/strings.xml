@@ -240,10 +240,15 @@
     <string name="forever_sub_plan">forever</string>
     <string name="purchase_date_title">Purchase date:</string>
     <string name="subscription_auto_renewed">This subscription will be automatically renewed at the end of the subscription period. You can cancel the subscription in the Google play settings.</string>
-    <string name="subscription_not_auto_renewed">This subscription will NOT be automatically renewed (you cancelled the subscription). You can reenable auto renewal in the Google play setting.</string>
+    <string name="subscription_not_auto_renewed">This subscription will NOT be automatically renewed (you cancelled the subscription). You can restore auto renewal in the Google play setting.</string>
     <string name="move_to_google_play_button">Open subscription settings</string>
     <string name="value_not_available">N/A</string>
     <string name="one_month_sub_button">One month subscription</string>
     <string name="one_year_sub_button">One year subscription</string>
     <string name="forever_sub_button">Forever subscription</string>
+    <string name="welcome_privacy_policy_msg">HandyPro uses some anonymous data from your device to provide the necessary functionality and for the app improvement. The full list of collected data is available in the privacy policy (the link is clickable).</string>
+    <string name="welcome_privacy_policy_msg2">Clicking on the “Begin” button means that you accept the privacy policy of the app. Privacy policy is available at any time in the “About” menu section.</string>
+    <string name="about_text">Privacy policy.\n\nThis app uses Yandex.Maps.\n<a href="https://yandex.ru/legal/maps_termsofuse/?lang=en">Terms of Use for Yandex.Maps Service.</a></string>
+    <string name="about_fragment_label">About</string>
+    <string name="contact_developer_button">Contact developer</string>
 </resources>

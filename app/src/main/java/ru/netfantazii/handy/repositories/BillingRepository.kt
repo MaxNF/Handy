@@ -15,8 +15,10 @@ class BillingRepository(val context: Context) {
     private val firestoreHttpsEuWest1 =
         FirebaseFunctions.getInstance(CloudFunctions.REGION_EU_WEST1)
     private val billingClient: BillingClient by lazy {
-        BillingClient.newBuilder(context).setListener(purchaseUpdatedListener)
+        val billingClient = BillingClient.newBuilder(context).setListener(purchaseUpdatedListener)
             .enablePendingPurchases().build()
+        clearGooglePlayStoreBillingCacheIfPossible(billingClient)
+        billingClient
     }
     private val purchaseUpdatedListener = PurchasesUpdatedListener { billingResult, purchaseList ->
         when (billingResult.responseCode) {
@@ -132,6 +134,16 @@ class BillingRepository(val context: Context) {
      * */
     fun launchBillingFlow(activity: Activity, billingFlowParams: BillingFlowParams): BillingResult {
         return billingClient.launchBillingFlow(activity, billingFlowParams)
+    }
+
+    /**
+     * Мифический способ, который должен (все надеются) помочь ускорить обновление кэша покупок.
+     * Самостоятельно кэш гугл-плея может не обновляться долго. Помогает ли этот способ достоверно неизвестно.*/
+    private fun clearGooglePlayStoreBillingCacheIfPossible(billingClient: BillingClient) {
+        billingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP) { _, _ ->
+        }
+        billingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.SUBS) { _, _ ->
+        }
     }
 }
 

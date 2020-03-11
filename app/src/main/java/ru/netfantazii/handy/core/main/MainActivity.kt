@@ -33,7 +33,6 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
-import io.reactivex.plugins.RxJavaPlugins
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.notifications.BUNDLE_DESTINATION_ID_KEY
@@ -42,7 +41,7 @@ import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.SHOULD_SILENT_SIGN_IN_KEY
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
-import ru.netfantazii.handy.data.BillingException
+import ru.netfantazii.handy.data.Constants
 import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
 import ru.netfantazii.handy.extensions.reloadActivity
@@ -50,7 +49,6 @@ import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
 import ru.netfantazii.handy.data.PbOperations
 import ru.netfantazii.handy.data.User
-import ru.netfantazii.handy.data.database.ErrorCodes
 
 //Проверить и сделать, чтобы будильники и геометки перерегистрировался при перезагрузки телефона!
 //проверить все цветовые схемы со всеми элементами (особенно напоминания, т.к. там подсветку заголовков не видно)
@@ -100,8 +98,8 @@ import ru.netfantazii.handy.data.database.ErrorCodes
 //сделать, чтобы на телефоне был звук оповещения и вибрация (на эмуляторе почему-то есть)
 //при клике по уведомлению (напр. геометки) логинится еще раз, хотя приложение открыто
 
-//todo добавить в приветствие первую страницу, где разъясняется что происходит с данными пользователей (локация, аккаунт и прочее)
-//todo добавить ссылку на политику конфиденциальности в меню приложения (СДЕЛАТЬ ПОЛИТИКУ КОНФИДЕНЦИАЛЬНОСТИ)
+//добавить в приветствие первую страницу, где разъясняется что происходит с данными пользователей (локация, аккаунт и прочее)
+//добавить ссылку на политику конфиденциальности в меню приложения (СДЕЛАТЬ ПОЛИТИКУ КОНФИДЕНЦИАЛЬНОСТИ)
 //todo зарегистрировать домен для приложения, прикрутить небольшой лендинг на гугл плей и политику конфиденциальности
 
 //Сделать лимит геозон для бесплатной версии (1) и без лимита для премиум версии.
@@ -130,16 +128,17 @@ import ru.netfantazii.handy.data.database.ErrorCodes
 //добавить действие  для покупки премиума, если пользователь пытается добавить больше 1 геозоны
 
 //todo протестировать биллинг как рекомендовано у гугла на сайте
-//todo протестировать валидацию покупок
+//протестировать валидацию покупок
 //сделать зависимость рекламных объявлений от премиум статуса пользователя
 //сделать зависимость кол-ва геозон от премиум статуса пользователя
-//todo почему-то при перезапуске программы не получаю премиум статус из кеша
+//почему-то при перезапуске программы не получаю премиум статус из кеша
 //todo сделать обработку ошибок биллинга
 
-//todo добавить раздел о программе, где сделать ссылку на яндекс карты
-//todo при активной подписке сделать другой экран и добавить туда кнопку с ссылкой на настройки гугл плей (где пользователь сможет отменить подписку)
-//todo сделать приветственное сообщение при запуске программы, типа как у помодоро (реклама подписки и преимущества)
-//todo сделать какую-нибудь прикольную бесплатную анимацию из https://lottiefiles.com/ при покупке подписки
+//добавить раздел о программе, где сделать ссылку на яндекс карты
+//при активной подписке сделать другой экран и добавить туда кнопку с ссылкой на настройки гугл плей (где пользователь сможет отменить подписку)
+//todo сделать кликабельными ссылки на политику конфиденциальности при запуске программы
+//todo сделат кликабельной ссылку на политику конф. в О программе
+//сделать автообновление фрагмента подписок при покупке подписки
 
 //--------------------- ОБНОВЛЕНИЕ
 //подготовить скриншоты
@@ -192,7 +191,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navController = Navigation.findNavController(this,
             R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
-        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
+//        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
         sp = PreferenceManager.getDefaultSharedPreferences(this)
         disableFirestorePersistence()
@@ -221,6 +221,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         createBillingViewModel()
         MobileAds.initialize(this, "ca-app-pub-4546128231433208~4467489086")
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, "onOptionsItemSelected: ${item.itemId}")
+        return if (item.itemId == android.R.id.home) {
+            when (navController.currentDestination?.id) {
+                R.id.catalogs_fragment -> {
+                    drawerLayout.openDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.welcomeFragment -> {
+                    moveTaskToBack(true)
+                    true
+                }
+                else -> {
+                    navController.navigateUp()
+                }
+            }
+        } else {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     private fun createBillingViewModel(): BillingViewModel {
@@ -316,24 +337,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun showWelcomeScreenIfNeeded() {
         if (isFirstLaunch()) {
-            setPrefToDefault()
-            setFirstLaunchToFalse()
             navController.navigate(R.id.welcomeFragment)
         }
-    }
-
-    private fun setPrefToDefault() {
-        val themeKey = getString(R.string.theme_pref_key)
-        val themeDefaultValue = getString(R.string.theme_violet_value)
-        val sortingKey = getString(R.string.sorting_pref_key)
-        val sortingDefaultValue = getString(R.string.sorting_newest_first_value)
-        sp.edit().putString(themeKey, themeDefaultValue)
-            .putString(sortingKey, sortingDefaultValue)
-            .apply()
-    }
-
-    private fun setFirstLaunchToFalse() {
-        sp.edit().putBoolean(FIRST_LAUNCH_KEY, false).apply()
     }
 
     private fun isFirstLaunch(): Boolean = sp.getBoolean(FIRST_LAUNCH_KEY, true)
@@ -396,10 +401,46 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onStart() {
         super.onStart()
-        subscribeToEvents()
+        subscribeToNetworkEvents()
+        subscribeToBillingEvents()
     }
 
-    private fun subscribeToEvents() {
+    private fun subscribeToBillingEvents() {
+        val owner = this
+        with(billingViewModel) {
+            unknownBillingException.observe(owner, Observer { event ->
+                event.getContentIfNotHandled()?.let { e ->
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                    showLongToast(this@MainActivity, getString(R.string.unknown_billing_exception))
+                }
+            })
+            allLiveDataList.add(unknownBillingException)
+
+            billingFlowError.observe(owner, Observer { event ->
+                event.getContentIfNotHandled()?.let { code ->
+                    FirebaseCrashlytics.getInstance().log("Billing flow error. Code: $code")
+                    showLongToast(this@MainActivity,
+                        getString(R.string.billing_flow_error_message, code))
+                }
+            })
+            allLiveDataList.add(billingFlowError)
+
+            openSubscriptionSettingsClicked.observe(owner, Observer { event ->
+                event.getContentIfNotHandled()?.let {
+                    val sku = premiumStatus.get()?.sku
+                    val url = String.format(Constants.PLAY_STORE_SUBSCRIPTION_DEEPLINK_URL,
+                        sku,
+                        packageName)
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(url)
+                    startActivity(intent)
+                }
+            })
+            allLiveDataList.add(openSubscriptionSettingsClicked)
+        }
+    }
+
+    private fun subscribeToNetworkEvents() {
         val owner = this
         with(networkViewModel) {
             signInClicked.observe(owner, Observer {
@@ -509,25 +550,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         user != null
                 }
             })
-        }
-
-        with(billingViewModel) {
-            unknownBillingException.observe(owner, Observer { event ->
-                event.getContentIfNotHandled()?.let { e ->
-                    FirebaseCrashlytics.getInstance().recordException(e)
-                    showLongToast(this@MainActivity, getString(R.string.unknown_billing_exception))
-                }
-            })
-            allLiveDataList.add(unknownBillingException)
-
-            billingFlowError.observe(owner, Observer { event ->
-                event.getContentIfNotHandled()?.let { code ->
-                    FirebaseCrashlytics.getInstance().log("Billing flow error. Code: $code")
-                    showLongToast(this@MainActivity,
-                        getString(R.string.billing_flow_error_message, code))
-                }
-            })
-            allLiveDataList.add(billingFlowError)
         }
     }
 
