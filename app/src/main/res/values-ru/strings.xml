@@ -229,4 +229,8 @@
     <string name="about_text"><a href="http://netfantazii.ru/handypro/privacy-policy.html">Политика конфиденциальности.</a>\n\n<a href="http://netfantazii.ru/handypro/terms-of-use.html">Условия использования.</a>\n\nПриложение использует Яндекс.Карты.\n<a href="https://yandex.ru/legal/maps_termsofuse/?lang=en">Условия использования сервиса Яндекс.Карты.</a></string>
     <string name="about_fragment_label">О программе</string>
     <string name="contact_developer_button">Написать разработчику</string>
+    <string name="redeem">Активировать код</string>
+    <string name="redeem_hint">Введите подарочный код</string>
+    <string name="redeem_button">Активировать</string>
+    <string name="redeem_dialog_title">Активировать код</string>
 </resources>

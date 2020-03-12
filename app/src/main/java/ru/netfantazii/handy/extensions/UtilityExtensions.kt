@@ -158,3 +158,11 @@ fun isNetworkAvailable(context: Context): Boolean {
         return nwInfo.isConnected
     }
 }
+
+fun defaultVibrationPattern(): LongArray = longArrayOf(0L, 500, 200, 500, 200, 500)
+
+fun createFunnyVibrationPattern(): LongArray = longArrayOf(0L,
+    225, 225, 225, 225,
+    112, 112, 112, 112, 225, 225,
+    112, 112, 112, 112, 112, 112, 225,
+    225, 112, 112, 225)

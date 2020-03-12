@@ -251,4 +251,8 @@
     <string name="about_text"><a href="http://netfantazii.ru/handypro/privacy-policy.html">HandyPro Privacy policy.</a>\n\n<a href="http://netfantazii.ru/handypro/terms-of-use.html">HandyPro Terms of Use.</a>\n\nThis app uses Yandex.Maps.\n<a href="https://yandex.ru/legal/maps_termsofuse/?lang=en">Terms of Use for Yandex.Maps Service.</a></string>
     <string name="about_fragment_label">About</string>
     <string name="contact_developer_button">Contact developer</string>
+    <string name="redeem">Redeem a code</string>
+    <string name="redeem_hint">Enter a gift code</string>
+    <string name="redeem_button">Redeem</string>
+    <string name="redeem_dialog_title">Redeem a code</string>
 </resources>

@@ -33,7 +33,7 @@ class AboutFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as MainActivity).checkMenuItem(R.id.contactsFragment)
+        (activity as MainActivity).checkMenuItem(R.id.aboutFragment)
         val textView = view.findViewById<TextView>(R.id.about_text_view)
         val button = view.findViewById<MaterialButton>(R.id.contact_developer_button)
         button.setOnClickListener { contactDeveloper() }

@@ -92,19 +92,6 @@ class NotificationService : IntentService("notification_service") {
         applicationContext.sendBroadcast(closeIntent)
     }
 
-//    private fun alarmToAlarmPendingIntent() = NavDeepLinkBuilder(applicationContext)
-//        .setGraph(R.navigation.nav_graph)
-//        .setDestination(R.id.notifications_fragment)
-//        .setArguments(alarmArguments())
-//        .createPendingIntent()
-
-
-//    private fun alarmToProductsPendingIntent() = NavDeepLinkBuilder(applicationContext)
-//        .setGraph(R.navigation.nav_graph)
-//        .setDestination(R.id.products_fragment)
-//        .setArguments(alarmArguments())
-//        .createPendingIntent()
-
     private fun intentForStartingActivity(arguments: Bundle): Intent {
         val context = applicationContext
         return Intent(context, MainActivity::class.java)!!.apply {
@@ -112,18 +99,6 @@ class NotificationService : IntentService("notification_service") {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
     }
-
-//    private fun geofenceToProductsPendingIntent() = NavDeepLinkBuilder(applicationContext)
-//        .setGraph(R.navigation.nav_graph)
-//        .setDestination(R.id.products_fragment)
-//        .setArguments(geofenceArguments())
-//        .createPendingIntent()
-
-//    private fun alarmArguments(): Bundle = Bundle().apply {
-//        putLong(BUNDLE_CATALOG_ID_KEY, catalogId())
-//        putString(BUNDLE_CATALOG_NAME_KEY, catalogName())
-//        putParcelable(BUNDLE_EXPAND_STATE_KEY, expandState())
-//    }
 
     private fun alarmArguments(destination: Int): Bundle = Bundle().apply {
         putInt(BUNDLE_DESTINATION_ID_KEY, destination)

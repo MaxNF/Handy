@@ -20,11 +20,8 @@ import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.core.main.REMINDER_NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.extensions.getCancelPendingIntentForNotifications
-import ru.netfantazii.handy.extensions.getNotificationSoundUri
-import ru.netfantazii.handy.extensions.registerAlarm
-import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.data.CatalogNotificationContent
+import ru.netfantazii.handy.extensions.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -154,6 +151,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .addAction(0,
                 context.getString(R.string.alarm_notification_action_label),
                 toAlarmPendingIntent)
+            .setVibrate(defaultVibrationPattern())
             .build()
     }
 
@@ -194,6 +192,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             .addAction(0,
                 context.getString(R.string.notification_cancel_label),
                 getCancelPendingIntentForNotifications(context, notificationId))
+            .setVibrate(defaultVibrationPattern())
             .build()
     }
 

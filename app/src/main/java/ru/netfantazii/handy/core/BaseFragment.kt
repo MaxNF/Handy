@@ -38,7 +38,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
         setUpFab(view)
         subscribeToEvents()
         initNavController()
-        (activity as MainActivity).uncheckActiveMenuItem()
+        (activity as MainActivity).uncheckMenuItems()
         loadAds(view)
     }
 

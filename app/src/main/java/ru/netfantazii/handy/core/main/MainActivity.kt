@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
@@ -41,7 +43,7 @@ import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.core.preferences.SHOULD_SILENT_SIGN_IN_KEY
 import ru.netfantazii.handy.core.preferences.getCurrentThemeValue
 import ru.netfantazii.handy.core.preferences.setTheme
-import ru.netfantazii.handy.data.Constants
+import ru.netfantazii.handy.core.premium.RedeemDialog
 import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
 import ru.netfantazii.handy.extensions.reloadActivity
@@ -49,6 +51,7 @@ import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.extensions.showShortToast
 import ru.netfantazii.handy.data.PbOperations
 import ru.netfantazii.handy.data.User
+import ru.netfantazii.handy.extensions.defaultVibrationPattern
 
 //Проверить и сделать, чтобы будильники и геометки перерегистрировался при перезагрузки телефона!
 //проверить все цветовые схемы со всеми элементами (особенно напоминания, т.к. там подсветку заголовков не видно)
@@ -141,6 +144,10 @@ import ru.netfantazii.handy.data.User
 //сделать кликабельной ссылку на политику конф. в О программе
 //сделать автообновление фрагмента подписок при покупке подписки
 
+//сделать более заметную вибрацию \ звук при напоминаниях (для приходящего списка, оставляю такой же)
+//todo проверить работоспособность подарочных кодов (похоже что не работают в тестовой версии, нужно проверить вечную покупку на не основном аккаунте)
+//todo сделать кнопочку в меню для перехода к списку каталогов
+
 //--------------------- ОБНОВЛЕНИЕ
 //подготовить скриншоты
 //подготовить описание
@@ -214,7 +221,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         buildSignInClient()
-        registerNotitificationChannels()
+        registerNotificationChannels()
         showWelcomeScreenIfNeeded()
 
         initGlobalRxErrorHandler(this, networkViewModel)
@@ -237,7 +244,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true
                 }
                 else -> {
-                    navController.navigateUp()
+                    navController.popBackStack()
                 }
             }
         } else {
@@ -275,6 +282,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         Log.d(TAG, "onResume: ")
         tryToSilentSignIn()
         billingViewModel.setCurrentPremiumStatus()
+        uncheckMenuItems()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -353,6 +361,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val googlePlayLink = getString(R.string.googlePlayLink)
                 openShareSheet(getString(R.string.recommend_app_text, googlePlayLink))
             }
+            R.id.navigation_redeem -> {
+                RedeemDialog().show(supportFragmentManager, "redeem_dialog")
+            }
             else -> {
                 navController.navigate(item.itemId)
             }
@@ -361,12 +372,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    fun uncheckActiveMenuItem() {
-        navigationView.checkedItem?.isChecked = false
+    fun uncheckMenuItems() {
+        val currentDest = navController.currentDestination?.id
+        if (currentDest == R.id.catalogs_fragment || currentDest == R.id.products_fragment) {
+            navigationView.checkedItem?.isChecked = false
+        }
     }
 
     fun checkMenuItem(itemId: Int) {
-        navigationView.menu.findItem(itemId).isChecked = true
+        navigationView.setCheckedItem(itemId)
     }
 
     private fun navigateToPlayMarket() {
@@ -375,7 +389,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    private fun registerNotitificationChannels() {
+    private fun registerNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val remindersDescription =
                 getString(R.string.notification_channel_reminders_description)
@@ -387,11 +401,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 getString(R.string.reminders_notification_channel_name),
                 NotificationManager.IMPORTANCE_HIGH).apply {
                 description = remindersDescription
+                enableVibration(true)
+                vibrationPattern = defaultVibrationPattern()
+                enableLights(true)
+                lightColor = Color.WHITE
             })
             notificationChannels.add(NotificationChannel(CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID,
                 getString(R.string.catalog_received_notification_ch_name),
                 NotificationManager.IMPORTANCE_HIGH).apply {
                 description = catalogReceivedDescription
+                enableVibration(true)
+                vibrationPattern = defaultVibrationPattern()
+                enableLights(true)
+                lightColor = Color.WHITE
             })
 
             val notificationManager: NotificationManager =
@@ -425,19 +447,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             })
             allLiveDataList.add(billingFlowError)
-
-            openSubscriptionSettingsClicked.observe(owner, Observer { event ->
-                event.getContentIfNotHandled()?.let {
-                    val sku = premiumStatus.get()?.sku
-                    val url = String.format(Constants.PLAY_STORE_SUBSCRIPTION_DEEPLINK_URL,
-                        sku,
-                        packageName)
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(url)
-                    startActivity(intent)
-                }
-            })
-            allLiveDataList.add(openSubscriptionSettingsClicked)
         }
     }
 
