@@ -34,7 +34,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
         get() {
             val value =
                 !(oneMonthBillingObject == null || oneYearBillingObject == null || foreverBillingObject == null)
-            Log.d(TAG, "$value")
+            Log.d(TAG, "Is price list ready? $value")
             return value
         }
 
@@ -75,7 +75,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
                 errorStream.flatMap { t: Throwable ->
                     if (t is BillingException) {
                         Log.d(TAG, "observePurchases: ${t.message}")
-                        Observable.timer(5, TimeUnit.SECONDS)
+                        Observable.just(0L)
                     } else {
                         Observable.error(t)
                     }

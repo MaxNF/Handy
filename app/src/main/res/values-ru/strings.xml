@@ -220,12 +220,13 @@
     <string name="value_not_available">нет данных</string>
     <string name="subscription_auto_renewed">Эта подписка будет автоматчески продлена в конце периода подписки. Вы можете отменить подписку в настройках Google play.</string>
     <string name="subscription_not_auto_renewed">Эта подписка НЕ будет автоматически продлена в конце периода (вы отменили подписку). Вы можете включить автопродление в настройках Google play.</string>
-    <string name="welcome_privacy_policy_msg">ХэндиПро собирает некоторые данные с вашего устройства в обезличенном виде для обеспечения необходимой функциональности и улучшения работы приложения. Ознакомиться с полным списком вы можете прочитав политику конфиденциальности (ссылка кликабельна).</string>
-    <string name="welcome_privacy_policy_msg2">Нажимая «Начать» вы соглашаетесь с политикой конфиденциальности приложения. Открыть политику конфиденциальности вы можете в любое время перейдя в раздел меню «О программе».</string>
     <string name="forever_sub_button">Вечная подписка</string>
     <string name="move_to_google_play_button">Открыть настройки подписки</string>
     <string name="one_month_sub_button">Подписка на один месяц</string>
     <string name="one_year_sub_button">Подписка на один год</string>
-    <string name="about_text">Политика конфиденциальности. Приложение использует Яндекс.Карты. <a href="https://yandex.ru/legal/maps_termsofuse/?lang=ru">Условия использования сервиса Яндекс.Карты.</a></string>
+    <string name="welcome_privacy_policy_msg">ХэндиПро собирает некоторые данные с вашего устройства для обеспечения необходимой функциональности и улучшения работы приложения. Ознакомиться с полным списком вы можете прочитав <a href="http://netfantazii.ru/handypro/privacy-policy.html">политику конфиденциальности</a> (ссылка кликабельна).</string>
+    <string name="welcome_privacy_policy_msg2">Нажимая «Начать» вы соглашаетесь с <a href="http://netfantazii.ru/handypro/privacy-policy.html">политикой конфиденциальности</a> и <a href="http://netfantazii.ru/handypro/terms-of-use.html">условиями использования</a> приложения. Открыть <a href="http://netfantazii.ru/handypro/privacy-policy.html">политику конфиденциальности</a> и <a href="http://netfantazii.ru/handypro/terms-of-use.html">условия использования</a> вы можете в любое время перейдя в раздел меню «О программе».</string>
+    <string name="about_text"><a href="http://netfantazii.ru/handypro/privacy-policy.html">Политика конфиденциальности.</a>\n\n<a href="http://netfantazii.ru/handypro/terms-of-use.html">Условия использования.</a>\n\nПриложение использует Яндекс.Карты.\n<a href="https://yandex.ru/legal/maps_termsofuse/?lang=en">Условия использования сервиса Яндекс.Карты.</a></string>
     <string name="about_fragment_label">О программе</string>
+    <string name="contact_developer_button">Написать разработчику</string>
 </resources>

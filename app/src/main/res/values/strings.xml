@@ -246,9 +246,9 @@
     <string name="one_month_sub_button">One month subscription</string>
     <string name="one_year_sub_button">One year subscription</string>
     <string name="forever_sub_button">Forever subscription</string>
-    <string name="welcome_privacy_policy_msg">HandyPro uses some anonymous data from your device to provide the necessary functionality and for the app improvement. The full list of collected data is available in the privacy policy (the link is clickable).</string>
-    <string name="welcome_privacy_policy_msg2">Clicking on the “Begin” button means that you accept the privacy policy of the app. Privacy policy is available at any time in the “About” menu section.</string>
-    <string name="about_text">Privacy policy.\n\nThis app uses Yandex.Maps.\n<a href="https://yandex.ru/legal/maps_termsofuse/?lang=en">Terms of Use for Yandex.Maps Service.</a></string>
+    <string name="welcome_privacy_policy_msg">HandyPro uses some anonymous data from your device to provide the necessary functionality and for the app improvement. The full list of collected data is available in the <a href="http://netfantazii.ru/handypro/privacy-policy.html">Privacy Policy</a> (the link is clickable).</string>
+    <string name="welcome_privacy_policy_msg2">Clicking on the “Begin” button means that you accept the <a href="http://netfantazii.ru/handypro/privacy-policy.html">Privacy Policy</a> and <a href="http://netfantazii.ru/handypro/terms-of-use.html">Terms of Use</a>  of the app. The <a href="http://netfantazii.ru/handypro/privacy-policy.html">Privacy Policy</a> and <a href="http://netfantazii.ru/handypro/terms-of-use.html">Terms of Use</a> are available at any time in the “About” menu section.</string>
+    <string name="about_text"><a href="http://netfantazii.ru/handypro/privacy-policy.html">HandyPro Privacy policy.</a>\n\n<a href="http://netfantazii.ru/handypro/terms-of-use.html">HandyPro Terms of Use.</a>\n\nThis app uses Yandex.Maps.\n<a href="https://yandex.ru/legal/maps_termsofuse/?lang=en">Terms of Use for Yandex.Maps Service.</a></string>
     <string name="about_fragment_label">About</string>
     <string name="contact_developer_button">Contact developer</string>
 </resources>

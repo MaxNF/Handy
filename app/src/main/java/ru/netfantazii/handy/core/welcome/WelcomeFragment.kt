@@ -2,12 +2,14 @@ package ru.netfantazii.handy.core.welcome
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
@@ -38,6 +40,10 @@ class WelcomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val beginButton = view.findViewById<Button>(R.id.begin_button)
         val navController = NavHostFragment.findNavController(this)
+        val privacyText1 = view.findViewById<TextView>(R.id.welcome_privacy_policy_msg)
+        val privacyText2 = view.findViewById<TextView>(R.id.welcome_privacy_policy_msg2)
+        privacyText1.movementMethod = LinkMovementMethod.getInstance()
+        privacyText2.movementMethod = LinkMovementMethod.getInstance()
         beginButton.setOnClickListener {
             navController.popBackStack()
             setPrefToDefault()
