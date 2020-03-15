@@ -170,8 +170,8 @@
     <string name="change_secret_timeout_message">You can\'t change the secret code more than once per minute</string>
     <string name="delete_contact_dialog_message">\"%1$s\" contact is going to be deleted. Are you sure? (this cannot be undone)</string>
     <string name="dialog_delete_action">Delete</string>
-    <string name="dialog_mark_as_bought_action">Mark as bought</string>
-    <string name="dialog_mark_as_non_bought_action">Mark as non bought</string>
+    <string name="dialog_mark_as_bought_action">Mark</string>
+    <string name="dialog_mark_as_non_bought_action">Mark</string>
     <string name="dialog_clear_action">Clear</string>
     <string name="dialog_delete_account_action">Delete</string>
     <string name="dialog_change_secret_action">Change</string>
@@ -233,9 +233,9 @@
     <string name="subscription_auto_renewed">This subscription will be automatically renewed at the end of the subscription period. You can cancel the subscription in the Google play settings.</string>
     <string name="subscription_not_auto_renewed">This subscription will NOT be automatically renewed (you cancelled the subscription). You can restore auto renewal in the Google play setting.</string>
     <string name="move_to_google_play_button">Open subscription settings</string>
-    <string name="one_month_sub_button">One month subscription</string>
-    <string name="one_year_sub_button">One year subscription</string>
-    <string name="forever_sub_button">Forever subscription</string>
+    <string name="one_month_sub_button">Monthly</string>
+    <string name="one_year_sub_button">Yearly</string>
+    <string name="forever_sub_button">Forever</string>
     <string name="welcome_privacy_policy_msg">HandyPro uses some anonymous data from your device to provide the necessary functionality and for the app improvement. The full list of collected data is available in the <a href="http://netfantazii.ru/handypro/privacy-policy.html">Privacy Policy</a> (the link is clickable).</string>
     <string name="welcome_privacy_policy_msg2">Clicking on the “Begin” button means that you accept the <a href="http://netfantazii.ru/handypro/privacy-policy.html">Privacy Policy</a> and <a href="http://netfantazii.ru/handypro/terms-of-use.html">Terms of Use</a> of the app. The <a href="http://netfantazii.ru/handypro/privacy-policy.html">Privacy Policy</a> and <a href="http://netfantazii.ru/handypro/terms-of-use.html">Terms of Use</a> are available at any time in the “About” menu section.</string>
     <string name="about_text"><a href="http://netfantazii.ru/handypro/privacy-policy.html">HandyPro Privacy policy.</a>\n\n<a href="http://netfantazii.ru/handypro/terms-of-use.html">HandyPro Terms of Use.</a>\n\nThis app uses Yandex.Maps.\n<a href="https://yandex.ru/legal/maps_termsofuse/?lang=en">Terms of Use for Yandex.Maps Service.</a></string>
@@ -245,4 +245,8 @@
     <string name="redeem_hint">Enter a gift code</string>
     <string name="redeem_button">Redeem</string>
     <string name="redeem_dialog_title">Redeem a code</string>
+    <string name="your_secret_code_title">Your secret code:</string>
+    <string name="secret_code_preference_hint">Give it to another user to be able to receive lists from him</string>
+    <string name="delete_account_button">Delete account</string>
+    <string name="delete_account_hint">This will delete only the friend list and other metadata from the cloud</string>
 </resources>

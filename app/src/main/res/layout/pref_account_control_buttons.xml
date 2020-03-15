@@ -9,9 +9,7 @@
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-    android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-    android:paddingRight="?android:attr/listPreferredItemPaddingRight">
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
 
     <include layout="@layout/image_frame_local" />
 
@@ -26,7 +24,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your secret code:"
+            android:text="@string/your_secret_code_title"
             android:textAppearance="?android:attr/textAppearanceListItem" />
 
         <LinearLayout
@@ -43,7 +41,7 @@
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/rounded_corners_bg"
                 android:padding="5dp"
-                android:text="Ge8Pxly"
+                android:text="n/a"
                 android:textColor="?attr/toolbarElementColor"
                 android:textSize="18sp"
                 tools:text="Ge8Pxly" />
@@ -81,7 +79,7 @@
             style="@style/PreferenceSummaryTextStyleLocal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Give it to another user to be able to receive lists from him" />
+            android:text="@string/secret_code_preference_hint" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete_account_button"
@@ -89,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Delete account"
+            android:text="@string/delete_account_button"
             android:textColor="?attr/toolbarElementColor"
             android:textSize="12sp" />
 
@@ -98,7 +96,7 @@
             style="@style/PreferenceSummaryTextStyleLocal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This will delete only the friend list and other metadata from the cloud" />
+            android:text="@string/delete_account_hint" />
 
     </LinearLayout>
     <!-- Preference should place its actual preference widget here. -->
@@ -109,7 +107,5 @@
         android:gravity="end|center_vertical"
         android:orientation="vertical"
         android:paddingStart="16dp"
-        android:paddingLeft="16dp"
-        android:paddingEnd="0dp"
-        android:paddingRight="0dp" />
+        android:paddingEnd="0dp" />
 </LinearLayout>

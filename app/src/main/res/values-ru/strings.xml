@@ -129,15 +129,15 @@
     <string name="dialog_clear_action">Очистить</string>
     <string name="dialog_delete_account_action">Удалить</string>
     <string name="dialog_delete_action">Удалить</string>
-    <string name="dialog_mark_as_bought_action">Пометить как купленные</string>
-    <string name="dialog_mark_as_non_bought_action">Пометить как не купленные</string>
+    <string name="dialog_mark_as_bought_action">Отметить</string>
+    <string name="dialog_mark_as_non_bought_action">Отметить</string>
     <string name="dialog_ok_button">ОК</string>
     <string name="geofence_limit_error_message">Нельзя регистрировать больше 100 геозон</string>
     <string name="geofences_label">Геозоны</string>
     <string name="grant_perm_manually_message">Похоже, что вы не выдали нужное разрешение. Чтобы пользоваться геозонами, выдайте требуемые разрешения вручную в настройках телефона.</string>
     <string name="grant_permission_label">Выдать разрешения</string>
     <string name="hint_nothing_to_show_contacts">Добавьте новый контакт</string>
-    <string name="message_failed_incorrect_secret_error">Отправка не удалась. Пользователь сменить секретный код. Попросите его о новом.</string>
+    <string name="message_failed_incorrect_secret_error">Отправка не удалась. Пользователь сменил секретный код. Попросите его о новом.</string>
     <string name="name_duplicate_error">Такое имя уже существует</string>
     <string name="name_hint">Имя</string>
     <string name="need_permission_message">Приложению требуются разрешения для работы с картой</string>
@@ -220,12 +220,12 @@
     <string name="value_not_available">нет данных</string>
     <string name="subscription_auto_renewed">Эта подписка будет автоматчески продлена в конце периода подписки. Вы можете отменить подписку в настройках Google play.</string>
     <string name="subscription_not_auto_renewed">Эта подписка НЕ будет автоматически продлена в конце периода (вы отменили подписку). Вы можете включить автопродление в настройках Google play.</string>
-    <string name="forever_sub_button">Вечная подписка</string>
     <string name="move_to_google_play_button">Открыть настройки подписки</string>
-    <string name="one_month_sub_button">Подписка на один месяц</string>
-    <string name="one_year_sub_button">Подписка на один год</string>
-    <string name="welcome_privacy_policy_msg">ХэндиПро собирает некоторые данные с вашего устройства для обеспечения необходимой функциональности и улучшения работы приложения. Ознакомиться с полным списком вы можете прочитав <a href="http://netfantazii.ru/handypro/privacy-policy.html">политику конфиденциальности</a> (ссылка кликабельна).</string>
-    <string name="welcome_privacy_policy_msg2">Нажимая «Начать» вы соглашаетесь с <a href="http://netfantazii.ru/handypro/privacy-policy.html">политикой конфиденциальности</a> и <a href="http://netfantazii.ru/handypro/terms-of-use.html">условиями использования</a> приложения. Открыть <a href="http://netfantazii.ru/handypro/privacy-policy.html">политику конфиденциальности</a> и <a href="http://netfantazii.ru/handypro/terms-of-use.html">условия использования</a> вы можете в любое время перейдя в раздел меню «О программе».</string>
+    <string name="one_month_sub_button">Ежемесячная</string>
+    <string name="one_year_sub_button">Годовая</string>
+    <string name="forever_sub_button">Пожизненная</string>
+    <string name="welcome_privacy_policy_msg">ХэндиПро собирает некоторые данные с вашего устройства для обеспечения необходимой функциональности и улучшения работы приложения. Ознакомиться с полным списком вы можете, прочитав <a href="http://netfantazii.ru/handypro/privacy-policy.html">политику конфиденциальности</a> (ссылка кликабельна).</string>
+    <string name="welcome_privacy_policy_msg2">Нажимая «Начать», вы соглашаетесь с <a href="http://netfantazii.ru/handypro/privacy-policy.html">политикой конфиденциальности</a> и <a href="http://netfantazii.ru/handypro/terms-of-use.html">условиями использования</a> приложения. Открыть <a href="http://netfantazii.ru/handypro/privacy-policy.html">политику конфиденциальности</a> и <a href="http://netfantazii.ru/handypro/terms-of-use.html">условия использования</a> вы можете в любое время перейдя в раздел меню «О программе».</string>
     <string name="about_text"><a href="http://netfantazii.ru/handypro/privacy-policy.html">Политика конфиденциальности.</a>\n\n<a href="http://netfantazii.ru/handypro/terms-of-use.html">Условия использования.</a>\n\nПриложение использует Яндекс.Карты.\n<a href="https://yandex.ru/legal/maps_termsofuse/?lang=en">Условия использования сервиса Яндекс.Карты.</a></string>
     <string name="about_fragment_label">О программе</string>
     <string name="contact_developer_button">Написать разработчику</string>
@@ -233,4 +233,8 @@
     <string name="redeem_hint">Введите подарочный код</string>
     <string name="redeem_button">Активировать</string>
     <string name="redeem_dialog_title">Активировать код</string>
+    <string name="delete_account_button">Удалить аккаунт</string>
+    <string name="delete_account_hint">Это действие удалит только список друзей и другие метаданные из облака</string>
+    <string name="secret_code_preference_hint">Дайте этот код другому пользователю, чтобы он смог отправлять вам списки</string>
+    <string name="your_secret_code_title">Ваш секретный код:</string>
 </resources>

@@ -81,6 +81,7 @@
             android:layout_marginTop="24dp"
             android:elevation="4dp"
             android:text="@string/move_to_google_play_button"
+            android:visibility="@{billingViewModel.premiumStatus.type == BillingPurchaseTypes.FOREVER ? View.GONE : View.VISIBLE}"
             android:onClick="@{() -> billingViewModel.openGooglePlaySubscriptionSetting()}"
             app:backgroundTint="@color/premiumButtonYear"
             app:layout_constraintEnd_toEndOf="parent"
