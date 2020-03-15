@@ -14,7 +14,6 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
@@ -28,6 +27,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -162,7 +162,6 @@ import ru.netfantazii.handy.extensions.defaultVibrationPattern
 //todo добавить возможность делиться списком не только через приложение, но и в текстовом виде
 
 
-
 const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"
 const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_channel"
 
@@ -199,7 +198,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
 
         drawerLayout = mainBinding.navigationDrawer
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+//        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         navigationView = drawerLayout.findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
         setInitialMenuItemsVisibility(navigationView)
@@ -236,8 +235,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         handleNotificationIntent(intent)
 
         createBillingViewModel()
+
+        MobileAds.setRequestConfiguration(getTestDevicesConfiguration())
         MobileAds.initialize(this, "ca-app-pub-4546128231433208~4467489086")
     }
+
+    private fun getTestDevicesConfiguration() = RequestConfiguration.Builder()
+        .setTestDeviceIds(listOf("7878A7AA6ECBC58AB4FD75D4A0FD5C9E",
+            "144FBBB720CF6B04896D65E9E88C6164"))
+        .build()
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected: ${item.itemId}")
