@@ -158,6 +158,10 @@ import ru.netfantazii.handy.extensions.defaultVibrationPattern
 //кнопки пометить как не влазят
 //название подписки налазит на цену
 
+//todo для ver 1.1:
+//todo добавить возможность делиться списком не только через приложение, но и в текстовом виде
+
+
 
 const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"
 const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_channel"

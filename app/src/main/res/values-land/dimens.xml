@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="seekbarHeight">180dp</dimen>
+    <dimen name="seekbarHeight">160dp</dimen>
 </resources>
