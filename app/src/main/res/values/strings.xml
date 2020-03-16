@@ -77,6 +77,8 @@
     <string name="help1_9">Additional buttons are here to delete, cancel or buy all items in a single tap.</string>
     <string name="help1_10">Drag and sort items manually by taping long on them. You can change a theme and other preferences in the settings.</string>
 
+
+    <string name="help2_0">If you do not receive notifications while the screen is off, check notification or energy settings of your device. Devices from certain manufacturers do not show notifications in some cases for energy-saving reasons if a user does not allow this explicitly.</string>
     <string name="help2_1">Press the bell icon to set notifications for this list up.</string>
     <string name="help2_2">There are two types of notifications available: time-based notifications and geofence notifications.</string>
     <string name="help2_3">Time-based ones are similar to alarms. You set the time and turn the switch on.</string>

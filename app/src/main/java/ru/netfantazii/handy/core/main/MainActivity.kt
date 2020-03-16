@@ -26,8 +26,7 @@ import androidx.navigation.*
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.ads.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -181,6 +180,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var pbManager: ProgressBarManager
     private lateinit var pbText: TextView
     private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var adScreen: InterstitialAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -188,7 +188,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mainBinding =
             DataBindingUtil.setContentView(this,
                 R.layout.activity_main)
-        createNetworkViewModel()
+        createGlobalViewModels()
         mainBinding.viewModel = networkViewModel
         pbManager = ProgressBarManager()
         pbManager.setProgressBarView(mainBinding.progressBarContainer)
@@ -234,10 +234,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initGlobalRxErrorHandler(this, networkViewModel)
         handleNotificationIntent(intent)
 
-        createBillingViewModel()
-
         MobileAds.setRequestConfiguration(getTestDevicesConfiguration())
         MobileAds.initialize(this, "ca-app-pub-4546128231433208~4467489086")
+        setUpInterstitialAds()
     }
 
     private fun getTestDevicesConfiguration() = RequestConfiguration.Builder()
@@ -267,14 +266,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun createBillingViewModel(): BillingViewModel {
-        val billingRepository =
-            (applicationContext as HandyApplication).billingRepository
-        val billingDataModel = BillingDataModel(billingRepository, packageName)
-        billingViewModel =
-            ViewModelProviders.of(this, BillingVmFactory(billingDataModel, application)
-            ).get(BillingViewModel::class.java)
-        return billingViewModel
+    private fun setUpInterstitialAds() {
+        adScreen = InterstitialAd(this)
+        adScreen.adUnitId = getString(R.string.ad_interstitial_share_unit_id)
+        adScreen.loadAd(AdRequest.Builder().build())
+        adScreen.adListener = object : AdListener() {
+            override fun onAdClosed() {
+                adScreen.loadAd(AdRequest.Builder().build())
+            }
+        }
+    }
+
+    fun showAdScreen() {
+        if (!(application as HandyApplication).isPremium.get()) {
+            if (::adScreen.isInitialized) {
+                if (adScreen.isLoaded) {
+                    adScreen.show()
+                }
+            }
+        }
     }
 
     private fun handleNotificationIntent(intent: Intent?) {
@@ -345,14 +355,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         signInClient = GoogleSignIn.getClient(this, gso)
     }
 
-    private fun createNetworkViewModel(): NetworkViewModel {
+    private fun createGlobalViewModels() {
         val remoteRepository =
             (applicationContext as HandyApplication).remoteRepository
         networkViewModel = ViewModelProviders.of(
             this,
             NetworkVmFactory(remoteRepository)
         ).get(NetworkViewModel::class.java)
-        return networkViewModel
+
+        val billingRepository =
+            (applicationContext as HandyApplication).billingRepository
+        val billingDataModel = BillingDataModel(billingRepository, packageName)
+        billingViewModel =
+            ViewModelProviders.of(this, BillingVmFactory(billingDataModel, application)
+            ).get(BillingViewModel::class.java)
     }
 
     private fun loadTheme() {

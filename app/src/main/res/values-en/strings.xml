@@ -187,6 +187,7 @@
     <string name="catalog_received_notification_ch_name">Getting lists</string>
     <string name="commentary_field_hint">Commentary</string>
     <string name="premium_fragment_label">Premium subscription</string>
+    <string name="help2_0">If you do not receive notifications while the screen is off, check notification or energy settings of your device. Devices from certain manufacturers do not show notifications in some cases for energy-saving reasons if a user does not allow this explicitly.</string>
     <string name="help2_1">Press the bell icon to set notifications for this list up.</string>
     <string name="help2_2">There are two types of notifications available: time-based notifications and geofence notifications.</string>
     <string name="help2_3">Time-based ones are similar to alarms. You set the time and turn the switch on.</string>

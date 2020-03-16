@@ -6,10 +6,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="8dp">
 
         <TextView
             style="@style/helpTextViews"
+            android:paddingTop="0dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/help4_1" />
@@ -26,7 +28,6 @@
 
         <ImageView
             style="@style/helpImageViews"
-            android:layout_marginBottom="16dp"
             android:src="@drawable/help4_2" />
 
         <TextView
@@ -44,7 +45,6 @@
 
         <ImageView
             style="@style/helpImageViews"
-            android:layout_marginBottom="16dp"
             android:src="@drawable/help4_4" />
 
         <TextView
@@ -55,7 +55,6 @@
 
         <ImageView
             style="@style/helpImageViews"
-            android:layout_marginBottom="16dp"
             android:src="@drawable/help4_5" />
 
         <TextView
@@ -66,7 +65,6 @@
 
         <ImageView
             style="@style/helpImageViews"
-            android:layout_marginBottom="16dp"
             android:src="@drawable/help4_6" />
 
         <TextView
@@ -83,7 +81,6 @@
 
         <ImageView
             style="@style/helpImageViews"
-            android:layout_marginBottom="16dp"
             android:src="@drawable/help4_8" />
 
     </LinearLayout>

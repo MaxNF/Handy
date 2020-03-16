@@ -165,10 +165,10 @@ class CloudToLocalDownloader(
 
         return NotificationCompat.Builder(context,
             REMINDER_NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_shopping_cart)
+            .setSmallIcon(R.drawable.ic_notification_large)
             .setContentTitle(title)
             .setContentText(message)
-            .setColor(ContextCompat.getColor(context, R.color.notificationColor))
+            .setColor(ContextCompat.getColor(context, R.color.appLogoBackgroundColor))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_SOCIAL)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

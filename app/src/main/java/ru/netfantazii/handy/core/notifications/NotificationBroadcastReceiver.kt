@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -135,10 +136,10 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
 
         return NotificationCompat.Builder(context,
             REMINDER_NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_shopping_cart)
+            .setSmallIcon(R.drawable.ic_notification_large)
             .setContentTitle(title)
             .setContentText(message)
-            .setColor(ContextCompat.getColor(context, R.color.notificationColor))
+            .setColor(ContextCompat.getColor(context, R.color.appLogoBackgroundColor))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -179,8 +180,8 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
 
         return NotificationCompat.Builder(context,
             REMINDER_NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_shopping_cart)
-            .setColor(ContextCompat.getColor(context, R.color.notificationColor))
+            .setSmallIcon(R.drawable.ic_notification_large)
+            .setColor(ContextCompat.getColor(context, R.color.appLogoBackgroundColor))
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_MAX)
