@@ -253,4 +253,9 @@
     <string name="login_to_share_hint">sign in to enable share-function</string>
     <string name="sign_in_hint">Sign in with Google</string>
     <string name="sign_out_hint">Sign out</string>
+    <string name="rate_yes_button">Rate</string>
+    <string name="rate_later_button">Later</string>
+    <string name="rate_never_show_button">Never</string>
+    <string name="rate_app_title">Would you like to rate the app?</string>
+    <string name="rate_app_message">It seems that the app is useful for you. Would you like to rate it in the Google Play?</string>
 </resources>

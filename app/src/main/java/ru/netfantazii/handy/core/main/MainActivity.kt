@@ -45,12 +45,9 @@ import ru.netfantazii.handy.core.preferences.setTheme
 import ru.netfantazii.handy.core.premium.RedeemDialog
 import ru.netfantazii.handy.databinding.ActivityMainBinding
 import ru.netfantazii.handy.databinding.NavigationHeaderBinding
-import ru.netfantazii.handy.extensions.reloadActivity
-import ru.netfantazii.handy.extensions.showLongToast
-import ru.netfantazii.handy.extensions.showShortToast
 import ru.netfantazii.handy.data.PbOperations
 import ru.netfantazii.handy.data.User
-import ru.netfantazii.handy.extensions.defaultVibrationPattern
+import ru.netfantazii.handy.extensions.*
 
 //Проверить и сделать, чтобы будильники и геометки перерегистрировался при перезагрузки телефона!
 //проверить все цветовые схемы со всеми элементами (особенно напоминания, т.к. там подсветку заголовков не видно)
@@ -158,9 +155,9 @@ import ru.netfantazii.handy.extensions.defaultVibrationPattern
 //название подписки налазит на цену
 
 //todo для ver 1.1:
-//todo не скрывать иконку share, а сделать тусклой
-//todo вместо слогана сделать подсказку, что требуется вход, чтобы делиться списками (можно курсивом)
-//todo установить диалоговое окно со счетчиком, которое будет призывать оценить приложение в гугл плей (узнать как вытянуть эту инфу от гугла, оценено оно или нет)
+//не скрывать иконку share, а сделать тусклой
+//вместо слогана сделать подсказку, что требуется вход, чтобы делиться списками (можно курсивом)
+//установить диалоговое окно со счетчиком, которое будет призывать оценить приложение в гугл плей (узнать как вытянуть эту инфу от гугла, оценено оно или нет)
 //todo на сайте приложение выложить email адрес
 //todo счетчик продуктов у групп (без группы) уплывает на новую строку
 //todo увеличить нижний паддинг у списков, т.к. баннер + кнопка закрывают последнюю группу
@@ -243,6 +240,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         MobileAds.setRequestConfiguration(getTestDevicesConfiguration())
         MobileAds.initialize(this, "ca-app-pub-4546128231433208~4467489086")
         setUpInterstitialAds()
+
+        if ((application as HandyApplication).shouldRateDialogBeShown) {
+            RateDialog().show(supportFragmentManager, "rate_dialog")
+        }
     }
 
     private fun getTestDevicesConfiguration() = RequestConfiguration.Builder()
@@ -392,7 +393,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.navigation_rate_app -> {
-                navigateToPlayMarket()
+                navigateToPlayMarket(this)
             }
             R.id.navigation_recommend_app -> {
                 val googlePlayLink = getString(R.string.googlePlayLink)
@@ -419,12 +420,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun checkMenuItem(itemId: Int) {
         navigationView.setCheckedItem(itemId)
     }
-
-    private fun navigateToPlayMarket() {
-        startActivity(Intent(Intent.ACTION_VIEW,
-            Uri.parse("market://details?id=$packageName")))
-    }
-
 
     private fun registerNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

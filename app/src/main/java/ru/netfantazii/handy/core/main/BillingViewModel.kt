@@ -96,7 +96,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
                 errorStream.flatMap { t ->
                     clearPrices()
                     if (t is BillingException) {
-                        t.printStackTrace()
+//                        t.printStackTrace()
                         if (t.message == BillingException.SERVICE_DISCONNECTED) {
                             Log.d(TAG, "BILLING DISCONNECTED, CONNECTING AGAIN...")
                             Observable.timer(10, TimeUnit.SECONDS)

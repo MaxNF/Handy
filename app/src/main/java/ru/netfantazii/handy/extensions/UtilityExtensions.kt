@@ -11,6 +11,7 @@ import android.content.res.Resources
 import android.media.RingtoneManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
@@ -166,3 +167,8 @@ fun createFunnyVibrationPattern(): LongArray = longArrayOf(0L,
     112, 112, 112, 112, 225, 225,
     112, 112, 112, 112, 112, 112, 225,
     225, 112, 112, 225)
+
+fun navigateToPlayMarket(context: Context) {
+    context.startActivity(Intent(Intent.ACTION_VIEW,
+        Uri.parse("market://details?id=${context.packageName}")))
+}
