@@ -115,7 +115,7 @@ class CloudToLocalDownloader(
                 (groupContent[RemoteDbSchema.MESSAGE_GROUP_PRODUCTS] as List<String>).map { productName ->
                     Product(name = productName, catalogId = 0, groupId = 0)
                 }.toMutableList()
-
+            group.productList.reassignPositions()
             group
         }
         return groups
