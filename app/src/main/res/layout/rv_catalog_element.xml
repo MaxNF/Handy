@@ -77,9 +77,9 @@
                     android:id="@+id/ib_share"
                     style="@style/RvElementIconStyle"
                     android:background="?actionBarItemBackground"
-                    android:onClick="@{() -> handler.onCatalogShareClick(catalog)}"
+                    android:onClick="@{() -> user == null ? null : handler.onCatalogShareClick(catalog)}"
                     android:src="@drawable/ic_share"
-                    android:visibility="@{user == null ? View.GONE : View.VISIBLE}"
+                    android:alpha="@{user == null ? 0.2f : 1.0f}"
                     app:layout_constraintBottom_toBottomOf="@+id/ib_notification"
                     app:layout_constraintEnd_toStartOf="@+id/ib_notification"
                     app:layout_constraintTop_toTopOf="@+id/ib_notification" />

@@ -148,7 +148,7 @@
     <string name="notifications_fragment_label">Оповещения</string>
     <string name="progress_bar_text">Список \"%1$s\" отправляется</string>
     <string name="recipient_label">Получатель</string>
-    <string name="revoke_access_hint">Долгий тап, чтобы отвязать аккаунт</string>
+    <string name="revoke_access_hint">долгий тап, чтобы отвязать аккаунт</string>
     <string name="revoke_is_successful">Ваш аккаунт был успешно отвязан</string>
     <string name="secret_code_hint">Секретный код</string>
     <string name="secret_is_copied">Секретный код скопирован</string>
@@ -238,4 +238,7 @@
     <string name="delete_account_hint">Это действие удалит только список друзей и другие метаданные из облака</string>
     <string name="secret_code_preference_hint">Дайте этот код другому пользователю, чтобы он смог отправлять вам списки</string>
     <string name="your_secret_code_title">Ваш секретный код:</string>
+    <string name="login_to_share_hint">для отправки списков другим пользователям требуется вход</string>
+    <string name="sign_in_hint">Войти с Google</string>
+    <string name="sign_out_hint">Выйти</string>
 </resources>
