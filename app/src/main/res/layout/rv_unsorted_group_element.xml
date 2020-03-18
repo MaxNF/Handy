@@ -54,7 +54,7 @@
                 <TextView
                     android:id="@+id/tv_element_count"
                     style="@style/SecondaryText"
-                    android:layout_width="22dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="47dp"
                     android:text='@{String.valueOf(group.boughtProductCount) + "/" + String.valueOf(group.totalProductCount)}'
@@ -63,7 +63,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/view"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="1/2" />
+                    tools:text="1/20" />
 
                 <TextView
                     android:id="@+id/tv_element_name"
