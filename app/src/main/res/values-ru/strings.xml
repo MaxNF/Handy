@@ -68,7 +68,7 @@
     <string name="help1_10">Используйте долгий тап, чтобы сортировать список вручную. Вы можете сменить тему и другие установки в настройках.</string>
     <string name="welcome_button_text">Начать</string>
     <string name="rate_app_label">Оценить приложение</string>
-    <string name="unsorted_group_label">Мой список (по умолчанию)</string>
+    <string name="unsorted_group_label">Мой список (по умолч.)</string>
     <string name="app_subtitle">список покупок на каждый день</string>
     <string name="buy_all_title">Отметить все как купленные</string>
     <string name="cancel_all_title">Отметить все как не купленные</string>
