@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.core.groupsandproducts
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -155,7 +156,11 @@ class GroupsAndProductsAdapter(
         setHasStableIds(true)
     }
 
-    override fun getChildCount(groupPosition: Int): Int = groupList[groupPosition].productList.size
+    override fun getChildCount(groupPosition: Int): Int {
+        Log.d(TAG,
+            "getChildCount, groupName: ${groupList[groupPosition].name}, size: ${groupList[groupPosition].productList.size}")
+        return groupList[groupPosition].productList.size
+    }
 
     override fun getGroupItemViewType(groupPosition: Int): Int =
         when (groupList[groupPosition].groupType) {
@@ -190,7 +195,11 @@ class GroupsAndProductsAdapter(
         return ProductViewHolder(productBinding)
     }
 
-    override fun getGroupId(groupPosition: Int): Long = groupList[groupPosition].id
+    override fun getGroupId(groupPosition: Int): Long {
+        Log.d(TAG,
+            "getGroupId, LIST-POSITION = $groupPosition, DB-POSITION = ${groupList[groupPosition].position}  NAME = ${groupList[groupPosition].name}  ID = ${groupList[groupPosition].id} ")
+        return groupList[groupPosition].id
+    }
 
     override fun onBindChildViewHolder(
         holder: ProductViewHolder,
@@ -198,13 +207,20 @@ class GroupsAndProductsAdapter(
         childPosition: Int,
         viewType: Int
     ) {
-        holder.bindData(groupList[groupPosition],
-            groupList[groupPosition].productList[childPosition],
+        val group =
+            groupList[groupPosition]
+        val product = group.productList[childPosition]
+
+        holder.bindData(group,
+            product,
             productClickHandler)
     }
 
-    override fun getChildId(groupPosition: Int, childPosition: Int): Long =
-        groupList[groupPosition].productList[childPosition].id
+    override fun getChildId(groupPosition: Int, childPosition: Int): Long {
+        Log.d(TAG,
+            "getChildId: groupName: ${groupList[groupPosition].name}, childPos: $childPosition")
+        return groupList[groupPosition].productList[childPosition].id
+    }
 
     override fun getGroupCount(): Int = groupList.size
 

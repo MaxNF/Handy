@@ -235,6 +235,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
             val catalogToAdd = overlayBuffer.bufferObject as Catalog
             catalogList.add(catalogToAdd.position, catalogToAdd)
             catalogList.reassignPositions()
+            catalogList.remove(catalogToAdd)
             localRepository.addAndUpdateCatalogs(catalogToAdd, catalogList)
         } else {
             localRepository.updateCatalog(overlayBuffer.bufferObject as Catalog)

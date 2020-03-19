@@ -124,7 +124,7 @@ class GroupsAndProductsViewModel(
     }
 
     private fun onNewDataReceive(groups: MutableList<Group>) {
-        filteredGroupList = getFilteredGroupList(groupList)
+        filteredGroupList = getFilteredGroupList(groups)
         _newDataReceived.value = Event(Unit)
     }
 
@@ -358,9 +358,11 @@ class GroupsAndProductsViewModel(
     }
 
     private fun addNewGroupToRepo() {
+        Log.d(TAG, "addNewGroupToRepo: ")
         val groupToAdd = overlayBuffer.bufferObject as Group
         groupList.add(groupToAdd.position, groupToAdd)
         groupList.reassignPositions()
+        groupList.remove(groupToAdd)
         localRepository.addAndUpdateGroups(groupToAdd, groupList)
         _overlayEnterClicked.value = Event(Unit)
     }
@@ -377,8 +379,8 @@ class GroupsAndProductsViewModel(
             ?: throw UnsupportedOperationException("Group is not found")
         productList.add(product.position, product)
         productList.reassignPositions()
-        localRepository.addAndUpdateProducts(overlayBuffer.bufferObject as Product,
-            productList)
+        productList.remove(product)
+        localRepository.addAndUpdateProducts(product, productList)
         overlayBuffer.replaceObject(createNewProduct(currentCatalogId,
             product.groupId,
             getNewProductPosition(productList)))

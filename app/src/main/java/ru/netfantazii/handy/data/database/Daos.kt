@@ -13,6 +13,9 @@ abstract class BaseDao<T> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun add(t: T)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun addAll(list: List<T>)
+
     @Delete
     abstract fun remove(t: T)
 

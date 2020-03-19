@@ -166,6 +166,8 @@ import ru.netfantazii.handy.extensions.*
 //исправить стиль диалоговых окон (ужать)
 //на узких экранах счетчик кол-ва уплывает влево
 
+//настройка куда добавлять новые элементы имеет плохо читаемую кнопку на светлых темах
+
 const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"
 const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_channel"
 

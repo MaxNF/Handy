@@ -71,16 +71,20 @@ class LocalRepositoryImpl(db: ProductDatabase) :
     private val netInfoDao = db.getCatalogNetInfoDao()
 
     override fun addCatalog(catalog: Catalog) =
-        Completable.fromRunnable { catalogDao.addWithDefaultGroup(catalog) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.addWithDefaultGroup(catalog) }
+            .subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeCatalog(catalog: Catalog) =
-        Completable.fromRunnable { catalogDao.remove(catalog) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.remove(catalog) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun updateCatalog(catalog: Catalog) =
-        Completable.fromRunnable { catalogDao.update(catalog) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.update(catalog) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun updateAllCatalogs(catalogs: List<Catalog>) =
-        Completable.fromRunnable { catalogDao.updateAll(catalogs) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { catalogDao.updateAll(catalogs) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun removeAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>) =
         Completable.fromRunnable { catalogDao.removeAndUpdateAll(catalog, list) }.subscribeOn(
@@ -111,13 +115,16 @@ class LocalRepositoryImpl(db: ProductDatabase) :
         Completable.fromRunnable { groupDao.add(group) }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeGroup(group: Group) =
-        Completable.fromRunnable { groupDao.remove(group) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.remove(group) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun updateGroup(group: Group) =
-        Completable.fromRunnable { groupDao.update(group) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.update(group) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun updateAllGroups(groups: List<Group>) =
-        Completable.fromRunnable { groupDao.updateAll(groups) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.updateAll(groups) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun removeAndUpdateGroups(group: Group, list: List<Group>) =
         Completable.fromRunnable {
@@ -126,17 +133,17 @@ class LocalRepositoryImpl(db: ProductDatabase) :
         }.subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeAllGroups(groupList: List<Group>) =
-        Completable.fromRunnable { groupDao.removeAllGroups(groupList) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.removeAllGroups(groupList) }
+            .subscribeOn(Schedulers.io()).subscribe()!!
 
 
     override fun addAndUpdateGroups(group: Group, list: List<Group>) =
-        Completable.fromRunnable {
-            groupDao.addAndUpdateAll(group,
-                list)
-        }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.addAndUpdateAll(group, list) }
+            .subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun addGroupWithProducts(group: Group): Disposable =
-        Completable.fromRunnable { groupDao.addGroupWithProducts(group) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { groupDao.addGroupWithProducts(group) }
+            .subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun addGroupWithProductsAndUpdateAll(group: Group, list: List<Group>): Disposable =
         Completable.fromRunnable {
@@ -148,21 +155,26 @@ class LocalRepositoryImpl(db: ProductDatabase) :
         groupDao.getGroups(catalogId)
 
     override fun addProduct(product: Product) =
-        Completable.fromRunnable { productDao.add(product) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.add(product) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun removeProduct(product: Product) =
-        Completable.fromRunnable { productDao.remove(product) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.remove(product) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun updateProduct(product: Product) =
-        Completable.fromRunnable { productDao.update(product) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.update(product) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun updateProductWithDelay(product: Product, delayMillis: Long) =
-        Completable.fromRunnable { productDao.update(product) }.subscribeOn(Schedulers.io()).delaySubscription(
-            delayMillis,
-            TimeUnit.MILLISECONDS).subscribe()!!
+        Completable.fromRunnable { productDao.update(product) }.subscribeOn(Schedulers.io())
+            .delaySubscription(
+                delayMillis,
+                TimeUnit.MILLISECONDS).subscribe()!!
 
     override fun updateAllProducts(products: List<Product>) =
-        Completable.fromRunnable { productDao.updateAll(products) }.subscribeOn(Schedulers.io()).subscribe()!!
+        Completable.fromRunnable { productDao.updateAll(products) }.subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun removeAndUpdateProducts(product: Product, list: List<Product>) =
         Completable.fromRunnable { productDao.removeAndUpdateAll(product, list) }.subscribeOn(
@@ -182,7 +194,8 @@ class LocalRepositoryImpl(db: ProductDatabase) :
         geofenceDao.removeGeofenceById(id).subscribeOn(Schedulers.io()).subscribe()!!
 
     override fun removeAllGeofencesFromCatalog(catalogId: Long): Disposable =
-        geofenceDao.removeAllGeofencesFromCatalog(catalogId).subscribeOn(Schedulers.io()).subscribe()!!
+        geofenceDao.removeAllGeofencesFromCatalog(catalogId).subscribeOn(Schedulers.io())
+            .subscribe()!!
 
     override fun getCatalogAlarmTime(catalogId: Long): Observable<List<Calendar>> =
         catalogDao.getCatalogAlarmTime(catalogId)

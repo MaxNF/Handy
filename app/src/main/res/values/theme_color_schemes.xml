@@ -31,6 +31,11 @@
         <item name="cancelAllButtonColor">@color/cancelAllButtonColor</item>
         <item name="deleteAllButtonColor">@color/deleteAllButtonColor</item>
         <item name="fabIconTintColor">?attr/fabIconTintColor</item>
+
+
+        <item name="alertDialogTheme">@style/PreferenceDialogTheme</item>
+
+
     </style>
 
     <style name="BaseBlackTitles" parent="Base">
@@ -51,9 +56,13 @@
         <item name="android:buttonBarNegativeButtonStyle">@style/NegativeButtonBarStyle</item>
         <item name="android:buttonBarPositiveButtonStyle">@style/PositiveButtonBarStyle</item>
         <item name="android:buttonBarNeutralButtonStyle">@style/NeutralButtonBarStyle</item>
+        <item name="buttonBarButtonStyle">@style/BaseButtonBarStyle</item>
     </style>
 
+    <style name="PreferenceDialogTheme" parent="BaseDialogTheme"/>
+
     <style name="BaseButtonBarStyle">
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
         <item name="android:textSize">14sp</item>
         <item name="android:minWidth">60dp</item>
         <item name="android:padding">8dp</item>

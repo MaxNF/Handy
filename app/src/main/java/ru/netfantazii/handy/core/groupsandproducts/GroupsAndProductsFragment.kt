@@ -107,8 +107,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         val currentCatalogId = fragmentArgs.catalogId
         viewModel =
             ViewModelProviders.of(this,
-                GroupsAndProductsVmFactory(repository,
-                    currentCatalogId))
+                    GroupsAndProductsVmFactory(repository,
+                        currentCatalogId))
                 .get(GroupsAndProductsViewModel::class.java)
         networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
     }
@@ -162,7 +162,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         val owner = this
         with(viewModel) {
             newDataReceived.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { shouldHintBeShown ->
+                it.getContentIfNotHandled()?.let {
                     refreshRecyclerView()
                     Log.d(TAG, "subscribeToEvents: ")
                 }
@@ -231,7 +231,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             createProductClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showOverlay()
-                    if (viewModel.getGroupList().isNotEmpty() && viewModel.getGroupList()[0].groupType == GroupType.ALWAYS_ON_TOP) {
+                    if (viewModel.getGroupList()
+                            .isNotEmpty() && viewModel.getGroupList()[0].groupType == GroupType.ALWAYS_ON_TOP
+                    ) {
                         expandManager.expandGroup(0)
                         saveExpandState()
                     } // открываем ALWAYS_ON_TOP группу, если она видна на экране
@@ -341,7 +343,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         with(fab) {
 
             addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_recipe,
-                R.drawable.ic_fab_action_add_recipe)
+                    R.drawable.ic_fab_action_add_recipe)
                 .setFabImageTintColor(getThemeColor(context, ThemeColor.FAB_ICON_TINT))
                 .setLabel(getString(R.string.fab_create_recipe_action))
                 .setLabelClickable(true)
@@ -351,7 +353,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                 .create())
 
             addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_buy,
-                R.drawable.ic_fab_action_add_buy)
+                    R.drawable.ic_fab_action_add_buy)
                 .setFabImageTintColor(getThemeColor(context, ThemeColor.FAB_ICON_TINT))
                 .setLabel(getString(R.string.fab_create_buy_action))
                 .setLabelClickable(true)
@@ -381,8 +383,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     override fun createSnackbars(view: View) {
         val constraintLayout = view.findViewById<ConstraintLayout>(R.id.constraint_layout)
         productUndoSnackbar = Snackbar.make(constraintLayout,
-            getString(R.string.buy_undo_label),
-            Snackbar.LENGTH_LONG)
+                getString(R.string.buy_undo_label),
+                Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.undo_action)) { viewModel.undoProductRemoval() }
             .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
             .setBehavior(object : BaseTransientBottomBar.Behavior() {
@@ -390,8 +392,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             })
 
         groupUndoSnackbar = Snackbar.make(constraintLayout,
-            getString(R.string.recipe_undo_label),
-            Snackbar.LENGTH_LONG)
+                getString(R.string.recipe_undo_label),
+                Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.undo_action)) { viewModel.undoGroupRemoval() }
             .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
             .setBehavior(object : BaseTransientBottomBar.Behavior() {
