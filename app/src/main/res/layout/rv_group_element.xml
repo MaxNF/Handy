@@ -39,7 +39,7 @@
             android:id="@+id/container"
             style="@style/ListElementElevation_shape"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@{group.buyStatus == BuyStatus.BOUGHT ? @drawable/bg_group_bought : @drawable/bg_group_not_bought}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -52,8 +52,8 @@
                     android:id="@+id/ib_element_edit"
                     style="@style/RvElementIconStyle"
                     android:background="?actionBarItemBackground"
-                    android:src="@drawable/ic_edit"
                     android:onClick="@{() -> groupHandler.onGroupEditClick(group)}"
+                    android:src="@drawable/ic_edit"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/area_for_expand_click"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -62,9 +62,9 @@
                     android:id="@+id/iv_add_ingredient"
                     android:layout_width="60dp"
                     android:layout_height="0dp"
+                    android:background="?actionBarItemBackground"
                     android:onClick="@{() -> groupHandler.onGroupCreateProductClick(group)}"
                     android:scaleType="center"
-                    android:background="?actionBarItemBackground"
                     android:src="@drawable/ic_add_product_vector"
                     android:textColor="?attr/listTextColor"
                     app:layout_constraintBottom_toBottomOf="parent"

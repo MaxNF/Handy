@@ -23,6 +23,7 @@
         <item name="listIconsColor">@color/blackSemiTransparent80</item>
         <item name="listTextColor">@color/blackSemiTransparent80</item>
         <!--Other colors-->
+<!--        <item name="colorButtonNormal">?attr/colorAccent</item>--> //todo
         <item name="overlayBackgroundColor">@color/overlayColor</item>
         <item name="speedDialActionLabelBackground">@color/speedDialActionBackground</item>
         <item name="speedDialActionLabelColor">@color/speedDialActionColor</item>
@@ -49,9 +50,11 @@
     <style name="BaseDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="android:buttonBarNegativeButtonStyle">@style/NegativeButtonBarStyle</item>
         <item name="android:buttonBarPositiveButtonStyle">@style/PositiveButtonBarStyle</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/NeutralButtonBarStyle</item>
     </style>
 
     <style name="BaseButtonBarStyle">
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">?attr/toolbarElementColor</item>
     </style>
 
@@ -60,6 +63,8 @@
     </style>
 
     <style name="PositiveButtonBarStyle" parent="BaseButtonBarStyle" />
+
+    <style name="NeutralButtonBarStyle" parent="BaseButtonBarStyle" />
 
     <!--Main theme (Purple)-->
     <style name="Purple" parent="BaseWhiteTitles">

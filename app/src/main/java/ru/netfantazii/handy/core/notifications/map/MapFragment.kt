@@ -582,7 +582,7 @@ class GeofenceLimitDialog : DialogFragment() {
                 val navController = NavHostFragment.findNavController(this)
                 navController.navigate(R.id.premiumFragment)
                 this@GeofenceLimitDialog.dismiss()
-            } //todo добавить действие при выборе купить премиум
+            }
             .setNegativeButton(R.string.dialog_cancel, null)
             .create()
     }

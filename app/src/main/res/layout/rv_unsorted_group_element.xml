@@ -42,7 +42,7 @@
             android:id="@+id/container"
             style="@style/ListElementElevation_shape"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
             android:background="@{group.buyStatus == BuyStatus.BOUGHT ? @drawable/bg_group_bought : @drawable/bg_group_not_bought}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -56,7 +56,7 @@
                     style="@style/SecondaryText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="47dp"
+                    android:layout_marginEnd="48dp"
                     android:text='@{String.valueOf(group.boughtProductCount) + "/" + String.valueOf(group.totalProductCount)}'
                     android:textColor="?attr/listTextColor"
                     android:visibility="visible"
@@ -67,16 +67,19 @@
 
                 <TextView
                     android:id="@+id/tv_element_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/unsorted_group_label"
                     android:textAllCaps="false"
                     android:textColor="?attr/listTextColor"
                     android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_element_count"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="ASDASDASDASDASDASDASDASDASDssssssssssssssssssssss" />
 
                 <TextView
                     android:id="@+id/ingredient_description"
@@ -94,7 +97,7 @@
                 <View
                     android:id="@+id/view"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
                     android:background="@drawable/bg_group_ripple"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

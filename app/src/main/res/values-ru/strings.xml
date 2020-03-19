@@ -241,9 +241,9 @@
     <string name="login_to_share_hint">для отправки списков другим пользователям требуется вход</string>
     <string name="sign_in_hint">Войти с Google</string>
     <string name="sign_out_hint">Выйти</string>
-    <string name="rate_yes_button">Да, конечно!</string>
+    <string name="rate_yes_button">Да!</string>
     <string name="rate_later_button">Позже</string>
-    <string name="rate_never_show_button">Не показывать</string>
+    <string name="rate_never_show_button">Никогда</string>
     <string name="rate_app_title">Хотите оценить приложение?</string>
     <string name="rate_app_message">Кажется, приложение оказалось для вас полезным. Хотели бы вы оценить его в Google Play?</string>
 </resources>
