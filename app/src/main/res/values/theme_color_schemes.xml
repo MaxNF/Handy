@@ -13,6 +13,7 @@
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="colorPrimary">@android:color/transparent</item>
         <item name="colorAccent">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/loading_screen</item>
         <!--List elements-->
         <item name="catalogNormalColor">@color/catalogColor</item>
         <item name="catalogSwipeColor">@color/catalogSwipeColor</item>
