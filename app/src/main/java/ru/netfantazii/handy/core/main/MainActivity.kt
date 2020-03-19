@@ -163,8 +163,8 @@ import ru.netfantazii.handy.extensions.*
 //увеличить нижний паддинг у списков, т.к. баннер + кнопка закрывают последнюю группу
 //у присланных списков сортировка работает не правильно
 //заменить устаревшие скриншоты Google Play на более актуальные
-//todo исправить стиль диалоговых окон (ужать)
-//todo на узких экранах счетчик кол-ва уплывает влево
+//исправить стиль диалоговых окон (ужать)
+//на узких экранах счетчик кол-ва уплывает влево
 
 const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"
 const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_channel"

@@ -246,4 +246,5 @@
     <string name="rate_never_show_button">Никогда</string>
     <string name="rate_app_title">Хотите оценить приложение?</string>
     <string name="rate_app_message">Кажется, приложение оказалось для вас полезным. Хотели бы вы оценить его в Google Play?</string>
+    <string name="google_play_not_found">ОШИБКА: Google Play не найден</string>
 </resources>

@@ -13,7 +13,7 @@ import java.util.*
 class RateDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        return AlertDialog.Builder(activity, R.style.BaseDialogTheme)
+        return AlertDialog.Builder(requireContext(), R.style.BaseDialogTheme)
             .setIcon(R.drawable.ic_solid_star_dialog)
             .setTitle(R.string.rate_app_title)
             .setMessage(R.string.rate_app_message)
@@ -32,11 +32,7 @@ class RateDialog : DialogFragment() {
     }
 
     private fun rateLater() {
-        val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        sp.edit()
-            .putLong(Constants.FIRST_LAUNCH_DATE_KEY, Date().time)
-            .putInt(Constants.LAUNCH_COUNT_KEY, 0)
-            .apply()
+        // do nothing (сброс счетчика происходит в HandyApplication. Поведение кнопки получается таким же как и клик по свобдному месту вне диалогового окна)
     }
 
     private fun rateNever() {

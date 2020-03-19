@@ -3,10 +3,7 @@ package ru.netfantazii.handy.extensions
 import android.Manifest
 import android.app.Activity
 import android.app.PendingIntent
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.res.Resources
 import android.media.RingtoneManager
 import android.net.ConnectivityManager
@@ -169,6 +166,10 @@ fun createFunnyVibrationPattern(): LongArray = longArrayOf(0L,
     225, 112, 112, 225)
 
 fun navigateToPlayMarket(context: Context) {
-    context.startActivity(Intent(Intent.ACTION_VIEW,
-        Uri.parse("market://details?id=${context.packageName}")))
+    try {
+        context.startActivity(Intent(Intent.ACTION_VIEW,
+            Uri.parse("market://details?id=${context.packageName}")))
+    } catch (e: ActivityNotFoundException) {
+        showLongToast(context, context.getString(R.string.google_play_not_found))
+    }
 }

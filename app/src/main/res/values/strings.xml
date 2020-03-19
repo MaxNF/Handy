@@ -269,4 +269,5 @@
     <string name="rate_never_show_button">Never</string>
     <string name="rate_app_title">Would you like to rate the app?</string>
     <string name="rate_app_message">It seems that the app is useful for you. Would you like to rate it in the Google Play?</string>
+    <string name="google_play_not_found">ERROR: Google Play not found</string>
 </resources>

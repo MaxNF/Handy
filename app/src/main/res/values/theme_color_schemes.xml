@@ -23,7 +23,6 @@
         <item name="listIconsColor">@color/blackSemiTransparent80</item>
         <item name="listTextColor">@color/blackSemiTransparent80</item>
         <!--Other colors-->
-<!--        <item name="colorButtonNormal">?attr/colorAccent</item>--> //todo
         <item name="overlayBackgroundColor">@color/overlayColor</item>
         <item name="speedDialActionLabelBackground">@color/speedDialActionBackground</item>
         <item name="speedDialActionLabelColor">@color/speedDialActionColor</item>
@@ -55,6 +54,8 @@
 
     <style name="BaseButtonBarStyle">
         <item name="android:textSize">14sp</item>
+        <item name="android:minWidth">60dp</item>
+        <item name="android:padding">8dp</item>
         <item name="android:textColor">?attr/toolbarElementColor</item>
     </style>
 
