@@ -247,6 +247,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if ((application as HandyApplication).shouldRateDialogBeShown) {
             RateDialog().show(supportFragmentManager, "rate_dialog")
+            (application as HandyApplication).shouldRateDialogBeShown = false
         }
     }
 
