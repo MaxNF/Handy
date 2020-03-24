@@ -16,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.OverlayActions
+import ru.netfantazii.handy.core.main.MainActivity
 import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.extensions.showLongToast
 
@@ -27,6 +28,7 @@ class WelcomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
         overrideBackButton()
+        (activity as MainActivity).lockDrawerClosed()
     }
 
     override fun onCreateView(
@@ -48,6 +50,7 @@ class WelcomeFragment : Fragment() {
             navController.popBackStack()
             setPrefToDefault()
             setFirstLaunchToFalse()
+            (activity as MainActivity).unlockDrawer()
         }
     }
 

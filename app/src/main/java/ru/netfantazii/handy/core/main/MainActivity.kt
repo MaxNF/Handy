@@ -167,6 +167,7 @@ import ru.netfantazii.handy.extensions.*
 //на узких экранах счетчик кол-ва уплывает влево
 
 //настройка куда добавлять новые элементы имеет плохо читаемую кнопку на светлых темах
+//todo запретить выдвижное меню на экране приветствия
 
 const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"
 const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_channel"
@@ -205,7 +206,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
 
         drawerLayout = mainBinding.navigationDrawer
-//        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         navigationView = drawerLayout.findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
         setInitialMenuItemsVisibility(navigationView)
@@ -248,6 +248,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if ((application as HandyApplication).shouldRateDialogBeShown) {
             RateDialog().show(supportFragmentManager, "rate_dialog")
             (application as HandyApplication).shouldRateDialogBeShown = false
+        }
+    }
+
+    fun lockDrawerClosed() {
+        if (::drawerLayout.isInitialized) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        }
+    }
+
+    fun unlockDrawer() {
+        if (::drawerLayout.isInitialized) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         }
     }
 
@@ -389,7 +401,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun showWelcomeScreenIfNeeded() {
         if (isFirstLaunch()) {
-            navController.navigate(R.id.welcomeFragment)
+            if (navController.currentDestination?.id != R.id.welcomeFragment) {
+                navController.navigate(R.id.welcomeFragment)
+            }
         }
     }
 
