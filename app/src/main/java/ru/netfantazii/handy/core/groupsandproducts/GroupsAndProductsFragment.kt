@@ -94,8 +94,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        viewModel.groupExpandStates =
-            expandManager.savedState as RecyclerViewExpandableItemManager.SavedState
+        if (::expandManager.isInitialized) {
+            viewModel.groupExpandStates =
+                expandManager.savedState as RecyclerViewExpandableItemManager.SavedState
+        }
     }
 
     private fun setCatalogName() {
