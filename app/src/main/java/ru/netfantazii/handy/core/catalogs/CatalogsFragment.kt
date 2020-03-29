@@ -224,10 +224,12 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
     private fun enterCatalog(catalog: Catalog) {
         Log.d(TAG, "enterCatalog: ")
-        val direction =
-            CatalogsFragmentDirections.actionCatalogsFragmentToProductsFragment(catalog.name,
-                catalog.id, catalog.groupExpandStates)
-        navController.navigate(direction)
+        if (navController.currentDestination?.id == R.id.catalogs_fragment) {
+            val direction =
+                CatalogsFragmentDirections.actionCatalogsFragmentToProductsFragment(catalog.name,
+                    catalog.id, catalog.groupExpandStates)
+            navController.navigate(direction)
+        }
     }
 
     private fun openShareFragment(catalog: Catalog) {
