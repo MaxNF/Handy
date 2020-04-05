@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.repositories
 
+import android.util.Log
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -10,6 +11,8 @@ import ru.netfantazii.handy.data.*
 import ru.netfantazii.handy.data.database.*
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface LocalRepository {
     fun addCatalog(catalog: Catalog): Disposable
@@ -62,7 +65,8 @@ interface LocalRepository {
     fun getTotalGeofenceCount(): Single<Int>
 }
 
-class LocalRepositoryImpl(db: ProductDatabase) :
+@Singleton
+class LocalRepositoryImpl @Inject constructor(db: ProductDatabase) :
     LocalRepository {
     private val catalogDao = db.getCatalogDao()
     private val groupDao = db.getGroupDao()

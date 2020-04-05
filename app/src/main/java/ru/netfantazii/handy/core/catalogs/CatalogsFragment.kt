@@ -28,6 +28,7 @@ import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.databinding.CatalogsFragmentBinding
+import ru.netfantazii.handy.repositories.LocalRepository
 
 class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     private val TAG = "CatalogsFragment"

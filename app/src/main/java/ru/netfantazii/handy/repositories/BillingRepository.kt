@@ -2,6 +2,7 @@ package ru.netfantazii.handy.repositories
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import com.android.billingclient.api.*
 import com.google.firebase.functions.FirebaseFunctions
 import io.reactivex.Completable
@@ -10,8 +11,28 @@ import io.reactivex.Single
 import ru.netfantazii.handy.data.BillingException
 import ru.netfantazii.handy.data.database.CloudFunctions
 import ru.netfantazii.handy.data.database.TokenValidation
+import ru.netfantazii.handy.di.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class BillingRepository(val context: Context) {
+interface BillingRepository {
+    fun observePurchases(): Observable<Purchase>
+    fun maintainConnection(): Observable<Unit>
+    fun getSkuDetails(params: SkuDetailsParams): Single<List<SkuDetails>>
+    fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams): Completable
+    fun validatePurchase(sku: String, purchaseToken: String, packageName: String): Completable
+    fun queryCachedSubs(): List<Purchase>
+    fun queryCachedPurchases(): List<Purchase>
+    fun isBillingClientReady(): Boolean
+    /**
+     * Должен запускаться из UI потока.
+     * */
+    fun launchBillingFlow(activity: Activity, billingFlowParams: BillingFlowParams): BillingResult
+}
+
+@Singleton
+class BillingRepositoryImpl @Inject constructor(@ApplicationContext val context: Context) :
+    BillingRepository {
     private val firestoreHttpsEuWest1 =
         FirebaseFunctions.getInstance(CloudFunctions.REGION_EU_WEST1)
     private val billingClient: BillingClient by lazy {
@@ -35,7 +56,7 @@ class BillingRepository(val context: Context) {
     private var purchasedAction: ((List<Purchase>) -> Unit)? = null
     private var errorAction: ((Int) -> Unit)? = null
 
-    fun observePurchases(): Observable<Purchase> =
+    override fun observePurchases(): Observable<Purchase> =
         Observable.create<List<Purchase>> { emitter ->
             purchasedAction = { list -> emitter.onNext(list) }
             errorAction = { errorCode -> emitter.onError(BillingException(errorCode)) }
@@ -45,7 +66,7 @@ class BillingRepository(val context: Context) {
             }
         }.flatMapIterable { it }
 
-    fun maintainConnection() = Observable.create<Unit> { emitter ->
+    override fun maintainConnection() = Observable.create<Unit> { emitter ->
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 when (billingResult.responseCode) {
@@ -64,22 +85,23 @@ class BillingRepository(val context: Context) {
         })
     }
 
-    fun getSkuDetails(params: SkuDetailsParams) = Single.create<List<SkuDetails>> { emitter ->
-        billingClient.querySkuDetailsAsync(params
-        ) { billingResult, skuDetailsList ->
-            when (billingResult.responseCode) {
-                BillingClient.BillingResponseCode.OK -> {
-                    emitter.onSuccess(skuDetailsList)
-                }
-                else -> {
-                    emitter.onError(BillingException(billingResult.responseCode))
+    override fun getSkuDetails(params: SkuDetailsParams) =
+        Single.create<List<SkuDetails>> { emitter ->
+            billingClient.querySkuDetailsAsync(params
+            ) { billingResult, skuDetailsList ->
+                when (billingResult.responseCode) {
+                    BillingClient.BillingResponseCode.OK -> {
+                        emitter.onSuccess(skuDetailsList)
+                    }
+                    else -> {
+                        emitter.onError(BillingException(billingResult.responseCode))
+                    }
                 }
             }
         }
-    }
 
 
-    fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams) =
+    override fun acknowledgePurchase(acknowledgePurchaseParams: AcknowledgePurchaseParams) =
         Completable.create { emitter ->
             billingClient.acknowledgePurchase(acknowledgePurchaseParams) { billingResult ->
                 when (billingResult.responseCode) {
@@ -93,7 +115,7 @@ class BillingRepository(val context: Context) {
             }
         }
 
-    fun validatePurchase(sku: String, purchaseToken: String, packageName: String) =
+    override fun validatePurchase(sku: String, purchaseToken: String, packageName: String) =
         Completable.create { emitter ->
             val validationData = hashMapOf(
                 TokenValidation.SKU_ID_KEY to sku,
@@ -118,21 +140,24 @@ class BillingRepository(val context: Context) {
             }
         }
 
-    fun queryCachedSubs(): List<Purchase> =
+    override fun queryCachedSubs(): List<Purchase> =
         billingClient.queryPurchases(BillingClient.SkuType.SUBS).purchasesList?.toList()
             ?: listOf()
 
 
-    fun queryCachedPurchases() =
+    override fun queryCachedPurchases() =
         billingClient.queryPurchases(BillingClient.SkuType.INAPP).purchasesList?.toList()
             ?: listOf()
 
-    fun isBillingClientReady() = billingClient.isReady
+    override fun isBillingClientReady() = billingClient.isReady
 
     /**
      * Должен запускаться из UI потока.
      * */
-    fun launchBillingFlow(activity: Activity, billingFlowParams: BillingFlowParams): BillingResult {
+    override fun launchBillingFlow(
+        activity: Activity,
+        billingFlowParams: BillingFlowParams
+    ): BillingResult {
         return billingClient.launchBillingFlow(activity, billingFlowParams)
     }
 

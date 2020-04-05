@@ -10,10 +10,11 @@ import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.data.*
 import ru.netfantazii.handy.data.database.SkuList
 import ru.netfantazii.handy.repositories.BillingRepository
+import ru.netfantazii.handy.repositories.BillingRepositoryImpl
 import java.util.*
 
 class BillingDataModel(
-    private val billingRepository: BillingRepository,
+    private val billingRepositoryImpl: BillingRepository,
     private val packageName: String
 ) {
     private val subscribeScheduler = Schedulers.io()
@@ -21,7 +22,7 @@ class BillingDataModel(
 
 
     fun observePurchases(): Observable<ShopItem> =
-        billingRepository.observePurchases()
+        billingRepositoryImpl.observePurchases()
             .subscribeOn(subscribeScheduler)
             .flatMap { purchase ->
                 val shopItem = transformPurchaseToShopItem(purchase)
@@ -36,7 +37,7 @@ class BillingDataModel(
             }
 
     private fun validatePurchase(shopItem: ShopItem): Completable =
-        billingRepository.validatePurchase(shopItem.sku,
+        billingRepositoryImpl.validatePurchase(shopItem.sku,
             shopItem.purchaseToken,
             packageName)
 
@@ -44,12 +45,12 @@ class BillingDataModel(
         val params = AcknowledgePurchaseParams.newBuilder()
             .setPurchaseToken(shopItem.purchaseToken)
             .build()
-        return billingRepository.acknowledgePurchase(params)
+        return billingRepositoryImpl.acknowledgePurchase(params)
             .subscribeOn(Schedulers.io())
     }
 
     fun connectToBillingAndGetPrices(): Observable<List<BillingObject>> =
-        billingRepository.maintainConnection()
+        billingRepositoryImpl.maintainConnection()
             .subscribeOn(Schedulers.io())
             .retry(maxRetryCount)
             .flatMap {
@@ -82,7 +83,7 @@ class BillingDataModel(
     }
 
     private fun queryPurchaseForPrice(params: SkuDetailsParams) =
-        billingRepository.getSkuDetails(params)
+        billingRepositoryImpl.getSkuDetails(params)
             .map { skuDetailsList ->
                 skuDetailsList.map {
                     BillingObject(it, getBillingItemTypeFromSku(it.sku))
@@ -110,10 +111,10 @@ class BillingDataModel(
 
     private fun getMostValuablePurchasedItemFromCache(): ShopItem? {
         val activePurchases =
-            billingRepository.queryCachedPurchases()
+            billingRepositoryImpl.queryCachedPurchases()
                 .map { transformPurchaseToShopItem(it) }
         val activeSubs =
-            billingRepository.queryCachedSubs().map { transformPurchaseToShopItem(it) }
+            billingRepositoryImpl.queryCachedSubs().map { transformPurchaseToShopItem(it) }
         val activeShopItems = mutableListOf<ShopItem>().apply {
             addAll(activePurchases)
             addAll(activeSubs)
@@ -178,12 +179,12 @@ class BillingDataModel(
         }
     }
 
-    fun isBillingClientReady() = billingRepository.isBillingClientReady()
+    fun isBillingClientReady() = billingRepositoryImpl.isBillingClientReady()
 
     fun launchBillingFlow(activity: Activity, billingObject: BillingObject): BillingResult {
         val params = BillingFlowParams.newBuilder()
             .setSkuDetails(billingObject.skuDetails)
             .build()
-        return billingRepository.launchBillingFlow(activity, params)
+        return billingRepositoryImpl.launchBillingFlow(activity, params)
     }
 }

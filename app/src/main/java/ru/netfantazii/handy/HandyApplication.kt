@@ -3,35 +3,44 @@ package ru.netfantazii.handy
 import android.app.Application
 import android.util.Log
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.preference.PreferenceManager
-import ru.netfantazii.handy.core.preferences.FIRST_LAUNCH_KEY
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.repositories.RemoteRepository
 import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.data.Constants
-import ru.netfantazii.handy.data.ShopItem
+import ru.netfantazii.handy.di.AppComponent
+import ru.netfantazii.handy.di.DaggerAppComponent
 import ru.netfantazii.handy.extensions.getSortOrder
 import ru.netfantazii.handy.repositories.BillingRepository
 import java.util.*
+import javax.inject.Inject
 
 class HandyApplication : Application() {
     private val TAG = "HandyApplication"
-    val localRepository: LocalRepository
-        get() = ServiceLocator.provideLocalRepository(this)
-    val remoteRepository: RemoteRepository
-        get() = ServiceLocator.provideRemoteRepository()
-    val billingRepository: BillingRepository
-        get() = ServiceLocator.provideBillingRepository(this)
+    val appComponent: AppComponent by lazy {
+        initializeComponent()
+    }
+
+    @Inject
+    lateinit var localRepository: LocalRepository
+
+    @Inject
+    lateinit var remoteRepository: RemoteRepository
+
+    @Inject
+    lateinit var billingRepository: BillingRepository
 
     val isPremium = ObservableBoolean()
     var shouldRateDialogBeShown = false
 
     override fun onCreate() {
         super.onCreate()
+        appComponent.inject(this)
         loadSortOrderToMemory()
         saveLaunchCount()
     }
+
+    open fun initializeComponent() = DaggerAppComponent.factory().create(applicationContext)
 
     private fun loadSortOrderToMemory() {
         currentSortOrder = getSortOrder(this)

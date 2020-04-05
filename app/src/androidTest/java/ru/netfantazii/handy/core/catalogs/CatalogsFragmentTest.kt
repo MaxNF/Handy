@@ -14,7 +14,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import ru.netfantazii.handy.FakeLocalRepository
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.ServiceLocator
 import ru.netfantazii.handy.createFakeCatalog
 
 @MediumTest
@@ -47,12 +46,12 @@ class CatalogsFragmentTest {
     @Before
     fun initRepository() {
         repository = FakeLocalRepository()
-        ServiceLocator.localRepository = repository
+//        ServiceLocator.localRepository = repository
     }
 
     @After
     fun cleanupDb() {
-        ServiceLocator.resetLocalRepository()
+//        ServiceLocator.resetLocalRepository()
     }
 
     @Test

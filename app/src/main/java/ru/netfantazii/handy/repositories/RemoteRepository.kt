@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.repositories
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -15,6 +16,8 @@ import ru.netfantazii.handy.data.database.RemoteDbSchema
 import java.lang.UnsupportedOperationException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface RemoteRepository {
     fun sendCatalog(
@@ -36,7 +39,8 @@ interface RemoteRepository {
     fun reauthenticateInFirebase(credential: AuthCredential): Completable
 }
 
-class RemoteRepositoryImpl : RemoteRepository {
+@Singleton
+class RemoteRepositoryImpl @Inject constructor() : RemoteRepository {
     private val TAG = "RemoteRepositoryImpl"
     val TIMEOUT_TIME_SEC = 10L
 
