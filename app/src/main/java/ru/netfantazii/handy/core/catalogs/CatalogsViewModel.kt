@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.core.catalogs
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.*
@@ -12,12 +13,17 @@ import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.extensions.*
 import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
 import ru.netfantazii.handy.data.database.GeofenceEntity
+import ru.netfantazii.handy.di.ApplicationContext
 import ru.netfantazii.handy.repositories.LocalRepository
 import java.util.*
+import javax.inject.Inject
 
 
-class CatalogsViewModel(private val localRepository: LocalRepository, application: Application) :
-    AndroidViewModel(application),
+class CatalogsViewModel @Inject constructor(
+    private val localRepository: LocalRepository,
+    @ApplicationContext private val context: Context
+) :
+    ViewModel(),
     CatalogClickHandler, CatalogStorage, OverlayActions, DialogClickHandler {
     private val TAG = "CatalogsViewModel"
     private var catalogList = mutableListOf<Catalog>()
@@ -133,8 +139,8 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
             realRemove(previousObject!!)
         }
         cancelAssociatedNotifications(catalog.id)
-        unregisterAllGeofences(getApplication(), catalog.id, null)
-        unregisterAlarm(getApplication(), catalog.id)
+        unregisterAllGeofences(context, catalog.id, null)
+        unregisterAlarm(context, catalog.id)
     }
 
     private fun realRemove(catalog: Catalog) {
@@ -183,7 +189,7 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMapCompletable { geofenceEntities ->
-                    registerGeofences(getApplication(),
+                    registerGeofences(context,
                         geofenceEntities,
                         catalog.id,
                         catalog.name,
@@ -204,18 +210,18 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
 
     private fun cancelAssociatedNotifications(catalogId: Long) {
         val notificationId = catalogId.toInt()
-        NotificationManagerCompat.from(getApplication()).cancel(notificationId)
+        NotificationManagerCompat.from(context).cancel(notificationId)
     }
 
     private fun restoreCatalogAlarm(catalog: Catalog, alarmTime: Calendar) {
-        registerAlarm(getApplication(), catalog.id,
+        registerAlarm(context, catalog.id,
             catalog.name,
             catalog.groupExpandStates,
             alarmTime)
     }
 
     private fun restoreCatalogGeofences(catalog: Catalog, geofenceEntities: List<GeofenceEntity>) {
-        registerGeofences(getApplication(),
+        registerGeofences(context,
             geofenceEntities,
             catalog.id,
             catalog.name,
@@ -273,16 +279,16 @@ class CatalogsViewModel(private val localRepository: LocalRepository, applicatio
     }
 }
 
-class CatalogsVmFactory(
-    private val localRepository: LocalRepository,
-    private val application: Application
-) :
-    ViewModelProvider.AndroidViewModelFactory(application) {
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CatalogsViewModel::class.java)) {
-            return CatalogsViewModel(localRepository, application) as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel class")
-    }
-}
+//class CatalogsVmFactory(
+//    private val localRepository: LocalRepository,
+//    private val application: Application
+//) :
+//    ViewModelProvider.AndroidViewModelFactory(application) {
+//
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(CatalogsViewModel::class.java)) {
+//            return CatalogsViewModel(localRepository, application) as T
+//        }
+//        throw IllegalArgumentException("Wrong ViewModel class")
+//    }
+//}

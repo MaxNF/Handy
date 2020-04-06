@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.core.groupsandproducts
 
+import android.content.Context
 import android.graphics.drawable.NinePatchDrawable
 import android.os.Bundle
 import android.util.Log
@@ -34,19 +35,25 @@ import ru.netfantazii.handy.data.GroupType
 import ru.netfantazii.handy.extensions.dpToPx
 import ru.netfantazii.handy.data.User
 import ru.netfantazii.handy.databinding.ProductsFragmentBinding
+import ru.netfantazii.handy.di.ViewModelFactory
+import ru.netfantazii.handy.di.components.GroupsAndProductsComponent
 import java.lang.UnsupportedOperationException
+import javax.inject.Inject
 
 class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     private val TAG = "GroupsAndProducts"
 
     private val fragmentArgs: GroupsAndProductsFragmentArgs by navArgs()
 
+    private lateinit var component: GroupsAndProductsComponent
+    @Inject
+    lateinit var factory: ViewModelFactory
+
     private lateinit var viewModel: GroupsAndProductsViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var expandManager: RecyclerViewExpandableItemManager
     private lateinit var productUndoSnackbar: Snackbar
     private lateinit var groupUndoSnackbar: Snackbar
-    private lateinit var hint: View
     private lateinit var shareMenuButton: MenuItem
     private val shareButtonCallback = object :
         Observable.OnPropertyChangedCallback() {
@@ -56,6 +63,14 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         }
     }
     private lateinit var networkViewModel: NetworkViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        component =
+            (context.applicationContext as HandyApplication).appComponent.groupsAndProductsComponent()
+                .create()
+        component.inject(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,13 +120,11 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     }
 
     override fun createViewModels() {
-        val repository = (requireContext().applicationContext as HandyApplication).localRepository
         val currentCatalogId = fragmentArgs.catalogId
         viewModel =
-            ViewModelProviders.of(this,
-                    GroupsAndProductsVmFactory(repository,
-                        currentCatalogId))
+            ViewModelProviders.of(this, factory)
                 .get(GroupsAndProductsViewModel::class.java)
+        viewModel.initialize(currentCatalogId)
         networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
     }
 
@@ -345,7 +358,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         with(fab) {
 
             addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_recipe,
-                    R.drawable.ic_fab_action_add_recipe)
+                R.drawable.ic_fab_action_add_recipe)
                 .setFabImageTintColor(getThemeColor(context, ThemeColor.FAB_ICON_TINT))
                 .setLabel(getString(R.string.fab_create_recipe_action))
                 .setLabelClickable(true)
@@ -355,7 +368,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                 .create())
 
             addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_buy,
-                    R.drawable.ic_fab_action_add_buy)
+                R.drawable.ic_fab_action_add_buy)
                 .setFabImageTintColor(getThemeColor(context, ThemeColor.FAB_ICON_TINT))
                 .setLabel(getString(R.string.fab_create_buy_action))
                 .setLabelClickable(true)
@@ -385,8 +398,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     override fun createSnackbars(view: View) {
         val constraintLayout = view.findViewById<ConstraintLayout>(R.id.constraint_layout)
         productUndoSnackbar = Snackbar.make(constraintLayout,
-                getString(R.string.buy_undo_label),
-                Snackbar.LENGTH_LONG)
+            getString(R.string.buy_undo_label),
+            Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.undo_action)) { viewModel.undoProductRemoval() }
             .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
             .setBehavior(object : BaseTransientBottomBar.Behavior() {
@@ -394,8 +407,8 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             })
 
         groupUndoSnackbar = Snackbar.make(constraintLayout,
-                getString(R.string.recipe_undo_label),
-                Snackbar.LENGTH_LONG)
+            getString(R.string.recipe_undo_label),
+            Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.undo_action)) { viewModel.undoGroupRemoval() }
             .setActionTextColor(getThemeColor(context!!, ThemeColor.SNACK_BAR_ACTION_COLOR))
             .setBehavior(object : BaseTransientBottomBar.Behavior() {

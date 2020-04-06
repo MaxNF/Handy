@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.core.catalogs
 
+import android.content.Context
 import android.graphics.drawable.NinePatchDrawable
 import android.os.Bundle
 import android.util.Log
@@ -23,19 +24,32 @@ import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.BaseFragment
-import ru.netfantazii.handy.core.main.BillingViewModel
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.databinding.CatalogsFragmentBinding
-import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.di.ViewModelFactory
+import ru.netfantazii.handy.di.components.CatalogsComponent
+import javax.inject.Inject
 
 class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     private val TAG = "CatalogsFragment"
 
+    private lateinit var component: CatalogsComponent
+    @Inject
+    lateinit var factory: ViewModelFactory
+
     private lateinit var viewModel: CatalogsViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var undoSnackbar: Snackbar
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        component =
+            (context.applicationContext as HandyApplication).appComponent.catalogsComponent()
+                .create()
+        component.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,11 +62,10 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     }
 
     override fun createViewModels() {
-        val repository = (requireContext().applicationContext as HandyApplication).localRepository
         viewModel =
             ViewModelProviders.of(
                 this,
-                CatalogsVmFactory(repository, activity!!.application)
+                factory
             ).get(CatalogsViewModel::class.java)
     }
 

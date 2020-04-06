@@ -15,13 +15,17 @@ import ru.netfantazii.handy.data.*
 import ru.netfantazii.handy.extensions.*
 import java.lang.UnsupportedOperationException
 import java.util.NoSuchElementException
+import javax.inject.Inject
 
-class GroupsAndProductsViewModel(
-    private val localRepository: LocalRepository,
-    private val currentCatalogId: Long
+class GroupsAndProductsViewModel @Inject constructor(
+    private val localRepository: LocalRepository
 ) : ViewModel(),
     GroupClickHandler, ProductClickHandler, GroupStorage, OverlayActions, DialogClickHandler {
     private val TAG = "GroupsAndProductsViewMo"
+
+    private var isInitialized = false
+    private var currentCatalogId: Long = 0L
+
     private var groupList = mutableListOf<Group>()
         set(groups) {
             field = groups
@@ -111,8 +115,11 @@ class GroupsAndProductsViewModel(
     private val _buyAllClicked = MutableLiveData<Event<Unit>>()
     val buyAllClicked: LiveData<Event<Unit>> = _buyAllClicked
 
-    init {
-        subscribeToGroupChanges()
+    fun initialize(currentCatalogId: Long) {
+        if (!isInitialized) {
+            this.currentCatalogId = currentCatalogId
+            subscribeToGroupChanges()
+        }
     }
 
     private fun subscribeToGroupChanges() {
@@ -492,6 +499,7 @@ class GroupsAndProductsViewModel(
     }
 }
 
+/*
 class GroupsAndProductsVmFactory(
     private val localRepository: LocalRepository,
     private val currentCatalogId: Long
@@ -504,4 +512,4 @@ class GroupsAndProductsVmFactory(
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }
-}
+}*/
