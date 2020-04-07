@@ -14,11 +14,12 @@ import ru.netfantazii.handy.extensions.*
 import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
 import ru.netfantazii.handy.data.database.GeofenceEntity
 import ru.netfantazii.handy.di.ApplicationContext
+import ru.netfantazii.handy.di.FragmentScope
 import ru.netfantazii.handy.repositories.LocalRepository
 import java.util.*
 import javax.inject.Inject
 
-
+@FragmentScope
 class CatalogsViewModel @Inject constructor(
     private val localRepository: LocalRepository,
     @ApplicationContext private val context: Context
@@ -91,6 +92,7 @@ class CatalogsViewModel @Inject constructor(
 
 
     init {
+        Log.d(TAG, "CREATED: ")
         subscribeToCatalogsChanges()
     }
 
@@ -279,16 +281,16 @@ class CatalogsViewModel @Inject constructor(
     }
 }
 
-//class CatalogsVmFactory(
-//    private val localRepository: LocalRepository,
-//    private val application: Application
-//) :
-//    ViewModelProvider.AndroidViewModelFactory(application) {
-//
-//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(CatalogsViewModel::class.java)) {
-//            return CatalogsViewModel(localRepository, application) as T
-//        }
-//        throw IllegalArgumentException("Wrong ViewModel class")
-//    }
-//}
+class CatalogsVmFactory(
+    private val localRepository: LocalRepository,
+    private val application: Application
+) :
+    ViewModelProvider.Factory {
+
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(CatalogsViewModel::class.java)) {
+            return CatalogsViewModel(localRepository, application) as T
+        }
+        throw IllegalArgumentException("Wrong ViewModel class")
+    }
+}

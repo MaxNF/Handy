@@ -27,8 +27,10 @@ import ru.netfantazii.handy.data.User
 import ru.netfantazii.handy.data.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.RemoteRepository
 import java.lang.UnsupportedOperationException
+import javax.inject.Inject
 
-class NetworkViewModel(private val remoteRepository: RemoteRepository) : ViewModel(),
+class NetworkViewModel @Inject constructor(private val remoteRepository: RemoteRepository) :
+    ViewModel(),
     ContactsStorage, DialogClickHandler, ContactsClickHandler {
     private val TAG = "NetworkViewModel"
 

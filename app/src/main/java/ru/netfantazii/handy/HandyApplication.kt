@@ -21,15 +21,6 @@ class HandyApplication : Application() {
         initializeComponent()
     }
 
-    @Inject
-    lateinit var localRepository: LocalRepository
-
-    @Inject
-    lateinit var remoteRepository: RemoteRepository
-
-    @Inject
-    lateinit var billingRepository: BillingRepository
-
     val isPremium = ObservableBoolean()
     var shouldRateDialogBeShown = false
 
@@ -40,7 +31,7 @@ class HandyApplication : Application() {
         saveLaunchCount()
     }
 
-    open fun initializeComponent() = DaggerAppComponent.factory().create(applicationContext)
+    open fun initializeComponent() = DaggerAppComponent.factory().create(applicationContext, packageName)
 
     private fun loadSortOrderToMemory() {
         currentSortOrder = getSortOrder(this)

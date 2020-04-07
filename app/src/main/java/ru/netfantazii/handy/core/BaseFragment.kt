@@ -15,15 +15,18 @@ import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.doWithDelay
 import ru.netfantazii.handy.extensions.fadeIn
 import ru.netfantazii.handy.extensions.fadeOut
+import javax.inject.Inject
 
-open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView.ViewHolder>> : Fragment() {
+open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView.ViewHolder>> :
+    Fragment() {
     private lateinit var hint: View
 
-    protected lateinit var adapter : Adapter
+    @Inject
+    lateinit var adapter: Adapter
+
     protected lateinit var dragManager: RecyclerViewDragDropManager
     protected val allLiveDataList = mutableListOf<LiveData<*>>()
     protected lateinit var navController: NavController
-//    private lateinit var adBanner: AdView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +91,7 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
     protected fun disableDragAndDrop() {
         dragManager.setInitiateOnLongPress(false)
     }
+
     protected fun enableDragAndDrop() {
         // перед включением drag режима нужна задержка, т.к. иначе иногда возникает баг с
         // анимацией после отмены свайпа
@@ -101,9 +105,11 @@ open abstract class BaseFragment<Adapter : RecyclerView.Adapter<out RecyclerView
     protected fun showHint() {
         hint.fadeIn()
     }
+
     protected fun hideHint() {
         hint.fadeOut()
     }
+
     protected fun refreshRecyclerView() {
         adapter.notifyDataSetChanged()
     }

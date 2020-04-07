@@ -20,6 +20,7 @@ import ru.netfantazii.handy.data.Group
 import ru.netfantazii.handy.data.GroupType
 import ru.netfantazii.handy.data.Product
 import java.lang.UnsupportedOperationException
+import javax.inject.Inject
 
 interface ProductClickHandler {
     fun onProductClick(group: Group, product: Product)
@@ -139,7 +140,7 @@ class ProductViewHolder(private val productBinding: RvProductElementBinding) :
     }
 }
 
-class GroupsAndProductsAdapter(
+class GroupsAndProductsAdapter @Inject constructor(
     private val groupClickHandler: GroupClickHandler,
     private val productClickHandler: ProductClickHandler,
     private val groupStorage: GroupStorage,

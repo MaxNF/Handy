@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.di.viewmodelsmodules
+package ru.netfantazii.handy.di.modules.groupsandproducts
 
 import androidx.lifecycle.ViewModel
 import dagger.Binds

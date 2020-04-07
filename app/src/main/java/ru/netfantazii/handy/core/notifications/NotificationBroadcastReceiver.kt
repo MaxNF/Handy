@@ -22,9 +22,11 @@ import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.core.main.REMINDER_NOTIFICATION_CHANNEL_ID
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.data.CatalogNotificationContent
+import ru.netfantazii.handy.di.components.NotificationComponent
 import ru.netfantazii.handy.extensions.*
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 const val ALARM_INTENT_ACTION = "ru.netfantazii.handy.ALARM_GOES_OFF"
 const val GEOFENCE_INTENT_ACTION = "ru.netfantazii.handy.GEOFENCE_IS_CROSSED"
@@ -44,18 +46,24 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     private var catalogId: Long = 0L
     private var catalogName: String? = null
     private var groupExpandState: RecyclerViewExpandableItemManager.SavedState? = null
+
+    private lateinit var component: NotificationComponent
+    @Inject
     lateinit var localRepository: LocalRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         this.context = context
+        component =
+            (context.applicationContext as HandyApplication).appComponent.notificationComponent()
+                .create()
+        component.inject(this)
+
         Log.d(TAG, "onReceive: ${intent.action}")
         if (intent.action == CANCEL_NOTIFICATION_ACTION) {
             val notificationId = intent.getIntExtra(BUNDLE_NOTIFICATION_ID_KEY, -1)
             cancelNotification(notificationId)
             return
         }
-
-        localRepository = (context.applicationContext as HandyApplication).localRepository
 
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             reregisterAllGeofencesAndAlarms(false)

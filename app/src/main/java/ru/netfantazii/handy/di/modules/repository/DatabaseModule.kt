@@ -1,4 +1,4 @@
-package ru.netfantazii.handy.di.module
+package ru.netfantazii.handy.di.modules.repository
 
 import android.content.Context
 import androidx.room.Room

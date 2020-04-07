@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.core.notifications.alarm
 
 import android.app.Application
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import android.widget.DatePicker
@@ -12,18 +13,23 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.core.Event
+import ru.netfantazii.handy.di.ApplicationContext
 import ru.netfantazii.handy.extensions.registerAlarm
 import ru.netfantazii.handy.extensions.unregisterAlarm
 import java.util.*
+import javax.inject.Inject
 
-class AlarmViewModel(
-    application: Application,
-    private val localRepository: LocalRepository,
-    private val currentCatalogId: Long,
-    private val catalogName: String,
-    private val expandStates: RecyclerViewExpandableItemManager.SavedState
+class AlarmViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val localRepository: LocalRepository
 ) :
-    AndroidViewModel(application) {
+    ViewModel() {
+
+    private var isInitialized = false
+    private var currentCatalogId: Long = 0
+    private lateinit var catalogName: String
+    private lateinit var expandStates: RecyclerViewExpandableItemManager.SavedState
+
     private val TAG = "AlarmViewModel"
     private val disposables: CompositeDisposable = CompositeDisposable()
     private var time: Calendar? = null
@@ -38,9 +44,23 @@ class AlarmViewModel(
     val newDataReceived: LiveData<Event<Calendar?>> = _newDataReceived
 
     init {
-        Log.d(TAG, "init: catalogId: $currentCatalogId, catalogName: $catalogName")
+        Log.d(TAG, "ALARM VIEW MODEL CREATED")
+    }
+
+    fun initialize(
+        currentCatalogId: Long,
+        catalogName: String,
+        expandStates: RecyclerViewExpandableItemManager.SavedState
+    ) {
+        if (!isInitialized) {
+            this.currentCatalogId = currentCatalogId
+            this.catalogName = catalogName
+            this.expandStates = expandStates
+            subscribeToAlarmChanges()
+            isInitialized = true
+            Log.d(TAG, "init: catalogId: $currentCatalogId, catalogName: $catalogName")
+        }
         switchStatus.set(false)
-        subscribeToAlarmChanges()
     }
 
     private fun subscribeToAlarmChanges() {
@@ -86,13 +106,13 @@ class AlarmViewModel(
     private fun applyAlarm(calendar: Calendar) {
         Log.d(TAG, "registerAlarm: ")
         localRepository.addCatalogAlarmTime(currentCatalogId, calendar)
-        registerAlarm(getApplication(), currentCatalogId, catalogName, expandStates, calendar)
+        registerAlarm(context, currentCatalogId, catalogName, expandStates, calendar)
     }
 
     private fun cancelAlarm() {
         Log.d(TAG, "unregisterAlarm: ")
         localRepository.removeCatalogAlarmTime(currentCatalogId)
-        unregisterAlarm(getApplication(), currentCatalogId)
+        unregisterAlarm(context, currentCatalogId)
     }
 
     override fun onCleared() {
@@ -103,20 +123,17 @@ class AlarmViewModel(
 
 class AlarmVmFactory(
     private val application: Application,
-    private val localRepository: LocalRepository,
-    private val catalogId: Long,
-    private val catalogName: String,
-    private val expandStates: RecyclerViewExpandableItemManager.SavedState
+    private val localRepository: LocalRepository
+//    private val catalogId: Long,
+//    private val catalogName: String,
+//    private val expandStates: RecyclerViewExpandableItemManager.SavedState
 ) :
     ViewModelProvider.AndroidViewModelFactory(application) {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AlarmViewModel::class.java)) {
             return AlarmViewModel(application,
-                localRepository,
-                catalogId,
-                catalogName,
-                expandStates) as T
+                localRepository) as T
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }

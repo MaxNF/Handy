@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.core.notifications.alarm
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -20,14 +21,35 @@ import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_ID_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_NAME_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_EXPAND_STATE_KEY
 import ru.netfantazii.handy.databinding.AlarmFragmentBinding
+import ru.netfantazii.handy.di.ViewModelFactory
+import ru.netfantazii.handy.di.components.AlarmComponent
+import ru.netfantazii.handy.di.components.NotificationComponent
+import ru.netfantazii.handy.di.modules.alarm.AlarmProvideModule
+import ru.netfantazii.handy.di.modules.alarm.AlarmViewModelModule
+import ru.netfantazii.handy.repositories.LocalRepository
 import java.util.*
+import javax.inject.Inject
 
 class AlarmFragment : Fragment() {
+
+    private lateinit var component: AlarmComponent
+//    @Inject
+//    lateinit var factory: ViewModelFactory
+    @Inject
     lateinit var viewModel: AlarmViewModel
+
     lateinit var datePicker: DatePicker
     lateinit var timePicker: TimePicker
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private val TAG = "AlarmFragment"
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        component =
+            (context.applicationContext as HandyApplication).appComponent.alarmComponent()
+                .create(AlarmProvideModule(this))
+        component.inject(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,22 +57,17 @@ class AlarmFragment : Fragment() {
     }
 
     private fun createViewModel() {
-        val repository = (requireContext().applicationContext as HandyApplication).localRepository
         val currentCatalogId = arguments!!.getLong(BUNDLE_CATALOG_ID_KEY)
         val catalogName = arguments!!.getString(BUNDLE_CATALOG_NAME_KEY)!!
         val groupExpandState =
             arguments!!.getParcelable<RecyclerViewExpandableItemManager.SavedState>(
                 BUNDLE_EXPAND_STATE_KEY)!!
 
-        viewModel =
-            ViewModelProviders.of(this,
-                AlarmVmFactory(
-                    activity!!.application,
-                    repository,
-                    currentCatalogId,
-                    catalogName,
-                    groupExpandState))
-                .get(AlarmViewModel::class.java)
+//        viewModel =
+//            ViewModelProviders.of(this,
+//                factory)
+//                .get(AlarmViewModel::class.java)
+        viewModel.initialize(currentCatalogId, catalogName, groupExpandState)
     }
 
     override fun onCreateView(
@@ -82,7 +99,7 @@ class AlarmFragment : Fragment() {
     }
 
     private fun subscribeToEvents() {
-        viewModel.newDataReceived.observe(this, androidx.lifecycle.Observer {
+        viewModel.newDataReceived.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             it.getContentIfNotHandled()?.let { calendar ->
                 val year = calendar.get(Calendar.YEAR)
                 val month = calendar.get(Calendar.MONTH)

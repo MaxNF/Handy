@@ -11,13 +11,16 @@ import ru.netfantazii.handy.data.Contact
 import ru.netfantazii.handy.data.Group
 import ru.netfantazii.handy.data.database.RemoteDbSchema
 import ru.netfantazii.handy.repositories.LocalRepository
+import javax.inject.Inject
 
-class ShareViewModel(
-    private val catalogId: Long,
-    val catalogName: String,
-    val totalProducts: String,
+class ShareViewModel @Inject constructor(
     private val localRepository: LocalRepository
 ) : ViewModel() {
+
+    private var isInitialized = false
+    private var catalogId: Long = 0
+    lateinit var catalogName: String
+    lateinit var totalProducts: String
 
     private val _sendClicked = MutableLiveData<Event<Map<String, Any>>>()
     val sendClicked: LiveData<Event<Map<String, Any>>> = _sendClicked
@@ -30,8 +33,14 @@ class ShareViewModel(
     private lateinit var parsedGroups: List<Map<String, Any>>
     var comment: String = ""
 
-    init {
-        getCatalogContent()
+    fun initialize(catalogId: Long, catalogName: String, totalProducts: String) {
+        if (!isInitialized) {
+            this.catalogId = catalogId
+            this.catalogName = catalogName
+            this.totalProducts = totalProducts
+            getCatalogContent()
+            isInitialized = true
+        }
     }
 
     private fun getCatalogContent() {
@@ -66,6 +75,7 @@ class ShareViewModel(
     }
 }
 
+/*
 class ShareVmFactory(
     private val catalogId: Long,
     private val catalogName: String,
@@ -82,4 +92,4 @@ class ShareVmFactory(
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }
-}
+}*/

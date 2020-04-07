@@ -2,22 +2,26 @@ package ru.netfantazii.handy.core.main
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.android.billingclient.api.BillingClient
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.data.*
+import ru.netfantazii.handy.di.ApplicationContext
 import java.util.concurrent.TimeUnit
-import kotlin.math.log
+import javax.inject.Inject
 
-class BillingViewModel(application: Application, private val billingDataModel: BillingDataModel) :
-    AndroidViewModel(application) {
+class BillingViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val billingDataModel: BillingDataModel
+) :
+    ViewModel() {
     private val TAG = "BillingViewModel"
 
     var oneMonthBillingObject: BillingObject? = null
@@ -65,7 +69,7 @@ class BillingViewModel(application: Application, private val billingDataModel: B
 
     private fun setPremiumStatus(shopItem: ShopItem?) {
         premiumStatus.set(shopItem)
-        getApplication<HandyApplication>().isPremium.set(shopItem != null)
+        (context as HandyApplication).isPremium.set(shopItem != null)
     }
 
     private fun observePurchases() {

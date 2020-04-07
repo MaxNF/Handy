@@ -119,6 +119,7 @@ class GroupsAndProductsViewModel @Inject constructor(
         if (!isInitialized) {
             this.currentCatalogId = currentCatalogId
             subscribeToGroupChanges()
+            isInitialized = true
         }
     }
 

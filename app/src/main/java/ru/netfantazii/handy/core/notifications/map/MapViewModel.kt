@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.core.notifications.map
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.databinding.ObservableField
@@ -20,18 +21,23 @@ import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.extensions.*
 import ru.netfantazii.handy.data.database.GeofenceEntity
 import ru.netfantazii.handy.data.GeofenceLimitException
+import ru.netfantazii.handy.di.ApplicationContext
+import javax.inject.Inject
 import kotlin.collections.Map
 
-class MapViewModel(
+class MapViewModel @Inject constructor(
     private val localRepository: LocalRepository,
-    private val currentCatalogId: Long,
-    private val catalogName: String,
-    private val groupExpandStates: RecyclerViewExpandableItemManager.SavedState,
-    application: Application
-) : AndroidViewModel(application) {
+    @ApplicationContext private val context: Context
+) : ViewModel() {
+
+
+    private var isInitialized = false
+    private var currentCatalogId: Long = 0
+    private lateinit var catalogName: String
+    private lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
 
     private val geofenceAppLimit
-        get() = if (getApplication<HandyApplication>().isPremium.get()) 100 else 1
+        get() = if ((context as HandyApplication).isPremium.get()) 100 else 1
     private val TAG = "MapViewModel"
 
     var circleMap = mapOf<Long, Circle>()
@@ -81,8 +87,18 @@ class MapViewModel(
     val geofenceLimitForFreeVersionReached: LiveData<Event<Unit>> =
         _geofenceLimitForFreeVersionReached
 
-    init {
-        subscribeToGeofencesChanges()
+    fun initialize(
+        currentCatalogId: Long,
+        catalogName: String,
+        groupExpandStates: RecyclerViewExpandableItemManager.SavedState
+    ) {
+        if (!isInitialized) {
+            this.currentCatalogId = currentCatalogId
+            this.catalogName = catalogName
+            this.groupExpandStates = groupExpandStates
+            subscribeToGeofencesChanges()
+            isInitialized = true
+        }
     }
 
     private fun refreshSeekBarValueField(value: Int) {
@@ -139,7 +155,7 @@ class MapViewModel(
                 // пытаемся зарегистрировать геозону, если ошибка, то удаляем геозону из бд
                 .flatMap { (geofenceId, geofenceCount) ->
                     geofence.id = geofenceId
-                    registerGeofences(getApplication(),
+                    registerGeofences(context,
                         listOf(geofence),
                         currentCatalogId,
                         catalogName,
@@ -152,7 +168,6 @@ class MapViewModel(
                         }
                 }.subscribe({ geofenceCount ->
                     // если все прошло успешно, то показываем тост с оставшимся лимитом геозон
-                    val context = getApplication<HandyApplication>()
                     Toast.makeText(context,
                         context.getString(R.string.geofence_success,
                             geofenceAppLimit - (geofenceCount + 1),
@@ -166,12 +181,12 @@ class MapViewModel(
                             _geofenceLimitForFreeVersionReached.value = Event(Unit)
                         }
                         it is ApiException && it.message == GEOFENCE_UNAVAILABLE_ERROR_MESSAGE -> {
-                            showLongToast(getApplication(),
-                                getApplication<Application>().getString(R.string.geofence_api_error))
+                            showLongToast(context,
+                                context.getString(R.string.geofence_api_error))
                         }
                         else -> {
-                            showLongToast(getApplication(),
-                                getApplication<Application>().getString(R.string.adding_geofence_failed))
+                            showLongToast(context,
+                                context.getString(R.string.adding_geofence_failed))
                         }
                     }
                 }))
@@ -179,8 +194,7 @@ class MapViewModel(
 
     fun onCircleClick(geofenceId: Long) {
         localRepository.removeGeofenceById(geofenceId)
-        unregisterGeofence(getApplication(), geofenceId) {
-            val context = getApplication<HandyApplication>()
+        unregisterGeofence(context, geofenceId) {
             Toast.makeText(context,
                 context.getString(R.string.geofence_unreg_success),
                 Toast.LENGTH_SHORT).show()
@@ -189,7 +203,7 @@ class MapViewModel(
 
     fun onClearAllClick() {
         localRepository.removeAllGeofencesFromCatalog(currentCatalogId)
-        unregisterAllGeofences(getApplication(), currentCatalogId) { context ->
+        unregisterAllGeofences(context, currentCatalogId) { context ->
             Toast.makeText(context,
                 context.getString(R.string.all_geofences_unreg_success),
                 Toast.LENGTH_SHORT).show()
@@ -209,6 +223,7 @@ class MapViewModel(
     }
 }
 
+/*
 class MapVmFactory(
     private val localRepository: LocalRepository,
     private val catalogId: Long,
@@ -229,4 +244,4 @@ class MapVmFactory(
         }
         throw IllegalArgumentException("Wrong ViewModel class")
     }
-}
+}*/

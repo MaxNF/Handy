@@ -148,7 +148,6 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true)
         guardManager.isEnabled = true
 
-        adapter = GroupsAndProductsAdapter(viewModel, viewModel, viewModel, expandManager)
         var wrappedAdapter = expandManager.createWrappedAdapter(adapter)
         wrappedAdapter = dragManager.createWrappedAdapter(wrappedAdapter)
         wrappedAdapter = swipeManager.createWrappedAdapter(wrappedAdapter)

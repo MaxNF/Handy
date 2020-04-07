@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.core.main
 
 import android.app.Activity
+import android.util.Log
 import com.android.billingclient.api.*
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -9,17 +10,19 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.data.*
 import ru.netfantazii.handy.data.database.SkuList
+import ru.netfantazii.handy.di.PackageName
 import ru.netfantazii.handy.repositories.BillingRepository
 import ru.netfantazii.handy.repositories.BillingRepositoryImpl
 import java.util.*
+import javax.inject.Inject
 
-class BillingDataModel(
+class BillingDataModel @Inject constructor(
     private val billingRepositoryImpl: BillingRepository,
-    private val packageName: String
+    @PackageName private val packageName: String
 ) {
+    private val TAG = "BillingDataModel"
     private val subscribeScheduler = Schedulers.io()
     private val maxRetryCount = 10L
-
 
     fun observePurchases(): Observable<ShopItem> =
         billingRepositoryImpl.observePurchases()

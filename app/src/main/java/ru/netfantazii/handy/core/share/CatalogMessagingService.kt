@@ -17,18 +17,22 @@ import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.repositories.RemoteRepository
 import java.util.concurrent.CountDownLatch
+import javax.inject.Inject
 
 class CatalogMessagingService : FirebaseMessagingService() {
     private val preferenceTokenKey = "prev_token"
     private val TAG = "CatalogMessagingService"
     private lateinit var downloader: CloudToLocalDownloader
-    private lateinit var remoteRepository: RemoteRepository
-    private lateinit var localRepository: LocalRepository
+
+    @Inject
+    lateinit var remoteRepository: RemoteRepository
+    @Inject
+    lateinit var localRepository: LocalRepository
 
     override fun onCreate() {
         super.onCreate()
-        remoteRepository = (application as HandyApplication).remoteRepository
-        localRepository = (application as HandyApplication).localRepository
+        (applicationContext as HandyApplication).appComponent.notificationComponent().create()
+            .inject(this)
         downloader = CloudToLocalDownloader(localRepository, remoteRepository, applicationContext)
     }
 

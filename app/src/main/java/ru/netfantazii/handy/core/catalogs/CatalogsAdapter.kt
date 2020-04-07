@@ -13,10 +13,13 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder
 import ru.netfantazii.handy.R
+import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.databinding.RvCatalogElementBinding
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.User
+import ru.netfantazii.handy.di.FragmentScope
 import java.lang.UnsupportedOperationException
+import javax.inject.Inject
 
 interface CatalogClickHandler {
     /**
@@ -82,10 +85,11 @@ class CatalogViewHolder(private val catalogBinding: RvCatalogElementBinding) :
     }
 }
 
-class CatalogsAdapter(
+@FragmentScope
+class CatalogsAdapter @Inject constructor(
     private val catalogClickHandler: CatalogClickHandler,
     private val catalogStorage: CatalogStorage,
-    private val user: ObservableField<User?>
+    private val networkViewModel: NetworkViewModel
 ) :
     RecyclerView.Adapter<CatalogViewHolder>(),
     DraggableItemAdapter<CatalogViewHolder>, SwipeableItemAdapter<CatalogViewHolder> {
@@ -110,7 +114,7 @@ class CatalogsAdapter(
     override fun getItemId(position: Int): Long = catalogList[position].id
 
     override fun onBindViewHolder(holder: CatalogViewHolder, position: Int) {
-        holder.bindData(catalogList[position], catalogClickHandler, user)
+        holder.bindData(catalogList[position], catalogClickHandler, networkViewModel.user)
     }
 
     override fun onGetItemDraggableRange(

@@ -2,6 +2,7 @@ package ru.netfantazii.handy.core.notifications.map
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.database.Cursor
 import android.database.MatrixCursor
 import androidx.core.graphics.drawable.*
@@ -44,14 +45,22 @@ import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_ID_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_CATALOG_NAME_KEY
 import ru.netfantazii.handy.core.notifications.BUNDLE_EXPAND_STATE_KEY
 import ru.netfantazii.handy.databinding.MapFragmentBinding
+import ru.netfantazii.handy.di.ViewModelFactory
+import ru.netfantazii.handy.di.components.MapComponent
+import ru.netfantazii.handy.di.components.NotificationComponent
 import java.lang.IllegalArgumentException
+import javax.inject.Inject
 
 class MapFragment : Fragment(), Session.SearchListener,
     SuggestSession.SuggestListener {
     private val TAG = "MapFragment"
 
     private lateinit var mapView: MapView
+    private lateinit var component: MapComponent
+    @Inject
+    lateinit var factory: ViewModelFactory
     private lateinit var viewModel: MapViewModel
+
     private lateinit var mapObjects: MapObjectCollection
     private lateinit var locationManager: LocationManager
     private lateinit var geofenceIconProvider: ImageProvider
@@ -91,6 +100,13 @@ class MapFragment : Fragment(), Session.SearchListener,
 
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        component =
+            (context.applicationContext as HandyApplication).appComponent.mapComponent().create()
+        component.inject(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate: ")
@@ -119,8 +135,6 @@ class MapFragment : Fragment(), Session.SearchListener,
     }
 
     private fun createViewModel() {
-        val repository =
-            (requireContext().applicationContext as HandyApplication).localRepository
         val currentCatalogId = arguments!!.getLong(BUNDLE_CATALOG_ID_KEY)
         val catalogName = arguments!!.getString(BUNDLE_CATALOG_NAME_KEY)!!
         val groupExpandState =
@@ -129,13 +143,9 @@ class MapFragment : Fragment(), Session.SearchListener,
 
         viewModel =
             ViewModelProviders.of(this,
-                MapVmFactory(
-                    repository,
-                    currentCatalogId,
-                    catalogName,
-                    groupExpandState,
-                    activity!!.application))
+                factory)
                 .get(MapViewModel::class.java)
+        viewModel.initialize(currentCatalogId, catalogName, groupExpandState)
     }
 
     override fun onCreateView(
@@ -235,7 +245,7 @@ class MapFragment : Fragment(), Session.SearchListener,
     }
 
     private fun subscribeToEvents() {
-        viewModel.newDataReceived.observe(this, Observer {
+        viewModel.newDataReceived.observe(viewLifecycleOwner, Observer {
             // нужно перерисовать геозоны после поворота экрана, поэтому не обнуляем контент Ивента
             val diffSearcher =
                 CircleDiffSearcher(
@@ -254,14 +264,14 @@ class MapFragment : Fragment(), Session.SearchListener,
         })
         allLiveDataList.add(viewModel.newDataReceived)
 
-        viewModel.findMyLocationClicked.observe(this, Observer {
+        viewModel.findMyLocationClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
                 moveToUserLocation()
             }
         })
         allLiveDataList.add(viewModel.findMyLocationClicked)
 
-        viewModel.newSearchValueReceived.observe(this, Observer {
+        viewModel.newSearchValueReceived.observe(viewLifecycleOwner, Observer {
             if (showSuggestions) {
                 requestSuggest(it.peekContent())
             }
@@ -269,7 +279,7 @@ class MapFragment : Fragment(), Session.SearchListener,
         })
         allLiveDataList.add(viewModel.newSearchValueReceived)
 
-        viewModel.geofenceLimitForFreeVersionReached.observe(this, Observer {
+        viewModel.geofenceLimitForFreeVersionReached.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
                 showGeofenceLimitForFreeVersionDialog()
             }
@@ -277,14 +287,14 @@ class MapFragment : Fragment(), Session.SearchListener,
 
         mapView.map.addInputListener(mapInputListener)
 
-        viewModel.zoomInClicked.observe(this, Observer {
+        viewModel.zoomInClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
                 zoomIn()
             }
         })
         allLiveDataList.add(viewModel.zoomInClicked)
 
-        viewModel.zoomOutClicked.observe(this, Observer {
+        viewModel.zoomOutClicked.observe(viewLifecycleOwner, Observer {
             it.getContentIfNotHandled()?.let {
                 zoomOut()
             }

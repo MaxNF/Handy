@@ -11,6 +11,7 @@ import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.extensions.*
 import java.lang.UnsupportedOperationException
+import javax.inject.Inject
 
 const val ALARM_TO_ALARM_INTENT_ACTION = "alarm_to_alarm"
 const val ALARM_TO_PRODUCTS_INTENT_ACTION = "alarm_to_products"
@@ -18,12 +19,15 @@ const val GEOFENCE_TO_PRODUCTS_INTENT_ACTION = "geofence_to_products"
 const val BUNDLE_DESTINATION_ID_KEY = "destination_id"
 
 class NotificationService : IntentService("notification_service") {
-    private lateinit var localRepository: LocalRepository
+
+    @Inject
+    lateinit var localRepository: LocalRepository
+
     private lateinit var arguments: Bundle
 
     override fun onCreate() {
         super.onCreate()
-        localRepository = (application as HandyApplication).localRepository
+        (application as HandyApplication).appComponent.notificationComponent().create().inject(this)
     }
 
     /**

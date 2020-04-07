@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -21,25 +20,26 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
 import com.leinardi.android.speeddial.SpeedDialView
 import ru.netfantazii.handy.HandyApplication
-import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.core.BaseFragment
 import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.databinding.CatalogsFragmentBinding
-import ru.netfantazii.handy.di.ViewModelFactory
 import ru.netfantazii.handy.di.components.CatalogsComponent
+import ru.netfantazii.handy.di.modules.catalogs.CatalogsProvideModule
 import javax.inject.Inject
 
 class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     private val TAG = "CatalogsFragment"
 
     private lateinit var component: CatalogsComponent
-    @Inject
-    lateinit var factory: ViewModelFactory
+//    @Inject
+//    lateinit var factory: ViewModelFactory
 
-    private lateinit var viewModel: CatalogsViewModel
+    @Inject
+    lateinit var viewModel: CatalogsViewModel
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var undoSnackbar: Snackbar
 
@@ -47,7 +47,7 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         super.onAttach(context)
         component =
             (context.applicationContext as HandyApplication).appComponent.catalogsComponent()
-                .create()
+                .create(CatalogsProvideModule(this))
         component.inject(this)
     }
 
@@ -62,11 +62,11 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     }
 
     override fun createViewModels() {
-        viewModel =
-            ViewModelProviders.of(
-                this,
-                factory
-            ).get(CatalogsViewModel::class.java)
+//        viewModel =
+//            ViewModelProviders.of(
+//                this,
+//                factory
+//            ).get(CatalogsViewModel::class.java)
     }
 
     override fun createRecyclerView(view: View) {
@@ -86,8 +86,9 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
 
         val swipeManager = RecyclerViewSwipeManager()
 
-        val networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
-        adapter = CatalogsAdapter(viewModel, viewModel, networkViewModel.user)
+//        val networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
+//        adapter = CatalogsAdapter(viewModel, viewModel, networkViewModel.user)
+
         var wrappedAdapter = dragManager.createWrappedAdapter(adapter)
         wrappedAdapter = swipeManager.createWrappedAdapter(wrappedAdapter)
 
