@@ -8,7 +8,7 @@ import ru.netfantazii.handy.core.share.ShareViewModel
 import ru.netfantazii.handy.di.ViewModelKey
 
 @Module
-abstract class ShareViewModelModule {
+abstract class ShareBindModule {
 
     @Binds
     @IntoMap

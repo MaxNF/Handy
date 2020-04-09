@@ -13,6 +13,11 @@ import android.os.Build
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import com.yandex.mapkit.geometry.Point
 import ru.netfantazii.handy.R
@@ -172,4 +177,13 @@ fun navigateToPlayMarket(context: Context) {
     } catch (e: ActivityNotFoundException) {
         showLongToast(context, context.getString(R.string.google_play_not_found))
     }
+}
+
+
+inline fun <reified T : ViewModel> FragmentActivity.injectViewModel(factory: ViewModelProvider.Factory): T {
+    return ViewModelProviders.of(this, factory)[T::class.java]
+}
+
+inline fun <reified T : ViewModel> Fragment.injectViewModel(factory: ViewModelProvider.Factory): T {
+    return ViewModelProviders.of(this, factory)[T::class.java]
 }

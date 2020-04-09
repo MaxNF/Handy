@@ -8,10 +8,10 @@ import ru.netfantazii.handy.core.notifications.alarm.AlarmViewModel
 import ru.netfantazii.handy.di.ViewModelKey
 
 @Module
-abstract class AlarmViewModelModule {
+abstract class AlarmBindModule {
 
-//    @Binds
-//    @IntoMap
-//    @ViewModelKey(AlarmViewModel::class)
-//    abstract fun bindAlarmViewModel(viewModel: AlarmViewModel): ViewModel
+    @Binds
+    @IntoMap
+    @ViewModelKey(AlarmViewModel::class)
+    abstract fun bindAlarmViewModel(viewModel: AlarmViewModel): ViewModel
 }

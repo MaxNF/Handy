@@ -10,17 +10,18 @@ import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.data.Contact
 import ru.netfantazii.handy.data.Group
 import ru.netfantazii.handy.data.database.RemoteDbSchema
+import ru.netfantazii.handy.di.CatalogId
+import ru.netfantazii.handy.di.CatalogName
+import ru.netfantazii.handy.di.TotalProducts
 import ru.netfantazii.handy.repositories.LocalRepository
 import javax.inject.Inject
 
 class ShareViewModel @Inject constructor(
+    @CatalogId private val catalogId: Long,
+    @CatalogName val catalogName: String,
+    @TotalProducts val totalProducts: String,
     private val localRepository: LocalRepository
 ) : ViewModel() {
-
-    private var isInitialized = false
-    private var catalogId: Long = 0
-    lateinit var catalogName: String
-    lateinit var totalProducts: String
 
     private val _sendClicked = MutableLiveData<Event<Map<String, Any>>>()
     val sendClicked: LiveData<Event<Map<String, Any>>> = _sendClicked
@@ -33,14 +34,8 @@ class ShareViewModel @Inject constructor(
     private lateinit var parsedGroups: List<Map<String, Any>>
     var comment: String = ""
 
-    fun initialize(catalogId: Long, catalogName: String, totalProducts: String) {
-        if (!isInitialized) {
-            this.catalogId = catalogId
-            this.catalogName = catalogName
-            this.totalProducts = totalProducts
-            getCatalogContent()
-            isInitialized = true
-        }
+    init {
+        getCatalogContent()
     }
 
     private fun getCatalogContent() {
@@ -75,21 +70,20 @@ class ShareViewModel @Inject constructor(
     }
 }
 
-/*
-class ShareVmFactory(
-    private val catalogId: Long,
-    private val catalogName: String,
-    private val totalProducts: String,
-    private val localRepository: LocalRepository
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ShareViewModel::class.java)) {
-            return ShareViewModel(catalogId,
-                catalogName,
-                totalProducts,
-                localRepository) as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel class")
-    }
-}*/
+//class ShareVmFactory(
+//    private val catalogId: Long,
+//    private val catalogName: String,
+//    private val totalProducts: String,
+//    private val localRepository: LocalRepository
+//) : ViewModelProvider.Factory {
+//
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(ShareViewModel::class.java)) {
+//            return ShareViewModel(catalogId,
+//                catalogName,
+//                totalProducts,
+//                localRepository) as T
+//        }
+//        throw IllegalArgumentException("Wrong ViewModel class")
+//    }
+//}

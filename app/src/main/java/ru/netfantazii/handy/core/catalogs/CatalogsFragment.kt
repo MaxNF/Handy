@@ -1,23 +1,14 @@
 package ru.netfantazii.handy.core.catalogs
 
-import android.content.Context
-import android.graphics.drawable.NinePatchDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
-import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
 import com.leinardi.android.speeddial.SpeedDialView
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.R
@@ -26,29 +17,29 @@ import ru.netfantazii.handy.core.preferences.ThemeColor
 import ru.netfantazii.handy.core.preferences.getThemeColor
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.databinding.CatalogsFragmentBinding
+import ru.netfantazii.handy.di.ViewModelFactory
 import ru.netfantazii.handy.di.components.CatalogsComponent
 import ru.netfantazii.handy.di.modules.catalogs.CatalogsProvideModule
+import ru.netfantazii.handy.extensions.injectViewModel
 import javax.inject.Inject
 
 class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     private val TAG = "CatalogsFragment"
 
     private lateinit var component: CatalogsComponent
-//    @Inject
-//    lateinit var factory: ViewModelFactory
+    @Inject
+    lateinit var factory: ViewModelFactory
 
     @Inject
     lateinit var viewModel: CatalogsViewModel
-
-    private lateinit var recyclerView: RecyclerView
     private lateinit var undoSnackbar: Snackbar
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun injectDependencies() {
         component =
-            (context.applicationContext as HandyApplication).appComponent.catalogsComponent()
+            (context!!.applicationContext as HandyApplication).appComponent.catalogsComponent()
                 .create(CatalogsProvideModule(this))
         component.inject(this)
+        viewModel = injectViewModel(factory)
     }
 
     override fun onCreateView(
@@ -61,47 +52,8 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         return binding.root
     }
 
-    override fun createViewModels() {
-//        viewModel =
-//            ViewModelProviders.of(
-//                this,
-//                factory
-//            ).get(CatalogsViewModel::class.java)
-    }
-
     override fun createRecyclerView(view: View) {
-        dragManager = RecyclerViewDragDropManager()
-        dragManager.setInitiateOnMove(false)
-        dragManager.setInitiateOnTouch(false)
-        dragManager.setInitiateOnLongPress(true)
-        dragManager.draggingItemAlpha = 0.9f
-        dragManager.draggingItemScale = 1.07f
-        dragManager.dragStartItemAnimationDuration = 250
-        dragManager.setDraggingItemShadowDrawable(ContextCompat.getDrawable(requireContext(),
-            R.drawable.shadow) as NinePatchDrawable)
-
-        val guardManager = RecyclerViewTouchActionGuardManager()
-        guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true)
-        guardManager.isEnabled = true
-
-        val swipeManager = RecyclerViewSwipeManager()
-
-//        val networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
-//        adapter = CatalogsAdapter(viewModel, viewModel, networkViewModel.user)
-
-        var wrappedAdapter = dragManager.createWrappedAdapter(adapter)
-        wrappedAdapter = swipeManager.createWrappedAdapter(wrappedAdapter)
-
-        recyclerView = view.findViewById(R.id.rv_list)
-        val layoutManager = LinearLayoutManager(context)
-
-        val animator = DraggableItemAnimator()
-        animator.supportsChangeAnimations = false
-
-        recyclerView.itemAnimator = animator
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = wrappedAdapter
-
+        super.createRecyclerView(view)
         guardManager.attachRecyclerView(recyclerView)
         swipeManager.attachRecyclerView(recyclerView)
         dragManager.attachRecyclerView(recyclerView)

@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.core.share
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import ru.netfantazii.handy.HandyApplication
 import ru.netfantazii.handy.core.main.NetworkViewModel
@@ -22,6 +20,7 @@ import ru.netfantazii.handy.extensions.showLongToast
 import ru.netfantazii.handy.data.Contact
 import ru.netfantazii.handy.di.ViewModelFactory
 import ru.netfantazii.handy.di.components.ShareComponent
+import ru.netfantazii.handy.extensions.injectViewModel
 import javax.inject.Inject
 
 class ShareFragment : Fragment() {
@@ -32,34 +31,24 @@ class ShareFragment : Fragment() {
 
     private val fragmentArgs: ShareFragmentArgs by navArgs()
     private val allLiveDataList = mutableListOf<LiveData<*>>()
-
     private lateinit var shareViewModel: ShareViewModel
     private lateinit var networkViewModel: NetworkViewModel
     private lateinit var spinner: Spinner
     private lateinit var spinnerAdapter: ArrayAdapter<Contact>
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        component =
-            (context.applicationContext as HandyApplication).appComponent.shareComponent().create()
-        component.inject(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
-        createViewModels()
     }
 
-    private fun createViewModels() {
-        shareViewModel =
-            ViewModelProviders.of(
-                this,
-                factory
-            ).get(ShareViewModel::class.java)
-        networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
-        shareViewModel.initialize(fragmentArgs.catalogId,
-            fragmentArgs.catalogName,
-            fragmentArgs.totalProducts)
+    private fun injectDependencies() {
+        component =
+            (context!!.applicationContext as HandyApplication).appComponent.shareComponent()
+                .create(fragmentArgs.catalogId,
+                    fragmentArgs.catalogName, fragmentArgs.totalProducts)
+        component.inject(this)
+        shareViewModel = injectViewModel(factory)
+        networkViewModel = activity!!.injectViewModel(factory)
     }
 
     override fun onCreateView(
@@ -72,7 +61,6 @@ class ShareFragment : Fragment() {
         binding.networkViewModel = networkViewModel
         spinner = binding.recipientSpinner
         binding.spinner = spinner
-
         return binding.root
     }
 

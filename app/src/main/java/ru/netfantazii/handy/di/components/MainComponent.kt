@@ -2,10 +2,10 @@ package ru.netfantazii.handy.di.components
 
 import dagger.Subcomponent
 import ru.netfantazii.handy.core.main.MainActivity
-import ru.netfantazii.handy.di.modules.billing.BillingViewModelModule
-import ru.netfantazii.handy.di.modules.network.NetworkViewModelModule
+import ru.netfantazii.handy.di.modules.billing.BillingBindModule
+import ru.netfantazii.handy.di.modules.network.NetworkBindModule
 
-@Subcomponent(modules = [BillingViewModelModule::class, NetworkViewModelModule::class])
+@Subcomponent(modules = [BillingBindModule::class, NetworkBindModule::class])
 interface MainComponent {
 
     @Subcomponent.Factory

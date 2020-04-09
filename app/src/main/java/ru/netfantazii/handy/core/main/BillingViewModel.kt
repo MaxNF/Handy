@@ -184,16 +184,16 @@ class BillingViewModel @Inject constructor(
     }
 }
 
-class BillingVmFactory(
-    private val billingDataModel: BillingDataModel,
-    private val application: Application
-) :
-    ViewModelProvider.AndroidViewModelFactory(application) {
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(BillingViewModel::class.java)) {
-            return BillingViewModel(application, billingDataModel) as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel class")
-    }
-}
+//class BillingVmFactory(
+//    private val billingDataModel: BillingDataModel,
+//    private val application: Application
+//) :
+//    ViewModelProvider.AndroidViewModelFactory(application) {
+//
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(BillingViewModel::class.java)) {
+//            return BillingViewModel(application, billingDataModel) as T
+//        }
+//        throw IllegalArgumentException("Wrong ViewModel class")
+//    }
+//}

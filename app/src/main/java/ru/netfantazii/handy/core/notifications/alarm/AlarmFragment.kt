@@ -11,7 +11,6 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
@@ -23,51 +22,39 @@ import ru.netfantazii.handy.core.notifications.BUNDLE_EXPAND_STATE_KEY
 import ru.netfantazii.handy.databinding.AlarmFragmentBinding
 import ru.netfantazii.handy.di.ViewModelFactory
 import ru.netfantazii.handy.di.components.AlarmComponent
-import ru.netfantazii.handy.di.components.NotificationComponent
 import ru.netfantazii.handy.di.modules.alarm.AlarmProvideModule
-import ru.netfantazii.handy.di.modules.alarm.AlarmViewModelModule
-import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.extensions.injectViewModel
 import java.util.*
 import javax.inject.Inject
 
 class AlarmFragment : Fragment() {
 
     private lateinit var component: AlarmComponent
-//    @Inject
-//    lateinit var factory: ViewModelFactory
     @Inject
-    lateinit var viewModel: AlarmViewModel
+    lateinit var factory: ViewModelFactory
+    private lateinit var viewModel: AlarmViewModel
 
     lateinit var datePicker: DatePicker
     lateinit var timePicker: TimePicker
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private val TAG = "AlarmFragment"
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        component =
-            (context.applicationContext as HandyApplication).appComponent.alarmComponent()
-                .create(AlarmProvideModule(this))
-        component.inject(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
-        createViewModel()
     }
 
-    private fun createViewModel() {
+    private fun injectDependencies() {
         val currentCatalogId = arguments!!.getLong(BUNDLE_CATALOG_ID_KEY)
         val catalogName = arguments!!.getString(BUNDLE_CATALOG_NAME_KEY)!!
         val groupExpandState =
             arguments!!.getParcelable<RecyclerViewExpandableItemManager.SavedState>(
                 BUNDLE_EXPAND_STATE_KEY)!!
-
-//        viewModel =
-//            ViewModelProviders.of(this,
-//                factory)
-//                .get(AlarmViewModel::class.java)
-        viewModel.initialize(currentCatalogId, catalogName, groupExpandState)
+        component =
+            (context!!.applicationContext as HandyApplication).appComponent.alarmComponent()
+                .create(currentCatalogId, catalogName, groupExpandState)
+        component.inject(this)
+        viewModel = injectViewModel(factory)
     }
 
     override fun onCreateView(

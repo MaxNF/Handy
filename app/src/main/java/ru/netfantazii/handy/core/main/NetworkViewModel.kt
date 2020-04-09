@@ -30,8 +30,7 @@ import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
 class NetworkViewModel @Inject constructor(private val remoteRepository: RemoteRepository) :
-    ViewModel(),
-    ContactsStorage, DialogClickHandler, ContactsClickHandler {
+    ViewModel(), ContactsStorage, DialogClickHandler, ContactsClickHandler {
     private val TAG = "NetworkViewModel"
 
     private val disposables = CompositeDisposable()
@@ -102,6 +101,10 @@ class NetworkViewModel @Inject constructor(private val remoteRepository: RemoteR
     val user = ObservableField<User?>()
 
     val inputFilter = InputFilter()
+
+    init {
+        Log.d(TAG, "NETWORK VIEW MODEL CREATED")
+    }
 
     private fun subscribeToContactUpdates() {
         contactsUpdateDisposable = remoteRepository.getContacts().subscribeOn(Schedulers.io())
@@ -304,16 +307,16 @@ class NetworkViewModel @Inject constructor(private val remoteRepository: RemoteR
     }
 }
 
-class NetworkVmFactory(
-    private val remoteRepository: RemoteRepository
-) :
-    ViewModelProvider.Factory {
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(NetworkViewModel::class.java)) {
-            return NetworkViewModel(
-                remoteRepository) as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel class")
-    }
-}
+//class NetworkVmFactory(
+//    private val remoteRepository: RemoteRepository
+//) :
+//    ViewModelProvider.Factory {
+//
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(NetworkViewModel::class.java)) {
+//            return NetworkViewModel(
+//                remoteRepository) as T
+//        }
+//        throw IllegalArgumentException("Wrong ViewModel class")
+//    }
+//}

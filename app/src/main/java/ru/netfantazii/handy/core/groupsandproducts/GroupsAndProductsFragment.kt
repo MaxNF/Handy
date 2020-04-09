@@ -1,26 +1,16 @@
 package ru.netfantazii.handy.core.groupsandproducts
 
-import android.content.Context
-import android.graphics.drawable.NinePatchDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator
-import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -37,6 +27,8 @@ import ru.netfantazii.handy.data.User
 import ru.netfantazii.handy.databinding.ProductsFragmentBinding
 import ru.netfantazii.handy.di.ViewModelFactory
 import ru.netfantazii.handy.di.components.GroupsAndProductsComponent
+import ru.netfantazii.handy.di.modules.groupsandproducts.GroupsAndProductsProvideModule
+import ru.netfantazii.handy.extensions.injectViewModel
 import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
@@ -44,14 +36,13 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     private val TAG = "GroupsAndProducts"
 
     private val fragmentArgs: GroupsAndProductsFragmentArgs by navArgs()
-
     private lateinit var component: GroupsAndProductsComponent
     @Inject
     lateinit var factory: ViewModelFactory
-
     private lateinit var viewModel: GroupsAndProductsViewModel
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var expandManager: RecyclerViewExpandableItemManager
+    @Inject
+    lateinit var expandManager: RecyclerViewExpandableItemManager
+
     private lateinit var productUndoSnackbar: Snackbar
     private lateinit var groupUndoSnackbar: Snackbar
     private lateinit var shareMenuButton: MenuItem
@@ -64,20 +55,15 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     }
     private lateinit var networkViewModel: NetworkViewModel
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun injectDependencies() {
         component =
-            (context.applicationContext as HandyApplication).appComponent.groupsAndProductsComponent()
-                .create()
+            (context!!.applicationContext as HandyApplication).appComponent.groupsAndProductsComponent()
+                .create(fragmentArgs.catalogId,
+                    fragmentArgs.groupExpandStates,
+                    GroupsAndProductsProvideModule(this))
         component.inject(this)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (!viewModel.isGroupExpandStatesInitialized()) {
-            Log.d(TAG, "onCreate: not init")
-            viewModel.groupExpandStates = fragmentArgs.groupExpandStates
-        }
+        viewModel = injectViewModel(factory)
+        networkViewModel = requireActivity().injectViewModel(factory)
     }
 
     override fun onCreateView(
@@ -85,20 +71,17 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d(TAG, "onCreateView: $savedInstanceState")
         val binding = ProductsFragmentBinding.inflate(inflater, container, false)
         binding.isPremium = (activity!!.application as HandyApplication).isPremium
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG, "onViewCreated: $savedInstanceState")
         super.onViewCreated(view, savedInstanceState)
         setCatalogName()
     }
 
     private fun restoreExpandState(groupExpandStates: RecyclerViewExpandableItemManager.SavedState) {
-        Log.d(TAG, "restoreExpandState: 1")
         expandManager.restoreState(groupExpandStates)
     }
 
@@ -110,8 +93,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (::expandManager.isInitialized) {
-            viewModel.groupExpandStates =
-                expandManager.savedState as RecyclerViewExpandableItemManager.SavedState
+            saveExpandState()
         }
     }
 
@@ -119,50 +101,10 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         activity!!.toolbar.title = fragmentArgs.catalogName
     }
 
-    override fun createViewModels() {
-        val currentCatalogId = fragmentArgs.catalogId
-        viewModel =
-            ViewModelProviders.of(this, factory)
-                .get(GroupsAndProductsViewModel::class.java)
-        viewModel.initialize(currentCatalogId)
-        networkViewModel = ViewModelProviders.of(activity!!).get(NetworkViewModel::class.java)
-    }
-
     override fun createRecyclerView(view: View) {
-        dragManager = RecyclerViewDragDropManager()
-        dragManager.setInitiateOnMove(false)
-        dragManager.setInitiateOnTouch(false)
-        dragManager.setInitiateOnLongPress(true)
-        dragManager.draggingItemAlpha = 0.9f
-        dragManager.draggingItemScale = 1.07f
-        dragManager.dragStartItemAnimationDuration = 250
-        dragManager.setDraggingItemShadowDrawable(ContextCompat.getDrawable(requireContext(),
-            R.drawable.shadow_round_corners) as NinePatchDrawable)
-
-        expandManager = RecyclerViewExpandableItemManager(null)
-        expandManager.defaultGroupsExpandedState = true
-
-        val swipeManager = RecyclerViewSwipeManager()
-        val layoutManager = LinearLayoutManager(context)
-        val guardManager = RecyclerViewTouchActionGuardManager()
-        guardManager.setInterceptVerticalScrollingWhileAnimationRunning(true)
-        guardManager.isEnabled = true
-
-        var wrappedAdapter = expandManager.createWrappedAdapter(adapter)
-        wrappedAdapter = dragManager.createWrappedAdapter(wrappedAdapter)
-        wrappedAdapter = swipeManager.createWrappedAdapter(wrappedAdapter)
-
-        recyclerView = view.findViewById(R.id.rv_list)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.adapter = wrappedAdapter
-
-        val animator = SwipeDismissItemAnimator()
-        animator.supportsChangeAnimations = false
-
-        recyclerView.itemAnimator = animator
+        super.createRecyclerView(view)
         recyclerView.addItemDecoration(RecyclerViewDecorator())
         recyclerView.setHasFixedSize(false)
-
         guardManager.attachRecyclerView(recyclerView)
         swipeManager.attachRecyclerView(recyclerView)
         dragManager.attachRecyclerView(recyclerView)

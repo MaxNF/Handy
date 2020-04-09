@@ -11,6 +11,22 @@ annotation class ApplicationContext
 @Retention(AnnotationRetention.RUNTIME)
 annotation class PackageName
 
-//@Qualifier
-//@Retention(AnnotationRetention.RUNTIME)
-//annotation class CatalogsStorage
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CatalogId
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class CatalogName
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class TotalProducts
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class UnwrappedAdapter
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class WrappedAdapter

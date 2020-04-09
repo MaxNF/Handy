@@ -19,6 +19,9 @@ import ru.netfantazii.handy.data.BuyStatus
 import ru.netfantazii.handy.data.Group
 import ru.netfantazii.handy.data.GroupType
 import ru.netfantazii.handy.data.Product
+import ru.netfantazii.handy.di.FragmentScope
+import ru.netfantazii.handy.di.UnwrappedAdapter
+import ru.netfantazii.handy.di.WrappedAdapter
 import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
@@ -140,6 +143,7 @@ class ProductViewHolder(private val productBinding: RvProductElementBinding) :
     }
 }
 
+@FragmentScope
 class GroupsAndProductsAdapter @Inject constructor(
     private val groupClickHandler: GroupClickHandler,
     private val productClickHandler: ProductClickHandler,

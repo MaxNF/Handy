@@ -18,6 +18,7 @@ import ru.netfantazii.handy.databinding.RvCatalogElementBinding
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.User
 import ru.netfantazii.handy.di.FragmentScope
+import ru.netfantazii.handy.di.UnwrappedAdapter
 import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 

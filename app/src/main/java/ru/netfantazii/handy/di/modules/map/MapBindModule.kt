@@ -8,7 +8,7 @@ import ru.netfantazii.handy.core.notifications.map.MapViewModel
 import ru.netfantazii.handy.di.ViewModelKey
 
 @Module
-abstract class MapViewModelModule {
+abstract class MapBindModule {
 
     @Binds
     @IntoMap

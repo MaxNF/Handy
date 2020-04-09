@@ -48,6 +48,7 @@ import ru.netfantazii.handy.databinding.MapFragmentBinding
 import ru.netfantazii.handy.di.ViewModelFactory
 import ru.netfantazii.handy.di.components.MapComponent
 import ru.netfantazii.handy.di.components.NotificationComponent
+import ru.netfantazii.handy.extensions.injectViewModel
 import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
@@ -55,12 +56,12 @@ class MapFragment : Fragment(), Session.SearchListener,
     SuggestSession.SuggestListener {
     private val TAG = "MapFragment"
 
-    private lateinit var mapView: MapView
     private lateinit var component: MapComponent
     @Inject
     lateinit var factory: ViewModelFactory
     private lateinit var viewModel: MapViewModel
 
+    private lateinit var mapView: MapView
     private lateinit var mapObjects: MapObjectCollection
     private lateinit var locationManager: LocationManager
     private lateinit var geofenceIconProvider: ImageProvider
@@ -68,7 +69,6 @@ class MapFragment : Fragment(), Session.SearchListener,
     private lateinit var searchObjectIconProvider: ImageProvider
     private lateinit var searchObjectCollection: MapObjectCollection
     private lateinit var searchManager: SearchManager
-
     private val allLiveDataList = mutableListOf<LiveData<*>>()
     private var circleFillColor: Int = 0
     private var circleStrokeColor: Int = 0
@@ -100,14 +100,8 @@ class MapFragment : Fragment(), Session.SearchListener,
 
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        component =
-            (context.applicationContext as HandyApplication).appComponent.mapComponent().create()
-        component.inject(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectDependencies()
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate: ")
         setHasOptionsMenu(true)
@@ -125,27 +119,25 @@ class MapFragment : Fragment(), Session.SearchListener,
         searchObjectIconProvider =
             ImageProvider.fromBitmap(resources.getDrawable(R.drawable.ic_search_location,
                 null).toBitmap())
-        createViewModel()
         getColorsFromRes()
     }
 
-    private fun getColorsFromRes() {
-        circleFillColor = ContextCompat.getColor(requireContext(), R.color.circleFillColor)
-        circleStrokeColor = ContextCompat.getColor(requireContext(), R.color.circleStrokeColor)
-    }
-
-    private fun createViewModel() {
+    private fun injectDependencies() {
         val currentCatalogId = arguments!!.getLong(BUNDLE_CATALOG_ID_KEY)
         val catalogName = arguments!!.getString(BUNDLE_CATALOG_NAME_KEY)!!
         val groupExpandState =
             arguments!!.getParcelable<RecyclerViewExpandableItemManager.SavedState>(
                 BUNDLE_EXPAND_STATE_KEY)!!
+        component =
+            (context!!.applicationContext as HandyApplication).appComponent.mapComponent()
+                .create(currentCatalogId, catalogName, groupExpandState)
+        component.inject(this)
+        viewModel = injectViewModel(factory)
+    }
 
-        viewModel =
-            ViewModelProviders.of(this,
-                factory)
-                .get(MapViewModel::class.java)
-        viewModel.initialize(currentCatalogId, catalogName, groupExpandState)
+    private fun getColorsFromRes() {
+        circleFillColor = ContextCompat.getColor(requireContext(), R.color.circleFillColor)
+        circleStrokeColor = ContextCompat.getColor(requireContext(), R.color.circleStrokeColor)
     }
 
     override fun onCreateView(

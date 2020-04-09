@@ -12,20 +12,19 @@ import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.core.*
 import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.data.*
+import ru.netfantazii.handy.di.CatalogId
 import ru.netfantazii.handy.extensions.*
 import java.lang.UnsupportedOperationException
 import java.util.NoSuchElementException
 import javax.inject.Inject
 
 class GroupsAndProductsViewModel @Inject constructor(
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository,
+    @CatalogId private val currentCatalogId: Long,
+    var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
 ) : ViewModel(),
     GroupClickHandler, ProductClickHandler, GroupStorage, OverlayActions, DialogClickHandler {
     private val TAG = "GroupsAndProductsViewMo"
-
-    private var isInitialized = false
-    private var currentCatalogId: Long = 0L
-
     private var groupList = mutableListOf<Group>()
         set(groups) {
             field = groups
@@ -36,9 +35,6 @@ class GroupsAndProductsViewModel @Inject constructor(
         get() {
             return getAllProducts().isEmpty() && filteredGroupList.isEmpty()
         }
-
-    lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
-    fun isGroupExpandStatesInitialized() = ::groupExpandStates.isInitialized
 
     private val disposables = CompositeDisposable()
     private var lastRemovedGroup: Group? = null
@@ -115,12 +111,8 @@ class GroupsAndProductsViewModel @Inject constructor(
     private val _buyAllClicked = MutableLiveData<Event<Unit>>()
     val buyAllClicked: LiveData<Event<Unit>> = _buyAllClicked
 
-    fun initialize(currentCatalogId: Long) {
-        if (!isInitialized) {
-            this.currentCatalogId = currentCatalogId
-            subscribeToGroupChanges()
-            isInitialized = true
-        }
+    init {
+        subscribeToGroupChanges()
     }
 
     private fun subscribeToGroupChanges() {
@@ -500,17 +492,16 @@ class GroupsAndProductsViewModel @Inject constructor(
     }
 }
 
-/*
-class GroupsAndProductsVmFactory(
-    private val localRepository: LocalRepository,
-    private val currentCatalogId: Long
-) :
-    ViewModelProvider.Factory {
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(GroupsAndProductsViewModel::class.java)) {
-            return GroupsAndProductsViewModel(localRepository, currentCatalogId) as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel class")
-    }
-}*/
+//class GroupsAndProductsVmFactory(
+//    private val localRepository: LocalRepository,
+//    private val currentCatalogId: Long
+//) :
+//    ViewModelProvider.Factory {
+//
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(GroupsAndProductsViewModel::class.java)) {
+//            return GroupsAndProductsViewModel(localRepository, currentCatalogId) as T
+//        }
+//        throw IllegalArgumentException("Wrong ViewModel class")
+//    }
+//}

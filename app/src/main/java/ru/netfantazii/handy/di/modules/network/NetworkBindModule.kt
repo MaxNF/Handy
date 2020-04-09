@@ -8,7 +8,7 @@ import ru.netfantazii.handy.core.main.NetworkViewModel
 import ru.netfantazii.handy.di.ViewModelKey
 
 @Module
-abstract class NetworkViewModelModule {
+abstract class NetworkBindModule {
 
     @Binds
     @IntoMap

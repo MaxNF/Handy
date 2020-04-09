@@ -14,6 +14,8 @@ import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.repositories.LocalRepository
 import ru.netfantazii.handy.core.Event
 import ru.netfantazii.handy.di.ApplicationContext
+import ru.netfantazii.handy.di.CatalogId
+import ru.netfantazii.handy.di.CatalogName
 import ru.netfantazii.handy.extensions.registerAlarm
 import ru.netfantazii.handy.extensions.unregisterAlarm
 import java.util.*
@@ -21,15 +23,12 @@ import javax.inject.Inject
 
 class AlarmViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val localRepository: LocalRepository
+    private val localRepository: LocalRepository,
+    @CatalogId private val currentCatalogId: Long,
+    @CatalogName private val catalogName: String,
+    private val expandStates: RecyclerViewExpandableItemManager.SavedState
 ) :
     ViewModel() {
-
-    private var isInitialized = false
-    private var currentCatalogId: Long = 0
-    private lateinit var catalogName: String
-    private lateinit var expandStates: RecyclerViewExpandableItemManager.SavedState
-
     private val TAG = "AlarmViewModel"
     private val disposables: CompositeDisposable = CompositeDisposable()
     private var time: Calendar? = null
@@ -44,23 +43,9 @@ class AlarmViewModel @Inject constructor(
     val newDataReceived: LiveData<Event<Calendar?>> = _newDataReceived
 
     init {
-        Log.d(TAG, "ALARM VIEW MODEL CREATED")
-    }
-
-    fun initialize(
-        currentCatalogId: Long,
-        catalogName: String,
-        expandStates: RecyclerViewExpandableItemManager.SavedState
-    ) {
-        if (!isInitialized) {
-            this.currentCatalogId = currentCatalogId
-            this.catalogName = catalogName
-            this.expandStates = expandStates
-            subscribeToAlarmChanges()
-            isInitialized = true
-            Log.d(TAG, "init: catalogId: $currentCatalogId, catalogName: $catalogName")
-        }
+        Log.d(TAG, "init: catalogId: $currentCatalogId, catalogName: $catalogName")
         switchStatus.set(false)
+        subscribeToAlarmChanges()
     }
 
     private fun subscribeToAlarmChanges() {
@@ -121,20 +106,23 @@ class AlarmViewModel @Inject constructor(
     }
 }
 
-class AlarmVmFactory(
-    private val application: Application,
-    private val localRepository: LocalRepository
+//class AlarmVmFactory(
+//    private val application: Application,
+//    private val localRepository: LocalRepository,
 //    private val catalogId: Long,
 //    private val catalogName: String,
 //    private val expandStates: RecyclerViewExpandableItemManager.SavedState
-) :
-    ViewModelProvider.AndroidViewModelFactory(application) {
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AlarmViewModel::class.java)) {
-            return AlarmViewModel(application,
-                localRepository) as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel class")
-    }
-}
+//) :
+//    ViewModelProvider.AndroidViewModelFactory(application) {
+//
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(AlarmViewModel::class.java)) {
+//            return AlarmViewModel(application,
+//                localRepository,
+//                catalogId,
+//                catalogName,
+//                expandStates) as T
+//        }
+//        throw IllegalArgumentException("Wrong ViewModel class")
+//    }
+//}

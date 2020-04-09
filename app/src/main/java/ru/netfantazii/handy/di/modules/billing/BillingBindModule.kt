@@ -8,7 +8,7 @@ import ru.netfantazii.handy.core.main.BillingViewModel
 import ru.netfantazii.handy.di.ViewModelKey
 
 @Module
-abstract class BillingViewModelModule {
+abstract class BillingBindModule {
 
     @Binds
     @IntoMap

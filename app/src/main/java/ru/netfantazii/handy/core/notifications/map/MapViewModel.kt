@@ -22,19 +22,18 @@ import ru.netfantazii.handy.extensions.*
 import ru.netfantazii.handy.data.database.GeofenceEntity
 import ru.netfantazii.handy.data.GeofenceLimitException
 import ru.netfantazii.handy.di.ApplicationContext
+import ru.netfantazii.handy.di.CatalogId
+import ru.netfantazii.handy.di.CatalogName
 import javax.inject.Inject
 import kotlin.collections.Map
 
 class MapViewModel @Inject constructor(
     private val localRepository: LocalRepository,
+    @CatalogId private val currentCatalogId: Long,
+    @CatalogName private val catalogName: String,
+    private val groupExpandStates: RecyclerViewExpandableItemManager.SavedState,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-
-
-    private var isInitialized = false
-    private var currentCatalogId: Long = 0
-    private lateinit var catalogName: String
-    private lateinit var groupExpandStates: RecyclerViewExpandableItemManager.SavedState
 
     private val geofenceAppLimit
         get() = if ((context as HandyApplication).isPremium.get()) 100 else 1
@@ -87,18 +86,8 @@ class MapViewModel @Inject constructor(
     val geofenceLimitForFreeVersionReached: LiveData<Event<Unit>> =
         _geofenceLimitForFreeVersionReached
 
-    fun initialize(
-        currentCatalogId: Long,
-        catalogName: String,
-        groupExpandStates: RecyclerViewExpandableItemManager.SavedState
-    ) {
-        if (!isInitialized) {
-            this.currentCatalogId = currentCatalogId
-            this.catalogName = catalogName
-            this.groupExpandStates = groupExpandStates
-            subscribeToGeofencesChanges()
-            isInitialized = true
-        }
+    init {
+        subscribeToGeofencesChanges()
     }
 
     private fun refreshSeekBarValueField(value: Int) {
@@ -223,25 +212,24 @@ class MapViewModel @Inject constructor(
     }
 }
 
-/*
-class MapVmFactory(
-    private val localRepository: LocalRepository,
-    private val catalogId: Long,
-    private val catalogName: String,
-    private val groupExpandStates: RecyclerViewExpandableItemManager.SavedState,
-    private val application: Application
-) :
-    ViewModelProvider.AndroidViewModelFactory(application) {
-
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
-            return MapViewModel(
-                localRepository,
-                catalogId,
-                catalogName,
-                groupExpandStates,
-                application) as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel class")
-    }
-}*/
+//class MapVmFactory(
+//    private val localRepository: LocalRepository,
+//    private val catalogId: Long,
+//    private val catalogName: String,
+//    private val groupExpandStates: RecyclerViewExpandableItemManager.SavedState,
+//    private val application: Application
+//) :
+//    ViewModelProvider.AndroidViewModelFactory(application) {
+//
+//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
+//            return MapViewModel(
+//                localRepository,
+//                catalogId,
+//                catalogName,
+//                groupExpandStates,
+//                application) as T
+//        }
+//        throw IllegalArgumentException("Wrong ViewModel class")
+//    }
+//}
