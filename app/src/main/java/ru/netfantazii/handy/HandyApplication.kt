@@ -15,7 +15,7 @@ import ru.netfantazii.handy.repositories.BillingRepository
 import java.util.*
 import javax.inject.Inject
 
-class HandyApplication : Application() {
+open class HandyApplication : Application() {
     private val TAG = "HandyApplication"
     val appComponent: AppComponent by lazy {
         initializeComponent()

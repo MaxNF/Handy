@@ -52,6 +52,10 @@ class Catalog(
         return if (other == null) false
         else this.id == (other as Catalog).id
     }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
 }
 
 open class Group(
@@ -102,6 +106,10 @@ open class Group(
         return if (other == null) false
         else this.id == (other as Group).id
     }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
 }
 
 class Product(
@@ -126,6 +134,10 @@ class Product(
     override fun equals(other: Any?): Boolean {
         return if (other == null) false
         else this.id == (other as Product).id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
     }
 }
 

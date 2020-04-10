@@ -61,9 +61,6 @@ class CatalogsViewModel @Inject constructor(
     private val _catalogEditClicked = MutableLiveData<Event<Catalog>>()
     val catalogEditClicked: LiveData<Event<Catalog>> = _catalogEditClicked
 
-    private val _catalogDragSucceeded = MutableLiveData<Event<Unit>>()
-    val catalogDragSucceeded: LiveData<Event<Unit>> = _catalogDragSucceeded
-
     private val _createCatalogClicked = MutableLiveData<Event<Unit>>()
     val createCatalogClicked: LiveData<Event<Unit>> = _createCatalogClicked
 
@@ -168,7 +165,6 @@ class CatalogsViewModel @Inject constructor(
         Log.d(TAG, "onCatalogDragSucceed: from $fromPosition, to $toPosition ")
         catalogList.moveAndReassignPositions(fromPosition, toPosition)
         localRepository.updateAllCatalogs(catalogList.sliceModified(fromPosition, toPosition))
-        _catalogDragSucceeded.value = Event(Unit)
     }
 
     fun onCreateCatalogClick() {

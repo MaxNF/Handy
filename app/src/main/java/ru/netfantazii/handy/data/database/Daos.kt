@@ -70,7 +70,7 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
 
     @Transaction
     @Query("SELECT c.id, c.creation_time, c.name, c.position, c.group_expand_states, c.alarm_time, c.from_network, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id) AS totalProductCount, (SELECT COUNT(id) FROM ProductEntity p WHERE p.catalog_id = c.id AND p.buy_status = 1) AS boughtProductCount FROM CatalogEntity c ORDER BY c.position ASC")
-    abstract fun getCatalogsSignleTime(): Single<MutableList<Catalog>>
+    abstract fun getCatalogsSingleTime(): Single<MutableList<Catalog>>
 
     @Insert
     abstract fun addGroupAndReturnId(group: GroupEntity): Long

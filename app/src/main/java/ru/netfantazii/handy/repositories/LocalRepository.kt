@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.repositories
 
-import android.util.Log
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -227,7 +226,7 @@ class LocalRepositoryImpl @Inject constructor(db: ProductDatabase) :
         netInfoDao.getCatalogNetInfo(catalogId)
 
     override fun getCatalogsSignleTime(): Single<MutableList<Catalog>> =
-        catalogDao.getCatalogsSignleTime()
+        catalogDao.getCatalogsSingleTime()
 
     override fun getAllGeofences(): Single<List<GeofenceEntity>> = geofenceDao.getAllGeofences()
 

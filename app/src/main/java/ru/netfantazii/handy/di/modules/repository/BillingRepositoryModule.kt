@@ -9,5 +9,5 @@ import ru.netfantazii.handy.repositories.BillingRepositoryImpl
 abstract class BillingRepositoryModule {
 
     @Binds
-    abstract fun bindBillingRepository(billingRepoImpl: BillingRepositoryImpl): BillingRepository
+    abstract fun bindBillingRepository(billingRepo: BillingRepositoryImpl): BillingRepository
 }

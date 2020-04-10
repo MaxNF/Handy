@@ -131,12 +131,6 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
                 Observer { it.getContentIfNotHandled()?.let { showOverlay() } })
             allLiveDataList.add(catalogEditClicked)
 
-            catalogDragSucceeded.observe(
-                owner, Observer {
-                    it.getContentIfNotHandled()?.let { } // do nothing yet
-                })
-            allLiveDataList.add(catalogDragSucceeded)
-
             createCatalogClicked.observe(
                 owner,
                 Observer { it.getContentIfNotHandled()?.let { showOverlay() } })
