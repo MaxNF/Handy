@@ -183,3 +183,7 @@ open class ShopItem(
 ) : BaseObservable()
 
 class BillingObject(val skuDetails: SkuDetails, val type: BillingPurchaseTypes)
+
+class PendingRemovedObject() {
+    var entity: BaseEntity? = null
+}

@@ -80,4 +80,9 @@ class CatalogsViewModel_refactored @Inject constructor(localRepository: LocalRep
     override fun onOverlayEnterClick() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    fun undoRemoval() {
+        // ... код отмены удаления
+        //todo вызвать обновления лайв даты для перерисовки ресайлклервью после отмены удаления onNewDataReceive(catalogList)
+    }
 }
