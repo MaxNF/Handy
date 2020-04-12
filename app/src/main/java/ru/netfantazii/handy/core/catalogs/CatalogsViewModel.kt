@@ -1,47 +1,45 @@
 package ru.netfantazii.handy.core.catalogs
 
-import android.content.Context
-import android.util.Log
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import ru.netfantazii.handy.core.*
+import ru.netfantazii.handy.core.catalogs.usecases.*
+import ru.netfantazii.handy.core.preferences.currentSortOrder
 import ru.netfantazii.handy.data.Catalog
-import ru.netfantazii.handy.extensions.*
+import ru.netfantazii.handy.data.SortOrder
 import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
-import ru.netfantazii.handy.data.database.GeofenceEntity
-import ru.netfantazii.handy.di.ApplicationContext
-import ru.netfantazii.handy.repositories.LocalRepository
-import java.util.*
+import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
 class CatalogsViewModel @Inject constructor(
-    private val localRepository: LocalRepository,
-    @ApplicationContext private val context: Context
+    private val addNewCatalogToTheBeginningUseCase: AddNewCatalogToTheBeginningUseCase,
+    private val addNewCatalogToTheEndUseCase: AddNewCatalogToTheEndUseCase,
+    private val dragCatalogUseCase: DragCatalogUseCase,
+    private val removeCatalogUseCase: RemoveCatalogUseCase,
+    private val renameCatalogUseCase: RenameCatalogUseCase,
+    private val realRemovePendingCatalogUseCase: RealRemovePendingCatalogUseCase,
+    private val subscribeToCatalogsChangesFilteredUseCase: SubscribeToCatalogsChangesFilteredUseCase,
+    private val undoRemovalUseCase: UndoRemovalUseCase,
+    private val loadCatalogNetInfoUseCase: LoadCatalogNetInfoUseCase
 ) :
     ViewModel(),
     CatalogClickHandler, CatalogStorage, OverlayActions, DialogClickHandler {
-    private val TAG = "CatalogsViewModel"
-    private var catalogList = mutableListOf<Catalog>()
-        set(value) {
-            Log.d(TAG, ": ")
-            field = value
-            onNewDataReceive(value)
-        }
-    private var filteredCatalogList = listOf<Catalog>()
-    val shouldHintBeShown: Boolean
-        get() = filteredCatalogList.isEmpty()
-
-    private val disposables = CompositeDisposable()
-
-    private var lastRemovedObject: Catalog? = null
 
     override lateinit var overlayBuffer: BufferObject
 
-    private val _newDataReceived = MutableLiveData<Event<Unit>>()
-    val newDataReceived: LiveData<Event<Unit>> = _newDataReceived
+    private var catalogList = listOf<Catalog>()
+        set(value) {
+            field = value
+            _redrawRecyclerView.value = Event(Unit)
+        }
+    val shouldHintBeShown: Boolean
+        get() = catalogList.isEmpty()
+
+    private val disposables = CompositeDisposable()
+
+    private val _redrawRecyclerView = MutableLiveData<Event<Unit>>()
+    val redrawRecyclerView: LiveData<Event<Unit>> = _redrawRecyclerView
 
     private val _catalogClicked = MutableLiveData<Event<Catalog>>()
     val catalogClicked: LiveData<Event<Catalog>> = _catalogClicked
@@ -84,168 +82,52 @@ class CatalogsViewModel @Inject constructor(
     override val catalogAndNetInfoReceived: LiveData<Event<Pair<Catalog, CatalogNetInfoEntity>>> =
         _catalogAndNetInfoReceived
 
-
     init {
         subscribeToCatalogsChanges()
     }
 
-    private fun onNewDataReceive(newList: MutableList<Catalog>) {
-        Log.d(TAG, "onNewDataReceive: ")
-        filteredCatalogList = getFilteredCatalogList(newList)
-        _newDataReceived.value = Event(Unit)
-    }
-
     private fun subscribeToCatalogsChanges() {
-        disposables.add(localRepository.getCatalogs()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                catalogList = it
-            })
+        disposables.add(subscribeToCatalogsChangesFilteredUseCase.subscribeToCatalogsChanges().observeOn(
+            AndroidSchedulers.mainThread()).subscribe {
+            catalogList = it
+        })
     }
 
-    private fun getFilteredCatalogList(catalogList: MutableList<Catalog>): List<Catalog> {
-        val listToFilter = mutableListOf<Catalog>()
-        listToFilter.addAll(catalogList)
-        lastRemovedObject?.let { listToFilter.remove(it) }
-        return listToFilter
+    fun onCreateCatalogClick() {
+        overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_CREATE, Catalog())
+        _createCatalogClicked.value = Event(Unit)
     }
-
-    override fun getCatalogList(): List<Catalog> = filteredCatalogList
-
 
     override fun onCatalogClick(catalog: Catalog) {
-        Log.d(TAG, "onCatalogClick: ")
         _catalogClicked.value = Event(catalog)
     }
 
     override fun onCatalogSwipeStart(catalog: Catalog) {
-        Log.d(TAG, "onCatalogSwipeStart: ")
         _catalogSwipeStarted.value = Event(Unit)
     }
 
     override fun onCatalogSwipePerform(catalog: Catalog) {
-        Log.d(TAG, "onCatalogSwipePerform: ")
-        if (lastRemovedObject == null) {
-            lastRemovedObject = catalog
-            onNewDataReceive(catalogList)
-        } else {
-            val previousObject = lastRemovedObject
-            lastRemovedObject = catalog
-            realRemove(previousObject!!)
+        val removalResult =
+            removeCatalogUseCase.removeCatalog(catalog, catalogList.toMutableList())
+        if (removalResult == RemoveCatalogUseCase.RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED) {
+            _redrawRecyclerView.value = Event(Unit)
         }
-        cancelAssociatedNotifications(catalog.id)
-        unregisterAllGeofences(context, catalog.id, null)
-        unregisterAlarm(context, catalog.id)
-    }
-
-    private fun realRemove(catalog: Catalog) {
-        catalogList.remove(catalog)
-        catalogList.reassignPositions()
-        localRepository.removeAndUpdateCatalogs(catalog, catalogList)
     }
 
     override fun onCatalogSwipeFinish(catalog: Catalog) {
-        Log.d(TAG, "onCatalogSwipeFinish: ")
         _catalogSwipeFinished.value = Event(catalog)
     }
 
     override fun onCatalogSwipeCancel(catalog: Catalog) {
-        Log.d(TAG, "onCatalogSwipeCancel: ")
         _catalogSwipeCanceled.value = Event(catalog)
     }
 
     override fun onCatalogEditClick(catalog: Catalog) {
-        Log.d(TAG, "onCatalogEditClick: ")
-        val catalogToEdit = catalog.getCopy()
-        overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_RENAME, catalogToEdit)
-        _catalogEditClicked.value = Event(catalog)
+        _catalogEditClicked.value = Event(catalog.getCopy())
     }
 
     override fun onCatalogDragSucceed(fromPosition: Int, toPosition: Int) {
-        Log.d(TAG, "onCatalogDragSucceed: from $fromPosition, to $toPosition ")
-        catalogList.moveAndReassignPositions(fromPosition, toPosition)
-        localRepository.updateAllCatalogs(catalogList.sliceModified(fromPosition, toPosition))
-    }
-
-    fun onCreateCatalogClick() {
-        Log.d(TAG, "createCatalog: ")
-        val newCatalog = Catalog(position = getNewCatalogPosition(catalogList))
-        overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_CREATE, newCatalog)
-        _createCatalogClicked.value = Event(Unit)
-    }
-
-    fun undoRemoval() {
-        Log.d(TAG, "undoRemoval: ")
-
-        lastRemovedObject?.let { catalog ->
-            localRepository.getGeofences(catalog.id)
-                .firstOrError()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMapCompletable { geofenceEntities ->
-                    registerGeofences(context,
-                        geofenceEntities,
-                        catalog.id,
-                        catalog.name,
-                        catalog.groupExpandStates)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                }
-                .doFinally {
-                    catalog.alarmTime?.let { alarmTime ->
-                        restoreCatalogAlarm(catalog, alarmTime)
-                    }
-                    lastRemovedObject = null
-                    onNewDataReceive(catalogList)
-                }
-                .subscribe()
-        }
-    }
-
-    private fun cancelAssociatedNotifications(catalogId: Long) {
-        val notificationId = catalogId.toInt()
-        NotificationManagerCompat.from(context).cancel(notificationId)
-    }
-
-    private fun restoreCatalogAlarm(catalog: Catalog, alarmTime: Calendar) {
-        registerAlarm(context, catalog.id,
-            catalog.name,
-            catalog.groupExpandStates,
-            alarmTime)
-    }
-
-    private fun restoreCatalogGeofences(catalog: Catalog, geofenceEntities: List<GeofenceEntity>) {
-        registerGeofences(context,
-            geofenceEntities,
-            catalog.id,
-            catalog.name,
-            catalog.groupExpandStates)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-    }
-
-    override fun onOverlayBackgroundClick() {
-        Log.d(TAG, "onOverlayBackgroundClick: ")
-        _overlayBackgroundClicked.value = Event(Unit)
-    }
-
-    override fun onOverlayEnterClick() {
-        if (overlayBuffer.action == OVERLAY_ACTION_CATALOG_CREATE) {
-            val catalogToAdd = overlayBuffer.bufferObject as Catalog
-            catalogList.add(catalogToAdd.position, catalogToAdd)
-            catalogList.reassignPositions()
-            catalogList.remove(catalogToAdd)
-            localRepository.addAndUpdateCatalogs(catalogToAdd, catalogList)
-        } else {
-            localRepository.updateCatalog(overlayBuffer.bufferObject as Catalog)
-        }
-        _overlayEnterClicked.value = Event(Unit)
-    }
-
-    override fun onCleared() {
-        Log.d(TAG, "onCleared: ")
-        disposables.clear()
+        dragCatalogUseCase.dragCatalog(catalogList.toMutableList(), fromPosition, toPosition)
     }
 
     override fun onCatalogNotificationClick(catalog: Catalog) {
@@ -256,33 +138,43 @@ class CatalogsViewModel @Inject constructor(
         _catalogShareClicked.value = Event(catalog)
     }
 
-    fun onFragmentStop() {
-        lastRemovedObject?.let { realRemove(it) }
-    }
-
     override fun onCatalogEnvelopeClick(catalog: Catalog) {
-        fetchCatalogWithNetInfo(catalog)
+        disposables.add(loadCatalogNetInfoUseCase.fetchCatalogWithNetInfo(catalog).subscribe { netInfo ->
+            _catalogAndNetInfoReceived.value = Event(Pair(catalog, netInfo))
+            _catalogEnvelopeClicked.value = Event(Unit)
+        })
     }
 
-    private fun fetchCatalogWithNetInfo(catalog: Catalog) {
-        disposables.add(localRepository.getCatalogNetInfo(catalog.id).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe { netInfo ->
-                _catalogAndNetInfoReceived.value = Event(Pair(catalog, netInfo))
-                _catalogEnvelopeClicked.value = Event(Unit)
-            })
+    override fun getCatalogList(): List<Catalog> = catalogList
+
+    override fun onOverlayBackgroundClick() {
+        _overlayBackgroundClicked.value = Event(Unit)
+    }
+
+    override fun onOverlayEnterClick() {
+        val catalog = overlayBuffer.bufferObject as Catalog
+        when (overlayBuffer.action) {
+            OVERLAY_ACTION_CATALOG_CREATE -> {
+                if (currentSortOrder == SortOrder.NEWEST_FIRST) {
+                    addNewCatalogToTheBeginningUseCase.addNewCatalogToTheBeginning(catalog,
+                        catalogList.toMutableList())
+                } else {
+                    addNewCatalogToTheEndUseCase.addNewCatalogToTheEnd(catalog,
+                        catalogList.toMutableList())
+                }
+            }
+            OVERLAY_ACTION_CATALOG_RENAME -> renameCatalogUseCase.renameCatalog(catalog)
+            else -> throw UnsupportedOperationException("Unsupported action for catalog objects")
+        }
+        _overlayEnterClicked.value = Event(Unit)
+    }
+
+    fun undoRemoval() {
+        undoRemovalUseCase.undoRemoval()
+        _redrawRecyclerView.value = Event(Unit)
+    }
+
+    fun onFragmentStop() {
+        realRemovePendingCatalogUseCase.realRemovePendingCatalog(catalogList.toMutableList())
     }
 }
-
-//class CatalogsVmFactory(
-//    private val localRepository: LocalRepository,
-//    private val application: Application
-//) :
-//    ViewModelProvider.AndroidViewModelFactory(application) {
-//
-//    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(CatalogsViewModel::class.java)) {
-//            return CatalogsViewModel(localRepository, application) as T
-//        }
-//        throw IllegalArgumentException("Wrong ViewModel class")
-//    }
-//}

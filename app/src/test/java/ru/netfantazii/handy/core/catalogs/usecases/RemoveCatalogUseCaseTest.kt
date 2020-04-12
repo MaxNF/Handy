@@ -5,19 +5,37 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Before
+import org.mockito.Mockito
+import ru.netfantazii.handy.core.notifications.alarm.usecases.UnregisterAlarmUseCase
+import ru.netfantazii.handy.core.notifications.map.usecases.UnregisterAllGeofencesUseCase
 import ru.netfantazii.handy.createFakeCatalog
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.PendingRemovedObject
 
 class RemoveCatalogUseCaseTest : CatalogUseCasesTestBase() {
 
-    private lateinit var removeCatalogUseCase: RemoveCatalogUseCase
     private lateinit var pendingRemovedObject: PendingRemovedObject
+    private lateinit var unregisterAlarmUseCase: UnregisterAlarmUseCase
+    private lateinit var unregisterAllGeofencesUseCase: UnregisterAllGeofencesUseCase
+    private lateinit var cancelAssociatedNotificationUseCase: CancelAssociatedNotificationUseCase
+    private lateinit var removeCatalogUseCase: RemoveCatalogUseCase
+    private lateinit var realRemovePendingCatalogUseCase: RealRemovePendingCatalogUseCase
 
     @Before
     fun createUseCase() {
         pendingRemovedObject = PendingRemovedObject()
-        removeCatalogUseCase = RemoveCatalogUseCase(localRepository, pendingRemovedObject)
+        unregisterAlarmUseCase = Mockito.mock(UnregisterAlarmUseCase::class.java)
+        unregisterAllGeofencesUseCase = Mockito.mock(UnregisterAllGeofencesUseCase::class.java)
+        cancelAssociatedNotificationUseCase =
+            Mockito.mock(CancelAssociatedNotificationUseCase::class.java)
+        realRemovePendingCatalogUseCase = RealRemovePendingCatalogUseCase(localRepository, pendingRemovedObject)
+        removeCatalogUseCase = RemoveCatalogUseCase(
+            pendingRemovedObject,
+            unregisterAllGeofencesUseCase,
+            unregisterAlarmUseCase,
+            cancelAssociatedNotificationUseCase,
+            realRemovePendingCatalogUseCase)
+
     }
 
     @Before
@@ -33,8 +51,10 @@ class RemoveCatalogUseCaseTest : CatalogUseCasesTestBase() {
     @Test
     fun removeCatalog_catalogAddedToPendingObjectAndNotReallyRemoved() {
         val addedCatalogs = localRepository.getCatalogs().test().values()[0]
-        removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
+        val removalResult = removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
         val resultList = localRepository.getCatalogs().test().values()[0]
+        assertThat(removalResult,
+            `is`(RemoveCatalogUseCase.RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED))
         assertThat(resultList.size, `is`(3))
         assertThat(resultList[0].name, `is`("1"))
         assertThat(resultList[1].name, `is`("2"))
@@ -45,9 +65,13 @@ class RemoveCatalogUseCaseTest : CatalogUseCasesTestBase() {
     @Test
     fun removeTwoCatalogs_secondCatalogAddedToPendingObjectAndFirstReallyRemoved() {
         val addedCatalogs = localRepository.getCatalogs().test().values()[0]
-        removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
-        removeCatalogUseCase.removeCatalog(addedCatalogs[1], addedCatalogs)
+        val removalResult1 = removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
+        val removalResult2 = removeCatalogUseCase.removeCatalog(addedCatalogs[1], addedCatalogs)
         val resultList = localRepository.getCatalogs().test().values()[0]
+        assertThat(removalResult1,
+            `is`(RemoveCatalogUseCase.RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED))
+        assertThat(removalResult2,
+            `is`(RemoveCatalogUseCase.RemoveCatalogResult.REAL_REMOVAL_WAS_PERFORMED))
         assertThat(resultList.size, `is`(2))
         assertThat(resultList[0].name, `is`("2"))
         assertThat(resultList[1].name, `is`("3"))

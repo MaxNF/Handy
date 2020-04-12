@@ -10,7 +10,9 @@ import com.google.firebase.auth.AuthCredential
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.R
 import ru.netfantazii.handy.data.database.*
+import ru.netfantazii.handy.di.FragmentScope
 import java.util.*
+import javax.inject.Inject
 
 class Catalog(
     id: Long = 0,
@@ -184,6 +186,7 @@ open class ShopItem(
 
 class BillingObject(val skuDetails: SkuDetails, val type: BillingPurchaseTypes)
 
-class PendingRemovedObject() {
+@FragmentScope
+class PendingRemovedObject @Inject constructor() {
     var entity: BaseEntity? = null
 }

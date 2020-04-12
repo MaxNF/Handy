@@ -10,10 +10,12 @@ import io.reactivex.Completable
 import ru.netfantazii.handy.core.notifications.GEOFENCE_INTENT_ACTION
 import ru.netfantazii.handy.data.database.GeofenceEntity
 import ru.netfantazii.handy.di.ApplicationContext
+import ru.netfantazii.handy.di.FragmentScope
 import ru.netfantazii.handy.extensions.GEOFENCE_CHECK_CYCLE_MILLIS
 import ru.netfantazii.handy.extensions.getPendingIntentForNotification
 import javax.inject.Inject
 
+@FragmentScope
 class RegisterGeofencesUseCase @Inject constructor(@ApplicationContext private val context: Context) {
 
     fun registerGeofences(

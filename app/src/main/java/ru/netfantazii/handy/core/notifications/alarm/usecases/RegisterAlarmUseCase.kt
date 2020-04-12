@@ -6,10 +6,12 @@ import android.os.Build
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import ru.netfantazii.handy.core.notifications.ALARM_INTENT_ACTION
 import ru.netfantazii.handy.di.ApplicationContext
+import ru.netfantazii.handy.di.FragmentScope
 import ru.netfantazii.handy.extensions.getPendingIntentForNotification
 import java.util.*
 import javax.inject.Inject
 
+@FragmentScope
 class RegisterAlarmUseCase @Inject constructor(@ApplicationContext private val context: Context) {
 
     fun registerAlarm(

@@ -1,15 +1,24 @@
 package ru.netfantazii.handy.core.catalogs.usecases
 
+import ru.netfantazii.handy.core.notifications.alarm.usecases.UnregisterAlarmUseCase
+import ru.netfantazii.handy.core.notifications.map.usecases.UnregisterAllGeofencesUseCase
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.PendingRemovedObject
-import ru.netfantazii.handy.extensions.reassignPositions
-import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.di.FragmentScope
 import javax.inject.Inject
 
+@FragmentScope
 class RemoveCatalogUseCase @Inject constructor(
-    private val localRepository: LocalRepository,
-    private val pendingRemovedObject: PendingRemovedObject
+    private val pendingRemovedObject: PendingRemovedObject,
+    private val unregisterAllGeofencesUseCase: UnregisterAllGeofencesUseCase,
+    private val unregisterAlarmUseCase: UnregisterAlarmUseCase,
+    private val cancelAssociatedNotificationUseCase: CancelAssociatedNotificationUseCase,
+    private val realRemovePendingCatalogUseCase: RealRemovePendingCatalogUseCase
 ) {
+
+    enum class RemoveCatalogResult {
+        REAL_REMOVAL_WAS_NOT_PERFORMED, REAL_REMOVAL_WAS_PERFORMED
+    }
 
     /**
      * Помещает каталог в очередь на удаление. Первое удаление с момента создания юз кейса не удаляет
@@ -17,18 +26,21 @@ class RemoveCatalogUseCase @Inject constructor(
      * старый объект, который находился в очереди удаляется из базы данных по-настоящему. Позиции
      * (поле position) находящихся в списке объектов меняются соответственным образом.
      * */
-    fun removeCatalog(catalog: Catalog, catalogList: MutableList<Catalog>) {
-        val catalogForRealRemove = pendingRemovedObject.entity as Catalog?
+    fun removeCatalog(
+        catalog: Catalog,
+        catalogList: MutableList<Catalog>
+    ): RemoveCatalogResult {
+        cancelAssociatedNotificationUseCase.cancelAssociatedNotifications(catalog.id)
+        unregisterAllGeofencesUseCase.unregisterAllGeofences(catalog.id, null)
+        unregisterAlarmUseCase.unregisterAlarm(catalog.id)
+
+        val wasReallyRemoved = realRemovePendingCatalogUseCase.realRemovePendingCatalog(catalogList)
         pendingRemovedObject.entity = catalog
 
-        catalogForRealRemove?.let {
-            realRemove(it, catalogList)
+        return if (wasReallyRemoved) {
+            RemoveCatalogResult.REAL_REMOVAL_WAS_PERFORMED
+        } else {
+            RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED
         }
-    }
-
-    private fun realRemove(catalog: Catalog, catalogList: MutableList<Catalog>) {
-        catalogList.remove(catalog)
-        catalogList.reassignPositions()
-        localRepository.removeAndUpdateCatalogs(catalog, catalogList)
     }
 }

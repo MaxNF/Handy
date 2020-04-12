@@ -6,10 +6,12 @@ import ru.netfantazii.handy.core.notifications.alarm.usecases.RegisterAlarmUseCa
 import ru.netfantazii.handy.core.notifications.map.usecases.RegisterGeofencesUseCase
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.PendingRemovedObject
+import ru.netfantazii.handy.di.FragmentScope
 import ru.netfantazii.handy.extensions.registerGeofences
 import ru.netfantazii.handy.repositories.LocalRepository
 import javax.inject.Inject
 
+@FragmentScope
 class UndoRemovalUseCase @Inject constructor(
     private val localRepository: LocalRepository,
     private val pendingRemovedObject: PendingRemovedObject,

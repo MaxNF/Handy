@@ -88,13 +88,13 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
         val owner = this
 
         with(viewModel) {
-            newDataReceived.observe(owner, Observer {
+            redrawRecyclerView.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     refreshRecyclerView()
                 }
                 if (shouldHintBeShown) showHint() else hideHint()
             })
-            allLiveDataList.add(newDataReceived)
+            allLiveDataList.add(redrawRecyclerView)
 
             catalogClicked.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let { catalog -> enterCatalog(catalog) }

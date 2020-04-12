@@ -53,6 +53,8 @@ import ru.netfantazii.handy.extensions.*
 import javax.inject.Inject
 
 //todo дополнить страницу netfantazii.ru/handypro/ картинкой и ссылкой на гугл-плей.
+//todo отрефакторить ViewModels. Использовать юз-кейсы.
+//todo Переделать механизм передачи данных об отправителе каталога в попап. Возможно сделать его частью каталога и хранить вместе со всей остальной информацией
 
 const val REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel"
 const val CATALOG_RECEIVED_NOTIFICATION_CHANNEL_ID = "download_notification_channel"
