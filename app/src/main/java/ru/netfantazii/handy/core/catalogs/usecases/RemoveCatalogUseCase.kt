@@ -16,9 +16,9 @@ class RemoveCatalogUseCase @Inject constructor(
     private val realRemovePendingCatalogUseCase: RealRemovePendingCatalogUseCase
 ) {
 
-    enum class RemoveCatalogResult {
-        REAL_REMOVAL_WAS_NOT_PERFORMED, REAL_REMOVAL_WAS_PERFORMED
-    }
+//    enum class RemoveCatalogResult {
+//        REAL_REMOVAL_WAS_NOT_PERFORMED, REAL_REMOVAL_WAS_PERFORMED
+//    }
 
     /**
      * Помещает каталог в очередь на удаление. Первое удаление с момента создания юз кейса не удаляет
@@ -29,18 +29,18 @@ class RemoveCatalogUseCase @Inject constructor(
     fun removeCatalog(
         catalog: Catalog,
         catalogList: MutableList<Catalog>
-    ): RemoveCatalogResult {
+    ) {
         cancelAssociatedNotificationUseCase.cancelAssociatedNotifications(catalog.id)
         unregisterAllGeofencesUseCase.unregisterAllGeofences(catalog.id, null)
         unregisterAlarmUseCase.unregisterAlarm(catalog.id)
 
         val wasReallyRemoved = realRemovePendingCatalogUseCase.realRemovePendingCatalog(catalogList)
-        pendingRemovedObject.entity = catalog
+        pendingRemovedObject.insertEntity(catalog, !wasReallyRemoved)
 
-        return if (wasReallyRemoved) {
-            RemoveCatalogResult.REAL_REMOVAL_WAS_PERFORMED
-        } else {
-            RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED
-        }
+//        return if (wasReallyRemoved) {
+//            RemoveCatalogResult.REAL_REMOVAL_WAS_PERFORMED
+//        } else {
+//            RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED
+//        }
     }
 }

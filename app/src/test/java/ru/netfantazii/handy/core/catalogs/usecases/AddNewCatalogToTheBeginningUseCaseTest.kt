@@ -1,15 +1,18 @@
 package ru.netfantazii.handy.core.catalogs.usecases
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
-import ru.netfantazii.handy.FakeLocalRepository
+import org.junit.Rule
 import ru.netfantazii.handy.createFakeCatalog
-import ru.netfantazii.handy.data.Catalog
-import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.getOrAwaitValue
 
 class AddNewCatalogToTheBeginningUseCaseTest : CatalogUseCasesTestBase() {
+
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var addNewCatalogToTheBeginningUseCase: AddNewCatalogToTheBeginningUseCase
 
@@ -22,11 +25,11 @@ class AddNewCatalogToTheBeginningUseCaseTest : CatalogUseCasesTestBase() {
     fun addNewCatalogToTheBeginning_catalogAddedPositionsUpdated() {
         val catalog1 = createFakeCatalog("1")
         localRepository.addCatalog(catalog1)
-        val addedCatalogs = localRepository.getCatalogs().test().values()[0]
+        val addedCatalogs = localRepository.getCatalogs().getOrAwaitValue()
 
         val catalog2 = createFakeCatalog("2")
         addNewCatalogToTheBeginningUseCase.addNewCatalogToTheBeginning(catalog2, addedCatalogs)
-        val resultList = localRepository.getCatalogs().test().values()[0]
+        val resultList = localRepository.getCatalogs().getOrAwaitValue()
 
         assertThat(resultList.size, `is`(2))
 

@@ -3,7 +3,9 @@ package ru.netfantazii.handy.core
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +58,7 @@ interface OverlayActions {
 
 class OverlayFragment : Fragment() {
 
+    private val TAG = "OverlayFragment"
     private lateinit var overlayActions: OverlayActions
 
     override fun onCreate(savedInstanceState: Bundle?) {

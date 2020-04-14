@@ -96,11 +96,11 @@ class CatalogsViewModel_old @Inject constructor(
     }
 
     private fun subscribeToCatalogsChanges() {
-        disposables.add(localRepository.getCatalogs()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                catalogList = it
-            })
+//        disposables.add(localRepository.getCatalogs()
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe {
+//                catalogList = it
+//            })
     }
 
     private fun getFilteredCatalogList(catalogList: MutableList<Catalog>): List<Catalog> {

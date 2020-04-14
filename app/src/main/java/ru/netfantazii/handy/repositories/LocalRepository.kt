@@ -1,5 +1,6 @@
 package ru.netfantazii.handy.repositories
 
+import androidx.lifecycle.LiveData
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -20,7 +21,7 @@ interface LocalRepository {
     fun updateAllCatalogs(catalogs: List<Catalog>): Disposable
     fun removeAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>): Disposable
     fun addAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>): Disposable
-    fun getCatalogs(): Observable<MutableList<Catalog>>
+    fun getCatalogs(): LiveData<MutableList<Catalog>>
     fun removeAllCatalogs(): Disposable
     fun updateGroupExpandStates(
         catalogId: Long,
@@ -109,7 +110,7 @@ class LocalRepositoryImpl @Inject constructor(db: ProductDatabase) :
                 expandStates)
         }.subscribeOn(Schedulers.io()).subscribe()!!
 
-    override fun getCatalogs(): Observable<MutableList<Catalog>> = catalogDao.getCatalogs()
+    override fun getCatalogs(): LiveData<MutableList<Catalog>> = catalogDao.getCatalogs()
 
     override fun removeAllCatalogs(): Disposable =
         catalogDao.removeAllCatalogs().subscribeOn(Schedulers.io()).subscribe()!!

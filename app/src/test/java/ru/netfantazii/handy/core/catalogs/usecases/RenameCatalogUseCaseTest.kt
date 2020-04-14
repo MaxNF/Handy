@@ -1,13 +1,19 @@
 package ru.netfantazii.handy.core.catalogs.usecases
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import ru.netfantazii.handy.createFakeCatalog
+import ru.netfantazii.handy.getOrAwaitValue
 
 class RenameCatalogUseCaseTest : CatalogUseCasesTestBase() {
+
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var renameCatalogUseCase: RenameCatalogUseCase
 
@@ -24,7 +30,7 @@ class RenameCatalogUseCaseTest : CatalogUseCasesTestBase() {
         localRepository.addCatalog(catalog1)
         localRepository.addCatalog(catalog2)
         localRepository.addCatalog(catalog3)
-        val addedCatalogs = localRepository.getCatalogs().test().values()[0]
+        val addedCatalogs = localRepository.getCatalogs().getOrAwaitValue()
 
         val renamedCatalog1 = addedCatalogs[0].apply { name = "renamed1" }
         val renamedCatalog2 = addedCatalogs[1].apply { name = "renamed2" }
@@ -33,7 +39,7 @@ class RenameCatalogUseCaseTest : CatalogUseCasesTestBase() {
         renameCatalogUseCase.renameCatalog(renamedCatalog2)
         renameCatalogUseCase.renameCatalog(renamedCatalog3)
 
-        val resultList = localRepository.getCatalogs().test().values()[0]
+        val resultList = localRepository.getCatalogs().getOrAwaitValue()
 
         assertThat(resultList[0].id, `is`(1L))
         assertThat(resultList[0].name, `is`("renamed1"))

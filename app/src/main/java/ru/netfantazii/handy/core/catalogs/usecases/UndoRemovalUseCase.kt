@@ -47,7 +47,7 @@ class UndoRemovalUseCase @Inject constructor(
                             catalog.groupExpandStates,
                             alarmTime)
                     }
-                    pendingRemovedObject.entity = null
+                    pendingRemovedObject.clearEntity(true)
                 }
         }
 }

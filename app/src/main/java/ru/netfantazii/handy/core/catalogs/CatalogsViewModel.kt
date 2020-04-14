@@ -1,7 +1,6 @@
 package ru.netfantazii.handy.core.catalogs
 
 import androidx.lifecycle.*
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.netfantazii.handy.core.*
 import ru.netfantazii.handy.core.catalogs.usecases.*
@@ -19,7 +18,7 @@ class CatalogsViewModel @Inject constructor(
     private val removeCatalogUseCase: RemoveCatalogUseCase,
     private val renameCatalogUseCase: RenameCatalogUseCase,
     private val realRemovePendingCatalogUseCase: RealRemovePendingCatalogUseCase,
-    private val subscribeToCatalogsChangesFilteredUseCase: SubscribeToCatalogsChangesFilteredUseCase,
+    private val subscribeToCatalogsChangesUseCase: SubscribeToCatalogsChangesUseCase,
     private val undoRemovalUseCase: UndoRemovalUseCase,
     private val loadCatalogNetInfoUseCase: LoadCatalogNetInfoUseCase
 ) :
@@ -28,13 +27,14 @@ class CatalogsViewModel @Inject constructor(
 
     override lateinit var overlayBuffer: BufferObject
 
-    private var catalogList = listOf<Catalog>()
+    private var notFilteredCatalogList = listOf<Catalog>()
+    private var filteredCatalogList = listOf<Catalog>()
         set(value) {
             field = value
             _redrawRecyclerView.value = Event(Unit)
         }
     val shouldHintBeShown: Boolean
-        get() = catalogList.isEmpty()
+        get() = filteredCatalogList.isEmpty()
 
     private val disposables = CompositeDisposable()
 
@@ -82,15 +82,15 @@ class CatalogsViewModel @Inject constructor(
     override val catalogAndNetInfoReceived: LiveData<Event<Pair<Catalog, CatalogNetInfoEntity>>> =
         _catalogAndNetInfoReceived
 
-    init {
-        subscribeToCatalogsChanges()
-    }
+    private val newCatalogsObserver =
+        Observer<Pair<List<Catalog>, List<Catalog>>> { (filtered, notFiltered) ->
+            filteredCatalogList = filtered
+            notFilteredCatalogList = notFiltered
+        }
 
-    private fun subscribeToCatalogsChanges() {
-        disposables.add(subscribeToCatalogsChangesFilteredUseCase.subscribeToCatalogsChanges().observeOn(
-            AndroidSchedulers.mainThread()).subscribe {
-            catalogList = it
-        })
+    init {
+        subscribeToCatalogsChangesUseCase.filteredAndNotFilteredCatalogs.observeForever(
+            newCatalogsObserver)
     }
 
     fun onCreateCatalogClick() {
@@ -107,11 +107,7 @@ class CatalogsViewModel @Inject constructor(
     }
 
     override fun onCatalogSwipePerform(catalog: Catalog) {
-        val removalResult =
-            removeCatalogUseCase.removeCatalog(catalog, catalogList.toMutableList())
-        if (removalResult == RemoveCatalogUseCase.RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED) {
-            _redrawRecyclerView.value = Event(Unit)
-        }
+        removeCatalogUseCase.removeCatalog(catalog, notFilteredCatalogList.toMutableList())
     }
 
     override fun onCatalogSwipeFinish(catalog: Catalog) {
@@ -123,11 +119,14 @@ class CatalogsViewModel @Inject constructor(
     }
 
     override fun onCatalogEditClick(catalog: Catalog) {
+        overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_RENAME, catalog)
         _catalogEditClicked.value = Event(catalog.getCopy())
     }
 
     override fun onCatalogDragSucceed(fromPosition: Int, toPosition: Int) {
-        dragCatalogUseCase.dragCatalog(catalogList.toMutableList(), fromPosition, toPosition)
+        dragCatalogUseCase.dragCatalog(notFilteredCatalogList.toMutableList(),
+            fromPosition,
+            toPosition)
     }
 
     override fun onCatalogNotificationClick(catalog: Catalog) {
@@ -145,7 +144,7 @@ class CatalogsViewModel @Inject constructor(
         })
     }
 
-    override fun getCatalogList(): List<Catalog> = catalogList
+    override fun getCatalogList(): List<Catalog> = filteredCatalogList
 
     override fun onOverlayBackgroundClick() {
         _overlayBackgroundClicked.value = Event(Unit)
@@ -157,10 +156,10 @@ class CatalogsViewModel @Inject constructor(
             OVERLAY_ACTION_CATALOG_CREATE -> {
                 if (currentSortOrder == SortOrder.NEWEST_FIRST) {
                     addNewCatalogToTheBeginningUseCase.addNewCatalogToTheBeginning(catalog,
-                        catalogList.toMutableList())
+                        notFilteredCatalogList.toMutableList())
                 } else {
                     addNewCatalogToTheEndUseCase.addNewCatalogToTheEnd(catalog,
-                        catalogList.toMutableList())
+                        notFilteredCatalogList.toMutableList())
                 }
             }
             OVERLAY_ACTION_CATALOG_RENAME -> renameCatalogUseCase.renameCatalog(catalog)
@@ -170,11 +169,18 @@ class CatalogsViewModel @Inject constructor(
     }
 
     fun undoRemoval() {
-        undoRemovalUseCase.undoRemoval()
-        _redrawRecyclerView.value = Event(Unit)
+        undoRemovalUseCase.undoRemoval()?.let {
+            disposables.add(it.subscribe())
+        }
     }
 
     fun onFragmentStop() {
-        realRemovePendingCatalogUseCase.realRemovePendingCatalog(catalogList.toMutableList())
+        realRemovePendingCatalogUseCase.realRemovePendingCatalog(notFilteredCatalogList.toMutableList())
+    }
+
+    override fun onCleared() {
+        disposables.clear()
+        subscribeToCatalogsChangesUseCase.filteredAndNotFilteredCatalogs.removeObserver(
+            newCatalogsObserver)
     }
 }

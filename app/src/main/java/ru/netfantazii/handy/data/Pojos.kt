@@ -1,6 +1,7 @@
 package ru.netfantazii.handy.data
 
 import android.net.Uri
+import android.util.Log
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Ignore
@@ -188,5 +189,56 @@ class BillingObject(val skuDetails: SkuDetails, val type: BillingPurchaseTypes)
 
 @FragmentScope
 class PendingRemovedObject @Inject constructor() {
+    
+    private val listeners: MutableSet<() -> Unit> = mutableSetOf()
+
     var entity: BaseEntity? = null
+        private set
+
+    private fun triggerListeners() = listeners.forEach { it() }
+
+
+    /**
+     * Вставляет объект ожидающий удаления.
+     * @param entity объект, который следует поместить на удаление
+     * @param shouldTriggerListeners нужно ли уведомлять об этом зарегистрированных слушателей
+     * */
+    fun insertEntity(entity: BaseEntity, shouldTriggerListeners: Boolean) {
+        this.entity = entity
+        if (shouldTriggerListeners) {
+            triggerListeners()
+        }
+    }
+
+    /**
+     * Удаляет объект ожидающий удаления.
+     * @param shouldTriggerListeners нужно ли уведомлять об этом зарегистрированных слушателей
+     * */
+    fun clearEntity(shouldTriggerListeners: Boolean) {
+        this.entity = null
+        if (shouldTriggerListeners) {
+            triggerListeners()
+        }
+    }
+
+
+    /**
+     * Добавляет слушателя. Уведомление придет при изменении объекта. Возвращает true, если слушатель
+     * был добавлен, false, если он уже зарегистрирован.
+     * @param onChanged действие, которое будет выполнено при изменении объекта. Клиент, который
+     * меняет значение может отказаться от уведомления слушателей.
+     * */
+    fun addListener(onChanged: () -> Unit) = listeners.add(onChanged)
+
+    /**
+     * Удаляет слушателя. Возвращает true, если слушатель был удален, false, если он не был зарегистрирован
+     * @param onChanged действие, которое будет выполнено при изменении объекта. Клиент, который
+     * меняет значение может отказаться от уведомления слушателей.
+     * */
+    fun removeListener(onChanged: () -> Unit): Boolean = listeners.remove(onChanged)
+
+    /**
+     * Удаляет всех слушателей.
+     */
+    fun removeAllListeners() = listeners.clear()
 }

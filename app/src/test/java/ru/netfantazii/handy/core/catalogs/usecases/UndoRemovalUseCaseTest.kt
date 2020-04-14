@@ -38,8 +38,8 @@ class UndoRemovalUseCaseTest : CatalogUseCasesTestBase() {
     @Before
     fun createUseCase() {
         pendingRemovedObject = PendingRemovedObject()
-        pendingRemovedObject.entity =
-            createFakeCatalog("1").apply { alarmTime = Calendar.getInstance() }
+        pendingRemovedObject.insertEntity(
+            createFakeCatalog("1").apply { alarmTime = Calendar.getInstance() }, false)
         registerGeofencesUseCase = Mockito.mock(RegisterGeofencesUseCase::class.java)
         Mockito.`when`(registerGeofencesUseCase.registerGeofences(any(),
             Mockito.anyLong(),
@@ -57,7 +57,6 @@ class UndoRemovalUseCaseTest : CatalogUseCasesTestBase() {
     @Test
     fun undoRemoval_catalogRemovedFromPendingObject() {
         undoRemovalUseCase.undoRemoval()?.test()
-
         assertThat(pendingRemovedObject.entity, `is`(nullValue()))
         Mockito.verify(registerGeofencesUseCase, Mockito.times(1)).registerGeofences(
             any(),

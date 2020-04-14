@@ -24,7 +24,7 @@ class RealRemovePendingCatalogUseCase @Inject constructor(
             catalogList.remove(catalog)
             catalogList.reassignPositions()
             localRepository.removeAndUpdateCatalogs(catalog, catalogList)
-            pendingRemovedObject.entity = null
+            pendingRemovedObject.clearEntity(false)
             return true
         }
         return false

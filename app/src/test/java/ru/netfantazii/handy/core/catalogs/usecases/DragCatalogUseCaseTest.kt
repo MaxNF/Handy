@@ -1,13 +1,19 @@
 package ru.netfantazii.handy.core.catalogs.usecases
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import ru.netfantazii.handy.createFakeCatalog
+import ru.netfantazii.handy.getOrAwaitValue
 
 class DragCatalogUseCaseTest : CatalogUseCasesTestBase() {
+
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var dragCatalogUseCase: DragCatalogUseCase
 
@@ -26,13 +32,13 @@ class DragCatalogUseCaseTest : CatalogUseCasesTestBase() {
         localRepository.addCatalog(catalog2)
         localRepository.addCatalog(catalog3)
         localRepository.addCatalog(catalog4)
-        val addedCatalogs = localRepository.getCatalogs().test().values()[0]
+        val addedCatalogs = localRepository.getCatalogs().getOrAwaitValue()
 
         dragCatalogUseCase.dragCatalog(addedCatalogs,
             addedCatalogs[0].position,
             addedCatalogs[2].position)
 
-        val resultList = localRepository.getCatalogs().test().values()[0]
+        val resultList = localRepository.getCatalogs().getOrAwaitValue()
 
         assertThat(resultList[0].position, `is`(0))
         assertThat(resultList[0].name, `is`("2"))

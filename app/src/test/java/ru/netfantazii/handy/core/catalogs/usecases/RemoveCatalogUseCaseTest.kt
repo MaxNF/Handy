@@ -1,18 +1,24 @@
 package ru.netfantazii.handy.core.catalogs.usecases
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.mockito.Mockito
 import ru.netfantazii.handy.core.notifications.alarm.usecases.UnregisterAlarmUseCase
 import ru.netfantazii.handy.core.notifications.map.usecases.UnregisterAllGeofencesUseCase
 import ru.netfantazii.handy.createFakeCatalog
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.PendingRemovedObject
+import ru.netfantazii.handy.getOrAwaitValue
 
 class RemoveCatalogUseCaseTest : CatalogUseCasesTestBase() {
+
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var pendingRemovedObject: PendingRemovedObject
     private lateinit var unregisterAlarmUseCase: UnregisterAlarmUseCase
@@ -50,11 +56,9 @@ class RemoveCatalogUseCaseTest : CatalogUseCasesTestBase() {
 
     @Test
     fun removeCatalog_catalogAddedToPendingObjectAndNotReallyRemoved() {
-        val addedCatalogs = localRepository.getCatalogs().test().values()[0]
-        val removalResult = removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
-        val resultList = localRepository.getCatalogs().test().values()[0]
-        assertThat(removalResult,
-            `is`(RemoveCatalogUseCase.RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED))
+        val addedCatalogs = localRepository.getCatalogs().getOrAwaitValue()
+        removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
+        val resultList = localRepository.getCatalogs().getOrAwaitValue()
         assertThat(resultList.size, `is`(3))
         assertThat(resultList[0].name, `is`("1"))
         assertThat(resultList[1].name, `is`("2"))
@@ -64,14 +68,10 @@ class RemoveCatalogUseCaseTest : CatalogUseCasesTestBase() {
 
     @Test
     fun removeTwoCatalogs_secondCatalogAddedToPendingObjectAndFirstReallyRemoved() {
-        val addedCatalogs = localRepository.getCatalogs().test().values()[0]
-        val removalResult1 = removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
-        val removalResult2 = removeCatalogUseCase.removeCatalog(addedCatalogs[1], addedCatalogs)
-        val resultList = localRepository.getCatalogs().test().values()[0]
-        assertThat(removalResult1,
-            `is`(RemoveCatalogUseCase.RemoveCatalogResult.REAL_REMOVAL_WAS_NOT_PERFORMED))
-        assertThat(removalResult2,
-            `is`(RemoveCatalogUseCase.RemoveCatalogResult.REAL_REMOVAL_WAS_PERFORMED))
+        val addedCatalogs = localRepository.getCatalogs().getOrAwaitValue()
+        removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
+        removeCatalogUseCase.removeCatalog(addedCatalogs[1], addedCatalogs)
+        val resultList = localRepository.getCatalogs().getOrAwaitValue()
         assertThat(resultList.size, `is`(2))
         assertThat(resultList[0].name, `is`("2"))
         assertThat(resultList[1].name, `is`("3"))

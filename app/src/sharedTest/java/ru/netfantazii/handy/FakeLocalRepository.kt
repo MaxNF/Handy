@@ -1,6 +1,8 @@
 package ru.netfantazii.handy
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.*
 import io.reactivex.Observable
@@ -24,6 +26,8 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     private val groups: SortedSet<Group> =
         sortedSetOf(Comparator { o1, o2 -> (o1.position - o2.position) })
 
+    private val catalogsLiveData = MutableLiveData<MutableList<Catalog>>()
+
     private fun <T : BaseEntity> assignNewIdAndReturn(t: T, set: SortedSet<T>): T {
         val maxId = set.maxBy { it.id }?.id ?: 0
         t.id = maxId + 1
@@ -33,6 +37,7 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     override fun addCatalog(catalog: Catalog): Disposable {
         val updatedCatalog = assignNewIdAndReturn(catalog, catalogs)
         catalogs.add(updatedCatalog)
+        catalogsLiveData.value = catalogs.toMutableList()
         return Disposables.empty()
     }
 
@@ -65,12 +70,8 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
         return Disposables.empty()
     }
 
-    override fun getCatalogs(): Observable<MutableList<Catalog>> {
-        val copiedList = mutableListOf<Catalog>()
-        catalogs.forEach {
-            copiedList.add(it.getCopy())
-        }
-        return Observable.just(copiedList.toMutableList())
+    override fun getCatalogs(): LiveData<MutableList<Catalog>> {
+        return catalogsLiveData
     }
 
     override fun removeAllCatalogs(): Disposable {

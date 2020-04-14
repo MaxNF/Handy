@@ -16,16 +16,14 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Base"
-        >
+        android:theme="@style/Base">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-4546128231433208~4467489086"/>
+            android:value="ca-app-pub-4546128231433208~4467489086" />
         <activity
             android:name="ru.netfantazii.handy.core.main.MainActivity"
-            android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleTop"
-            >
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,7 +39,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
             <intent-filter>
-<!--                Отслеживает очищение данных у Google services (после этого геометки в приложениях слетают)-->
+                <!--                Отслеживает очищение данных у Google services (после этого геометки в приложениях слетают)-->
                 <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
                 <data
                     android:scheme="package"
