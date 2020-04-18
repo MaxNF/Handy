@@ -4,6 +4,7 @@ package ru.netfantazii.handy
 import org.hamcrest.Matchers.*
 import org.junit.Assert.*
 import android.content.Context
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,7 +15,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import ru.netfantazii.handy.data.*
 import java.io.IOException
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ru.netfantazii.handy.data.database.CatalogDao
 import ru.netfantazii.handy.data.database.GroupDao
 import ru.netfantazii.handy.data.database.ProductDao
@@ -40,7 +40,7 @@ class DatabaseTest {
     }
 
     @get:Rule
-    var instantTaskExecutionRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
+    var instantTaskExecutionRule = InstantTaskExecutorRule()
 
     @After
     @Throws(IOException::class)
@@ -52,7 +52,7 @@ class DatabaseTest {
     @Throws(IOException::class)
     fun testEmptyCatalog() {
         catalogDao.add(createFakeCatalog())
-        val catalogs = catalogDao.getCatalogs().test().values()[0]
+        val catalogs = catalogDao.getCatalogs().getOrAwaitValue()
 
         assertThat(catalogs.size, `is`(1)) // В базу добавлен только один каталог
         assertThat(catalogs[0].totalProductCount, `is`(0)) // Общее кол-во продуктов в каталоге: 0
@@ -69,7 +69,7 @@ class DatabaseTest {
         catalogDao.add(createFakeCatalog())
         catalogDao.add(createFakeCatalog())
         catalogDao.add(createFakeCatalog())
-        val catalogs = catalogDao.getCatalogs().test().values()[0]
+        val catalogs = catalogDao.getCatalogs().getOrAwaitValue()
 
         assertThat(catalogs.size, `is`(3)) // В базу добавлено 3 каталога
         assertThat(catalogs[0].id, `is`(1L)) // Первый каталог имеет id = 1
@@ -96,7 +96,7 @@ class DatabaseTest {
         groupDao.add(createFakeGroup(1))
         productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT))
         productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT))
-        val catalogs = catalogDao.getCatalogs().test().values()[0]
+        val catalogs = catalogDao.getCatalogs().getOrAwaitValue()
 
         assertThat(catalogs.size, `is`(1))
         assertThat(catalogs[0].totalProductCount, `is`(2)) // Общее кол-во продуктов в каталоге: 2
@@ -126,7 +126,7 @@ class DatabaseTest {
         groupDao.add(createFakeGroup(1))
         productDao.add(createFakeProduct(1, 1, BuyStatus.BOUGHT))
         productDao.add(createFakeProduct(1, 1, BuyStatus.NOT_BOUGHT))
-        val catalogs = catalogDao.getCatalogs().test().values()[0]
+        val catalogs = catalogDao.getCatalogs().getOrAwaitValue()
 
         assertThat(catalogs.size, `is`(1)) // В базу добавлен только один каталог
         assertThat(catalogs[0].totalProductCount, `is`(2)) // Общее кол-во продуктов в каталоге: 2
@@ -157,7 +157,7 @@ class DatabaseTest {
         catalogDao.add(createFakeCatalog())
         catalogDao.add(createFakeCatalog())
 
-        val catalogsBeforeUpdate = catalogDao.getCatalogs().test().values()[0]
+        val catalogsBeforeUpdate = catalogDao.getCatalogs().getOrAwaitValue()
         val firstCatalogBeforeUpdate = catalogsBeforeUpdate[0]
         val secondCatalogBeforeUpdate = catalogsBeforeUpdate[1]
 
@@ -166,7 +166,7 @@ class DatabaseTest {
         val updatedCatalogs = listOf(firstCatalogBeforeUpdate, secondCatalogBeforeUpdate)
         catalogDao.updateAll(updatedCatalogs)
 
-        val catalogsAfterUpdate = catalogDao.getCatalogs().test().values()[0]
+        val catalogsAfterUpdate = catalogDao.getCatalogs().getOrAwaitValue()
         val firstCatalogAfterUpdate = catalogsAfterUpdate[0]
         val secondCatalogAfterUpdate = catalogsAfterUpdate[1]
 
@@ -264,7 +264,7 @@ class DatabaseTest {
         catalogDao.add(createFakeCatalog("0", position = 1))
         catalogDao.add(createFakeCatalog("3", position = 2))
 
-        val catalogs = catalogDao.getCatalogs().test().values()[0]
+        val catalogs = catalogDao.getCatalogs().getOrAwaitValue()
         assertThat(catalogs[0].name, `is`("1"))
         assertThat(catalogs[1].name, `is`("0"))
         assertThat(catalogs[2].name, `is`("3"))
@@ -288,7 +288,7 @@ class DatabaseTest {
         val calendarToAdd = Calendar.getInstance()
         calendarToAdd.timeInMillis = 5
         catalogDao.add(createFakeCatalog())
-        val catalog = catalogDao.getCatalogs().test().values()[0]
+        val catalog = catalogDao.getCatalogs().getOrAwaitValue()
         assertThat(catalog[0].id, `is`(1L))
         catalogDao.addAlarmTime(1L, calendarToAdd).test().assertComplete()
         val addedCalendar = catalogDao.getCatalogAlarmTime(1).test().values()[0]

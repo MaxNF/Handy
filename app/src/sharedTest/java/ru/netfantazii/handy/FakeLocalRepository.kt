@@ -26,12 +26,18 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     private val groups: SortedSet<Group> =
         sortedSetOf(Comparator { o1, o2 -> (o1.position - o2.position) })
 
-    private val catalogsLiveData = MutableLiveData<MutableList<Catalog>>()
+    private var catalogsLiveData = MutableLiveData<MutableList<Catalog>>()
 
     private fun <T : BaseEntity> assignNewIdAndReturn(t: T, set: SortedSet<T>): T {
         val maxId = set.maxBy { it.id }?.id ?: 0
         t.id = maxId + 1
         return t
+    }
+
+    fun resetRepository() {
+        catalogs.clear()
+        groups.clear()
+        catalogsLiveData = MutableLiveData()
     }
 
     override fun addCatalog(catalog: Catalog): Disposable {

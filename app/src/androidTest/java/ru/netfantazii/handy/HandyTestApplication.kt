@@ -8,4 +8,8 @@ class HandyTestApplication : HandyApplication() {
         return DaggerTestAppComponent.factory()
             .create(applicationContext, applicationContext.packageName)
     }
+
+    fun resetRepository() {
+        (localRepository as? FakeLocalRepository)?.resetRepository()
+    }
 }

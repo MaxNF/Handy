@@ -2,6 +2,7 @@ package ru.netfantazii.handy
 
 import android.app.Application
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.databinding.ObservableBoolean
 import androidx.preference.PreferenceManager
 import ru.netfantazii.handy.repositories.LocalRepository
@@ -24,6 +25,10 @@ open class HandyApplication : Application() {
     val isPremium = ObservableBoolean()
     var shouldRateDialogBeShown = false
 
+    @Inject
+    @get:VisibleForTesting
+    lateinit var localRepository: LocalRepository
+
     override fun onCreate() {
         super.onCreate()
         appComponent.inject(this)
@@ -31,7 +36,8 @@ open class HandyApplication : Application() {
         saveLaunchCount()
     }
 
-    open fun initializeComponent() = DaggerAppComponent.factory().create(applicationContext, packageName)
+    open fun initializeComponent() =
+        DaggerAppComponent.factory().create(applicationContext, packageName)
 
     private fun loadSortOrderToMemory() {
         currentSortOrder = getSortOrder(this)
