@@ -93,7 +93,7 @@ class ContactsFragment : Fragment() {
     private fun subscribeToEvents() {
         val owner = this
         with(viewModel) {
-            contactsUpdated.observe(owner, Observer {
+            contactsUpdated.observe(viewLifecycleOwner, Observer {
                 it.getContentIfNotHandled()?.let {
                     adapter.notifyDataSetChanged()
                 }
@@ -101,21 +101,21 @@ class ContactsFragment : Fragment() {
             })
             allLiveDataList.add(contactsUpdated)
 
-            contactSwipePerformed.observe(owner, Observer {
+            contactSwipePerformed.observe(viewLifecycleOwner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showDeleteDialog()
                 }
             })
             allLiveDataList.add(contactSwipePerformed)
 
-            contactEditClicked.observe(owner, Observer {
+            contactEditClicked.observe(viewLifecycleOwner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showEditDialog()
                 }
             })
             allLiveDataList.add(contactEditClicked)
 
-            addContactClicked.observe(owner, Observer {
+            addContactClicked.observe(viewLifecycleOwner, Observer {
                 it.getContentIfNotHandled()?.let {
                     showEditDialog()
                 }

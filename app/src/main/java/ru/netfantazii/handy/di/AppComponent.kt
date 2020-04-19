@@ -12,7 +12,8 @@ import ru.netfantazii.handy.di.modules.repository.RemoteRepositoryModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppSubcomponents::class,
+@Component(modules = [
+    AppSubcomponents::class,
     DatabaseModule::class,
     LocalRepositoryModule::class,
     RemoteRepositoryModule::class,
@@ -33,5 +34,4 @@ interface AppComponent {
     interface Factory {
         fun create(@ApplicationContext @BindsInstance context: Context, @PackageName @BindsInstance packageName: String): AppComponent
     }
-
 }
