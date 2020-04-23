@@ -1,7 +1,6 @@
 package ru.netfantazii.handy.data
 
 import android.net.Uri
-import android.util.Log
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Ignore
@@ -82,7 +81,7 @@ open class Group(
     val statusColor: Int
 
     init {
-        buyStatus = calculateStatus(productList)
+        buyStatus = calculateAndReturnStatus(productList)
         statusColor =
             if (buyStatus == BuyStatus.BOUGHT) R.color.boughtColor else R.color.notBoughtColor
         productList.sortBy { it.position }
@@ -100,12 +99,13 @@ open class Group(
         this.productList
     )
 
-    private fun calculateStatus(productEntityList: List<Product>): BuyStatus =
+    fun calculateAndReturnStatus(productEntityList: List<Product>): BuyStatus =
         if (productEntityList.isNotEmpty() && productEntityList.all { it.buyStatus == BuyStatus.BOUGHT }) BuyStatus.BOUGHT else BuyStatus.NOT_BOUGHT
 
-    fun isStatusChanged() = buyStatus != calculateStatus(productList)
+    fun isStatusChanged() = buyStatus != calculateAndReturnStatus(productList)
 
     override fun equals(other: Any?): Boolean {
+        //todo дописать проверку класса для корректного переопределения (у других классов тоже)
         return if (other == null) false
         else this.id == (other as Group).id
     }

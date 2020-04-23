@@ -37,11 +37,10 @@ interface LocalRepository {
     fun removeAndUpdateGroups(group: Group, list: List<Group>): Disposable
     fun removeAllGroups(groupList: List<Group>): Disposable
     fun addAndUpdateGroups(group: Group, list: List<Group>): Disposable
-    fun getGroups(catalogId: Long): Observable<MutableList<Group>>
+    fun getGroups(catalogId: Long): LiveData<MutableList<Group>>
     fun addProduct(product: Product): Disposable
     fun removeProduct(product: Product): Disposable
     fun updateProduct(product: Product): Disposable
-    fun updateProductWithDelay(product: Product, delayMillis: Long): Disposable
     fun updateAllProducts(products: List<Product>): Disposable
     fun removeAndUpdateProducts(product: Product, list: List<Product>): Disposable
     fun addAndUpdateProducts(product: Product, list: List<Product>): Disposable
@@ -155,7 +154,7 @@ class LocalRepositoryImpl @Inject constructor(db: ProductDatabase) :
                 list)
         }.subscribeOn(Schedulers.io()).subscribe()!!
 
-    override fun getGroups(catalogId: Long): Observable<MutableList<Group>> =
+    override fun getGroups(catalogId: Long): LiveData<MutableList<Group>> =
         groupDao.getGroups(catalogId)
 
     override fun addProduct(product: Product) =
@@ -169,12 +168,6 @@ class LocalRepositoryImpl @Inject constructor(db: ProductDatabase) :
     override fun updateProduct(product: Product) =
         Completable.fromRunnable { productDao.update(product) }.subscribeOn(Schedulers.io())
             .subscribe()!!
-
-    override fun updateProductWithDelay(product: Product, delayMillis: Long) =
-        Completable.fromRunnable { productDao.update(product) }.subscribeOn(Schedulers.io())
-            .delaySubscription(
-                delayMillis,
-                TimeUnit.MILLISECONDS).subscribe()!!
 
     override fun updateAllProducts(products: List<Product>) =
         Completable.fromRunnable { productDao.updateAll(products) }.subscribeOn(Schedulers.io())

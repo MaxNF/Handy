@@ -26,7 +26,9 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     private val groups: SortedSet<Group> =
         sortedSetOf(Comparator { o1, o2 -> (o1.position - o2.position) })
 
+
     private var catalogsLiveData = MutableLiveData<MutableList<Catalog>>()
+    private var groupsLiveData = MutableLiveData<MutableList<Group>>()
 
     private fun <T : BaseEntity> assignNewIdAndReturn(t: T, set: SortedSet<T>): T {
         val maxId = set.maxBy { it.id }?.id ?: 0
@@ -40,39 +42,56 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
         catalogsLiveData = MutableLiveData()
     }
 
+    private fun notifyCatalogsObservers() {
+        catalogsLiveData.value = catalogs.toMutableList()
+    }
+
+    private fun notifyGroupsObservers() {
+        val groupList = groups.toMutableList()
+        groupsLiveData.value = groupList
+    }
+
     override fun addCatalog(catalog: Catalog): Disposable {
         val updatedCatalog = assignNewIdAndReturn(catalog, catalogs)
         catalogs.add(updatedCatalog)
-        catalogsLiveData.value = catalogs.toMutableList()
+        notifyCatalogsObservers()
         return Disposables.empty()
     }
 
     override fun removeCatalog(catalog: Catalog): Disposable {
         catalogs.remove(catalog)
+        notifyCatalogsObservers()
         return Disposables.empty()
     }
 
     override fun updateCatalog(catalog: Catalog): Disposable {
-        catalogs.remove(catalog)
-        catalogs.add(catalog)
+        if (catalogs.contains(catalog)) {
+            catalogs.remove(catalog)
+            catalogs.add(catalog)
+        }
+        notifyCatalogsObservers()
         return Disposables.empty()
     }
 
     override fun updateAllCatalogs(catalogs: List<Catalog>): Disposable {
-        this.catalogs.removeAll(catalogs)
-        this.catalogs.addAll(catalogs)
+        catalogs.forEach {
+            updateCatalog(it)
+        }
+        notifyCatalogsObservers()
         return Disposables.empty()
     }
 
     override fun removeAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>): Disposable {
         catalogs.remove(catalog)
         updateAllCatalogs(list)
+        notifyCatalogsObservers()
         return Disposables.empty()
     }
 
     override fun addAndUpdateCatalogs(catalog: Catalog, list: List<Catalog>): Disposable {
         updateAllCatalogs(list)
         addCatalog(catalog)
+        notifyCatalogsObservers()
         return Disposables.empty()
     }
 
@@ -83,6 +102,7 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     override fun removeAllCatalogs(): Disposable {
         groups.clear()
         catalogs.clear()
+        notifyCatalogsObservers()
         return Disposables.empty()
     }
 
@@ -90,76 +110,138 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
         catalogId: Long,
         expandStates: RecyclerViewExpandableItemManager.SavedState
     ): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val catalog = catalogs.find { it.id == catalogId }
+        catalog?.let {
+            it.groupExpandStates = expandStates
+            updateCatalog(it)
+            notifyCatalogsObservers()
+        }
+        return Disposables.empty()
     }
 
     override fun addGroup(group: Group): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val updatedGroup = assignNewIdAndReturn(group, groups)
+        groups.add(updatedGroup)
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun addGroupWithProducts(group: Group): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        addGroup(group)
+        return Disposables.empty()
     }
 
     override fun addGroupWithProductsAndUpdateAll(group: Group, list: List<Group>): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        addGroupWithProducts(group)
+        updateAllGroups(list)
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun removeGroup(group: Group): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        groups.remove(group)
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun updateGroup(group: Group): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        println(group)
+        println(groups)
+        if (groups.contains(group)) {
+            println(group.position)
+            groups.remove(group)
+            groups.add(group)
+        }
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun updateAllGroups(groups: List<Group>): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        for (group in groups) {
+            updateGroup(group)
+        }
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun removeAndUpdateGroups(group: Group, list: List<Group>): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        removeGroup(group)
+        updateAllGroups(list)
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun removeAllGroups(groupList: List<Group>): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        groups.removeAll(groupList)
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun addAndUpdateGroups(group: Group, list: List<Group>): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        addGroup(group)
+        updateAllGroups(list)
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
-    override fun getGroups(catalogId: Long): Observable<MutableList<Group>> {
-        return Observable.just(groups.toMutableList())
+    override fun getGroups(catalogId: Long): LiveData<MutableList<Group>> {
+        // создаем новый список копированием (для групп важно симуляровать работу Room)
+        val copiedList = mutableListOf<Group>()
+        groups.forEach {
+            copiedList.add(it.getCopy())
+        }
+        groupsLiveData.value = copiedList
+        return groupsLiveData
     }
 
     override fun addProduct(product: Product): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val group = groups.find { it.id == product.groupId }
+        group?.let {
+            it.productList.add(product)
+            notifyGroupsObservers()
+        }
+        return Disposables.empty()
     }
 
     override fun removeProduct(product: Product): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val group = groups.find { it.id == product.groupId }
+        group?.let {
+            it.productList.remove(product)
+            notifyGroupsObservers()
+        }
+        return Disposables.empty()
     }
 
     override fun updateProduct(product: Product): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun updateProductWithDelay(product: Product, delayMillis: Long): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val group = groups.find { it.id == product.groupId }
+        group?.let {
+            if (it.productList.contains(product)) {
+                it.productList.remove(product)
+                it.productList.add(product)
+                notifyGroupsObservers()
+            }
+        }
+        return Disposables.empty()
     }
 
     override fun updateAllProducts(products: List<Product>): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        products.forEach { updateProduct(it) }
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun removeAndUpdateProducts(product: Product, list: List<Product>): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-
+        removeProduct(product)
+        updateAllProducts(list)
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun addAndUpdateProducts(product: Product, list: List<Product>): Disposable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        addProduct(product)
+        updateAllProducts(list)
+        notifyGroupsObservers()
+        return Disposables.empty()
     }
 
     override fun addGeofence(geofence: GeofenceEntity): Single<Long> {

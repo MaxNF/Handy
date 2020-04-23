@@ -39,11 +39,12 @@ class ShareViewModel @Inject constructor(
     }
 
     private fun getCatalogContent() {
-        disposables.add(localRepository.getGroups(catalogId)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                parsedGroups = parseGroups(it)
-            })
+        //todo ПЕРЕДЕЛАТЬ ПОД ЛАЙВ ДАТУ!
+//        disposables.add(localRepository.getGroups(catalogId)
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe {
+//                parsedGroups = parseGroups(it)
+//            })
     }
 
     private fun parseGroups(groupList: List<Group>): List<Map<String, Any>> {

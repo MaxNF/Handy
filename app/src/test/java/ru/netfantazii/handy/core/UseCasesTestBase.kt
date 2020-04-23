@@ -1,10 +1,15 @@
-package ru.netfantazii.handy.core.catalogs.usecases
+package ru.netfantazii.handy.core
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import org.junit.Before
+import org.junit.Rule
 import ru.netfantazii.handy.FakeLocalRepository
 import ru.netfantazii.handy.repositories.LocalRepository
 
-open class CatalogUseCasesTestBase {
+open class UseCasesTestBase {
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
+
     protected lateinit var localRepository: LocalRepository
 
     @Before

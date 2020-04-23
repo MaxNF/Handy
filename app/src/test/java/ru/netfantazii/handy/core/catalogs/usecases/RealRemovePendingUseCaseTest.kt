@@ -8,14 +8,12 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
+import ru.netfantazii.handy.core.UseCasesTestBase
 import ru.netfantazii.handy.createFakeCatalog
 import ru.netfantazii.handy.data.PendingRemovedObject
 import ru.netfantazii.handy.getOrAwaitValue
 
-class RealRemovePendingCatalogUseCaseTest : CatalogUseCasesTestBase() {
-
-    @get:Rule
-    var instantExecutorRule = InstantTaskExecutorRule()
+class RealRemovePendingUseCaseTest : UseCasesTestBase() {
 
     private lateinit var realRemovePendingCatalogUseCase: RealRemovePendingCatalogUseCase
     private lateinit var pendingRemovedObject: PendingRemovedObject

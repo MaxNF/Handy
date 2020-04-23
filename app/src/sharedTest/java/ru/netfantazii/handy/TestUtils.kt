@@ -20,13 +20,15 @@ fun createFakeGroup(
     catalogId: Long = 1,
     name: String = "fake group",
     position: Int = 0,
-    id: Long = 0
+    id: Long = 0,
+    productList: MutableList<Product> = mutableListOf()
 ): Group {
     return Group(
         id = id,
         catalogId = catalogId,
         name = name,
-        position = position
+        position = position,
+        productList = productList
     )
 }
 

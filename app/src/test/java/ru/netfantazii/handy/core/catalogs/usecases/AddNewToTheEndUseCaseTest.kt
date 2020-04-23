@@ -1,19 +1,16 @@
 package ru.netfantazii.handy.core.catalogs.usecases
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
+import ru.netfantazii.handy.core.UseCasesTestBase
 import ru.netfantazii.handy.createFakeCatalog
 import ru.netfantazii.handy.getOrAwaitValue
 
-class AddNewCatalogToTheEndUseCaseTest : CatalogUseCasesTestBase() {
-
-    @get:Rule
-    var instantExecutorRule = InstantTaskExecutorRule()
+class AddNewToTheEndUseCaseTest : UseCasesTestBase() {
 
     private lateinit var addNewCatalogToTheEndUseCase: AddNewCatalogToTheEndUseCase
 

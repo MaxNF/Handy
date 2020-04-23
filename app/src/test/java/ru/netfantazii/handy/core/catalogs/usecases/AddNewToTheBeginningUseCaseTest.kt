@@ -6,13 +6,11 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
+import ru.netfantazii.handy.core.UseCasesTestBase
 import ru.netfantazii.handy.createFakeCatalog
 import ru.netfantazii.handy.getOrAwaitValue
 
-class AddNewCatalogToTheBeginningUseCaseTest : CatalogUseCasesTestBase() {
-
-    @get:Rule
-    var instantExecutorRule = InstantTaskExecutorRule()
+class AddNewToTheBeginningUseCaseTest : UseCasesTestBase() {
 
     private lateinit var addNewCatalogToTheBeginningUseCase: AddNewCatalogToTheBeginningUseCase
 

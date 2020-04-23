@@ -143,7 +143,7 @@ abstract class CatalogDao : BaseDao<CatalogEntity>() {
 abstract class GroupDao : BaseDao<GroupEntity>() {
     @Transaction
     @Query("SELECT * FROM GroupEntity WHERE catalog_id = :catalogId ORDER BY position")
-    abstract fun getGroups(catalogId: Long): Observable<MutableList<Group>>
+    abstract fun getGroups(catalogId: Long): LiveData<MutableList<Group>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun addAllProducts(products: List<ProductEntity>)

@@ -1,8 +1,6 @@
 package ru.netfantazii.handy.core.catalogs.usecases
 
-import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import io.reactivex.Completable
-import io.reactivex.CompletableSource
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Test
@@ -10,19 +8,17 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.ClassRule
-import org.junit.runner.RunWith
 import org.mockito.Mockito
-import org.mockito.junit.MockitoJUnitRunner
 import ru.netfantazii.handy.RxImmediateSchedulerRule
 import ru.netfantazii.handy.any
+import ru.netfantazii.handy.core.UseCasesTestBase
 import ru.netfantazii.handy.core.notifications.alarm.usecases.RegisterAlarmUseCase
 import ru.netfantazii.handy.core.notifications.map.usecases.RegisterGeofencesUseCase
 import ru.netfantazii.handy.createFakeCatalog
 import ru.netfantazii.handy.data.PendingRemovedObject
-import ru.netfantazii.handy.data.database.GeofenceEntity
 import java.util.*
 
-class UndoRemovalUseCaseTest : CatalogUseCasesTestBase() {
+class UndoRemovalUseCaseTest : UseCasesTestBase() {
 
     companion object {
         @ClassRule

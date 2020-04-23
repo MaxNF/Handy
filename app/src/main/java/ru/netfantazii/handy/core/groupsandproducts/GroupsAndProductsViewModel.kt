@@ -112,16 +112,16 @@ class GroupsAndProductsViewModel @Inject constructor(
     val buyAllClicked: LiveData<Event<Unit>> = _buyAllClicked
 
     init {
-        subscribeToGroupChanges()
+//        subscribeToGroupChanges()
     }
-
-    private fun subscribeToGroupChanges() {
-        disposables.add(localRepository.getGroups(currentCatalogId)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                groupList = it
-            })
-    }
+//
+//    private fun subscribeToGroupChanges() {
+//        disposables.add(localRepository.getGroups(currentCatalogId)
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe {
+//                groupList = it
+//            })
+//    }
 
     private fun onNewDataReceive(groups: MutableList<Group>) {
         filteredGroupList = getFilteredGroupList(groups)

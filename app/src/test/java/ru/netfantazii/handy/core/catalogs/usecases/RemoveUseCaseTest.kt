@@ -8,6 +8,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.mockito.Mockito
+import ru.netfantazii.handy.core.UseCasesTestBase
 import ru.netfantazii.handy.core.notifications.alarm.usecases.UnregisterAlarmUseCase
 import ru.netfantazii.handy.core.notifications.map.usecases.UnregisterAllGeofencesUseCase
 import ru.netfantazii.handy.createFakeCatalog
@@ -15,10 +16,7 @@ import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.PendingRemovedObject
 import ru.netfantazii.handy.getOrAwaitValue
 
-class RemoveCatalogUseCaseTest : CatalogUseCasesTestBase() {
-
-    @get:Rule
-    var instantExecutorRule = InstantTaskExecutorRule()
+class RemoveUseCaseTest : UseCasesTestBase() {
 
     private lateinit var pendingRemovedObject: PendingRemovedObject
     private lateinit var unregisterAlarmUseCase: UnregisterAlarmUseCase
@@ -72,6 +70,7 @@ class RemoveCatalogUseCaseTest : CatalogUseCasesTestBase() {
         removeCatalogUseCase.removeCatalog(addedCatalogs[0], addedCatalogs)
         removeCatalogUseCase.removeCatalog(addedCatalogs[1], addedCatalogs)
         val resultList = localRepository.getCatalogs().getOrAwaitValue()
+
         assertThat(resultList.size, `is`(2))
         assertThat(resultList[0].name, `is`("2"))
         assertThat(resultList[1].name, `is`("3"))
