@@ -173,4 +173,7 @@ dependencies {
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
     // Mockito
     testImplementation "org.mockito:mockito-inline:3.3.3"
+
+    //Robolectric
+    testImplementation 'org.robolectric:robolectric:4.3'
 }

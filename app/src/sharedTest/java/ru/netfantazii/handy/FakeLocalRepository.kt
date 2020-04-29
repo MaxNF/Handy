@@ -22,9 +22,9 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
 
     private val catalogs: SortedSet<Catalog> =
         // Сэт сортируется по позиции, т.к. у настоящей бд запрашиваемые данные имеют такую же сортировку
-        sortedSetOf(Comparator { o1, o2 -> (o1.position - o2.position) })
+        sortedSetOf(Comparator { o1, o2 -> (o1.id.toInt() - o2.id.toInt()) })
     private val groups: SortedSet<Group> =
-        sortedSetOf(Comparator { o1, o2 -> (o1.position - o2.position) })
+        sortedSetOf(Comparator { o1, o2 -> (o1.id.toInt() - o2.id.toInt()) })
 
 
     private var catalogsLiveData = MutableLiveData<MutableList<Catalog>>()
@@ -96,6 +96,12 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     }
 
     override fun getCatalogs(): LiveData<MutableList<Catalog>> {
+        val copiedCatalogs = mutableListOf<Catalog>()
+        catalogs.forEach { originalCatalog ->
+            copiedCatalogs.add(originalCatalog.getCopy())
+        }
+        copiedCatalogs.sortBy { it.position }
+        catalogsLiveData.value = copiedCatalogs
         return catalogsLiveData
     }
 
@@ -145,10 +151,7 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     }
 
     override fun updateGroup(group: Group): Disposable {
-        println(group)
-        println(groups)
         if (groups.contains(group)) {
-            println(group.position)
             groups.remove(group)
             groups.add(group)
         }
@@ -185,12 +188,19 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     }
 
     override fun getGroups(catalogId: Long): LiveData<MutableList<Group>> {
-        // создаем новый список копированием (для групп важно симуляровать работу Room)
-        val copiedList = mutableListOf<Group>()
-        groups.forEach {
-            copiedList.add(it.getCopy())
+        // создаем новый список копированием (для групп важно симулировать работу Room)
+        val copiedGroupList = mutableListOf<Group>()
+        groups.forEach { originalGroup ->
+            val copiedGroup = originalGroup.getCopy()
+            val copiedProductList = mutableListOf<Product>()
+            originalGroup.productList.forEach { originalProduct ->
+                copiedProductList.add(originalProduct.getCopy())
+            }
+            copiedGroup.productList = copiedProductList
+            copiedGroupList.add(copiedGroup)
         }
-        groupsLiveData.value = copiedList
+        copiedGroupList.sortBy { it.position }
+        groupsLiveData.value = copiedGroupList
         return groupsLiveData
     }
 
@@ -225,7 +235,9 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     }
 
     override fun updateAllProducts(products: List<Product>): Disposable {
-        products.forEach { updateProduct(it) }
+        val newList = mutableListOf<Product>()
+        newList.addAll(products)
+        newList.forEach { updateProduct(it) }
         notifyGroupsObservers()
         return Disposables.empty()
     }
