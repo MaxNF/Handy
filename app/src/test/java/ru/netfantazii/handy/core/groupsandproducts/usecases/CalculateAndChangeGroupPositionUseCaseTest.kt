@@ -47,21 +47,20 @@ class CalculateAndChangeGroupPositionUseCaseTest : UseCasesTestBase() {
     @Test
     fun calculateGroupStatusTest_changeProductStatusFromBoughtToNonBought_groupPositionChangedToFirst() {
         // купленный продукт добавляется в третью не топовую группу
-        val boughtProduct = createFakeProduct(name = "product 1",
+        localRepository.addProduct(createFakeProduct(name = "product 1",
             groupId = 4,
             catalogId = 1,
-            buyStatus = BuyStatus.BOUGHT)
-        localRepository.addGroup(createFakeGroup(name = "4", position = 4, productList = mutableListOf(boughtProduct)))
+            buyStatus = BuyStatus.BOUGHT))
 
         val addedGroups = localRepository.getGroups(1).getOrAwaitValue()
-        val product = addedGroups[4].productList[0]
+        val product = addedGroups[3].productList[0]
         product.buyStatus = BuyStatus.NOT_BOUGHT
-        localRepository.updateProduct(product)
 
-        calculateAndChangeGroupPositionUseCase.calculateGroupPosition(addedGroups[4], addedGroups)
+        localRepository.updateProduct(product)
+        calculateAndChangeGroupPositionUseCase.calculateGroupPosition(addedGroups[3], addedGroups)
 
         val resultList = localRepository.getGroups(1).getOrAwaitValue()
-        assertThat(resultList[1].name, `is`("4"))
+        assertThat(resultList[1].name, `is`("3"))
         assertThat(resultList[1].position, `is`(1))
         assertThat(resultList[1].buyStatus, `is`(BuyStatus.NOT_BOUGHT))
     }

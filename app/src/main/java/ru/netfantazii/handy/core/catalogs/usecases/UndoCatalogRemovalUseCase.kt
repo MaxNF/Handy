@@ -12,7 +12,7 @@ import ru.netfantazii.handy.repositories.LocalRepository
 import javax.inject.Inject
 
 @FragmentScope
-class UndoRemovalUseCase @Inject constructor(
+class UndoCatalogRemovalUseCase @Inject constructor(
     private val localRepository: LocalRepository,
     private val pendingRemovedObject: PendingRemovedObject,
     private val registerGeofencesUseCase: RegisterGeofencesUseCase,

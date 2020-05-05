@@ -14,7 +14,7 @@ class AddNewProductToTheBeginningUseCase @Inject constructor(private val localRe
             ?: throw UnsupportedOperationException("Group is not found")
         productList.add(0, product)
         productList.reassignPositions()
-        productList.remove(product)
+        productList.removeAt(0)
         localRepository.addAndUpdateProducts(product, productList)
     }
 }

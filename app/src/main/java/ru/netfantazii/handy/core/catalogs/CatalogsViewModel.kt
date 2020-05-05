@@ -19,7 +19,7 @@ class CatalogsViewModel @Inject constructor(
     private val renameCatalogUseCase: RenameCatalogUseCase,
     private val realRemovePendingCatalogUseCase: RealRemovePendingCatalogUseCase,
     private val subscribeToCatalogsChangesUseCase: SubscribeToCatalogsChangesUseCase,
-    private val undoRemovalUseCase: UndoRemovalUseCase,
+    private val undoCatalogRemovalUseCase: UndoCatalogRemovalUseCase,
     private val loadCatalogNetInfoUseCase: LoadCatalogNetInfoUseCase
 ) :
     ViewModel(),
@@ -169,7 +169,7 @@ class CatalogsViewModel @Inject constructor(
     }
 
     fun undoRemoval() {
-        undoRemovalUseCase.undoRemoval()?.let {
+        undoCatalogRemovalUseCase.undoRemoval()?.let {
             disposables.add(it.subscribe())
         }
     }

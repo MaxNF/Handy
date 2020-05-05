@@ -35,7 +35,7 @@ class SubscribeToCatalogsChangesUseCase @Inject constructor(
         }
 
     /**
-     * Запускает поток данных вручную без тригера со стороны базы данных (полезно, если изменился фильтр)
+     * Запускает поток данных вручную без тригера со стороны базы данных (требуется, если изменился фильтр)
      * */
     private fun initiateDataFlow() {
         _filteredAndNotFilteredCatalogs.value =

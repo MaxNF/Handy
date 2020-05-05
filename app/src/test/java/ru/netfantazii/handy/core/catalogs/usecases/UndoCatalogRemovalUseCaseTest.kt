@@ -18,7 +18,7 @@ import ru.netfantazii.handy.createFakeCatalog
 import ru.netfantazii.handy.data.PendingRemovedObject
 import java.util.*
 
-class UndoRemovalUseCaseTest : UseCasesTestBase() {
+class UndoCatalogRemovalUseCaseTest : UseCasesTestBase() {
 
     companion object {
         @ClassRule
@@ -29,7 +29,7 @@ class UndoRemovalUseCaseTest : UseCasesTestBase() {
     private lateinit var pendingRemovedObject: PendingRemovedObject
     private lateinit var registerAlarmUseCase: RegisterAlarmUseCase
     private lateinit var registerGeofencesUseCase: RegisterGeofencesUseCase
-    private lateinit var undoRemovalUseCase: UndoRemovalUseCase
+    private lateinit var undoCatalogRemovalUseCase: UndoCatalogRemovalUseCase
 
     @Before
     fun createUseCase() {
@@ -43,7 +43,7 @@ class UndoRemovalUseCaseTest : UseCasesTestBase() {
             any()))
             .thenReturn(Completable.complete())
         registerAlarmUseCase = Mockito.mock(RegisterAlarmUseCase::class.java)
-        undoRemovalUseCase = UndoRemovalUseCase(localRepository,
+        undoCatalogRemovalUseCase = UndoCatalogRemovalUseCase(localRepository,
             pendingRemovedObject,
             registerGeofencesUseCase,
             registerAlarmUseCase)
@@ -52,7 +52,7 @@ class UndoRemovalUseCaseTest : UseCasesTestBase() {
 
     @Test
     fun undoRemoval_catalogRemovedFromPendingObject() {
-        undoRemovalUseCase.undoRemoval()?.test()
+        undoCatalogRemovalUseCase.undoRemoval()?.test()
         assertThat(pendingRemovedObject.entity, `is`(nullValue()))
         Mockito.verify(registerGeofencesUseCase, Mockito.times(1)).registerGeofences(
             any(),

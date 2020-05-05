@@ -16,7 +16,7 @@ import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.PendingRemovedObject
 import ru.netfantazii.handy.getOrAwaitValue
 
-class RemoveUseCaseTest : UseCasesTestBase() {
+class RemoveCatalogUseCaseTest : UseCasesTestBase() {
 
     private lateinit var pendingRemovedObject: PendingRemovedObject
     private lateinit var unregisterAlarmUseCase: UnregisterAlarmUseCase

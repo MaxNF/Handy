@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.core.catalogs
 
-import android.net.Uri
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Single
@@ -12,10 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
-import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.times
-import org.mockito.internal.stubbing.defaultanswers.ReturnsEmptyValues
-import org.mockito.invocation.InvocationOnMock
 import ru.netfantazii.handy.any
 import ru.netfantazii.handy.core.BufferObject
 import ru.netfantazii.handy.core.OVERLAY_ACTION_CATALOG_CREATE
@@ -27,8 +23,6 @@ import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.SortOrder
 import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
 import ru.netfantazii.handy.getOrAwaitValue
-import java.lang.Exception
-import java.util.*
 
 class CatalogsViewModelTest {
 
@@ -42,7 +36,7 @@ class CatalogsViewModelTest {
     private lateinit var renameCatalogUseCase: RenameCatalogUseCase
     private lateinit var realRemovePendingCatalogUseCase: RealRemovePendingCatalogUseCase
     private lateinit var subscribeToCatalogsChangesUseCase: SubscribeToCatalogsChangesUseCase
-    private lateinit var undoRemovalUseCase: UndoRemovalUseCase
+    private lateinit var undoCatalogRemovalUseCase: UndoCatalogRemovalUseCase
     private lateinit var loadCatalogNetInfoUseCase: LoadCatalogNetInfoUseCase
 
     private lateinit var viewModel: CatalogsViewModel
@@ -61,7 +55,7 @@ class CatalogsViewModelTest {
         Mockito.`when`(subscribeToCatalogsChangesUseCase.filteredAndNotFilteredCatalogs)
             .thenReturn(MutableLiveData<Pair<List<Catalog>, List<Catalog>>>())
 
-        undoRemovalUseCase = Mockito.mock(UndoRemovalUseCase::class.java)
+        undoCatalogRemovalUseCase = Mockito.mock(UndoCatalogRemovalUseCase::class.java)
         loadCatalogNetInfoUseCase = Mockito.mock(LoadCatalogNetInfoUseCase::class.java)
         Mockito.`when`(loadCatalogNetInfoUseCase.fetchCatalogWithNetInfo(any()))
             .thenReturn(Single.never<CatalogNetInfoEntity>())
@@ -74,7 +68,7 @@ class CatalogsViewModelTest {
             renameCatalogUseCase,
             realRemovePendingCatalogUseCase,
             subscribeToCatalogsChangesUseCase,
-            undoRemovalUseCase,
+            undoCatalogRemovalUseCase,
             loadCatalogNetInfoUseCase
         )
     }
@@ -226,7 +220,7 @@ class CatalogsViewModelTest {
     @Test
     fun undoRemoval_undoRemovalUseCaseInvoked() {
         viewModel.undoRemoval()
-        Mockito.verify(undoRemovalUseCase, times(1)).undoRemoval()
+        Mockito.verify(undoCatalogRemovalUseCase, times(1)).undoRemoval()
     }
 
     @Test
