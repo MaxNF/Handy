@@ -40,6 +40,7 @@ class AddNewProductToTheEndUseCaseTest : UseCasesTestBase() {
 
         val resultGroups = localRepository.getGroups(1).getOrAwaitValue()
         val productList = resultGroups[1].productList
+
         assertThat(productList.size, `is`(2))
 
         assertThat(productList[0].name, `is`("product 1"))

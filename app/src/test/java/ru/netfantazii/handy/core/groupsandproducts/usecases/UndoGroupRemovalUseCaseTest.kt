@@ -44,6 +44,7 @@ class UndoGroupRemovalUseCaseTest : UseCasesTestBase() {
         assertThat(resultGroups.size, `is`(4))
         assertThat(resultGroups[2].name, `is`("restored group"))
         assertThat(resultGroups[2].position, `is`(2))
+        assertThat(resultGroups[2].id, `is`(4L))
         assertThat(resultGroups[2].productList.size, `is`(2))
         assertThat(resultGroups[3].name, `is`("2"))
         assertThat(resultGroups[3].position, `is`(3))

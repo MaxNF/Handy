@@ -49,8 +49,7 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     }
 
     private fun notifyGroupsObservers() {
-        val groupList = groups.toMutableList()
-        groupsLiveData.value = groupList
+        groupsLiveData.value = groupsLiveData.value
     }
 
     override fun addCatalog(catalog: Catalog): Disposable {
@@ -200,6 +199,12 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
 
     override fun getGroups(catalogId: Long): LiveData<MutableList<Group>> {
         // создаем новый список копированием (для групп важно симулировать работу Room)
+        // в фейковом репозитории отдаются все группы независимо от полученного ИД каталога
+        groupsLiveData.value = getPopulatedGroups()
+        return groupsLiveData
+    }
+
+    private fun getPopulatedGroups(): MutableList<Group> {
         val copiedGroupList = mutableListOf<Group>()
         groups.forEach { originalGroup ->
             originalGroup.productList = getProductsForGroup(originalGroup.id)
@@ -207,8 +212,7 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
             copiedGroupList.add(copiedGroup)
         }
         copiedGroupList.sortBy { it.position }
-        groupsLiveData.value = copiedGroupList
-        return groupsLiveData
+        return copiedGroupList
     }
 
     private fun getProductsForGroup(groupId: Long): MutableList<Product> {
@@ -225,6 +229,7 @@ class FakeLocalRepository @Inject constructor() : LocalRepository {
     override fun addProduct(product: Product): Disposable {
         val productWithId = assignNewIdAndReturn(product, products)
         products.add(productWithId)
+        notifyGroupsObservers()
         return Disposables.empty()
     }
 
