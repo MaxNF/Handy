@@ -32,8 +32,8 @@ class DragGroupUseCaseTest : UseCasesTestBase() {
     @Test
     fun dragGroupTest_dragGroupFromFirstToSecondPosition_allPositionsChanged() {
         val groups = localRepository.getGroups(1).getOrAwaitValue()
-        dragGroupUseCase.dragGroup(1, 2, groups)
 
+        dragGroupUseCase.dragGroup(1, 2, groups)
         val resultGroups = localRepository.getGroups(1).getOrAwaitValue()
 
         assertThat(resultGroups[1].name, `is`("2"))

@@ -11,7 +11,7 @@ import ru.netfantazii.handy.core.UseCasesTestBase
 import ru.netfantazii.handy.createFakeCatalog
 import ru.netfantazii.handy.getOrAwaitValue
 
-class DragUseCaseTest : UseCasesTestBase() {
+class DragCatalogUseCaseTest : UseCasesTestBase() {
 
     private lateinit var dragCatalogUseCase: DragCatalogUseCase
 
