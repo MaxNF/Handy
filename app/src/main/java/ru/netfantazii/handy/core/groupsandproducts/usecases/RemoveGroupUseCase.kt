@@ -15,9 +15,10 @@ class RemoveGroupUseCase @Inject constructor(
         if (groupList.size == 1) {
             localRepository.removeGroup(group)
         } else {
-            groupList.remove(group)
-            groupList.reassignPositions()
-            localRepository.removeAndUpdateGroups(group, groupList)
+            val removedGroupIndex = groupList.indexOf(group)
+            val listForUpdating = groupList.slice(removedGroupIndex + 1..groupList.lastIndex)
+            listForUpdating.shiftPositionsToLeft()
+            localRepository.removeAndUpdateGroups(group, listForUpdating)
         }
         pendingRemovedObject.insertEntity(group, false)
     }

@@ -1,6 +1,5 @@
 package ru.netfantazii.handy.core.groupsandproducts
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -38,7 +37,8 @@ class GroupsAndProductsViewModel @Inject constructor(
     private val buyAllProductsUseCase: BuyAllProductsUseCase,
     private val markAllNotBoughtUseCase: MarkAllNotBoughtUseCase,
     private val removeAllGroupsUseCase: RemoveAllGroupsUseCase,
-    private val updateCatalogExpandStatesUseCase: UpdateCatalogExpandStatesUseCase
+    private val updateCatalogExpandStatesUseCase: UpdateCatalogExpandStatesUseCase,
+    private val calculateAndChangeGroupPositionUseCase: CalculateAndChangeGroupPositionUseCase
 ) : ViewModel(), GroupClickHandler, ProductClickHandler, GroupStorage, OverlayActions,
     DialogClickHandler {
     override lateinit var overlayBuffer: BufferObject
@@ -99,8 +99,8 @@ class GroupsAndProductsViewModel @Inject constructor(
     private val _groupSwipeCanceled = MutableLiveData<Event<Group>>()
     val groupSwipeCanceled: LiveData<Event<Group>> = _groupSwipeCanceled
 
-    private val _groupEditClicked = MutableLiveData<Event<Group>>()
-    val groupEditClicked: LiveData<Event<Group>> = _groupEditClicked
+    private val _groupEditClicked = MutableLiveData<Event<Int>>()
+    val groupEditClicked: LiveData<Event<Int>> = _groupEditClicked
 
     private val _groupDragSucceed = MutableLiveData<Event<Unit>>()
     val groupDragSucceed: LiveData<Event<Unit>> = _groupDragSucceed
@@ -150,7 +150,12 @@ class GroupsAndProductsViewModel @Inject constructor(
     }
 
     override fun onProductSwipeFinish(group: Group, product: Product) {
-        //todo тут может быть проблема при удалении, т.к. в первой версии есть доп. код, проверить
+        // необходимо выполнить следующий код, чтобы корректно пересчитать состояние группы после
+        // удаление продукта и не уронить программу (вероятно, можно сделать это в юзкейсе удаления
+        // продукта, но тогда потребуется копирование группы со списком, что не особо то и лучше
+        group.productList.removeAt(product.position)
+        calculateAndChangeGroupPositionUseCase.calculateGroupPosition(group,
+            notFilteredGroupList.toMutableList())
         _productSwipeFinished.value = Event(product)
     }
 
@@ -159,8 +164,8 @@ class GroupsAndProductsViewModel @Inject constructor(
     }
 
     override fun onProductEditClick(product: Product) {
-        //todo потенциальное место проблема, в первой я делал копию продукта, чекнуть
-        overlayBuffer = BufferObject(OVERLAY_ACTION_PRODUCT_RENAME, product)
+        // передаем в буфер копию, чтобы не подтвержденные результаты изменений не отражались на продукте
+        overlayBuffer = BufferObject(OVERLAY_ACTION_PRODUCT_RENAME, product.getCopy())
         _productEditClicked.value = Event(product)
     }
 
@@ -205,9 +210,9 @@ class GroupsAndProductsViewModel @Inject constructor(
     }
 
     override fun onGroupEditClick(group: Group) {
-        //todo возможно стоит передавать копию а не саму группу
-        overlayBuffer = BufferObject(OVERLAY_ACTION_GROUP_RENAME, group)
-        _groupEditClicked.value = Event(group)
+        // передаем в буфер копию, чтобы не подтвержденные результаты изменений не отражались на продукте
+        overlayBuffer = BufferObject(OVERLAY_ACTION_GROUP_RENAME, group.getCopy())
+        _groupEditClicked.value = Event(filteredGroupList.indexOf(group))
     }
 
     override fun onGroupDragSucceed(fromPosition: Int, toPosition: Int) {
@@ -215,11 +220,20 @@ class GroupsAndProductsViewModel @Inject constructor(
         _groupDragSucceed.value = Event(Unit)
     }
 
-    override fun onGroupCreateProductClick(group: Group?) {
+    fun onCreateProductClick() {
+        // Помещаем в буфер продукт для группы несортированных товаров (самая верхняя).
+        // Поэтому id группы берем всегда у groupList[0]
+        overlayBuffer = BufferObject(OVERLAY_ACTION_PRODUCT_CREATE,
+            Product(catalogId = currentCatalogId,
+                groupId = notFilteredGroupList[0].id))
+        _createProductClicked.value = Event(Unit)
+    }
+
+    override fun onGroupCreateProductClick(group: Group) {
         // если группа null, то создаем в дефолтной группе
         overlayBuffer = BufferObject(OVERLAY_ACTION_PRODUCT_CREATE,
             Product(catalogId = currentCatalogId,
-                groupId = group?.id ?: notFilteredGroupList[0].id))
+                groupId = group.id))
         _groupCreateProductClicked.value = Event(getGroupList().indexOf(group))
     }
 

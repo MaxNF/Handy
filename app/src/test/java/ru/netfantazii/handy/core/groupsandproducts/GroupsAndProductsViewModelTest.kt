@@ -45,6 +45,7 @@ class GroupsAndProductsViewModelTest {
     private lateinit var markAllNotBoughtUseCase: MarkAllNotBoughtUseCase
     private lateinit var removeAllGroupsUseCase: RemoveAllGroupsUseCase
     private lateinit var updateCatalogExpandStatesUseCase: UpdateCatalogExpandStatesUseCase
+    private lateinit var calculateAndChangeGroupPositionUseCase: CalculateAndChangeGroupPositionUseCase
 
     private lateinit var viewModel: GroupsAndProductsViewModel
 
@@ -71,6 +72,7 @@ class GroupsAndProductsViewModelTest {
         markAllNotBoughtUseCase = mock(MarkAllNotBoughtUseCase::class.java)
         removeAllGroupsUseCase = mock(RemoveAllGroupsUseCase::class.java)
         updateCatalogExpandStatesUseCase = mock(UpdateCatalogExpandStatesUseCase::class.java)
+        calculateAndChangeGroupPositionUseCase = mock(CalculateAndChangeGroupPositionUseCase::class.java)
 
         val expandStates = mock(RecyclerViewExpandableItemManager.SavedState::class.java)
         viewModel = GroupsAndProductsViewModel(1,
@@ -92,7 +94,9 @@ class GroupsAndProductsViewModelTest {
             buyAllProductsUseCase,
             markAllNotBoughtUseCase,
             removeAllGroupsUseCase,
-            updateCatalogExpandStatesUseCase)
+            updateCatalogExpandStatesUseCase,
+            calculateAndChangeGroupPositionUseCase
+            )
     }
 
     @Test
@@ -119,7 +123,10 @@ class GroupsAndProductsViewModelTest {
 
     @Test
     fun onProductSwipeFinishTest_liveDataUpdated() {
-        viewModel.onProductSwipeFinish(createFakeGroup(), createFakeProduct())
+        val group = createFakeGroup()
+        val product = createFakeProduct()
+        group.productList.add(product)
+        viewModel.onProductSwipeFinish(group, product)
         val value = viewModel.productSwipeFinished.getOrAwaitValue()
         assertThat(value, `is`(notNullValue()))
     }

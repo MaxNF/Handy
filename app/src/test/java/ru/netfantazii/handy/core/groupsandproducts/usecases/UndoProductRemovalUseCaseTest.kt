@@ -14,11 +14,16 @@ class UndoProductRemovalUseCaseTest : UseCasesTestBase() {
 
     private lateinit var undoProductRemovalUseCase: UndoProductRemovalUseCase
     private lateinit var pendingRemovedObject: PendingRemovedObject
+    private lateinit var calculateAndChangeGroupPositionUseCase: CalculateAndChangeGroupPositionUseCase
 
     @Before
     fun createUseCase() {
         pendingRemovedObject = PendingRemovedObject()
-        undoProductRemovalUseCase = UndoProductRemovalUseCase(pendingRemovedObject, localRepository)
+        calculateAndChangeGroupPositionUseCase =
+            CalculateAndChangeGroupPositionUseCase(localRepository)
+        undoProductRemovalUseCase = UndoProductRemovalUseCase(pendingRemovedObject,
+            localRepository,
+            calculateAndChangeGroupPositionUseCase)
         localRepository.addCatalog(createFakeCatalog())
         localRepository.addGroup(createFakeTopGroup(name = "TOP GROUP",
             catalogId = 1,

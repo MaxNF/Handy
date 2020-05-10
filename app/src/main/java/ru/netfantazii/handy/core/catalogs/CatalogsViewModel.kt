@@ -119,7 +119,8 @@ class CatalogsViewModel @Inject constructor(
     }
 
     override fun onCatalogEditClick(catalog: Catalog) {
-        overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_RENAME, catalog)
+        // передаем в буфер копию, чтобы не подтвержденные результаты изменений не отражались на каталоге
+        overlayBuffer = BufferObject(OVERLAY_ACTION_CATALOG_RENAME, catalog.getCopy())
         _catalogEditClicked.value = Event(catalog.getCopy())
     }
 

@@ -243,9 +243,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             allLiveDataList.add(groupSwipeCanceled)
 
             groupEditClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { group ->
+                it.getContentIfNotHandled()?.let { groupIndex ->
                     showOverlay()
-                    scrollToGroup(group.position)
+                    scrollToGroup(groupIndex)
                 }
             })
             allLiveDataList.add(groupEditClicked)
@@ -326,7 +326,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                         true
                     }
                     R.id.fab_add_buy -> {
-                        viewModel.onGroupCreateProductClick(null)
+                        viewModel.onCreateProductClick()
                         fab.close()
                         true
                     }

@@ -391,7 +391,7 @@ class GroupsAndProductsViewModel_old @Inject constructor(
         _overlayEnterClicked.value = Event(Unit)
     }
 
-    override fun onGroupCreateProductClick(group: Group?) {
+    override fun onGroupCreateProductClick(group: Group) {
         Log.d(TAG, "onGroupCreateProductClick: ")
         if (group != null) {
             overlayBuffer =

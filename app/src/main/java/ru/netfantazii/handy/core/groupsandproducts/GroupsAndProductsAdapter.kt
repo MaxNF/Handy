@@ -56,7 +56,7 @@ interface GroupClickHandler {
 
     fun onGroupDragSucceed(fromPosition: Int, toPosition: Int)
 
-    fun onGroupCreateProductClick(group: Group?)
+    fun onGroupCreateProductClick(group: Group)
 }
 
 interface GroupStorage {
@@ -297,7 +297,10 @@ class GroupsAndProductsAdapter @Inject constructor(
         groupPosition: Int,
         x: Int,
         y: Int
-    ): Boolean = if (groupList[0].groupType == GroupType.ALWAYS_ON_TOP) groupPosition > 0 else true
+    ): Boolean =
+    // если в фильтрованном списке есть (видна) дефолтная группа, то можно тащить все кроме нее,
+        // если не видна, то тащить можно все группы
+        if (groupList[0].groupType == GroupType.ALWAYS_ON_TOP) groupPosition > 0 else true
 
     override fun onCheckGroupCanDrop(draggingGroupPosition: Int, dropGroupPosition: Int): Boolean =
         true // на данный момент не используется, для использования нужно включить checkCanDrop(true)
@@ -314,19 +317,23 @@ class GroupsAndProductsAdapter @Inject constructor(
         holder: BaseGroupViewHolder,
         groupPosition: Int
     ): ItemDraggableRange {
+        val isAlwaysOnTopGroupPresent = groupList[0].groupType == GroupType.ALWAYS_ON_TOP
         return if (groupList[groupPosition].buyStatus == BuyStatus.NOT_BOUGHT) {
             val firstBoughtGroup =
                 // не учитываем ALWAYS ON TOP группу
                 groupList.find { it.groupType != GroupType.ALWAYS_ON_TOP && it.buyStatus == BuyStatus.BOUGHT }
             val firstBoughtGroupPosition =
                 if (firstBoughtGroup != null) groupList.indexOf(firstBoughtGroup) - 1 else groupCount - 1
-            val isAlwaysOnTopGroupPresent = groupList[0].groupType == GroupType.ALWAYS_ON_TOP
             ItemDraggableRange(if (isAlwaysOnTopGroupPresent) 1 else 0, firstBoughtGroupPosition)
         } else {
-            val lastNotBoughtGroup = groupList.findLast { it.buyStatus == BuyStatus.NOT_BOUGHT }
+            val lastNotBoughtGroup =
+                groupList.findLast { it.groupType != GroupType.ALWAYS_ON_TOP && it.buyStatus == BuyStatus.NOT_BOUGHT }
             val lastNotBoughtGroupPosition =
-                if (lastNotBoughtGroup != null) groupList.indexOf(lastNotBoughtGroup) + 1 else 1
-            ItemDraggableRange(lastNotBoughtGroupPosition, groupCount - 1)
+                if (lastNotBoughtGroup != null) groupList.indexOf(lastNotBoughtGroup) + 1 else {
+                    if (isAlwaysOnTopGroupPresent) 1 else 0
+                }
+            ItemDraggableRange(lastNotBoughtGroupPosition,
+                groupCount - 1)
         }
     }
 

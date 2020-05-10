@@ -18,9 +18,11 @@ class RemoveProductUseCase @Inject constructor(
         if (productList.size == 1) {
             localRepository.removeProduct(product)
         } else {
-            productList.remove(product)
-            productList.reassignPositions()
-            localRepository.removeAndUpdateProducts(product, productList)
+            val removedProductIndex = group.productList.indexOf(product)
+            val listForUpdating =
+                productList.slice((removedProductIndex + 1)..group.productList.lastIndex)
+            listForUpdating.shiftPositionsToLeft()
+            localRepository.removeAndUpdateProducts(product, listForUpdating)
         }
         pendingRemovedObject.insertEntity(product, false)
     }
