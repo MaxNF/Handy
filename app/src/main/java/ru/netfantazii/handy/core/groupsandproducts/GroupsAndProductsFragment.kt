@@ -117,7 +117,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
         subscribeToDialogEvents()
         val owner = this
         with(viewModel) {
-            newDataReceived.observe(owner, Observer {
+            redrawRecyclerView.observe(owner, Observer {
                 it.getContentIfNotHandled()?.let {
                     refreshRecyclerView()
                     Log.d(TAG, "subscribeToEvents: ")
@@ -126,7 +126,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                 restoreExpandState(viewModel.groupExpandStates)
             })
 
-            allLiveDataList.add(newDataReceived)
+            allLiveDataList.add(redrawRecyclerView)
 
             overlayBackgroundClicked.observe(owner,
                 Observer { it.getContentIfNotHandled()?.let { closeOverlay() } })
@@ -243,9 +243,9 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
             allLiveDataList.add(groupSwipeCanceled)
 
             groupEditClicked.observe(owner, Observer {
-                it.getContentIfNotHandled()?.let { groupId ->
+                it.getContentIfNotHandled()?.let { group ->
                     showOverlay()
-                    scrollToGroup(groupId)
+                    scrollToGroup(group.position)
                 }
             })
             allLiveDataList.add(groupEditClicked)
@@ -326,7 +326,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
                         true
                     }
                     R.id.fab_add_buy -> {
-                        viewModel.onCreateProductClick()
+                        viewModel.onGroupCreateProductClick(null)
                         fab.close()
                         true
                     }
@@ -386,7 +386,7 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     private fun openShareFragment() {
         val direction =
             GroupsAndProductsFragmentDirections.actionProductsFragmentToShareFragment(fragmentArgs.catalogId,
-                fragmentArgs.catalogName, viewModel.getAllProducts().size.toString())
+                fragmentArgs.catalogName, viewModel.allFilteredProducts.size.toString())
         navController.navigate(direction)
     }
 

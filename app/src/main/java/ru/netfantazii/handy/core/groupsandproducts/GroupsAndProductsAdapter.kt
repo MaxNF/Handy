@@ -56,7 +56,7 @@ interface GroupClickHandler {
 
     fun onGroupDragSucceed(fromPosition: Int, toPosition: Int)
 
-    fun onGroupCreateProductClick(group: Group)
+    fun onGroupCreateProductClick(group: Group?)
 }
 
 interface GroupStorage {

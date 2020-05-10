@@ -9,6 +9,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import ru.netfantazii.handy.data.Catalog
 import ru.netfantazii.handy.data.Group
+import ru.netfantazii.handy.data.GroupType
 import ru.netfantazii.handy.data.Product
 import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
 import ru.netfantazii.handy.data.database.GeofenceEntity
@@ -107,7 +108,8 @@ class FakeLocalRepositoryFixed : FakeLocalDatabase(), LocalRepository {
     }
 
     override fun removeAllGroups(groupList: List<Group>): Disposable {
-        groups.removeAllNotify(groupList)
+        groups.removeAllNoNotify(groupList.filterNot { it.groupType == GroupType.ALWAYS_ON_TOP })
+        products.removeAllNotify(products)
         return Disposables.empty()
     }
 
