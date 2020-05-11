@@ -1,22 +1,16 @@
 package ru.netfantazii.handy.di.modules.groupsandproducts
 
-import android.content.Context
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import ru.netfantazii.handy.core.catalogs.CatalogsAdapter
-import ru.netfantazii.handy.core.groupsandproducts.*
+import ru.netfantazii.handy.ui.groupsandproducts.*
 import ru.netfantazii.handy.di.*
-import ru.netfantazii.handy.extensions.injectViewModel
+import ru.netfantazii.handy.utils.extensions.injectViewModel
 
 @Module
 class GroupsAndProductsProvideModule(private val fragment: Fragment) {

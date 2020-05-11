@@ -7,13 +7,13 @@
 
         <import type="android.view.View" />
 
-        <import type="ru.netfantazii.handy.data.BillingPurchaseTypes" />
+        <import type="ru.netfantazii.handy.data.model.BillingPurchaseTypes" />
 
-        <import type="ru.netfantazii.handy.data.ShopItem" />
+        <import type="ru.netfantazii.handy.data.model.ShopItem" />
 
         <variable
             name="billingViewModel"
-            type="ru.netfantazii.handy.core.main.BillingViewModel" />
+            type="ru.netfantazii.handy.ui.main.BillingViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,8 +1,7 @@
 package ru.netfantazii.handy
 
 import org.junit.Before
-import org.junit.Test
-import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.data.repositories.LocalRepository
 
 class FakeRepositoryTest {
 

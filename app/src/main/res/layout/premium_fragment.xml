@@ -6,11 +6,11 @@
     <data>
         <import type="android.view.View" />
 
-        <import type="ru.netfantazii.handy.data.BillingObject" />
+        <import type="ru.netfantazii.handy.data.model.BillingObject" />
 
         <variable
             name="billingViewModel"
-            type="ru.netfantazii.handy.core.main.BillingViewModel" />
+            type="ru.netfantazii.handy.ui.main.BillingViewModel" />
     </data>
 
     <ScrollView

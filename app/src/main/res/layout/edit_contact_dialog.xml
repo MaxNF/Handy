@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View"/>
-        <import type="ru.netfantazii.handy.data.ContactDialogAction"/>
+        <import type="ru.netfantazii.handy.data.model.ContactDialogAction"/>
         <variable
             name="contact"
-            type="ru.netfantazii.handy.data.Contact" />
+            type="ru.netfantazii.handy.data.model.Contact" />
         <variable
             name="action"
-            type="ru.netfantazii.handy.data.ContactDialogAction" />
+            type="ru.netfantazii.handy.data.model.ContactDialogAction" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,6 +1,5 @@
 package ru.netfantazii.handy
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
@@ -8,13 +7,13 @@ import io.reactivex.*
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import ru.netfantazii.handy.data.Catalog
-import ru.netfantazii.handy.data.database.GeofenceEntity
-import ru.netfantazii.handy.data.Group
-import ru.netfantazii.handy.data.Product
-import ru.netfantazii.handy.data.database.BaseEntity
-import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
-import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.data.model.Catalog
+import ru.netfantazii.handy.data.localdb.GeofenceEntity
+import ru.netfantazii.handy.data.model.Group
+import ru.netfantazii.handy.data.model.Product
+import ru.netfantazii.handy.data.localdb.BaseEntity
+import ru.netfantazii.handy.data.localdb.CatalogNetInfoEntity
+import ru.netfantazii.handy.data.repositories.LocalRepository
 import java.util.*
 import javax.inject.Inject
 

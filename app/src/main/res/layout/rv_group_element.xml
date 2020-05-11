@@ -6,9 +6,9 @@
     <data>
         <import type="ru.netfantazii.handy.R" />
 
-        <import type="ru.netfantazii.handy.data.BuyStatus" />
+        <import type="ru.netfantazii.handy.data.model.BuyStatus" />
 
-        <import type="ru.netfantazii.handy.data.HintType" />
+        <import type="ru.netfantazii.handy.data.model.HintType" />
 
         <variable
             name="positionInFilteredList"
@@ -20,7 +20,7 @@
 
         <variable
             name="group"
-            type="ru.netfantazii.handy.data.Group" />
+            type="ru.netfantazii.handy.data.model.Group" />
 
         <variable
             name="expandManager"
@@ -28,7 +28,7 @@
 
         <variable
             name="groupHandler"
-            type="ru.netfantazii.handy.core.groupsandproducts.GroupClickHandler" />
+            type="ru.netfantazii.handy.ui.groupsandproducts.GroupClickHandler" />
     </data>
     <FrameLayout
         android:layout_width="match_parent"

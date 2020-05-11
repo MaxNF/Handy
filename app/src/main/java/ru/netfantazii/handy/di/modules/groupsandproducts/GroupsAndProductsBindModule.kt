@@ -6,8 +6,7 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimat
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import ru.netfantazii.handy.core.catalogs.CatalogsViewModel
-import ru.netfantazii.handy.core.groupsandproducts.GroupsAndProductsViewModel
+import ru.netfantazii.handy.ui.groupsandproducts.GroupsAndProductsViewModel
 import ru.netfantazii.handy.di.ViewModelKey
 
 @Module

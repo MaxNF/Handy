@@ -5,14 +5,12 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.databinding.ObservableBoolean
 import androidx.preference.PreferenceManager
-import ru.netfantazii.handy.repositories.LocalRepository
-import ru.netfantazii.handy.repositories.RemoteRepository
-import ru.netfantazii.handy.core.preferences.currentSortOrder
-import ru.netfantazii.handy.data.Constants
+import ru.netfantazii.handy.data.repositories.LocalRepository
+import ru.netfantazii.handy.ui.preferences.currentSortOrder
+import ru.netfantazii.handy.data.model.Constants
 import ru.netfantazii.handy.di.AppComponent
 import ru.netfantazii.handy.di.DaggerAppComponent
-import ru.netfantazii.handy.extensions.getSortOrder
-import ru.netfantazii.handy.repositories.BillingRepository
+import ru.netfantazii.handy.utils.extensions.getSortOrder
 import java.util.*
 import javax.inject.Inject
 

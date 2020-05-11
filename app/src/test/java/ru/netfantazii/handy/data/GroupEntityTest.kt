@@ -3,6 +3,9 @@ package ru.netfantazii.handy.data
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.*
 import org.junit.Test
+import ru.netfantazii.handy.data.model.BuyStatus
+import ru.netfantazii.handy.data.model.Group
+import ru.netfantazii.handy.data.model.Product
 import java.util.*
 import kotlin.random.Random
 
@@ -41,7 +44,11 @@ class GroupEntityTest {
     }
 
     private fun createGroup(productList: MutableList<Product>, name: String): Group {
-        return Group(0, 1, name = name, position = Random.nextInt(), productList = productList)
+        return Group(0,
+            1,
+            name = name,
+            position = Random.nextInt(),
+            productList = productList)
     }
 
     private fun createNotBoughtUnitList1(): MutableList<Product> {

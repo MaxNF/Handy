@@ -5,7 +5,7 @@ import com.android.billingclient.api.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.netfantazii.handy.repositories.BillingRepository
+import ru.netfantazii.handy.data.repositories.BillingRepository
 import javax.inject.Inject
 
 class FakeBillingRepository @Inject constructor() : BillingRepository {

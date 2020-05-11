@@ -3,7 +3,7 @@ package ru.netfantazii.handy
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import ru.netfantazii.handy.data.*
+import ru.netfantazii.handy.data.model.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException

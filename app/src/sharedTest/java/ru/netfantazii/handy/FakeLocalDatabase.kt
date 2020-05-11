@@ -3,10 +3,10 @@ package ru.netfantazii.handy
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
-import ru.netfantazii.handy.data.Catalog
-import ru.netfantazii.handy.data.Group
-import ru.netfantazii.handy.data.Product
-import ru.netfantazii.handy.data.database.BaseEntity
+import ru.netfantazii.handy.data.model.Catalog
+import ru.netfantazii.handy.data.model.Group
+import ru.netfantazii.handy.data.model.Product
+import ru.netfantazii.handy.data.localdb.BaseEntity
 import java.util.*
 import kotlin.Comparator
 import kotlin.reflect.KClass

@@ -1,7 +1,7 @@
 package ru.netfantazii.handy.di.components
 
 import dagger.Subcomponent
-import ru.netfantazii.handy.core.catalogs.CatalogsFragment
+import ru.netfantazii.handy.ui.catalogs.CatalogsFragment
 import ru.netfantazii.handy.di.FragmentScope
 import ru.netfantazii.handy.di.modules.RecyclerViewProvideModule
 import ru.netfantazii.handy.di.modules.catalogs.CatalogsBindModule

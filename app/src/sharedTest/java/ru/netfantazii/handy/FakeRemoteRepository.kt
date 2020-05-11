@@ -4,8 +4,8 @@ import com.google.firebase.auth.AuthCredential
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.netfantazii.handy.data.Contact
-import ru.netfantazii.handy.repositories.RemoteRepository
+import ru.netfantazii.handy.data.model.Contact
+import ru.netfantazii.handy.data.repositories.RemoteRepository
 import javax.inject.Inject
 
 class FakeRemoteRepository @Inject constructor() : RemoteRepository {

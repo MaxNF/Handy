@@ -9,15 +9,15 @@
 
         <variable
             name="inputFilter"
-            type="ru.netfantazii.handy.core.main.InputFilter" />
+            type="ru.netfantazii.handy.data.model.InputFilter" />
 
         <variable
             name="contact"
-            type="ru.netfantazii.handy.data.Contact" />
+            type="ru.netfantazii.handy.data.model.Contact" />
 
         <variable
             name="handler"
-            type="ru.netfantazii.handy.core.contacts.ContactsClickHandler" />
+            type="ru.netfantazii.handy.ui.contacts.ContactsClickHandler" />
     </data>
 
     <FrameLayout

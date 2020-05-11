@@ -1,10 +1,10 @@
 package ru.netfantazii.handy.di.components
 
 import dagger.Subcomponent
-import ru.netfantazii.handy.core.notifications.NotificationBroadcastReceiver
-import ru.netfantazii.handy.core.notifications.NotificationService
-import ru.netfantazii.handy.core.share.CatalogDownloadJobService
-import ru.netfantazii.handy.core.share.CatalogMessagingService
+import ru.netfantazii.handy.data.receiver.NotificationBroadcastReceiver
+import ru.netfantazii.handy.data.service.NotificationService
+import ru.netfantazii.handy.data.service.CatalogDownloadJobService
+import ru.netfantazii.handy.data.service.CatalogMessagingService
 
 @Subcomponent
 interface NotificationComponent {

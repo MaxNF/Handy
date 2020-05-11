@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="ru.netfantazii.handy.core.notifications.map.MapViewModel" />
+            type="ru.netfantazii.handy.ui.notifications.map.MapViewModel" />
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout

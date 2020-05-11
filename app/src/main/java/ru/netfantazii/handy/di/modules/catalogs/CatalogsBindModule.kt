@@ -6,9 +6,7 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import ru.netfantazii.handy.core.catalogs.CatalogClickHandler
-import ru.netfantazii.handy.core.catalogs.CatalogStorage
-import ru.netfantazii.handy.core.catalogs.CatalogsViewModel
+import ru.netfantazii.handy.ui.catalogs.CatalogsViewModel
 import ru.netfantazii.handy.di.ViewModelKey
 
 @Module

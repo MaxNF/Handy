@@ -5,15 +5,15 @@
 
     <data>
 
-        <import type="ru.netfantazii.handy.data.Contact" />
+        <import type="ru.netfantazii.handy.data.model.Contact" />
 
         <variable
             name="viewModel"
-            type="ru.netfantazii.handy.core.share.ShareViewModel" />
+            type="ru.netfantazii.handy.ui.share.ShareViewModel" />
 
         <variable
             name="networkViewModel"
-            type="ru.netfantazii.handy.core.main.NetworkViewModel" />
+            type="ru.netfantazii.handy.ui.main.NetworkViewModel" />
 
         <variable
             name="spinner"

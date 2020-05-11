@@ -3,10 +3,10 @@ package ru.netfantazii.handy
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import ru.netfantazii.handy.extensions.move
-import ru.netfantazii.handy.extensions.moveAndReassignPositions
-import ru.netfantazii.handy.extensions.reassignPositions
-import ru.netfantazii.handy.extensions.sliceModified
+import ru.netfantazii.handy.utils.extensions.move
+import ru.netfantazii.handy.utils.extensions.moveAndReassignPositions
+import ru.netfantazii.handy.utils.extensions.reassignPositions
+import ru.netfantazii.handy.utils.extensions.sliceModified
 
 class ExtensionsTest {
 

@@ -7,13 +7,13 @@ import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import ru.netfantazii.handy.data.Catalog
-import ru.netfantazii.handy.data.Group
-import ru.netfantazii.handy.data.GroupType
-import ru.netfantazii.handy.data.Product
-import ru.netfantazii.handy.data.database.CatalogNetInfoEntity
-import ru.netfantazii.handy.data.database.GeofenceEntity
-import ru.netfantazii.handy.repositories.LocalRepository
+import ru.netfantazii.handy.data.model.Catalog
+import ru.netfantazii.handy.data.model.Group
+import ru.netfantazii.handy.data.model.GroupType
+import ru.netfantazii.handy.data.model.Product
+import ru.netfantazii.handy.data.localdb.CatalogNetInfoEntity
+import ru.netfantazii.handy.data.localdb.GeofenceEntity
+import ru.netfantazii.handy.data.repositories.LocalRepository
 import java.util.*
 
 class FakeLocalRepositoryFixed : FakeLocalDatabase(), LocalRepository {

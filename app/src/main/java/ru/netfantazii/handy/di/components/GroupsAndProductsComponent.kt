@@ -3,7 +3,7 @@ package ru.netfantazii.handy.di.components
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import dagger.BindsInstance
 import dagger.Subcomponent
-import ru.netfantazii.handy.core.groupsandproducts.GroupsAndProductsFragment
+import ru.netfantazii.handy.ui.groupsandproducts.GroupsAndProductsFragment
 import ru.netfantazii.handy.di.CatalogId
 import ru.netfantazii.handy.di.FragmentScope
 import ru.netfantazii.handy.di.modules.RecyclerViewProvideModule

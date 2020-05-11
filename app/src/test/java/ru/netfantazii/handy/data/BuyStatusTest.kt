@@ -3,8 +3,9 @@ package ru.netfantazii.handy.data
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.*
 import org.junit.Test
-import ru.netfantazii.handy.data.database.Converters.buyStatusToNumber
-import ru.netfantazii.handy.data.database.Converters.numberToBuyStatus
+import ru.netfantazii.handy.data.localdb.Converters.buyStatusToNumber
+import ru.netfantazii.handy.data.localdb.Converters.numberToBuyStatus
+import ru.netfantazii.handy.data.model.BuyStatus
 
 /**
  * Проверяем конвертацию статусов в инт и обратно.*/

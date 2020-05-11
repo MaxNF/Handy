@@ -7,19 +7,19 @@
 
         <import type="ru.netfantazii.handy.R" />
 
-        <import type="ru.netfantazii.handy.data.BuyStatus" />
+        <import type="ru.netfantazii.handy.data.model.BuyStatus" />
 
         <variable
             name="parentGroup"
-            type="ru.netfantazii.handy.data.Group" />
+            type="ru.netfantazii.handy.data.model.Group" />
 
         <variable
             name="product"
-            type="ru.netfantazii.handy.data.Product" />
+            type="ru.netfantazii.handy.data.model.Product" />
 
         <variable
             name="productHandler"
-            type="ru.netfantazii.handy.core.groupsandproducts.ProductClickHandler" />
+            type="ru.netfantazii.handy.ui.groupsandproducts.ProductClickHandler" />
     </data>
 
     <FrameLayout

@@ -21,7 +21,7 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-4546128231433208~4467489086" />
         <activity
-            android:name="ru.netfantazii.handy.core.main.MainActivity"
+            android:name="ru.netfantazii.handy.ui.main.MainActivity"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".core.notifications.NotificationBroadcastReceiver"
+            android:name=".data.receiver.NotificationBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="ru.netfantazii.handy.ALARM_GOES_OFF" />
@@ -47,16 +47,16 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".core.notifications.NotificationService" />
+        <service android:name=".data.service.NotificationService" />
         <service
-            android:name=".core.share.CatalogMessagingService"
+            android:name=".data.service.CatalogMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".core.share.CatalogDownloadJobService"
+            android:name=".data.service.CatalogDownloadJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

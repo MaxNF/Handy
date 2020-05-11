@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
-import ru.netfantazii.handy.data.database.ProductDatabase
+import ru.netfantazii.handy.data.localdb.ProductDatabase
 import ru.netfantazii.handy.di.ApplicationContext
 import javax.inject.Singleton
 
