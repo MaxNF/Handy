@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         handleNotificationIntent(intent)
 
         MobileAds.setRequestConfiguration(getTestDevicesConfiguration())
-        MobileAds.initialize(this, "ca-app-pub-4546128231433208~4467489086")
+        MobileAds.initialize(this, getString(R.string.admob_app_id))
         setUpInterstitialAds()
 
         if ((application as HandyApplication).shouldRateDialogBeShown) {
@@ -155,8 +155,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun getTestDevicesConfiguration() = RequestConfiguration.Builder()
-        .setTestDeviceIds(listOf("7878A7AA6ECBC58AB4FD75D4A0FD5C9E",
-            "144FBBB720CF6B04896D65E9E88C6164"))
+        // add your test device ids to keys.xml and link them here
+        .setTestDeviceIds(listOf(getString(R.string.admob_test_device_id_1),
+            getString(R.string.admob_test_device_id_2)))
         .build()
 
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="admob_app_id" translatable="false">ca-app-pub-4546128231433208~4467489086</string>
+    <string name="admob_test_device_id_1" translatable="false">ca-app-pub-4546128231433208~4467489086</string>
+    <string name="admob_test_device_id_2" translatable="false">ca-app-pub-4546128231433208~4467489086</string>
+</resources>

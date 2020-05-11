@@ -19,7 +19,7 @@
         android:theme="@style/Base">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-4546128231433208~4467489086" />
+            android:value="@string/admob_app_id" />
         <activity
             android:name="ru.netfantazii.handy.ui.main.MainActivity"
             android:launchMode="singleTop"
