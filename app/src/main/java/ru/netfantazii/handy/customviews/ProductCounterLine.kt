@@ -10,15 +10,18 @@ import ru.netfantazii.handy.R
 import ru.netfantazii.handy.utils.extensions.dpToPx
 
 class ProductCounterLine : FrameLayout {
-    private var stripeBackground = 0
-    private var stripeColor = 0
-    private var backgroundAlpha = 0f
-    private var stripeAlpha = 0f
-    private var stripeWidthPercent = 0f
-    private var stripeHeight = 0
+    private var stripeBackgroundColor = 0
+    private var stripeForegroundColor = 0
+    private var stripeBackgroundAlpha = 0f
+    private var stripeForegroundAlpha = 0f
+    private var stripeForegroundWidthPercent = 0f
 
     private lateinit var stripeBackgroundView: View
     private lateinit var stripeForegroundView: View
+
+    constructor(context: Context) : super(context) {
+        setAttributes(null)
+    }
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         setAttributes(attrs)
@@ -52,6 +55,8 @@ class ProductCounterLine : FrameLayout {
 
         stripeBackgroundView = findViewById(R.id.stripe_background)
         stripeForegroundView = findViewById(R.id.stripe_foreground)
+
+
     }
 
     fun setStripeBackgroundColor(color: Int) {
@@ -70,15 +75,7 @@ class ProductCounterLine : FrameLayout {
         stripeForegroundView.alpha = alpha
     }
 
-    /**
-     * @param dp height in dp format  */
-    fun setStripeHeight(dp: Int) {
-        val params = layoutParams
-        params.height = dpToPx(dp).toInt()
-        this.layoutParams = params
-    }
-
-    fun setForegroundWidthPercent(percent: Float) {
+    fun setStripeForegroundWidthPercent(percent: Float) {
         val maxWidth = width
         val widthToSet = (percent.coerceIn(0f, 100f) * maxWidth).toInt()
         val params = stripeForegroundView.layoutParams
@@ -86,16 +83,15 @@ class ProductCounterLine : FrameLayout {
         stripeForegroundView.layoutParams = params
     }
 
-    private fun setAttributes(attrs: AttributeSet) {
+    private fun setAttributes(attrs: AttributeSet?) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.ProductCounterLine, 0, 0)
-        stripeBackground =
-            a.getColor(R.styleable.ProductCounterLine_stripeBackground, defaultBackground())
-        stripeColor =
-            a.getColor(R.styleable.ProductCounterLine_stripeBackground, defaultColor())
-        backgroundAlpha = a.getFloat(R.styleable.ProductCounterLine_backgroundAlpha, 0f)
-        stripeAlpha = a.getFloat(R.styleable.ProductCounterLine_stripeAlpha, 0f)
-        stripeWidthPercent = a.getFloat(R.styleable.ProductCounterLine_stripeWidthPercent, 0f)
-        stripeHeight = a.getInt(R.styleable.ProductCounterLine_stripeHeight, dpToPx(2).toInt())
+        stripeBackgroundColor =
+            a.getColor(R.styleable.ProductCounterLine_stripeBackgroundColor, defaultBackground())
+        stripeForegroundColor =
+            a.getColor(R.styleable.ProductCounterLine_stripeBackgroundColor, defaultColor())
+        stripeBackgroundAlpha = a.getFloat(R.styleable.ProductCounterLine_stripeBackgroundAlpha, 0f)
+        stripeForegroundAlpha = a.getFloat(R.styleable.ProductCounterLine_stripeForegroundAlpha, 0f)
+        stripeForegroundWidthPercent = a.getFloat(R.styleable.ProductCounterLine_stripeForegroundWidthPercent, 0f)
         a.recycle()
     }
 

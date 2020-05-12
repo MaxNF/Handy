@@ -28,11 +28,10 @@
     <attr name="deleteAllButtonColor" format="reference|color"/>
     </declare-styleable>
     <declare-styleable name="ProductCounterLine">
-        <attr name="stripeBackground" format="color" localization="suggested"/>
-        <attr name="backgroundAlpha" format="float" localization="suggested"/>
-        <attr name="stripeColor" format="color" localization="suggested"/>
-        <attr name="stripeWidthPercent" format="float" localization="suggested"/>
-        <attr name="stripeHeight" format="integer" localization="suggested"/>
-        <attr name="stripeAlpha" format="float" localization="suggested"/>
+        <attr name="stripeBackgroundColor" format="color" localization="suggested"/>
+        <attr name="stripeBackgroundAlpha" format="float" localization="suggested"/>
+        <attr name="stripeForegroundColor" format="color" localization="suggested"/>
+        <attr name="stripeForegroundWidthPercent" format="float" localization="suggested"/>
+        <attr name="stripeForegroundAlpha" format="float" localization="suggested"/>
     </declare-styleable>
 </resources>
