@@ -2,22 +2,20 @@ package ru.netfantazii.handy.customviews
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import ru.netfantazii.handy.R
-import ru.netfantazii.handy.utils.extensions.dpToPx
 
 class ProductCounterLine : FrameLayout {
     private var stripeBackgroundColor = 0
     private var stripeForegroundColor = 0
     private var stripeBackgroundAlpha = 0f
     private var stripeForegroundAlpha = 0f
-    private var stripeForegroundWidthPercent = 0f
+    private var stripeForegroundWidthFraction = 0f
 
-    private lateinit var stripeBackgroundView: View
-    private lateinit var stripeForegroundView: View
+    private val stripeBackgroundView: View
+    private val stripeForegroundView: View
 
     constructor(context: Context) : super(context) {
         setAttributes(null)
@@ -43,20 +41,21 @@ class ProductCounterLine : FrameLayout {
     }
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.product_counter_line, this, true)
+        stripeBackgroundView = View(context)
+        stripeForegroundView = createStripeForegroundView()
+
+        this.addView(stripeBackgroundView, 0,
+            LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        this.addView(stripeForegroundView, 1,
+            LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-//        val backgroundView = getChildAt(0) as View
-//        val backgroundParams = backgroundView.layoutParams
-//        val stripeView = getChildAt(1) as View
-//        val stripeParams = stripeView.layoutParams
-
-        stripeBackgroundView = findViewById(R.id.stripe_background)
-        stripeForegroundView = findViewById(R.id.stripe_foreground)
-
-
+        setStripeBackgroundColor(stripeBackgroundColor)
+        setStripeForegroundColor(stripeForegroundColor)
+        setStripeBackgroundAlpha(stripeBackgroundAlpha)
+        setStripeForegroundAlpha(stripeForegroundAlpha)
     }
 
     fun setStripeBackgroundColor(color: Int) {
@@ -75,28 +74,41 @@ class ProductCounterLine : FrameLayout {
         stripeForegroundView.alpha = alpha
     }
 
-    fun setStripeForegroundWidthPercent(percent: Float) {
-        val maxWidth = width
-        val widthToSet = (percent.coerceIn(0f, 100f) * maxWidth).toInt()
-        val params = stripeForegroundView.layoutParams
-        params.width = widthToSet
-        stripeForegroundView.layoutParams = params
+    fun setStripeForegroundWidthFraction(fraction: Float) {
+        stripeForegroundWidthFraction = fraction
     }
+
 
     private fun setAttributes(attrs: AttributeSet?) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.ProductCounterLine, 0, 0)
         stripeBackgroundColor =
-            a.getColor(R.styleable.ProductCounterLine_stripeBackgroundColor, defaultBackground())
+            a.getColor(R.styleable.ProductCounterLine_stripeBackgroundColor,
+                defaultStripeBackgroundColor())
         stripeForegroundColor =
-            a.getColor(R.styleable.ProductCounterLine_stripeBackgroundColor, defaultColor())
-        stripeBackgroundAlpha = a.getFloat(R.styleable.ProductCounterLine_stripeBackgroundAlpha, 0f)
-        stripeForegroundAlpha = a.getFloat(R.styleable.ProductCounterLine_stripeForegroundAlpha, 0f)
-        stripeForegroundWidthPercent = a.getFloat(R.styleable.ProductCounterLine_stripeForegroundWidthPercent, 0f)
+            a.getColor(R.styleable.ProductCounterLine_stripeForegroundColor,
+                defaultStripeForegroundColor())
+        stripeBackgroundAlpha =
+            a.getFloat(R.styleable.ProductCounterLine_stripeBackgroundAlpha, 0f).coerceIn(0f, 1f)
+        stripeForegroundAlpha =
+            a.getFloat(R.styleable.ProductCounterLine_stripeForegroundAlpha, 1f).coerceIn(0f, 1f)
+        stripeForegroundWidthFraction =
+            a.getFloat(R.styleable.ProductCounterLine_stripeForegroundWidthFraction, 0f)
+                .coerceIn(0f, 1f)
         a.recycle()
     }
 
-    private fun defaultBackground() = ContextCompat.getColor(context, android.R.color.white)
-    private fun defaultColor() = ContextCompat.getColor(context, android.R.color.holo_blue_light)
+    private fun defaultStripeBackgroundColor() =
+        ContextCompat.getColor(context, android.R.color.white)
 
+    private fun defaultStripeForegroundColor() =
+        ContextCompat.getColor(context, android.R.color.holo_blue_light)
 
+    private fun createStripeForegroundView() = object : View(context) {
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            val height = MeasureSpec.getSize(heightMeasureSpec)
+            val maxWidth = MeasureSpec.getSize(widthMeasureSpec)
+            val width = (stripeForegroundWidthFraction * maxWidth).toInt()
+            setMeasuredDimension(width, height)
+        }
+    }
 }

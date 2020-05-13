@@ -31,7 +31,7 @@
         <attr name="stripeBackgroundColor" format="color" localization="suggested"/>
         <attr name="stripeBackgroundAlpha" format="float" localization="suggested"/>
         <attr name="stripeForegroundColor" format="color" localization="suggested"/>
-        <attr name="stripeForegroundWidthPercent" format="float" localization="suggested"/>
+        <attr name="stripeForegroundWidthFraction" format="float" localization="suggested"/>
         <attr name="stripeForegroundAlpha" format="float" localization="suggested"/>
     </declare-styleable>
 </resources>
