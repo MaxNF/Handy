@@ -19,8 +19,8 @@ android {
         applicationId "ru.netfantazii.handypro"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 10
-        versionName "1.1.3_refactor"
+        versionCode 11g
+        versionName "1.1.4"
     }
     buildTypes {
         release {
