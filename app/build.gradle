@@ -19,7 +19,7 @@ android {
         applicationId "ru.netfantazii.handypro"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 11g
+        versionCode 11
         versionName "1.1.4"
     }
     buildTypes {
