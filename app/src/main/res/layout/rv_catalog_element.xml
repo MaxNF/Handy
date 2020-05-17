@@ -132,35 +132,6 @@
                     app:stripeForegroundWidthFraction="@{ (float) catalog.boughtProductCount / (float) catalog.totalProductCount }"
                     />
 
-<!--                <FrameLayout-->
-<!--                    android:id="@+id/stripe_container"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="2dp"-->
-<!--                    android:layout_marginStart="8dp"-->
-<!--                    android:layout_marginEnd="16dp"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@+id/tv_element_count"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toEndOf="@+id/tv_element_count"-->
-<!--                    app:layout_constraintTop_toTopOf="@+id/tv_element_count"-->
-<!--                    app:layout_constraintVertical_bias="0.55">-->
-
-<!--                    <View-->
-<!--                        android:id="@+id/stripe_background"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_gravity="start"-->
-<!--                        android:alpha="0.7"-->
-<!--                        android:background="@android:color/white" />-->
-
-<!--                    <View-->
-<!--                        android:id="@+id/stripe_main"-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_gravity="start"-->
-<!--                        android:background="@android:color/holo_green_light"-->
-<!--                        app:stripeWidth="@{ (float) catalog.boughtProductCount / (float) catalog.totalProductCount }" />-->
-<!--                </FrameLayout>-->
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
     </FrameLayout>

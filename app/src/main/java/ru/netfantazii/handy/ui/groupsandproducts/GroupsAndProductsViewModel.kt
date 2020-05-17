@@ -295,6 +295,8 @@ class GroupsAndProductsViewModel @Inject constructor(
                     addNewProductToTheEndUseCase.addNewProduct(entity,
                         notFilteredGroupList.toMutableList())
                 }
+                overlayBuffer.replaceObject(Product(catalogId = currentCatalogId,
+                    groupId = entity.groupId))
             }
             OVERLAY_ACTION_PRODUCT_RENAME -> {
                 if (entity !is Product) throw UnsupportedOperationException("Buffer object should be product.")

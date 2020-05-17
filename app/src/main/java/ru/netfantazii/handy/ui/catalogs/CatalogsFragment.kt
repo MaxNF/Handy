@@ -174,9 +174,11 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     }
 
     private fun openNotificationFragment(catalog: Catalog) {
-        val direction = CatalogsFragmentDirections.actionCatalogsFragmentToMap(catalog.id,
-            catalog.name, catalog.groupExpandStates)
-        navController.navigate(direction)
+        if (navController.currentDestination?.id == R.id.catalogs_fragment) {
+            val direction = CatalogsFragmentDirections.actionCatalogsFragmentToMap(catalog.id,
+                catalog.name, catalog.groupExpandStates)
+            navController.navigate(direction)
+        }
     }
 
     private fun showCatalogRemovalSnackbar() {
@@ -195,9 +197,12 @@ class CatalogsFragment : BaseFragment<CatalogsAdapter>() {
     }
 
     private fun openShareFragment(catalog: Catalog) {
-        val direction = CatalogsFragmentDirections.actionCatalogsFragmentToShareFragment(catalog.id,
-            catalog.name, catalog.totalProductCount.toString())
-        navController.navigate(direction)
+        if (navController.currentDestination?.id == R.id.catalogs_fragment) {
+            val direction =
+                CatalogsFragmentDirections.actionCatalogsFragmentToShareFragment(catalog.id,
+                    catalog.name, catalog.totalProductCount.toString())
+            navController.navigate(direction)
+        }
     }
 
     private fun scrollToBeginOfList() {

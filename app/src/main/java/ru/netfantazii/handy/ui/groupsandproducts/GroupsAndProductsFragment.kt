@@ -394,19 +394,25 @@ class GroupsAndProductsFragment : BaseFragment<GroupsAndProductsAdapter>() {
     }
 
     private fun openShareFragment() {
-        val direction =
-            GroupsAndProductsFragmentDirections.actionProductsFragmentToShareFragment(fragmentArgs.catalogId,
-                fragmentArgs.catalogName, viewModel.allFilteredProducts.size.toString())
-        navController.navigate(direction)
+        if (navController.currentDestination?.id == R.id.products_fragment) {
+            val direction =
+                GroupsAndProductsFragmentDirections.actionProductsFragmentToShareFragment(
+                    fragmentArgs.catalogId,
+                    fragmentArgs.catalogName,
+                    viewModel.allFilteredProducts.size.toString())
+            navController.navigate(direction)
+        }
     }
 
     private fun openNotificationFragment() {
-        val direction =
-            GroupsAndProductsFragmentDirections.actionProductsFragmentToNotificationsFragment(
-                fragmentArgs.catalogId,
-                fragmentArgs.catalogName,
-                fragmentArgs.groupExpandStates)
-        navController.navigate(direction)
+        if (navController.currentDestination?.id == R.id.products_fragment) {
+            val direction =
+                GroupsAndProductsFragmentDirections.actionProductsFragmentToNotificationsFragment(
+                    fragmentArgs.catalogId,
+                    fragmentArgs.catalogName,
+                    fragmentArgs.groupExpandStates)
+            navController.navigate(direction)
+        }
     }
 
 

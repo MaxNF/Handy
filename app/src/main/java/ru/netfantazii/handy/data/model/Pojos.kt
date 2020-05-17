@@ -105,7 +105,6 @@ open class Group(
     fun isStatusChanged() = buyStatus != calculateAndReturnStatus(productList)
 
     override fun equals(other: Any?): Boolean {
-        //todo дописать проверку класса для корректного переопределения (у других классов тоже)
         return if (other == null || other.javaClass != this.javaClass) false
         else this.id == (other as Group).id
     }

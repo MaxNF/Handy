@@ -32,7 +32,6 @@ class ShareViewModel @Inject constructor(
     }
 
     private fun getCatalogContent() {
-        //todo ПЕРЕДЕЛАТЬ ПОД ЛАЙВ ДАТУ!
         subscribeToGroupsChangesUseCase.filteredAndNotFilteredGroups.observeForever { (notFilteredGroups, filteredGroups) ->
             parsedGroups = parseGroups(notFilteredGroups)
         }
